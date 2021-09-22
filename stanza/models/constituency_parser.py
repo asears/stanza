@@ -70,6 +70,7 @@ import torch
 from stanza import Pipeline
 from stanza.models.common import utils
 from stanza.models.constituency import trainer
+from stanza.models.constituency.lstm_model import SentenceBoundary
 from stanza.models.constituency.parse_transitions import TransitionScheme
 
 logger = logging.getLogger('stanza')
@@ -213,8 +214,8 @@ def parse_args(args=None):
     parser.add_argument('--num_lstm_layers', default=2, type=int, help='How many layers to use in the LSTMs')
     parser.add_argument('--num_output_layers', default=3, type=int, help='How many layers to use at the prediction level')
 
-    parser.add_argument('--sentence_boundary_vectors', action='store_true', help='Train vectors for the boundaries of a sentence')
-    parser.add_argument('--no_sentence_boundary_vectors', action='store_false', dest='sentence_boundary_vectors', help="Don't train vectors for the boundaries of a sentence")
+    parser.add_argument('--sentence_boundary_vectors', default=SentenceBoundary.NONE, type=lambda x: SentenceBoundary[x.upper()],
+                        help='Vectors to learn at the start & end of sentences.  {}'.format(", ".join(x.name for x in SentenceBoundary)))
 
     # TODO: add the ability to keep training in a different direction
     # after making an error, eg, add an oracle
