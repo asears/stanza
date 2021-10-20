@@ -5,11 +5,13 @@ This script converts the Hungarian files available at u-szeged
 
 import os
 import tempfile
+from typing import List
 
 # we reuse this to split the data randomly
 from stanza.utils.datasets.ner.split_wikiner import split_wikiner
 
-def read_rgai_file(filename, separator):
+
+def read_rgai_file(filename, separator) -> List[str]:
     with open(filename, encoding="latin-1") as fin:
         lines = fin.readlines()
         lines = [x.strip() for x in lines]
@@ -19,7 +21,10 @@ def read_rgai_file(filename, separator):
                 continue
             pieces = lines[idx].split(separator)
             if len(pieces) != 2:
-                raise ValueError("Line %d is in an unexpected format!  Expected exactly two pieces when split on %s" % (idx, separator))
+                raise ValueError(
+                    "Line %d is in an unexpected format!  Expected exactly two pieces when split on %s"
+                    % (idx, separator)
+                )
             # some of the data has '0' (the digit) instead of 'O' (the letter)
             if pieces[-1] == '0':
                 pieces[-1] = "O"
@@ -27,7 +32,9 @@ def read_rgai_file(filename, separator):
     print("Read %d lines from %s" % (len(lines), filename))
     return lines
 
-def get_rgai_data(base_input_path, use_business, use_criminal):
+
+def get_rgai_data(base_input_path, use_business: bool, use_criminal: bool) -> List[str]:
+    """Get RGAI Data."""
     assert use_business or use_criminal, "Must specify one or more sections of the dataset to use"
 
     dataset_lines = []
@@ -49,7 +56,8 @@ def get_rgai_data(base_input_path, use_business, use_criminal):
 
     return dataset_lines
 
-def convert_rgai(base_input_path, base_output_path, short_name, use_business, use_criminal):
+
+def convert_rgai(base_input_path, base_output_path, short_name: str, use_business: bool, use_criminal: bool) -> None:
     all_data_file = tempfile.NamedTemporaryFile(delete=False)
     try:
         raw_data = get_rgai_data(base_input_path, use_business, use_criminal)

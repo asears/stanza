@@ -1,4 +1,6 @@
 """
+Prepare depparse treebank.
+
 A script to prepare all depparse datasets.
 
 For example, do
@@ -20,10 +22,12 @@ from stanza.utils.training.run_pos import pos_batch_size, wordvec_args
 logger = logging.getLogger('stanza')
 
 class Tags(Enum):
+    """Tags."""
     GOLD = 1
     PREDICTED = 2
 
-def add_specific_args(parser):
+def add_specific_args(parser) -> None:
+    """Add specific args."""
     parser.add_argument("--gold", dest='tag_method', action='store_const', const=Tags.GOLD, default=Tags.PREDICTED,
                         help='Use gold tags for building the depparse data')
     parser.add_argument("--predicted", dest='tag_method', action='store_const', const=Tags.PREDICTED,
@@ -31,7 +35,8 @@ def add_specific_args(parser):
     parser.add_argument('--wordvec_pretrain_file', type=str, default=None, help='Exact name of the pretrain file to read')
 
 
-def process_treebank(treebank, paths, args):
+def process_treebank(treebank, paths, args) -> None:
+    """Process treebank."""
     if args.tag_method is Tags.GOLD:
         prepare_tokenizer_treebank.copy_conllu_treebank(treebank, paths, paths["DEPPARSE_DATA_DIR"])
     elif args.tag_method is Tags.PREDICTED:
@@ -62,7 +67,8 @@ def process_treebank(treebank, paths, args):
         raise ValueError("Unknown tags method: {}".format(arg.tag_method))
 
 
-def main():
+def main() -> None:
+    """Process treebank."""
     common.main(process_treebank, add_specific_args)
 
 if __name__ == '__main__':

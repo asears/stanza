@@ -18,7 +18,7 @@ def parse_args():
     args = parser.parse_args()
     return args
 
-def main():
+def main() -> None:
     args = parse_args()
     process_dataset(args.input, args.output)
 
@@ -38,7 +38,7 @@ def process_dataset(input_filename, output_filename):
     print("Generated json file {}".format(output_filename))
 
 # TODO: make skip_doc_start an argument
-def load_conll03(filename, skip_doc_start=True):
+def load_conll03(filename, skip_doc_start: bool = True):
     cached_lines = []
     examples = []
     with open(filename) as infile:

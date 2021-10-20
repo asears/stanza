@@ -34,18 +34,20 @@ import glob
 import os
 import re
 import sys
+from typing import List
 
 import stanza
 from stanza.models.constituency import parse_tree
 from stanza.models.constituency import tree_reader
 
-def load_without_asterisks(in_file, encoding='utf-8'):
+def load_without_asterisks(in_file, encoding='utf-8') -> List[str]:
     with open(in_file, encoding=encoding) as fin:
         new_lines = [x if x.find("********") < 0 else "\n" for x in fin.readlines()]
     if len(new_lines) > 0 and not new_lines[-1].endswith("\n"):
         new_lines[-1] = new_lines[-1] + "\n"
     return new_lines
 
+# fmt:off
 CONSTITUENT_SPLIT = re.compile("[-=#+0-9]")
 
 # JRCA is almost entirely duplicates
@@ -148,7 +150,7 @@ BIWORD_SPLITS = { "offertogli": ("offerto", "gli"),
                   "esimersi": ("esimer", "si"),
                   "opporsi": ("oppor", "si"),
 }
-
+# fmt:on
 CAP_BIWORD = re.compile("[A-Z]+_[A-Z]+")
 
 def split_mwe(tree, pipeline):
@@ -267,7 +269,7 @@ def save_trees(out_file, trees):
             fout.write(str(tree))
             fout.write("\n")
 
-def convert_it_turin(input_path, output_path):
+def convert_it_turin(input_path, output_path) -> None:
     pipeline = stanza.Pipeline("it", processors="tokenize, mwt", tokenize_no_ssplit=True)
 
     os.makedirs(output_path, exist_ok=True)
@@ -329,7 +331,7 @@ def convert_it_turin(input_path, output_path):
     it_dev = os.path.join(output_path, "it_turin_dev.mrg")
     save_trees(it_dev, dev_trees)
 
-def main():
+def main() -> None:
     input_path = sys.argv[1]
     output_path = sys.argv[2]
 

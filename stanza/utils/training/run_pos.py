@@ -1,5 +1,4 @@
-
-
+"""Run POS."""
 import logging
 import os
 
@@ -10,17 +9,24 @@ from stanza.utils.training.common import Mode
 
 logger = logging.getLogger('stanza')
 
-# TODO: move this somewhere common
+# TODO(John Bauer): move this somewhere common
 def wordvec_args(short_language):
+    """Wordvector args."""
     if short_language in ("cop", "orv", "pcm", "qtd", "swl"):
         # we couldn't find word vectors for these languages:
         # coptic, naija, old russian, turkish german, swedish sign language
-        logger.warning("No known word vectors for language {}  If those vectors can be found, please update the training scripts.".format(short_language))
+        logger.warning(
+            "No known word vectors for language {0}  If those vectors can be found, please update the training scripts.".format(
+                short_language
+            )
+        )
         return ["--no_pretrain"]
     else:
         return []
 
+
 def pos_batch_size(short_name):
+    """POS batch size."""
     if short_name == 'de_hdt':
         # 'UD_German-HDT'
         return "2000"
@@ -30,10 +36,12 @@ def pos_batch_size(short_name):
     else:
         return "5000"
 
-def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
-    short_language = short_name.split("_")[0]
 
+def run_treebank(mode, paths, treebank, short_name, temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
+
+    # fmt:off
+    short_language = short_name.split("_")[0]
     pos_dir        = paths["POS_DATA_DIR"]
     train_file     = f"{pos_dir}/{short_name}.train.in.conllu"
     dev_in_file    = f"{pos_dir}/{short_name}.dev.in.conllu"
@@ -42,6 +50,7 @@ def run_treebank(mode, paths, treebank, short_name,
     test_in_file   = f"{pos_dir}/{short_name}.test.in.conllu"
     test_gold_file = f"{pos_dir}/{short_name}.test.gold.conllu"
     test_pred_file = temp_output_file if temp_output_file else f"{pos_dir}/{short_name}.test.pred.conllu"
+    # fmt:on
 
     if mode == Mode.TRAIN:
         if not os.path.exists(train_file):
@@ -50,7 +59,7 @@ def run_treebank(mode, paths, treebank, short_name,
 
         # some languages need reduced batch size
         batch_size = pos_batch_size(short_name)
-
+        # fmt:off
         train_args = ["--wordvec_dir", paths["WORDVEC_DIR"],
                       "--train_file", train_file,
                       "--eval_file", dev_in_file,
@@ -60,12 +69,14 @@ def run_treebank(mode, paths, treebank, short_name,
                       "--lang", short_language,
                       "--shorthand", short_name,
                       "--mode", "train"]
+        # fmt:on
         train_args = train_args + wordvec_args(short_language)
         train_args = train_args + extra_args
-        logger.info("Running train POS for {} with args {}".format(treebank, train_args))
+        logger.info("Running train POS for {0} with args {1}".format(treebank, train_args))
         tagger.main(train_args)
 
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
+        # fmt: off
         dev_args = ["--wordvec_dir", paths["WORDVEC_DIR"],
                     "--eval_file", dev_in_file,
                     "--output_file", dev_pred_file,
@@ -73,15 +84,17 @@ def run_treebank(mode, paths, treebank, short_name,
                     "--lang", short_language,
                     "--shorthand", short_name,
                     "--mode", "predict"]
+        # fmt: on
         dev_args = dev_args + wordvec_args(short_language)
         dev_args = dev_args + extra_args
-        logger.info("Running dev POS for {} with args {}".format(treebank, dev_args))
+        logger.info("Running dev POS for {0} with args {1}".format(treebank, dev_args))
         tagger.main(dev_args)
 
         results = common.run_eval_script_pos(dev_gold_file, dev_pred_file)
-        logger.info("Finished running dev set on\n{}\n{}".format(treebank, results))
+        logger.info("Finished running dev set on\n{0}\n{1}".format(treebank, results))
 
     if mode == Mode.SCORE_TEST:
+        # fmt:off
         test_args = ["--wordvec_dir", paths["WORDVEC_DIR"],
                     "--eval_file", test_in_file,
                     "--output_file", test_pred_file,
@@ -89,18 +102,20 @@ def run_treebank(mode, paths, treebank, short_name,
                     "--lang", short_language,
                     "--shorthand", short_name,
                     "--mode", "predict"]
+        # fmt: on
         test_args = test_args + wordvec_args(short_language)
         test_args = test_args + extra_args
-        logger.info("Running test POS for {} with args {}".format(treebank, test_args))
+        logger.info("Running test POS for {0} with args {1}".format(treebank, test_args))
         tagger.main(test_args)
 
         results = common.run_eval_script_pos(test_gold_file, test_pred_file)
-        logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
+        logger.info("Finished running test set on\n{0}\n{1}".format(treebank, results))
 
 
-def main():
+def main() -> None:
+    """Run treebank."""
     common.main(run_treebank, "pos", "tagger")
+
 
 if __name__ == "__main__":
     main()
-

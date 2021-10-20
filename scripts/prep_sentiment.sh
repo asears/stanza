@@ -1,3 +1,15 @@
+#!/bin/bash
+# Manipulates various downloads from their original form to a form
+# usable by the classifier model
+
+# Notes on the individual datasets can be found in the relevant
+# process_dataset script
+
+# Example:
+# prep_sentiment -lenglish
+# Example:
+# prep_sentiment -lgerman
+
 if hash python3 2>/dev/null; then
     PYTHON=python3
 else
@@ -7,16 +19,6 @@ fi
 if [ -z "$SENTIMENT_DATA_DIR" ]; then
     source scripts/config.sh
 fi
-
-# Manipulates various downloads from their original form to a form
-# usable by the classifier model
-
-# Notes on the individual datasets can be found in the relevant
-# process_dataset script
-
-# Run as follows:
-# prep_sentiment -lenglish
-# prep_sentiment -lgerman
 
 language="english"
 while getopts "l:" OPTION

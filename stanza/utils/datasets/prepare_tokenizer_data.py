@@ -1,12 +1,6 @@
-import argparse
-import json
-import os
-import re
-import sys
-
-from collections import Counter
-
 """
+Prepare Tokenizer Data.
+
 Data is output in 4 files:
 
 a file containing the mwt information
@@ -16,6 +10,13 @@ a file of 0,1,2 indicating word break or sentence break on a character level for
   1: end of word
   2: end of sentence
 """
+import argparse
+import json
+import os
+import re
+import sys
+
+from collections import Counter
 
 PARAGRAPH_BREAK = re.compile(r'\n\s*\n')
 
@@ -56,7 +57,7 @@ def find_next_word(index, text, word, output):
         index += 1
     return index, word_sofar
 
-def main(args):
+def main(args) -> None:
     parser = argparse.ArgumentParser()
 
     parser.add_argument('plaintext_file', type=str, help="Plaintext file containing the raw input")

@@ -1,12 +1,15 @@
+"""Process Thai tokenization."""
 import os
 import random
+from typing import List
 
 try:
     from pythainlp import sent_tokenize
 except ImportError:
     pass
 
-def write_section(output_dir, dataset_name, section, documents):
+
+def write_section(output_dir, dataset_name: str, section: str, documents):
     """
     Writes a list of documents for tokenization, including a file in conll format
 
@@ -27,7 +30,7 @@ def write_section(output_dir, dataset_name, section, documents):
         for paragraph in document:
             for sentence_idx, sentence in enumerate(paragraph):
                 for word_idx, word in enumerate(sentence):
-                    # TODO: split with newlines to make it more readable?
+                    # TODO(John Bauer): split with newlines to make it more readable?
                     text_out.write(word[0])
                     for i in range(len(word[0]) - 1):
                         label_out.write("0")
@@ -65,10 +68,15 @@ def write_section(output_dir, dataset_name, section, documents):
                         # Note the faked dependency structure: the conll reading code
                         # needs it even if it isn't being used in any way
                         fake_dep = 'root' if word_idx == 0 else 'dep'
-                        fout.write('{}\t{}\t_\t_\t_\t_\t{}\t{}\t{}:{}\t{}\n'.format(word_idx+1, word[0], word_idx, fake_dep, word_idx, fake_dep, space))
+                        fout.write(
+                            '{}\t{}\t_\t_\t_\t_\t{}\t{}\t{}:{}\t{}\n'.format(
+                                word_idx + 1, word[0], word_idx, fake_dep, word_idx, fake_dep, space
+                            )
+                        )
                     fout.write('\n')
 
-def write_dataset(documents, output_dir, dataset_name):
+
+def write_dataset(documents: List[str], output_dir: str, dataset_name: str) -> None:
     """
     Shuffle a list of documents, write three sections
     """
@@ -77,10 +85,11 @@ def write_dataset(documents, output_dir, dataset_name):
     num_dev = int(len(documents) * 0.1)
     os.makedirs(output_dir, exist_ok=True)
     write_section(output_dir, dataset_name, 'train', documents[:num_train])
-    write_section(output_dir, dataset_name, 'dev', documents[num_train:num_train+num_dev])
-    write_section(output_dir, dataset_name, 'test', documents[num_train+num_dev:])
+    write_section(output_dir, dataset_name, 'dev', documents[num_train : num_train + num_dev])
+    write_section(output_dir, dataset_name, 'test', documents[num_train + num_dev :])
 
-def write_dataset_best(documents, test_documents, output_dir, dataset_name):
+
+def write_dataset_best(documents, test_documents, output_dir, dataset_name: str) -> None:
     """
     Shuffle a list of documents, write three sections
     """
@@ -89,11 +98,11 @@ def write_dataset_best(documents, test_documents, output_dir, dataset_name):
     num_dev = int(len(documents) * 0.15)
     os.makedirs(output_dir, exist_ok=True)
     write_section(output_dir, dataset_name, 'train', documents[:num_train])
-    write_section(output_dir, dataset_name, 'dev', documents[num_train:num_train+num_dev])
+    write_section(output_dir, dataset_name, 'dev', documents[num_train : num_train + num_dev])
     write_section(output_dir, dataset_name, 'test', test_documents)
 
 
-def reprocess_lines(processed_lines):
+def reprocess_lines(processed_lines: List[str]) -> List[str]:
     """
     Reprocesses lines using pythainlp to cut up sentences into shorter sentences.
 
@@ -134,16 +143,17 @@ def reprocess_lines(processed_lines):
                 word = word[remaining_len:]
                 chunk_lengths = chunk_lengths[1:]
                 while len(word) > chunk_lengths[0]:
-                    new_line = [word[:chunk_lengths[0]]]
+                    new_line = [word[: chunk_lengths[0]]]
                     reprocessed_lines.append(new_line)
-                    word = word[chunk_lengths[0]:]
+                    word = word[chunk_lengths[0] :]
                     chunk_lengths = chunk_lengths[1:]
                 new_line = [word]
                 current_length = len(word)
         reprocessed_lines.append(new_line)
     return reprocessed_lines
 
-def convert_processed_lines(processed_lines):
+
+def convert_processed_lines(processed_lines: List[str]) -> List[str]:
     """
     Convert a list of sentences into documents suitable for the output methods in this module.
 
@@ -167,6 +177,7 @@ def convert_processed_lines(processed_lines):
             if not word:
                 if len(sentence) == 0:
                     print(word)
+                    # TODO(John Bauer) filename is not defined error here
                     raise ValueError("Unexpected space at start of sentence in document {}".format(filename))
                 sentence[-1] = (sentence[-1][0], True)
             else:
@@ -179,9 +190,5 @@ def convert_processed_lines(processed_lines):
         sentence[-1] = (sentence[-1][0], True)
         sentences.append(sentence)
     paragraphs.append([sentences])
+
     return paragraphs
-
-
-
-
-

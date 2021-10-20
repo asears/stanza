@@ -13,11 +13,13 @@ import os
 import argparse
 
 
-def is_closed_tree(tree):
-    """
-    Checks if the tree is properly closed
-    :param tree: tree as a string
+def is_closed_tree(tree) -> bool:
+    """Checks if the tree is properly closed.
+
+    :param tree: tree
+    :type tree: str
     :return: True if closed otherwise False
+    :rtype: bool
     """
     count = 0
     for char in tree:
@@ -28,7 +30,7 @@ def is_closed_tree(tree):
     return count == 0
 
 
-def is_valid_line(line):
+def is_valid_line(line: str) -> bool:
     """
     Check if a line being read is a valid constituent
     :param line: constituent being read
@@ -41,7 +43,7 @@ def is_valid_line(line):
     return False
 
 
-def convert_file(org_dir, new_dir):
+def convert_file(org_dir, new_dir) -> None:
     """
     :param org_dir: original directory storing original trees
     :param new_dir: new directory storing formatted constituency trees
@@ -89,7 +91,7 @@ def convert_file(org_dir, new_dir):
                     reading_tree = False
 
 
-def convert_dir(org_dir, new_dir):
+def convert_dir(org_dir, new_dir) -> None:
     for filename in os.listdir(org_dir):
         file_name, file_extension = os.path.splitext(filename)
         # Only convert .prd files, skip the .raw files
@@ -102,7 +104,7 @@ def convert_dir(org_dir, new_dir):
         convert_file(file_path, new_file_path)
 
 
-def main():
+def main() -> None:
     """
     Main function for the script
 
@@ -112,14 +114,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="Script that converts a VTB Tree into the desired format",
     )
-    parser.add_argument(
-        'org_dir',
-        help='The location of the original directory storing original trees '
-    )
-    parser.add_argument(
-        'new_dir',
-        help='The location of new directory storing the new formatted trees'
-    )
+    parser.add_argument('org_dir', help='The location of the original directory storing original trees ')
+    parser.add_argument('new_dir', help='The location of new directory storing the new formatted trees')
 
     args = parser.parse_args()
 

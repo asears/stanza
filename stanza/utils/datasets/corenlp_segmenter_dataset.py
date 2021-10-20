@@ -17,14 +17,17 @@ import stanza.utils.default_paths as default_paths
 
 from stanza.models.common.constant import treebank_to_short_name
 
-def build_argparse():
+
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
+    # fmt: off
     parser.add_argument('treebanks', type=str, nargs='*', default=["UD_Chinese-GSDSimp"], help='Which treebanks to run on')
     parser.add_argument('--output_dir', type=str, default='.', help='Where to put the results')
+    # fmt: on
     return parser
 
 
-def write_segmenter_file(output_filename, dataset):
+def write_segmenter_file(output_filename, dataset) -> None:
     with open(output_filename, "w") as fout:
         for sentence in dataset:
             sentence = [x for x in sentence if not x.startswith("#")]
@@ -36,20 +39,21 @@ def write_segmenter_file(output_filename, dataset):
             fout.write(text)
             fout.write("\n")
 
-def process_treebank(treebank, paths, output_dir):
+
+def process_treebank(treebank, paths, output_dir) -> None:
     with tempfile.TemporaryDirectory() as tokenizer_dir:
         paths = dict(paths)
         paths["TOKENIZE_DATA_DIR"] = tokenizer_dir
 
         short_name = treebank_to_short_name(treebank)
-        
+
         # first we process the tokenization data
         args = argparse.Namespace()
         args.augment = False
         args.prepare_labels = False
         prepare_tokenizer_treebank.process_treebank(treebank, paths, args)
 
-        # TODO: these names should be refactored
+        # TODO(John Bauer): these names should be refactored
         train_file = f"{tokenizer_dir}/{short_name}.train.gold.conllu"
         dev_file = f"{tokenizer_dir}/{short_name}.dev.gold.conllu"
         test_file = f"{tokenizer_dir}/{short_name}.test.gold.conllu"
@@ -64,7 +68,8 @@ def process_treebank(treebank, paths, output_dir):
         write_segmenter_file(train_out, train_set + dev_set)
         write_segmenter_file(test_out, test_set)
 
-def main():
+
+def main() -> None:
     parser = build_argparse()
     args = parser.parse_args()
 
@@ -72,6 +77,6 @@ def main():
     for treebank in args.treebanks:
         process_treebank(treebank, paths, args.output_dir)
 
+
 if __name__ == '__main__':
     main()
-

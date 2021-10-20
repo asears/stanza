@@ -25,7 +25,7 @@ import argparse
 
 EXCLUDED_FOLDERS = ['raw_corpus']
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("src_root", default="src", help="Root directory with all source files.")
     parser.add_argument("tgt_root", default="tgt", help="Root directory with all target files.")
@@ -46,9 +46,9 @@ def main():
     tgt_root = Path(args.tgt_root)
 
     lang_dirs = os.listdir(src_root)
-    lang_dirs = [l for l in lang_dirs if l not in EXCLUDED_FOLDERS] # skip excluded
-    if len(langs) > 0: # filter languages if specified
-        lang_dirs = [l for l in lang_dirs if l in langs]
+    lang_dirs = [l for l in lang_dirs if l not in EXCLUDED_FOLDERS]  # skip excluded  # noqa: E741
+    if len(langs) > 0:  # filter languages if specified
+        lang_dirs = [l for l in lang_dirs if l in langs]  # noqa: E741
     print(f"{len(lang_dirs)} total languages found:")
     print(lang_dirs)
     print("")
@@ -69,7 +69,7 @@ def main():
         
         print("")
 
-def prepare_lm_data(src_dir, tgt_dir, lang, dataset_name):
+def prepare_lm_data(src_dir: str, tgt_dir: str, lang: str, dataset_name: str) -> None:
     """
     Combine, shuffle and split data into smaller files, following a naming convention.
     """
@@ -97,9 +97,9 @@ def prepare_lm_data(src_dir, tgt_dir, lang, dataset_name):
     size = os.path.getsize(tgt_tmp_shuffled) / 1024 / 1024 / 1024
     print(f"--> Shuffled file size: {size:.4f} GB")
 
-    print(f"--> Splitting into smaller files...")
+    print("--> Splitting into smaller files...")
     train_dir = tgt_dir / 'train'
-    if not os.path.exists(train_dir): # make training dir
+    if not os.path.exists(train_dir):  # make training dir
         os.makedirs(train_dir)
     cmd = f"split -C 52428800 -a 3 -d --additional-suffix .txt {tgt_tmp_shuffled} {train_dir}/{lang}-{dataset_name}-"
     subprocess.run(cmd, shell=True)

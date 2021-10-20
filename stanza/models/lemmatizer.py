@@ -79,7 +79,7 @@ def parse_args(args=None):
     args = parser.parse_args(args=args)
     return args
 
-def main(args=None):
+def main(args=None) -> None:
     args = parse_args(args=args)
 
     torch.manual_seed(args.seed)
@@ -98,7 +98,7 @@ def main(args=None):
     else:
         evaluate(args)
 
-def train(args):
+def train(args) -> None:
     # load data
     logger.info("[Loading data with batch size {}...]".format(args['batch_size']))
     train_doc = CoNLL.conll2doc(input_file=args['train_file'])
@@ -204,7 +204,7 @@ def train(args):
         best_f, best_epoch = max(dev_score_history)*100, np.argmax(dev_score_history)+1
         logger.info("Best dev F1 = {:.2f}, at epoch = {}".format(best_f, best_epoch))
 
-def evaluate(args):
+def evaluate(args) -> None:
     # file paths
     system_pred_file = args['output_file']
     gold_file = args['gold_file']

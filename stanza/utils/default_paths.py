@@ -1,5 +1,6 @@
 import os
 
+
 def get_default_paths():
     """
     Gets base paths for the data directories
@@ -39,7 +40,7 @@ def get_default_paths():
         "EXTERN_DIR": "extern_data",
     }
 
-    paths = { "DATA_ROOT" : DATA_ROOT }
+    paths = {"DATA_ROOT": DATA_ROOT}
     for k, v in defaults.items():
         paths[k] = os.environ.get(k, v)
 

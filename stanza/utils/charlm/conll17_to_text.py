@@ -17,10 +17,10 @@ To build a new charlm for a new language from a conll17 dataset:
 
 import argparse
 import lzma
-import sys
 import os
 
-def process_file(input_filename, output_directory, compress):
+def process_file(input_filename: str, output_directory: str, compress: bool) -> None:
+    """Process file."""
     if not input_filename.endswith('.conllu') and not input_filename.endswith(".conllu.xz"):
         print("Skipping {}".format(input_filename))
         return
@@ -71,6 +71,7 @@ def process_file(input_filename, output_directory, compress):
         fout.write('\n'.join([' '.join(sentence) for sentence in sentences]))
 
 def parse_args():
+    """Parse args."""
     parser = argparse.ArgumentParser()
     parser.add_argument("input_directory", help="Root directory with conllu or conllu.xz files.")
     parser.add_argument("--output_directory", default=None, help="Directory to output to.  Will output to input_directory if None")

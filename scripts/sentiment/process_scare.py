@@ -1,16 +1,31 @@
 """
 SCARE is a dataset of German text with sentiment annotations.
 
+Dataset:
+
 http://romanklinger.de/scare/
+
+Notes:
 
 To run the script, pass in the directory where scare was unpacked.  It
 should have subdirectories scare_v1.0.0 and scare_v1.0.0_text
 
-You need to fill out a license agreement to not redistribute the data
-in order to get the data, but the process is not onerous.
+Example:
+
+./scare_v1.0.0_text/annotations/*txt
 
 Although it sounds interesting, there are unfortunately a lot of very
 short items.  Not sure the long items will be enough
+
+License:
+
+You need to fill out a license agreement to not redistribute the data
+in order to get the data, but the process is not onerous.
+
+Example:
+
+python3 process_scare.py /base_dir
+
 """
 
 
@@ -37,7 +52,7 @@ for filename in text_files:
                 continue
             key, value = line.split(maxsplit=1)
             if key in text_id_map:
-                raise ValueError("Duplicate key {}".format(key))
+                raise ValueError("Duplicate key {0}".format(key))
             text_id_map[key] = value
 
 print(len(text_id_map))
@@ -46,4 +61,3 @@ snippets = process_utils.get_scare_snippets(nlp, os.path.join(basedir, "scare_v1
 
 print(len(snippets))
 process_utils.write_list(os.path.join(basedir, "train.txt"), snippets)
-

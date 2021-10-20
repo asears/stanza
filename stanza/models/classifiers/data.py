@@ -1,3 +1,5 @@
+"""Stanza models classifier data functions."""
+
 import logging
 import stanza.models.classifiers.classifier_args as classifier_args
 

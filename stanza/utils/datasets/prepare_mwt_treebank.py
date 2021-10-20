@@ -19,12 +19,12 @@ import stanza.utils.datasets.prepare_tokenizer_treebank as prepare_tokenizer_tre
 
 from stanza.utils.datasets.contract_mwt import contract_mwt
 
-def copy_conllu(tokenizer_dir, mwt_dir, short_name, dataset, particle):
+def copy_conllu(tokenizer_dir, mwt_dir, short_name, dataset, particle) -> None:
     input_conllu_tokenizer = f"{tokenizer_dir}/{short_name}.{dataset}.gold.conllu"
     input_conllu_mwt = f"{mwt_dir}/{short_name}.{dataset}.{particle}.conllu"
     shutil.copyfile(input_conllu_tokenizer, input_conllu_mwt)
 
-def process_treebank(treebank, paths, args):
+def process_treebank(treebank, paths, args) -> None:
     short_name = common.project_to_short_name(treebank)
 
     mwt_dir = paths["MWT_DATA_DIR"]
@@ -56,7 +56,7 @@ def process_treebank(treebank, paths, args):
         contract_mwt(f"{mwt_dir}/{short_name}.test.gold.conllu",
                      f"{mwt_dir}/{short_name}.test.in.conllu")
 
-def main():
+def main() -> None:
     common.main(process_treebank)
 
 if __name__ == '__main__':

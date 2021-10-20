@@ -1,5 +1,5 @@
 """
-MELD is a dataset of Friends (the TV show) utterances.  
+MELD is a dataset of Friends (the TV show) utterances.
 
 The ratings include judgment based on the visuals, so it might be
 harder than expected to directly extract from the text.  However, it
@@ -17,10 +17,9 @@ Files in the MELD repo are csv, with quotes in "..." if they contained commas th
 Accordingly, we use the csv module to read the files and output them in the format
 <class> <sentence>
 
-Run using 
+Example:
 
 python3 convert_MELD.py MELD/train_sent_emo.csv train.txt
-etc
 
 """
 
@@ -47,7 +46,7 @@ with open(tmp_filename, "w") as fout:
         elif sentiment == 'positive':
             sentiment = '2'
         else:
-            raise ValueError("Unknown sentiment: {}".format(sentiment))
+            raise ValueError("Unknown sentiment: {0}".format(sentiment))
         utterance = line[1].replace("Â", "")
         fout.write("%s %s\n" % (sentiment, utterance))
 

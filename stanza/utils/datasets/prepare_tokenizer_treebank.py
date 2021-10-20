@@ -31,6 +31,7 @@ import subprocess
 import tempfile
 
 from collections import Counter
+from typing import List
 
 import stanza.utils.datasets.common as common
 import stanza.utils.datasets.prepare_tokenizer_data as prepare_tokenizer_data
@@ -45,7 +46,7 @@ def copy_conllu_file(tokenizer_dir, tokenizer_file, dest_dir, dest_file, short_n
 
     shutil.copyfile(original, copied)
 
-def copy_conllu_treebank(treebank, paths, dest_dir, postprocess=None, augment=True):
+def copy_conllu_treebank(treebank, paths, dest_dir, postprocess=None, augment=True) -> None:
     """
     This utility method copies only the conllu files to the given destination directory.
 
@@ -78,7 +79,7 @@ def copy_conllu_treebank(treebank, paths, dest_dir, postprocess=None, augment=Tr
         postprocess(tokenizer_dir, "test.gold", dest_dir, "test.gold", short_name)
         copy_conllu_file(dest_dir, "test.gold", dest_dir, "test.in", short_name)
 
-def read_sentences_from_conllu(filename):
+def read_sentences_from_conllu(filename) -> List[str]:
     sents = []
     cache = []
     with open(filename) as infile:
@@ -94,7 +95,7 @@ def read_sentences_from_conllu(filename):
             sents += [cache]
     return sents
 
-def write_sentences_to_conllu(filename, sents):
+def write_sentences_to_conllu(filename, sents) -> None:
     with open(filename, 'w') as outfile:
         for lines in sents:
             for line in lines:
@@ -102,7 +103,7 @@ def write_sentences_to_conllu(filename, sents):
             print("", file=outfile)
 
 def split_train_file(treebank, train_input_conllu,
-                     train_output_conllu, dev_output_conllu):
+                     train_output_conllu, dev_output_conllu) -> bool:
     # set the seed for each data file so that the results are the same
     # regardless of how many treebanks are processed at once
     random.seed(1234)
@@ -126,7 +127,7 @@ def split_train_file(treebank, train_input_conllu,
 
     return True
 
-def mwt_name(base_dir, short_name, dataset):
+def mwt_name(base_dir, short_name, dataset) -> str:
     return f"{base_dir}/{short_name}-ud-{dataset}-mwt.json"
 
 def prepare_dataset_labels(input_txt, input_conllu, tokenizer_dir, short_name, dataset):
@@ -170,7 +171,7 @@ MWT_OR_COPY_RE = re.compile("^[0-9]+[-.][0-9]+")
 # more restrictive than an actual int as we expect certain formats in the conllu files
 INT_RE = re.compile("^[0-9]+$")
 
-def strip_mwt_from_sentences(sents):
+def strip_mwt_from_sentences(sents) -> List[str]:
     """
     Removes all mwt lines from the given list of sentences
 
@@ -183,7 +184,7 @@ def strip_mwt_from_sentences(sents):
     return new_sents
 
 
-def has_space_after_no(piece):
+def has_space_after_no(piece) -> bool:
     if not piece or piece == "_":
         return False
     if piece == "SpaceAfter=No":
@@ -830,12 +831,12 @@ def build_combined_english_dataset(udbase_dir, tokenizer_dir, handparsed_dir, sh
     """
     en_combined is currently EWT, GUM, PUD, and Pronouns
 
-    TODO: use more of the handparsed data
+    TODO(John Bauer): use more of the handparsed data
     """
     check_gum_ready(udbase_dir)
 
     if dataset == 'train':
-        # TODO: include more UD treebanks, possibly with xpos removed
+        # TODO(John Bauer): include more UD treebanks, possibly with xpos removed
         #  UD_English-ParTUT - xpos are different
         # also include "external" treebanks such as PTB
         # NOTE: in order to get the best results, make sure each of these treebanks have the latest edits applied
@@ -888,8 +889,8 @@ def build_combined_spanish_dataset(udbase_dir, tokenizer_dir, handparsed_dir, sh
     """
     es_combined is AnCora and GSD put together
 
-    TODO: remove features which aren't shared between datasets
-    TODO: consider mixing in PUD?
+    TODO(John Bauer): remove features which aren't shared between datasets
+    TODO(John Bauer): consider mixing in PUD?
     """
     if dataset == 'train':
         treebanks = ["UD_Spanish-AnCora", "UD_Spanish-GSD"]

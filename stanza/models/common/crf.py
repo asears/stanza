@@ -50,7 +50,7 @@ class CRFLoss(nn.Module):
         """
         flat_inputs = inputs.view(input_bs, -1)
         flat_tag_indices = tag_indices + \
-                set_cuda(torch.arange(input_sl).long().unsqueeze(0) * input_nc, tag_indices.is_cuda)
+            set_cuda(torch.arange(input_sl).long().unsqueeze(0) * input_nc, tag_indices.is_cuda)
         unary_scores = torch.gather(flat_inputs, 1, flat_tag_indices).view(input_bs, -1)
         unary_scores.masked_fill_(masks, 0)
         return unary_scores.sum(dim=1)

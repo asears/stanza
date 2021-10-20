@@ -1,3 +1,4 @@
+"""Run Dep parse."""
 import logging
 import os
 
@@ -10,10 +11,12 @@ from stanza.utils.training.run_pos import wordvec_args
 logger = logging.getLogger('stanza')
 
 def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
+                 temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
     short_language = short_name.split("_")[0]
 
-    # TODO: refactor these blocks?
+    # TODO(John Bauer): refactor these blocks?
+    # fmt:off
     depparse_dir   = paths["DEPPARSE_DATA_DIR"]
     train_file     = f"{depparse_dir}/{short_name}.train.in.conllu"
     dev_in_file    = f"{depparse_dir}/{short_name}.dev.in.conllu"
@@ -22,7 +25,7 @@ def run_treebank(mode, paths, treebank, short_name,
     test_in_file   = f"{depparse_dir}/{short_name}.test.in.conllu"
     test_gold_file = f"{depparse_dir}/{short_name}.test.gold.conllu"
     test_pred_file = temp_output_file if temp_output_file else f"{depparse_dir}/{short_name}.test.pred.conllu"
-
+    # fmt:on
     if mode == Mode.TRAIN:
         if not os.path.exists(train_file):
             logger.error("TRAIN FILE NOT FOUND: %s ... skipping" % train_file)
@@ -86,9 +89,10 @@ def run_treebank(mode, paths, treebank, short_name,
         logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
 
 
-def main():
+def main() -> None:
+    """Run treebank."""
     common.main(run_treebank, "depparse", "parser")
+
 
 if __name__ == "__main__":
     main()
-

@@ -23,6 +23,7 @@ class Mode(Enum):
 
 def build_argparse():
     parser = argparse.ArgumentParser()
+    # fmt: off
     parser.add_argument('--save_output', dest='temp_output', default=True, action='store_false', help="Save output - default is to use a temp directory.")
 
     parser.add_argument('treebanks', type=str, nargs='+', help='Which treebanks to run on.  Use all_ud or ud_all for all UD treebanks')
@@ -35,11 +36,12 @@ def build_argparse():
     parser.add_argument('--save_dir', type=str, default=None, help="Root dir for saving models.  If set, will override the model's default.")
 
     parser.add_argument('--force', dest='force', action='store_true', default=False, help='Retrain existing models')
+    # fmt: on
     return parser
 
 SHORTNAME_RE = re.compile("[a-z-]+_[a-z0-9]+")
 
-def main(run_treebank, model_dir, model_name, add_specific_args=None):
+def main(run_treebank, model_dir, model_name: str, add_specific_args=None) -> None:
     """
     A main program for each of the run_xyz scripts
 
@@ -108,7 +110,7 @@ def main(run_treebank, model_dir, model_name, add_specific_args=None):
             run_treebank(mode, paths, treebank, short_name,
                          None, command_args, extra_args)
 
-def run_eval_script(gold_conllu_file, system_conllu_file, evals=None):
+def run_eval_script(gold_conllu_file, system_conllu_file, evals=None) -> str:
     """ Wrapper for lemma scorer. """
     gold_ud = ud_eval.load_conllu_file(gold_conllu_file)
     system_ud = ud_eval.load_conllu_file(system_conllu_file)
@@ -118,16 +120,25 @@ def run_eval_script(gold_conllu_file, system_conllu_file, evals=None):
         return ud_eval.build_evaluation_table(evaluation, verbose=True, counts=False)
     else:
         results = [evaluation[key].f1 for key in evals]
-        return " ".join("{:.2f}".format(100 * x) for x in results)
+        formatted_results = " ".join("{:.2f}".format(100 * x) for x in results)
+        return formatted_results
 
-def run_eval_script_tokens(eval_gold, eval_pred):
-    return run_eval_script(eval_gold, eval_pred, evals=["Tokens", "Sentences", "Words"])
+def run_eval_script_tokens(eval_gold, eval_pred) -> str:
+    """Run eval script tokens."""
+    result = run_eval_script(eval_gold, eval_pred, evals=["Tokens", "Sentences", "Words"])
+    return result
 
-def run_eval_script_mwt(eval_gold, eval_pred):
-    return run_eval_script(eval_gold, eval_pred, evals=["Words"])
+def run_eval_script_mwt(eval_gold, eval_pred) -> str:
+    """Run eval script mwt."""
+    result = run_eval_script(eval_gold, eval_pred, evals=["Words"])
+    return result
 
-def run_eval_script_pos(eval_gold, eval_pred):
-    return run_eval_script(eval_gold, eval_pred, evals=["UPOS", "XPOS", "UFeats", "AllTags"])
+def run_eval_script_pos(eval_gold, eval_pred) -> str:
+    """Run eval script pos."""
+    result = run_eval_script(eval_gold, eval_pred, evals=["UPOS", "XPOS", "UFeats", "AllTags"])
+    return result
 
-def run_eval_script_depparse(eval_gold, eval_pred):
-    return run_eval_script(eval_gold, eval_pred, evals=["UAS", "LAS", "CLAS", "MLAS", "BLEX"])
+def run_eval_script_depparse(eval_gold, eval_pred) -> str:
+    """Run eval script depparse."""
+    result = run_eval_script(eval_gold, eval_pred, evals=["UAS", "LAS", "CLAS", "MLAS", "BLEX"])
+    return result

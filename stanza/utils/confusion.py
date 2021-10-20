@@ -1,7 +1,9 @@
-
+"""Confusion."""
 from collections import defaultdict
 
+
 def condense_ner_labels(confusion, labels):
+    """Condence NER labels."""
     new_confusion = defaultdict(lambda: defaultdict(int))
     new_labels = []
     for l1 in labels:
@@ -22,9 +24,10 @@ def condense_ner_labels(confusion, labels):
     return new_confusion, new_labels
 
 
-def format_confusion(confusion, labels=None, hide_zeroes=False):
+def format_confusion(confusion, labels: set = None, hide_zeroes: bool = False):
     """
-    pretty print for confusion matrixes
+    Pretty print for confusion matrixes.
+
     adapted from https://gist.github.com/zachguo/10296432
 
     The matrix should look like this:
@@ -70,7 +73,7 @@ def format_confusion(confusion, labels=None, hide_zeroes=False):
         confusion, labels = condense_ner_labels(confusion, labels)
 
     # Print header
-    fst_empty_cell = (columnwidth-3)//2 * " " + "t/p" + (columnwidth-3)//2 * " "
+    fst_empty_cell = (columnwidth - 3) // 2 * " " + "t/p" + (columnwidth - 3) // 2 * " "
     if len(fst_empty_cell) < len(empty_cell):
         fst_empty_cell = " " * (len(empty_cell) - len(fst_empty_cell)) + fst_empty_cell
     header = "    " + fst_empty_cell + " "
@@ -89,5 +92,3 @@ def format_confusion(confusion, labels=None, hide_zeroes=False):
             row = row + cell + " "
         text.append(row)
     return "\n".join(text)
-
-

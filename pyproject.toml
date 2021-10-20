@@ -1,0 +1,27 @@
+[tool.pytest.ini_options]
+
+addopts = '--ignore-glob="*iterate_test*" -m "not client"'
+
+filterwarnings = [
+    'ignore:the imp module is deprecated in favour of importlib:DeprecationWarning',
+    'ignore:Using or importing the ABCs from:DeprecationWarning'
+]
+
+markers = [
+    "travis",
+    "pipeline",
+    "client",
+]
+
+norecursedirs= [
+    '/stanza/',
+]
+
+[tool.darglint]
+docstring_style = 'sphinx'
+
+[tool.black]
+# Ignore line length
+line-length = 120
+# This skips converting single to double quotes
+skip-string-normalization = 1

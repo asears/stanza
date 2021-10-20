@@ -1,7 +1,11 @@
+"""Average sentence length."""
+# flake8: noqa
 import sys
 import json
 
-def avg_sent_len(toklabels):
+
+def avg_sent_len(toklabels) -> int:  
+    """Average sentence length."""
     if toklabels.endswith('.json'):
         with open(toklabels, 'r') as f:
             l = json.load(f)
@@ -15,6 +19,7 @@ def avg_sent_len(toklabels):
 
     sentlen = [len(x) + 1 for para in l for x in para.split('2')]
     return sum(sentlen) / len(sentlen)
+
 
 if __name__ == '__main__':
     print(avg_sent_len(sys.args[1]))

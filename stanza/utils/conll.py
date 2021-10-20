@@ -3,10 +3,11 @@ Utility functions for the loading and conversion of CoNLL-format files.
 """
 import os
 import io
+from typing import List, Dict
 
 FIELD_NUM = 10
 
-# TODO: unify this list with the list in common/doc.py
+# TODO(John Bauer): unify this list with the list in common/doc.py
 ID = 'id'
 TEXT = 'text'
 LEMMA = 'lemma'
@@ -22,13 +23,14 @@ START_CHAR = 'start_char'
 END_CHAR = 'end_char'
 FIELD_TO_IDX = {ID: 0, TEXT: 1, LEMMA: 2, UPOS: 3, XPOS: 4, FEATS: 5, HEAD: 6, DEPREL: 7, DEPS: 8, MISC: 9}
 
-from stanza.models.common.doc import Document
+from stanza.models.common.doc import Document  # noqa: E402
+
 
 class CoNLL:
-
     @staticmethod
     def load_conll(f, ignore_gapping=True):
-        """ Load the file or string into the CoNLL-U format data.
+        """Load the file or string into the CoNLL-U format data.
+
         Input: file or string reader, where the data is in CoNLL-U format.
         Output: a tuple whose first element is a list of list of list for each token in each sentence in the data,
         where the innermost list represents all fields of a token; and whose second element is a list of lists for each
@@ -46,14 +48,15 @@ class CoNLL:
                     doc_comments.append(sent_comments)
                     sent_comments = []
             else:
-                if line.startswith('#'): # read comment line
+                if line.startswith('#'):  # read comment line
                     sent_comments.append(line)
                     continue
                 array = line.split('\t')
                 if ignore_gapping and '.' in array[0]:
                     continue
-                assert len(array) == FIELD_NUM, \
-                        f"Cannot parse CoNLL line {line_idx+1}: expecting {FIELD_NUM} fields, {len(array)} found.\n  {array}"
+                assert (
+                    len(array) == FIELD_NUM
+                ), f"Cannot parse CoNLL line {line_idx+1}: expecting {FIELD_NUM} fields, {len(array)} found.\n  {array}"
                 sent += [array]
         if len(sent) > 0:
             doc.append(sent)
@@ -62,7 +65,8 @@ class CoNLL:
 
     @staticmethod
     def convert_conll(doc_conll):
-        """ Convert the CoNLL-U format input data to a dictionary format output data.
+        """Convert the CoNLL-U format input data to a dictionary format output data.
+
         Input: list of token fields loaded from the CoNLL-U format data, where the outmost list represents a list of sentences, and the inside list represents all fields of a token.
         Output: a list of list of dictionaries for each token in each sentence in the document.
         """
@@ -77,7 +81,8 @@ class CoNLL:
 
     @staticmethod
     def convert_conll_token(token_conll):
-        """ Convert the CoNLL-U format input token to the dictionary format output token.
+        """Convert the CoNLL-U format input token to the dictionary format output token.
+
         Input: a list of all CoNLL-U fields for the token.
         Output: a dictionary that maps from field name to value.
         """
@@ -99,9 +104,10 @@ class CoNLL:
 
     @staticmethod
     def conll2dict(input_file=None, input_str=None, ignore_gapping=True):
-        """ Load the CoNLL-U format data from file or string into lists of dictionaries.
-        """
-        assert any([input_file, input_str]) and not all([input_file, input_str]), 'either input input file or input string'
+        """Load the CoNLL-U format data from file or string into lists of dictionaries."""
+        assert any([input_file, input_str]) and not all(
+            [input_file, input_str]
+        ), 'either input input file or input string'
         if input_str:
             infile = io.StringIO(input_str)
         else:
@@ -111,14 +117,16 @@ class CoNLL:
         return doc_dict, doc_comments
 
     @staticmethod
-    def conll2doc(input_file=None, input_str=None, ignore_gapping=True):
+    def conll2doc(input_file=None, input_str=None, ignore_gapping=True) -> Document:
+        """Load the CoNLL-U format data and return a document."""
         doc_dict, doc_comments = CoNLL.conll2dict(input_file, input_str, ignore_gapping)
         return Document(doc_dict, text=None, comments=doc_comments)
-    
+
     @staticmethod
     def convert_dict(doc_dict):
-        """ Convert the dictionary format input data to the CoNLL-U format output data. This is the reverse function of
-        `convert_conll`.
+        """Convert the dictionary format input data to the CoNLL-U format output data.
+
+        This is the reverse function of `convert_conll`.
         Input: dictionary format data, which is a list of list of dictionaries for each token in each sentence in the data.
         Output: CoNLL-U format data, which is a list of list of list for each token in each sentence in the data.
         """
@@ -133,8 +141,10 @@ class CoNLL:
 
     @staticmethod
     def convert_token_dict(token_dict):
-        """ Convert the dictionary format input token to the CoNLL-U format output token. This is the reverse function of
-        `convert_conll_token`.
+        """Convert the dictionary format input token to the CoNLL-U format output token.
+
+        This is the reverse function of `convert_conll_token`.
+
         Input: dictionary format token, which is a dictionaries for the token.
         Output: CoNLL-U format token, which is a list for the token.
         """
@@ -149,7 +159,11 @@ class CoNLL:
                 if token_dict[key]:
                     misc.append(token_dict[key])
             elif key == ID:
-                token_conll[FIELD_TO_IDX[key]] = '-'.join([str(x) for x in token_dict[key]]) if isinstance(token_dict[key], tuple) else str(token_dict[key])
+                token_conll[FIELD_TO_IDX[key]] = (
+                    '-'.join([str(x) for x in token_dict[key]])
+                    if isinstance(token_dict[key], tuple)
+                    else str(token_dict[key])
+                )
             elif key in FIELD_TO_IDX:
                 token_conll[FIELD_TO_IDX[key]] = str(token_dict[key])
         if misc:
@@ -158,33 +172,33 @@ class CoNLL:
             token_conll[FIELD_TO_IDX[MISC]] = '_'
         # when a word (not mwt token) without head is found, we insert dummy head as required by the UD eval script
         if '-' not in token_conll[FIELD_TO_IDX[ID]] and HEAD not in token_dict:
-            token_conll[FIELD_TO_IDX[HEAD]] = str(int(token_dict[ID] if isinstance(token_dict[ID], int) else token_dict[ID][0]) - 1) # evaluation script requires head: int
+            token_conll[FIELD_TO_IDX[HEAD]] = str(
+                int(token_dict[ID] if isinstance(token_dict[ID], int) else token_dict[ID][0]) - 1
+            )  # evaluation script requires head: int
         return token_conll
 
     @staticmethod
     def conll_as_string(doc):
-        """ Dump the loaded CoNLL-U format list data to string. """
+        """Dump the loaded CoNLL-U format list data to string."""
         return_string = ""
         for sent in doc:
             for ln in sent:
-                return_string += ("\t".join(ln)+"\n")
+                return_string += "\t".join(ln) + "\n"
             return_string += "\n"
         return return_string
 
     @staticmethod
     def dict2conll(doc_dict, filename):
-        """ Convert the dictionary format input data to the CoNLL-U format output data and write to a file.
-        """
+        """Convert the dictionary format input data to the CoNLL-U format output data and write to a file."""
         doc_conll = CoNLL.convert_dict(doc_dict)
         conll_string = CoNLL.conll_as_string(doc_conll)
         with open(filename, 'w', encoding='utf-8') as outfile:
             outfile.write(conll_string)
         return
 
-
     @staticmethod
-    def doc2conll(doc):
-        """ Convert a Document object to a list of list of strings
+    def doc2conll(doc) -> List[str]:
+        """Convert a Document object to a list of list of strings.
 
         Each sentence is represented by a list of strings: first the comments, then the converted tokens
         """
@@ -199,16 +213,13 @@ class CoNLL:
         return doc_conll
 
     @staticmethod
-    def doc2conll_text(doc):
-        """ Convert a Document to a big block of text.
-        """
+    def doc2conll_text(doc) -> str:
+        """Convert a Document to a big block of text."""
         doc_conll = CoNLL.doc2conll(doc)
-        return "\n\n".join("\n".join(line for line in sentence)
-                           for sentence in doc_conll) + "\n\n"
+        return "\n\n".join("\n".join(line for line in sentence) for sentence in doc_conll) + "\n\n"
 
     @staticmethod
-    def write_doc2conll(doc, filename):
-        """ Writes the doc as a conll file to the given filename
-        """
+    def write_doc2conll(doc, filename) -> None:
+        """Writes the doc as a conll file to the given filename."""
         with open(filename, 'w', encoding='utf-8') as outfile:
             outfile.write(CoNLL.doc2conll_text(doc))

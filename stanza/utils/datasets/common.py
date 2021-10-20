@@ -1,4 +1,4 @@
-
+"""Common utils."""
 import argparse
 import glob
 import logging
@@ -6,6 +6,7 @@ import os
 import re
 import subprocess
 import sys
+from typing import List
 
 import stanza.utils.default_paths as default_paths
 from stanza.models.common.constant import treebank_to_short_name
@@ -13,6 +14,7 @@ from stanza.models.common.constant import treebank_to_short_name
 logger = logging.getLogger('stanza')
 
 SHORTNAME_RE = re.compile("[a-z-]+_[a-z0-9]+")
+
 
 def project_to_short_name(treebank):
     """
@@ -24,6 +26,7 @@ def project_to_short_name(treebank):
         return treebank
     else:
         return treebank_to_short_name(treebank)
+
 
 def find_treebank_dataset_file(treebank, udbase_dir, dataset, extension, fail=False):
     """
@@ -49,7 +52,8 @@ def find_treebank_dataset_file(treebank, udbase_dir, dataset, extension, fail=Fa
     else:
         raise RuntimeError(f"Unexpected number of files matched '{udbase_dir}/{treebank}/*-ud-{dataset}.{extension}'")
 
-def mostly_underscores(filename):
+
+def mostly_underscores(filename) -> int:
     """
     Certain treebanks have proprietary data, so the text is hidden
 
@@ -74,7 +78,8 @@ def mostly_underscores(filename):
             underscore_count = underscore_count + 1
     return underscore_count / total_count > 0.5
 
-def num_words_in_file(conllu_file):
+
+def num_words_in_file(conllu_file) -> int:
     """
     Count the number of non-blank lines in a conllu file
     """
@@ -90,7 +95,7 @@ def num_words_in_file(conllu_file):
     return count
 
 
-def get_ud_treebanks(udbase_dir, filtered=True):
+def get_ud_treebanks(udbase_dir, filtered=True) -> List[str]:
     """
     Looks in udbase_dir for all the treebanks which have both train, dev, and test
     """
@@ -98,6 +103,7 @@ def get_ud_treebanks(udbase_dir, filtered=True):
     # skip UD_English-GUMReddit as it is usually incorporated into UD_English-GUM
     treebanks = [os.path.split(t)[1] for t in treebanks]
     treebanks = [t for t in treebanks if t != "UD_English-GUMReddit"]
+    # fmt: off
     if filtered:
         treebanks = [t for t in treebanks
                      if (find_treebank_dataset_file(t, udbase_dir, "train", "conllu") and
@@ -110,16 +116,21 @@ def get_ud_treebanks(udbase_dir, filtered=True):
         treebanks = [t for t in treebanks
                      if (find_treebank_dataset_file(t, udbase_dir, "dev", "conllu") or
                          num_words_in_file(find_treebank_dataset_file(t, udbase_dir, "train", "conllu")) > 1000)]
+    # fmt: on
     return treebanks
 
-def build_argparse():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('treebanks', type=str, nargs='+', help='Which treebanks to run on.  Use all_ud or ud_all for all UD treebanks')
 
+def build_argparse():
+    """Build argparse."""
+    parser = argparse.ArgumentParser()
+    # fmt: off
+    parser.add_argument('treebanks', type=str, nargs='+', help='Which treebanks to run on.  Use all_ud or ud_all for all UD treebanks')
+    # fmt: on
     return parser
 
 
-def main(process_treebank, add_specific_args=None):
+def main(process_treebank, add_specific_args=None) -> None:
+    """Process treebank."""
     logger.info("Datasets program called with:\n" + " ".join(sys.argv))
 
     parser = build_argparse()

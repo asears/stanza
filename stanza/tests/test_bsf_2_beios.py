@@ -9,7 +9,7 @@ import pytest
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
 class TestBsf2Beios(unittest.TestCase):
-    
+
     def test_empty_markup(self):
         res = convert_bsf('', '')
         self.assertEqual('', res)

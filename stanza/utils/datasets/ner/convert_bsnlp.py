@@ -1,7 +1,9 @@
+"""Converts the BSNLP dataset for the given language."""
+
 import argparse
 import glob
-import os
 import logging
+import os
 import random
 import re
 
@@ -11,7 +13,9 @@ logger = logging.getLogger('stanza')
 
 AVAILABLE_LANGUAGES = ("bg", "cs", "pl", "ru")
 
+
 def normalize_bg_entity(text, entity, raw):
+    """Normalize Bulgarian entity."""
     entity = entity.strip()
     # sanity check that the token is in the original text
     if text.find(entity) >= 0:
@@ -48,7 +52,7 @@ def normalize_bg_entity(text, entity, raw):
 
     lower_idx = text.lower().find(entity.lower())
     if lower_idx >= 0:
-        fixed_entity = text[lower_idx:lower_idx+len(entity)]
+        fixed_entity = text[lower_idx : lower_idx + len(entity)]
         logger.info("lowercase match found.  Searching for '%s' instead of '%s' in %s" % (fixed_entity, entity, raw))
         return fixed_entity
 
@@ -95,7 +99,6 @@ def normalize_bg_entity(text, entity, raw):
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_1963.txt
         'Найджъл Фараж': 'Найджъл Фарадж',
         'Фараж': 'Фарадж',
-
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_1773.txt has an entity which is mixed Cyrillic and Ascii
         'Tescо': 'Tesco',
     }
@@ -109,18 +112,20 @@ def normalize_bg_entity(text, entity, raw):
     # want to raise ValueError but there are just too many in the train set for BG
     logger.error("Could not find '%s' in %s" % (entity, raw))
 
+
 def fix_bg_typos(text, raw_filename):
+    """Fix Bulgarian typos."""
     typo_pairs = {
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_202.txt is not exactly a typo, but the word is mixed cyrillic and ascii characters
-        'brexit_bg.txt_file_202.txt':  ('Вlооmbеrg', 'Bloomberg'),
+        'brexit_bg.txt_file_202.txt': ('Вlооmbеrg', 'Bloomberg'),
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_261.txt has a typo: Telegaph instead of Telegraph
-        'brexit_bg.txt_file_261.txt':  ('Telegaph', 'Telegraph'),
+        'brexit_bg.txt_file_261.txt': ('Telegaph', 'Telegraph'),
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_574.txt has a typo: politicalskrapbook instead of politicalscrapbook
-        'brexit_bg.txt_file_574.txt':  ('politicalskrapbook', 'politicalscrapbook'),
+        'brexit_bg.txt_file_574.txt': ('politicalskrapbook', 'politicalscrapbook'),
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_861.txt has a mix of cyrillic and ascii
-        'brexit_bg.txt_file_861.txt':  ('Съвета „Общи въпроси“', 'Съветa "Общи въпроси"'),
+        'brexit_bg.txt_file_861.txt': ('Съвета „Общи въпроси“', 'Съветa "Общи въпроси"'),
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_992.txt is not exactly a typo, but the word is mixed cyrillic and ascii characters
-        'brexit_bg.txt_file_992.txt':  ('The Guardiаn', 'The Guardian'),
+        'brexit_bg.txt_file_992.txt': ('The Guardiаn', 'The Guardian'),
         # training_pl_cs_ru_bg_rc1/raw/bg/brexit_bg.txt_file_1856.txt has a typo: Southerb instead of Southern
         'brexit_bg.txt_file_1856.txt': ('Southerb', 'Southern'),
     }
@@ -132,7 +137,9 @@ def fix_bg_typos(text, raw_filename):
 
     return text
 
+
 def get_sentences(language, pipeline, annotated, raw):
+    """Get sentences."""
     if language == 'bg':
         normalize_entity = normalize_bg_entity
         fix_typos = fix_bg_typos
@@ -205,16 +212,19 @@ def get_sentences(language, pipeline, annotated, raw):
                     break
             if start_token is None or end_token is None:
                 raise RuntimeError("Match %s did not align with any tokens in %s" % (match.group(0), raw))
-            if not start_token.sent is end_token.sent:
+            if start_token.sent is not end_token.sent:
                 bad_sentences.add(start_token.sent.id)
                 bad_sentences.add(end_token.sent.id)
-                logger.warn("match %s spanned sentences %d and %d in document %s" % (match.group(0), start_token.sent.id, end_token.sent.id, raw))
+                logger.warn(
+                    "match %s spanned sentences %d and %d in document %s"
+                    % (match.group(0), start_token.sent.id, end_token.sent.id, raw)
+                )
                 continue
 
             # ids start at 1, not 0, so we have to subtract 1
             # then the end token is included, so we add back the 1
-            # TODO: verify that this is correct if the language has MWE - cs, pl, for example
-            tokens = start_token.sent.tokens[start_token.id[0]-1:end_token.id[0]]
+            # TODO (John Bauer): verify that this is correct if the language has MWE - cs, pl, for example
+            tokens = start_token.sent.tokens[start_token.id[0] - 1 : end_token.id[0]]
             if all(token.ner for token in tokens):
                 # skip matches which have already been made
                 # this has the nice side effect of not complaining if
@@ -229,16 +239,16 @@ def get_sentences(language, pipeline, annotated, raw):
             if start_sloppy:
                 bad_sentences.add(end_token.sent.id)
                 logger.warn("match %s started matching in the middle of a token in %s" % (match.group(0), raw))
-                #print(start_token)
-                #print(end_token)
-                #print(start_char, end_char)
+                # print(start_token)
+                # print(end_token)
+                # print(start_char, end_char)
                 continue
             if end_sloppy:
                 bad_sentences.add(start_token.sent.id)
                 logger.warn("match %s ended matching in the middle of a token in %s" % (match.group(0), raw))
-                #print(start_token)
-                #print(end_token)
-                #print(start_char, end_char)
+                # print(start_token)
+                # print(end_token)
+                # print(start_char, end_char)
                 continue
             match_text = match.group(0)
             if match_text not in entities:
@@ -249,12 +259,20 @@ def get_sentences(language, pipeline, annotated, raw):
                 token.ner = "I-" + ner_tag
 
     for sentence in tokenized.sentences:
-        if not sentence.id in bad_sentences:
+        if sentence.id not in bad_sentences:
             annotated_sentences.append(sentence)
 
     return annotated_sentences
 
+
 def write_sentences(output_filename, annotated_sentences):
+    """Write sentences.
+
+    :param output_filename: output filename
+    :type output_filename: Path
+    :param annotated_sentences: annotated sentences
+    :type annotated_sentences: List[str]
+    """ """Write sentences."""
     logger.info("Writing %d sentences to %s" % (len(annotated_sentences), output_filename))
     with open(output_filename, "w") as fout:
         for sentence in annotated_sentences:
@@ -266,7 +284,7 @@ def write_sentences(output_filename, annotated_sentences):
             fout.write("\n")
 
 
-def convert_bsnlp(language, base_input_path, output_filename, split_filename=None):
+def convert_bsnlp(language: str, base_input_path, output_filename, split_filename=None):
     """
     Converts the BSNLP dataset for the given language.
 
@@ -279,9 +297,14 @@ def convert_bsnlp(language, base_input_path, output_filename, split_filename=Non
       for another language.
     """
     if language not in AVAILABLE_LANGUAGES:
-        raise ValueError("The current BSNLP datasets only include the following languages: %s" % ",".join(AVAILABLE_LANGUAGES))
+        raise ValueError(
+            "The current BSNLP datasets only include the following languages: %s" % ",".join(AVAILABLE_LANGUAGES)
+        )
     if language != "bg":
-        raise ValueError("There were quite a few data fixes needed to get the data correct for BG.  Please work on similar fixes before using the model for %s" % language.upper())
+        raise ValueError(
+            "There were quite a few data fixes needed to get the data correct for BG.  Please work on similar fixes before using the model for %s"
+            % language.upper()
+        )
     pipeline = stanza.Pipeline(language, processors="tokenize")
     random.seed(1234)
 
@@ -322,12 +345,15 @@ def convert_bsnlp(language, base_input_path, output_filename, split_filename=Non
     if split_filename:
         write_sentences(split_filename, split_sentences)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    # fmt:off
     parser.add_argument('--language', type=str, default="bg", help="Language to process")
     parser.add_argument('--input_path', type=str, default="/home/john/extern_data/ner/bsnlp2019", help="Where to find the files")
     parser.add_argument('--output_path', type=str, default="/home/john/stanza/data/ner/bg_bsnlp.test.csv", help="Where to output the results")
     parser.add_argument('--dev_path', type=str, default=None, help="A secondary output path - 15% of the data will go here")
+    # fmt: on
     args = parser.parse_args()
 
     convert_bsnlp(args.language, args.input_path, args.output_path, args.dev_path)

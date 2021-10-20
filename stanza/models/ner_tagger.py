@@ -96,7 +96,7 @@ def parse_args(args=None):
     args = parser.parse_args(args=args)
     return args
 
-def main(args=None):
+def main(args=None) -> None:
     args = parse_args(args=args)
 
     if args.cpu:
@@ -111,7 +111,7 @@ def main(args=None):
     else:
         evaluate(args)
 
-def train(args):
+def train(args) -> None:
     utils.ensure_dir(args['save_dir'])
     model_file = os.path.join(args['save_dir'], args['save_name']) if args['save_name'] is not None \
         else '{}/{}_nertagger.pt'.format(args['save_dir'], args['shorthand'])

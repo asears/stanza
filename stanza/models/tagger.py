@@ -91,7 +91,7 @@ def parse_args(args=None):
     args = parser.parse_args(args=args)
     return args
 
-def main(args=None):
+def main(args=None) -> None:
     args = parse_args(args=args)
 
     if args.cpu:
@@ -125,7 +125,7 @@ def load_pretrain(args):
         pt = pretrain.Pretrain(pretrain_file, vec_file, args['pretrain_max_vocab'])
     return pt
 
-def train(args):
+def train(args) -> None:
     model_file = model_file_name(args)
     utils.ensure_dir(os.path.split(model_file)[0])
 

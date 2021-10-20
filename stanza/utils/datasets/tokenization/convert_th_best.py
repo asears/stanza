@@ -29,7 +29,7 @@ from pythainlp import sent_tokenize
 
 from stanza.utils.datasets.tokenization.process_thai_tokenization import reprocess_lines, write_dataset, convert_processed_lines, write_dataset_best, write_dataset
 
-def clean_line(line):
+def clean_line(line: str) -> str:
     line = line.replace("html>", "html|>")
     # news_00089.txt
     line = line.replace("<NER>", "<NE>")
@@ -55,7 +55,7 @@ def clean_line(line):
     return line
 
 
-def clean_word(word):
+def clean_word(word: str):
     # novel_00078.txt
     if word == '<NEพี่มน</NE>':
         return 'พี่มน'
@@ -146,7 +146,7 @@ def read_data(input_dir):
     return documents, test_documents
 
 
-def main(*args):
+def main(*args) -> None:
     random.seed(1000)
     if not args:
         args = sys.argv[1:]
