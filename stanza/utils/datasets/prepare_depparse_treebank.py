@@ -37,9 +37,11 @@ def add_specific_args(parser) -> None:
 
 def process_treebank(treebank, paths, args) -> None:
     """Process treebank."""
-    if args.tag_method is Tags.GOLD:
+    tag_method = args.tag_method
+
+    if tag_method is Tags.GOLD:
         prepare_tokenizer_treebank.copy_conllu_treebank(treebank, paths, paths["DEPPARSE_DATA_DIR"])
-    elif args.tag_method is Tags.PREDICTED:
+    elif tag_method is Tags.PREDICTED:
         short_name = common.project_to_short_name(treebank)
         short_language = short_name.split("_")[0]
 
@@ -64,7 +66,7 @@ def process_treebank(treebank, paths, args) -> None:
 
         prepare_tokenizer_treebank.copy_conllu_treebank(treebank, paths, paths["DEPPARSE_DATA_DIR"], retag_dataset)
     else:
-        raise ValueError("Unknown tags method: {}".format(arg.tag_method))
+        raise ValueError("Unknown tags method: {}".format(tag_method))
 
 
 def main() -> None:

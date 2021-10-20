@@ -35,7 +35,6 @@ def find_next_word(index, text, word, output):
     """
     idx = 0
     word_sofar = ''
-    yeah=False
     while index < len(text) and idx < len(word):
         para_break, break_len = is_para_break(index, text)
         if para_break:
@@ -69,7 +68,6 @@ def main(args) -> None:
 
     with open(args.plaintext_file, 'r') as f:
         text = ''.join(f.readlines())
-    textlen = len(text)
 
     if args.output is None:
         output = sys.stdout
@@ -78,7 +76,7 @@ def main(args) -> None:
         os.makedirs(outdir, exist_ok=True)
         output = open(args.output, 'w')
 
-    index = 0 # character offset in rawtext
+    index = 0  # character offset in rawtext
 
     mwt_expansions = []
     with open(args.conllu_file, 'r') as f:
@@ -112,7 +110,7 @@ def main(args) -> None:
                     continue
                 elif int(line[0]) == mwtend:
                     expanded += [word]
-                    expanded = [x.lower() for x in expanded] # evaluation doesn't care about case
+                    expanded = [x.lower() for x in expanded]  # evaluation doesn't care about case
                     mwt_expansions += [(lastmwt, tuple(expanded))]
                     if lastmwt[0].islower() and not expanded[0][0].islower():
                         print('Sentence ID with potential wrong MWT expansion: ', last_comments, file=sys.stderr)

@@ -37,7 +37,8 @@ def do_annotate(args):
 
     with corenlp.CoreNLPClient(annotators=args.annotators, properties=args.props, be_quiet=not args.verbose_server) as client:
         for line in args.input:
-            if line.startswith("#"): continue
+            if line.startswith("#"):
+                continue
 
             ann = client.annotate(line.strip(), output_format=args.format)
 
@@ -51,14 +52,16 @@ def do_annotate(args):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Annotate data')
+    # fmt:off
     parser.add_argument('-i', '--input', type=argparse.FileType('r'), default=sys.stdin, help="Input file to process; each line contains one document (default: stdin)")
     parser.add_argument('-o', '--output', type=argparse.FileType('w'), default=sys.stdout, help="File to write annotations to (default: stdout)")
-    parser.add_argument('-f', '--format', choices=["json",], default="json", help="Output format")
+    parser.add_argument('-f', '--format', choices=["json", ], default="json", help="Output format")
     parser.add_argument('-a', '--annotators', nargs="+", type=str, default=["tokenize ssplit lemma pos"], help="A list of annotators")
-    parser.add_argument('-s', '--sentence-mode', action="store_true",help="Assume each line of input is a sentence.")
-    parser.add_argument('-v', '--verbose-server', action="store_true",help="Server is made verbose")
+    parser.add_argument('-s', '--sentence-mode', action="store_true", help="Assume each line of input is a sentence.")
+    parser.add_argument('-v', '--verbose-server', action="store_true", help="Server is made verbose")
     parser.add_argument('-m', '--memory', type=str, default="4G", help="Memory to use for the server")
     parser.add_argument('-p', '--props', nargs="+", type=dictstr, help="Properties as a list of key=value pairs")
+    # fmt:on
     parser.set_defaults(func=do_annotate)
 
     ARGS = parser.parse_args()

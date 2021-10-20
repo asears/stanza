@@ -24,8 +24,9 @@ class DataLoader:
         else:
             self.device = None
 
-    def load_data(self, batch_size, data_files, char_index, tag_index, randomize=False, randomize_range=(5,20),
-                  max_length=None):
+    def load_data(
+        self, batch_size, data_files, char_index, tag_index, randomize=False, randomize_range=(5, 20), max_length=None
+    ):
         """
         Load sequence data and labels, calculate weights for weighted cross entropy loss.
         Data is stored in a file, 1 example per line
@@ -45,8 +46,8 @@ class DataLoader:
         for new_label in new_labels:
             tag_index[new_label] = len(tag_index)
         self.tag_to_idx = tag_index
-        self.idx_to_tag = [i[1] for i in sorted([(v,k) for k,v in self.tag_to_idx.items()])]
-        
+        self.idx_to_tag = [i[1] for i in sorted([(v, k) for k, v in self.tag_to_idx.items()])]
+
         # set up lang counts used for weights for cross entropy loss
         lang_counts = [0 for _ in tag_index]
 
@@ -60,8 +61,9 @@ class DataLoader:
             for example in examples:
                 sequence = example["text"]
                 label = example["label"]
-                sequences = DataLoader.randomize_data([sequence], upper_lim=randomize_range[1], 
-                                                      lower_lim=randomize_range[0])
+                sequences = DataLoader.randomize_data(
+                    [sequence], upper_lim=randomize_range[1], lower_lim=randomize_range[0]
+                )
                 split_examples += [{"text": seq, "label": label} for seq in sequences]
             examples = split_examples
             random.shuffle(examples)
@@ -82,8 +84,9 @@ class DataLoader:
         # create final set of batches
         batches = []
         for length in batch_lengths:
-            for sublist in [batch_lengths[length][i:i + batch_size] for i in
-                            range(0, len(batch_lengths[length]), batch_size)]:
+            for sublist in [
+                batch_lengths[length][i : i + batch_size] for i in range(0, len(batch_lengths[length]), batch_size)
+            ]:
                 batches.append(sublist)
 
         self.batches = [self.build_batch_tensors(batch) for batch in batches]
@@ -91,7 +94,7 @@ class DataLoader:
         # set up lang weights
         most_frequent = max(lang_counts)
         # set to 0.0 if lang_count is 0 or most_frequent/lang_count otherwise
-        lang_counts = [(most_frequent * x)/(max(1, x) ** 2) for x in lang_counts]
+        lang_counts = [(most_frequent * x) / (max(1, x) ** 2) for x in lang_counts]
         self.lang_weights = torch.tensor(lang_counts, device=self.device, dtype=torch.float)
 
         # shuffle batches to mix up lengths
@@ -133,4 +136,3 @@ class DataLoader:
 
     def next(self):
         return next(self.batches_iter)
-

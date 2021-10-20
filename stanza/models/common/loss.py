@@ -79,7 +79,7 @@ class MaxEntropySequenceLoss(nn.Module):
         mask = targets.eq(constant.PAD_ID).unsqueeze(1).expand_as(inputs)
         masked_inputs = inputs.clone().masked_fill_(mask, 0.0)
         p = torch.exp(masked_inputs)
-        ent_loss = p.mul(masked_inputs).sum() / inputs.size(0) # average over minibatch
+        ent_loss = p.mul(masked_inputs).sum() / inputs.size(0)  # average over minibatch
         loss = nll_loss + self.alpha * ent_loss
         return loss
 

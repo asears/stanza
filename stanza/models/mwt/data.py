@@ -1,16 +1,13 @@
 import random
-import numpy as np
-import os
-from collections import Counter
 import logging
 import torch
 
 import stanza.models.common.seq2seq_constant as constant
-from stanza.models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
+from stanza.models.common.data import get_long_tensor, sort_all
 from stanza.models.mwt.vocab import Vocab
-from stanza.models.common.doc import Document
 
 logger = logging.getLogger('stanza')
+
 
 class DataLoader:
     def __init__(self, doc, batch_size, args, vocab=None, evaluation=False):
@@ -43,12 +40,12 @@ class DataLoader:
         self.num_examples = len(data)
 
         # chunk into batches
-        data = [data[i:i+batch_size] for i in range(0, len(data), batch_size)]
+        data = [data[i : i + batch_size] for i in range(0, len(data), batch_size)]
         self.data = data
         logger.debug("{} batches created.".format(len(data)))
 
     def init_vocab(self, data):
-        assert self.eval == False # for eval vocab must exist
+        assert self.eval == False  # for eval vocab must exist
         vocab = Vocab(data, self.args['shorthand'])
         return vocab
 
@@ -58,7 +55,7 @@ class DataLoader:
             src = list(d[0])
             src = [constant.SOS] + src + [constant.EOS]
             if self.eval:
-                tgt = src # as a placeholder
+                tgt = src  # as a placeholder
             else:
                 tgt = list(d[1])
             src = vocab.map(src)
@@ -71,7 +68,7 @@ class DataLoader:
         return len(self.data)
 
     def __getitem__(self, key):
-        """ Get a batch with index. """
+        """Get a batch with index."""
         if not isinstance(key, int):
             raise TypeError
         if key < 0 or key >= len(self.data):
@@ -91,8 +88,7 @@ class DataLoader:
         src_mask = torch.eq(src, constant.PAD_ID)
         tgt_in = get_long_tensor(batch[1], batch_size)
         tgt_out = get_long_tensor(batch[2], batch_size)
-        assert tgt_in.size(1) == tgt_out.size(1), \
-                "Target input and output sequence sizes do not match."
+        assert tgt_in.size(1) == tgt_out.size(1), "Target input and output sequence sizes do not match."
         return (src, src_mask, tgt_in, tgt_out, orig_idx)
 
     def __iter__(self):
@@ -101,6 +97,6 @@ class DataLoader:
 
     def load_doc(self, doc, evaluation=False):
         data = doc.get_mwt_expansions(evaluation)
-        if evaluation: data = [[e] for e in data]
+        if evaluation:
+            data = [[e] for e in data]
         return data
-

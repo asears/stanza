@@ -4,8 +4,15 @@ Build a transition sequence from parse trees.
 Supports multiple transition schemes - TOP_DOWN and variants, IN_ORDER
 """
 
-from stanza.models.constituency.parse_transitions import Shift, CompoundUnary, OpenConstituent, CloseConstituent, TransitionScheme
+from stanza.models.constituency.parse_transitions import (
+    Shift,
+    CompoundUnary,
+    OpenConstituent,
+    CloseConstituent,
+    TransitionScheme,
+)
 from stanza.models.constituency.tree_reader import read_trees
+
 
 def yield_top_down_sequence(tree, transition_scheme=TransitionScheme.TOP_DOWN_UNARY):
     """
@@ -48,6 +55,7 @@ def yield_top_down_sequence(tree, transition_scheme=TransitionScheme.TOP_DOWN_UN
             yield transition
     yield CloseConstituent()
 
+
 def yield_in_order_sequence(tree):
     """
     For tree (X A B C D), yield A Open(X) B C D Close
@@ -70,6 +78,7 @@ def yield_in_order_sequence(tree):
 
     yield CloseConstituent()
 
+
 def build_sequence(tree, transition_scheme=TransitionScheme.TOP_DOWN_UNARY):
     """
     Turn a single tree into a list of transitions based on the TransitionScheme
@@ -79,11 +88,13 @@ def build_sequence(tree, transition_scheme=TransitionScheme.TOP_DOWN_UNARY):
     else:
         return list(yield_top_down_sequence(tree, transition_scheme))
 
+
 def build_treebank(trees, transition_scheme=TransitionScheme.TOP_DOWN_UNARY):
     """
     Turn each of the trees in the treebank into a list of transitions based on the TransitionScheme
     """
     return [build_sequence(tree, transition_scheme) for tree in trees]
+
 
 def all_transitions(transition_lists):
     """
@@ -95,18 +106,20 @@ def all_transitions(transition_lists):
             transitions.add(trans)
     return sorted(transitions)
 
+
 def main():
     """
     Convert a sample tree and print its transitions
     """
-    text="( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
-    #text = "(WP Who)"
+    text = "( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    # text = "(WP Who)"
 
     tree = read_trees(text)[0]
 
     print(tree)
     transitions = build_sequence(tree)
     print(transitions)
+
 
 if __name__ == '__main__':
     main()

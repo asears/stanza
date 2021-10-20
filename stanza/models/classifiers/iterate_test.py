@@ -6,7 +6,6 @@ import stanza.models.classifier as classifier
 import stanza.models.classifiers.cnn_classifier as cnn_classifier
 import stanza.models.classifiers.classifier_args as classifier_args
 from stanza.models.common import utils
-from stanza.models.common.pretrain import Pretrain
 
 """
 A script for running the same test file on several different classifiers.

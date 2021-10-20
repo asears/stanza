@@ -7,6 +7,7 @@ from stanza.models.common.utils import tensor_unsort, unsort
 from stanza.models.common.dropout import SequenceUnitDropout
 from stanza.models.common.vocab import UNK_ID, CharVocab
 
+
 class CharacterModel(nn.Module):
     def __init__(self, args, vocab, pad=False, bidirectional=False, attention=True):
         super().__init__()
@@ -17,15 +18,26 @@ class CharacterModel(nn.Module):
 
         # char embeddings
         self.char_emb = nn.Embedding(len(vocab['char']), self.args['char_emb_dim'], padding_idx=0)
-        if self.attn: 
+        if self.attn:
             self.char_attn = nn.Linear(self.num_dir * self.args['char_hidden_dim'], 1, bias=False)
             self.char_attn.weight.data.zero_()
 
         # modules
-        self.charlstm = PackedLSTM(self.args['char_emb_dim'], self.args['char_hidden_dim'], self.args['char_num_layers'], batch_first=True, \
-                dropout=0 if self.args['char_num_layers'] == 1 else args['dropout'], rec_dropout = self.args['char_rec_dropout'], bidirectional=bidirectional)
-        self.charlstm_h_init = nn.Parameter(torch.zeros(self.num_dir * self.args['char_num_layers'], 1, self.args['char_hidden_dim']))
-        self.charlstm_c_init = nn.Parameter(torch.zeros(self.num_dir * self.args['char_num_layers'], 1, self.args['char_hidden_dim']))
+        self.charlstm = PackedLSTM(
+            self.args['char_emb_dim'],
+            self.args['char_hidden_dim'],
+            self.args['char_num_layers'],
+            batch_first=True,
+            dropout=0 if self.args['char_num_layers'] == 1 else args['dropout'],
+            rec_dropout=self.args['char_rec_dropout'],
+            bidirectional=bidirectional,
+        )
+        self.charlstm_h_init = nn.Parameter(
+            torch.zeros(self.num_dir * self.args['char_num_layers'], 1, self.args['char_hidden_dim'])
+        )
+        self.charlstm_c_init = nn.Parameter(
+            torch.zeros(self.num_dir * self.args['char_num_layers'], 1, self.args['char_hidden_dim'])
+        )
 
         self.dropout = nn.Dropout(args['dropout'])
 
@@ -33,10 +45,19 @@ class CharacterModel(nn.Module):
         embs = self.dropout(self.char_emb(chars))
         batch_size = embs.size(0)
         embs = pack_padded_sequence(embs, wordlens, batch_first=True)
-        output = self.charlstm(embs, wordlens, hx=(\
-                self.charlstm_h_init.expand(self.num_dir * self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']).contiguous(), \
-                self.charlstm_c_init.expand(self.num_dir * self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']).contiguous()))
-         
+        output = self.charlstm(
+            embs,
+            wordlens,
+            hx=(
+                self.charlstm_h_init.expand(
+                    self.num_dir * self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']
+                ).contiguous(),
+                self.charlstm_c_init.expand(
+                    self.num_dir * self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']
+                ).contiguous(),
+            ),
+        )
+
         # apply attention, otherwise take final states
         if self.attn:
             char_reps = output[0]
@@ -46,7 +67,7 @@ class CharacterModel(nn.Module):
             res = char_reps.sum(1)
         else:
             h, c = output[1]
-            res = h[-2:].transpose(0,1).contiguous().view(batch_size, -1)
+            res = h[-2:].transpose(0, 1).contiguous().view(batch_size, -1)
 
         # recover character order and word separation
         res = tensor_unsort(res, word_orig_idx)
@@ -56,22 +77,31 @@ class CharacterModel(nn.Module):
 
         return res
 
-class CharacterLanguageModel(nn.Module):
 
+class CharacterLanguageModel(nn.Module):
     def __init__(self, args, vocab, pad=False, is_forward_lm=True):
         super().__init__()
         self.args = args
         self.vocab = vocab
         self.is_forward_lm = is_forward_lm
         self.pad = pad
-        self.finetune = True # always finetune unless otherwise specified
+        self.finetune = True  # always finetune unless otherwise specified
 
         # char embeddings
-        self.char_emb = nn.Embedding(len(self.vocab['char']), self.args['char_emb_dim'], padding_idx=None) # we use space as padding, so padding_idx is not necessary
-        
+        self.char_emb = nn.Embedding(
+            len(self.vocab['char']), self.args['char_emb_dim'], padding_idx=None
+        )  # we use space as padding, so padding_idx is not necessary
+
         # modules
-        self.charlstm = PackedLSTM(self.args['char_emb_dim'], self.args['char_hidden_dim'], self.args['char_num_layers'], batch_first=True, \
-                dropout=0 if self.args['char_num_layers'] == 1 else args['char_dropout'], rec_dropout = self.args['char_rec_dropout'], bidirectional=False)
+        self.charlstm = PackedLSTM(
+            self.args['char_emb_dim'],
+            self.args['char_hidden_dim'],
+            self.args['char_num_layers'],
+            batch_first=True,
+            dropout=0 if self.args['char_num_layers'] == 1 else args['char_dropout'],
+            rec_dropout=self.args['char_rec_dropout'],
+            bidirectional=False,
+        )
         self.charlstm_h_init = nn.Parameter(torch.zeros(self.args['char_num_layers'], 1, self.args['char_hidden_dim']))
         self.charlstm_c_init = nn.Parameter(torch.zeros(self.args['char_num_layers'], 1, self.args['char_hidden_dim']))
 
@@ -85,9 +115,15 @@ class CharacterLanguageModel(nn.Module):
         embs = self.dropout(self.char_emb(chars))
         batch_size = embs.size(0)
         embs = pack_padded_sequence(embs, charlens, batch_first=True)
-        if hidden is None: 
-            hidden = (self.charlstm_h_init.expand(self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']).contiguous(),
-                      self.charlstm_c_init.expand(self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']).contiguous())
+        if hidden is None:
+            hidden = (
+                self.charlstm_h_init.expand(
+                    self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']
+                ).contiguous(),
+                self.charlstm_c_init.expand(
+                    self.args['char_num_layers'], batch_size, self.args['char_hidden_dim']
+                ).contiguous(),
+            )
         output, hidden = self.charlstm(embs, charlens, hx=hidden)
         output = self.dropout(pad_packed_sequence(output, batch_first=True)[0])
         decoded = self.decoder(output)
@@ -111,13 +147,13 @@ class CharacterLanguageModel(nn.Module):
 
     def train(self, mode=True):
         """
-        Override the default train() function, so that when self.finetune == False, the training mode 
+        Override the default train() function, so that when self.finetune == False, the training mode
         won't be impacted by the parent models' status change.
         """
-        if not mode: # eval() is always allowed, regardless of finetune status
+        if not mode:  # eval() is always allowed, regardless of finetune status
             super().train(mode)
         else:
-            if self.finetune: # only set to training mode in finetune status
+            if self.finetune:  # only set to training mode in finetune status
                 super().train(mode)
 
     def save(self, filename):
@@ -126,7 +162,7 @@ class CharacterLanguageModel(nn.Module):
             'args': self.args,
             'state_dict': self.state_dict(),
             'pad': self.pad,
-            'is_forward_lm': self.is_forward_lm
+            'is_forward_lm': self.is_forward_lm,
         }
         torch.save(state, filename, _use_new_zipfile_serialization=False)
 
@@ -137,5 +173,5 @@ class CharacterLanguageModel(nn.Module):
         model = cls(state['args'], vocab, state['pad'], state['is_forward_lm'])
         model.load_state_dict(state['state_dict'])
         model.eval()
-        model.finetune = finetune # set finetune status
+        model.finetune = finetune  # set finetune status
         return model

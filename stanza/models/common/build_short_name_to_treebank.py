@@ -27,8 +27,10 @@ with open(output_name, "w") as fout:
 
     fout.write("}\n")
 
-    fout.write("""
+    fout.write(
+        """
 
 def short_name_to_treebank(short_name):
     return SHORT_NAMES[short_name]
-""")
+"""
+    )

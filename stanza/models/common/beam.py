@@ -117,16 +117,16 @@ class Beam(object):
         hyp = []
         cpy = []
         for j in range(len(self.prevKs) - 1, -1, -1):
-            hyp.append(self.nextYs[j+1][k])
+            hyp.append(self.nextYs[j + 1][k])
             if len(self.copy) > 0:
                 cpy.append(self.copy[j][k])
             k = self.prevKs[j][k]
-         
+
         hyp = hyp[::-1]
         cpy = cpy[::-1]
         # postprocess: if cpy index is not -1, use cpy index instead of hyp word
-        for i,cidx in enumerate(cpy):
+        for i, cidx in enumerate(cpy):
             if cidx >= 0:
-                hyp[i] = -(cidx+1) # make index 1-based and flip it for token generation
+                hyp[i] = -(cidx + 1)  # make index 1-based and flip it for token generation
 
         return hyp

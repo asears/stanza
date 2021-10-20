@@ -24,6 +24,7 @@ from pathlib import Path
 from six.moves.urllib.parse import urlparse
 
 from stanza.protobuf import Document, parseFromDelimitedString, writeToDelimitedString, to_text
+
 __author__ = 'arunchaganty, kelvinguu, vzhong, wmonroe4'
 
 logger = logging.getLogger('stanza')
@@ -41,12 +42,12 @@ LANGUAGE_SHORTHANDS_TO_FULL = {
     "en": "english",
     "fr": "french",
     "de": "german",
-    "es": "spanish"
+    "es": "spanish",
 }
 
 
 def is_corenlp_lang(props_str):
-    """ Check if a string references a CoreNLP language """
+    """Check if a string references a CoreNLP language"""
     return props_str.lower() in CORENLP_LANGS
 
 
@@ -55,33 +56,40 @@ CORENLP_OUTPUT_VALS = ["conll", "conllu", "json", "serialized", "text", "xml", "
 
 
 def validate_corenlp_props(properties=None, annotators=None, output_format=None):
-    """ Do basic checks to validate CoreNLP properties """
+    """Do basic checks to validate CoreNLP properties"""
     if output_format and output_format.lower() not in CORENLP_OUTPUT_VALS:
         raise ValueError(f"{output_format} not a valid CoreNLP outputFormat value! Choose from: {CORENLP_OUTPUT_VALS}")
     if type(properties) == dict:
         if "outputFormat" in properties and properties["outputFormat"].lower() not in CORENLP_OUTPUT_VALS:
-            raise ValueError(f"{properties['outputFormat']} not a valid CoreNLP outputFormat value! Choose from: "
-                             f"{CORENLP_OUTPUT_VALS}")
+            raise ValueError(
+                f"{properties['outputFormat']} not a valid CoreNLP outputFormat value! Choose from: "
+                f"{CORENLP_OUTPUT_VALS}"
+            )
 
 
 class AnnotationException(Exception):
-    """ Exception raised when there was an error communicating with the CoreNLP server. """
+    """Exception raised when there was an error communicating with the CoreNLP server."""
+
     pass
 
 
 class TimeoutException(AnnotationException):
-    """ Exception raised when the CoreNLP server timed out. """
+    """Exception raised when the CoreNLP server timed out."""
+
     pass
 
 
 class ShouldRetryException(Exception):
-    """ Exception raised if the service should retry the request. """
+    """Exception raised if the service should retry the request."""
+
     pass
 
 
 class PermanentlyFailedException(Exception):
-    """ Exception raised if the service should NOT retry the request. """
+    """Exception raised if the service should NOT retry the request."""
+
     pass
+
 
 class StartServer(enum.Enum):
     DONT_START = 0
@@ -97,11 +105,22 @@ def clean_props_file(props_file):
 
 
 class RobustService(object):
-    """ Service that resuscitates itself if it is not available. """
+    """Service that resuscitates itself if it is not available."""
+
     CHECK_ALIVE_TIMEOUT = 120
 
-    def __init__(self, start_cmd, stop_cmd, endpoint, stdout=None,
-                 stderr=None, be_quiet=False, host=None, port=None, ignore_binding_error=False):
+    def __init__(
+        self,
+        start_cmd,
+        stop_cmd,
+        endpoint,
+        stdout=None,
+        stderr=None,
+        be_quiet=False,
+        host=None,
+        port=None,
+        ignore_binding_error=False,
+    ):
         self.start_cmd = start_cmd and shlex.split(start_cmd)
         self.stop_cmd = stop_cmd and shlex.split(stop_cmd)
         self.endpoint = endpoint
@@ -136,8 +155,10 @@ class RobustService(object):
                             self.server = None
                             return
                         else:
-                            raise PermanentlyFailedException("Error: unable to start the CoreNLP server on port %d "
-                                                         "(possibly something is already running there)" % self.port)
+                            raise PermanentlyFailedException(
+                                "Error: unable to start the CoreNLP server on port %d "
+                                "(possibly something is already running there)" % self.port
+                            )
             if self.be_quiet:
                 # Issue #26: subprocess.DEVNULL isn't supported in python 2.7.
                 if hasattr(subprocess, 'DEVNULL'):
@@ -150,11 +171,11 @@ class RobustService(object):
                 stderr = self.stderr
             logger.info(f"Starting server with command: {' '.join(self.start_cmd)}")
             try:
-                self.server = subprocess.Popen(self.start_cmd,
-                                               stderr=stderr,
-                                               stdout=stdout)
+                self.server = subprocess.Popen(self.start_cmd, stderr=stderr, stdout=stdout)
             except FileNotFoundError as e:
-                raise FileNotFoundError("When trying to run CoreNLP, a FileNotFoundError occurred, which frequently means Java was not installed or was not in the classpath.") from e
+                raise FileNotFoundError(
+                    "When trying to run CoreNLP, a FileNotFoundError occurred, which frequently means Java was not installed or was not in the classpath."
+                ) from e
 
     def atexit_kill(self):
         # make some kind of effort to stop the service (such as a
@@ -234,15 +255,16 @@ def resolve_classpath(classpath=None):
     elif classpath is None:
         classpath = os.getenv("CORENLP_HOME", os.path.join(str(Path.home()), 'stanza_corenlp'))
 
-        assert os.path.exists(classpath), \
-            "Please install CoreNLP by running `stanza.install_corenlp()`. If you have installed it, please define " \
+        assert os.path.exists(classpath), (
+            "Please install CoreNLP by running `stanza.install_corenlp()`. If you have installed it, please define "
             "$CORENLP_HOME to be location of your CoreNLP distribution or pass in a classpath parameter."
+        )
         classpath = os.path.join(classpath, "*")
     return classpath
 
 
 class CoreNLPClient(RobustService):
-    """ A client to the Stanford CoreNLP server. """
+    """A client to the Stanford CoreNLP server."""
 
     DEFAULT_ENDPOINT = "http://localhost:9000"
     DEFAULT_TIMEOUT = 60000
@@ -251,21 +273,24 @@ class CoreNLPClient(RobustService):
     DEFAULT_MEMORY = "5G"
     DEFAULT_MAX_CHAR_LENGTH = 100000
 
-    def __init__(self, start_server=StartServer.FORCE_START,
-                 endpoint=DEFAULT_ENDPOINT,
-                 timeout=DEFAULT_TIMEOUT,
-                 threads=DEFAULT_THREADS,
-                 annotators=None,
-                 output_format=None,
-                 properties=None,
-                 stdout=None,
-                 stderr=None,
-                 memory=DEFAULT_MEMORY,
-                 be_quiet=False,
-                 max_char_length=DEFAULT_MAX_CHAR_LENGTH,
-                 preload=True,
-                 classpath=None,
-                 **kwargs):
+    def __init__(
+        self,
+        start_server=StartServer.FORCE_START,
+        endpoint=DEFAULT_ENDPOINT,
+        timeout=DEFAULT_TIMEOUT,
+        threads=DEFAULT_THREADS,
+        annotators=None,
+        output_format=None,
+        properties=None,
+        stdout=None,
+        stderr=None,
+        memory=DEFAULT_MEMORY,
+        be_quiet=False,
+        max_char_length=DEFAULT_MAX_CHAR_LENGTH,
+        preload=True,
+        classpath=None,
+        **kwargs,
+    ):
 
         # whether or not server should be started by client
         self.start_server = start_server
@@ -283,8 +308,10 @@ class CoreNLPClient(RobustService):
         self._setup_client_defaults()
         # start the server
         if isinstance(start_server, bool):
-            warning_msg = f"Setting 'start_server' to a boolean value when constructing {self.__class__.__name__} is deprecated and will stop" + \
-                " to function in a future version of stanza. Please consider switching to using a value from stanza.server.StartServer."
+            warning_msg = (
+                f"Setting 'start_server' to a boolean value when constructing {self.__class__.__name__} is deprecated and will stop"
+                + " to function in a future version of stanza. Please consider switching to using a value from stanza.server.StartServer."
+            )
             logger.warning(warning_msg)
             start_server = StartServer.FORCE_START if start_server is True else StartServer.DONT_START
 
@@ -298,9 +325,11 @@ class CoreNLPClient(RobustService):
             port = int(port)
             assert host == "localhost", "If starting a server, endpoint must be localhost"
             classpath = resolve_classpath(classpath)
-            start_cmd = f"java -Xmx{memory} -cp '{classpath}'  edu.stanford.nlp.pipeline.StanfordCoreNLPServer " \
-                        f"-port {port} -timeout {timeout} -threads {threads} -maxCharLength {max_char_length} " \
-                        f"-quiet {be_quiet} "
+            start_cmd = (
+                f"java -Xmx{memory} -cp '{classpath}'  edu.stanford.nlp.pipeline.StanfordCoreNLPServer "
+                f"-port {port} -timeout {timeout} -threads {threads} -maxCharLength {max_char_length} "
+                f"-quiet {be_quiet} "
+            )
 
             self.server_classpath = classpath
             self.server_host = host
@@ -352,8 +381,17 @@ class CoreNLPClient(RobustService):
             start_cmd = stop_cmd = None
             host = port = None
 
-        super(CoreNLPClient, self).__init__(start_cmd, stop_cmd, endpoint,
-                                            stdout, stderr, be_quiet, host=host, port=port, ignore_binding_error=(start_server == StartServer.TRY_START))
+        super(CoreNLPClient, self).__init__(
+            start_cmd,
+            stop_cmd,
+            endpoint,
+            stdout,
+            stderr,
+            be_quiet,
+            host=host,
+            port=port,
+            ignore_binding_error=(start_server == StartServer.TRY_START),
+        )
 
         self.timeout = timeout
 
@@ -405,11 +443,14 @@ class CoreNLPClient(RobustService):
                 logger.info(
                     f"Using CoreNLP default properties for: {self.properties}.  Make sure to have "
                     f"{self.properties} models jar (available for download here: "
-                    f"https://stanfordnlp.github.io/CoreNLP/) in CLASSPATH")
+                    f"https://stanfordnlp.github.io/CoreNLP/) in CLASSPATH"
+                )
             else:
                 if not os.path.isfile(self.properties):
-                    logger.warning(f"{self.properties} does not correspond to a file path. Make sure this file is in "
-                                   f"your CLASSPATH.")
+                    logger.warning(
+                        f"{self.properties} does not correspond to a file path. Make sure this file is in "
+                        f"your CLASSPATH."
+                    )
             self.server_props_path = self.properties
         elif isinstance(self.properties, dict):
             # make a copy
@@ -448,13 +489,17 @@ class CoreNLPClient(RobustService):
                 kwargs['auth'] = requests.auth.HTTPBasicAuth(kwargs['username'], kwargs['password'])
                 kwargs.pop('username')
                 kwargs.pop('password')
-            r = requests.post(self.endpoint,
-                              params={'properties': str(properties), 'resetDefault': str(reset_default).lower()},
-                              data=buf, headers={'content-type': ctype},
-                              timeout=(self.timeout*2)/1000, **kwargs)
+            r = requests.post(
+                self.endpoint,
+                params={'properties': str(properties), 'resetDefault': str(reset_default).lower()},
+                data=buf,
+                headers={'content-type': ctype},
+                timeout=(self.timeout * 2) / 1000,
+                **kwargs,
+            )
             r.raise_for_status()
             return r
-        except requests.HTTPError as e:
+        except requests.HTTPError:
             if r.text == "CoreNLP request timed out. Your document may be too long.":
                 raise TimeoutException(r.text)
             else:
@@ -535,11 +580,13 @@ class CoreNLPClient(RobustService):
     def update(self, doc, annotators=None, properties=None):
         if properties is None:
             properties = {}
-            properties.update({
-                'inputFormat': 'serialized',
-                'outputFormat': 'serialized',
-                'serializer': 'edu.stanford.nlp.pipeline.ProtobufAnnotationSerializer'
-            })
+            properties.update(
+                {
+                    'inputFormat': 'serialized',
+                    'outputFormat': 'serialized',
+                    'serializer': 'edu.stanford.nlp.pipeline.ProtobufAnnotationSerializer',
+                }
+            )
         if annotators:
             properties['annotators'] = annotators if type(annotators) == str else ",".join(annotators)
         with io.BytesIO() as stream:
@@ -580,10 +627,9 @@ class CoreNLPClient(RobustService):
         self.ensure_alive()
         if properties is None:
             properties = {}
-            properties.update({
-                'inputFormat': 'text',
-                'serializer': 'edu.stanford.nlp.pipeline.ProtobufAnnotationSerializer'
-            })
+            properties.update(
+                {'inputFormat': 'text', 'serializer': 'edu.stanford.nlp.pipeline.ProtobufAnnotationSerializer'}
+            )
         if annotators:
             properties['annotators'] = ",".join(annotators) if isinstance(annotators, list) else annotators
 
@@ -605,18 +651,15 @@ class CoreNLPClient(RobustService):
                 raise ValueError("Unrecognized inputFormat " + input_format)
             # change request method from `get` to `post` as required by CoreNLP
             r = requests.post(
-                self.endpoint + path, params={
-                    'pattern': pattern,
-                    'filter': filter,
-                    'properties': str(properties)
-                },
+                self.endpoint + path,
+                params={'pattern': pattern, 'filter': filter, 'properties': str(properties)},
                 data=text.encode('utf-8'),
                 headers={'content-type': ctype},
-                timeout=(self.timeout*2)/1000,
+                timeout=(self.timeout * 2) / 1000,
             )
             r.raise_for_status()
             return json.loads(r.text)
-        except requests.HTTPError as e:
+        except requests.HTTPError:
             if r.text.startswith("Timeout"):
                 raise TimeoutException(r.text)
             else:
@@ -626,21 +669,24 @@ class CoreNLPClient(RobustService):
 
 
 def read_corenlp_props(props_path):
-    """ Read a Stanford CoreNLP properties file into a dict """
+    """Read a Stanford CoreNLP properties file into a dict"""
     props_dict = {}
     with open(props_path) as props_file:
-        entry_lines = [entry_line for entry_line in props_file.read().split('\n')
-                       if entry_line.strip() and not entry_line.startswith('#')]
+        entry_lines = [
+            entry_line
+            for entry_line in props_file.read().split('\n')
+            if entry_line.strip() and not entry_line.startswith('#')
+        ]
         for entry_line in entry_lines:
             k = entry_line.split('=')[0]
-            k_len = len(k+"=")
+            k_len = len(k + "=")
             v = entry_line[k_len:]
             props_dict[k.strip()] = v
     return props_dict
 
 
 def write_corenlp_props(props_dict, file_path=None):
-    """ Write a Stanford CoreNLP properties dict to a file """
+    """Write a Stanford CoreNLP properties dict to a file"""
     if file_path is None:
         file_path = f"corenlp_server-{uuid.uuid4().hex[:16]}.props"
         # confirm tmp file path matches pattern
@@ -661,9 +707,12 @@ def regex_matches_to_indexed_words(matches):
     :param matches: unprocessed regex matches
     :return: flat array of indexed words
     """
-    words = [dict(v, **dict([('sentence', i)]))
-             for i, s in enumerate(matches['sentences'])
-             for k, v in s.items() if k != 'length']
+    words = [
+        dict(v, **dict([('sentence', i)]))
+        for i, s in enumerate(matches['sentences'])
+        for k, v in s.items()
+        if k != 'length'
+    ]
     return words
 
 

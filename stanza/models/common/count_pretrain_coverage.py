@@ -12,12 +12,15 @@ from stanza.utils.conll import CoNLL
 
 import argparse
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
+    # fmt:off
     parser.add_argument('treebanks', type=str, nargs='*', help='Which treebanks to run on')
     parser.add_argument('--pretrain', type=str, default="/home/john/extern_data/wordvec/glove/armenian.pt", help='Which pretrain to use')
     parser.set_defaults(treebanks=["/home/john/extern_data/ud2/ud-treebanks-v2.7/UD_Western_Armenian-ArmTDP/hyw_armtdp-ud-train.conllu",
                                    "/home/john/extern_data/ud2/ud-treebanks-v2.7/UD_Armenian-ArmTDP/hy_armtdp-ud-train.conllu"])
+    # fmt:on
     args = parser.parse_args()
     return args
 
@@ -38,4 +41,4 @@ for treebank in args.treebanks:
             if word.text in pt.vocab:
                 found = found + 1
 
-    print (found / total)
+    print(found / total)

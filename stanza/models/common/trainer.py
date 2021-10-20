@@ -1,15 +1,13 @@
 import torch
 
+
 class Trainer:
     def change_lr(self, new_lr):
         for param_group in self.optimizer.param_groups:
             param_group['lr'] = new_lr
 
     def save(self, filename):
-        savedict = {
-                   'model': self.model.state_dict(),
-                   'optimizer': self.optimizer.state_dict()
-                   }
+        savedict = {'model': self.model.state_dict(), 'optimizer': self.optimizer.state_dict()}
         torch.save(savedict, filename)
 
     def load(self, filename):

@@ -1,6 +1,7 @@
 """Stanza models classifier data functions."""
 
 import logging
+import re
 import stanza.models.classifiers.classifier_args as classifier_args
 
 logger = logging.getLogger('stanza')

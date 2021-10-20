@@ -11,7 +11,6 @@ or save part of an Icelandic WV file:
 Note that if the pretrain already exists, nothing will be changed.  It will not overwrite an existing .pt file.
 """
 
-import os
 import sys
 
 from stanza.models.common import pretrain

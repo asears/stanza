@@ -6,10 +6,13 @@ import hashlib
 import shutil
 import zipfile
 
+
 def parse_args():
     parser = argparse.ArgumentParser()
+    # fmt:off
     parser.add_argument('--input_dir', type=str, default="/u/nlp/software/stanza/current-models", help='Input dir for various models.  Defaults to the recommended home on the nlp cluster')
     parser.add_argument('--output_dir', type=str, default="/u/nlp/software/stanza/built-models", help='Output dir for various models.')
+    # fmt:on
     args = parser.parse_args()
     args.input_dir = os.path.abspath(args.input_dir)
     args.output_dir = os.path.abspath(args.output_dir)
@@ -18,176 +21,176 @@ def parse_args():
 
 # default treebank for languages
 default_treebanks = {
-  "af": "afribooms",
-  "grc": "proiel",
-  "ar": "padt",
-  "hy": "armtdp",
-  "eu": "bdt",
-  "bg": "btb",
-  "bxr": "bdt",
-  "ca": "ancora",
-  "zh-hant": "gsd",
-  "hr": "set",
-  "cs": "pdt",
-  "cy": "ccg",
-  "da": "ddt",
-  "nl": "alpino",
-  "en": "combined",
-  "et": "edt",
-  "fi": "tdt",
-  "fo": "farpahc",
-  "fr": "gsd",
-  "gl": "ctg",
-  "de": "gsd",
-  "got": "proiel",
-  "el": "gdt",
-  "he": "htb",
-  "hi": "hdtb",
-  "hu": "szeged",
-  "id": "gsd",
-  "is": "icepahc",
-  "ga": "idt",
-  "it": "combined",
-  "ja": "gsd",
-  "kk": "ktb",
-  "ko": "kaist",
-  "kmr": "mg",
-  "la": "ittb",
-  "lv": "lvtb",
-  "pcm": "nsc",
-  "sme": "giella",
-  "cu": "proiel",
-  "fro": "srcmf",
-  "fa": "perdt",
-  "pl": "pdb",
-  "pt": "bosque",
-  "ro": "rrt",
-  "ru": "syntagrus",
-  "sa": "vedic",
-  "sr": "set",
-  "sk": "snk",
-  "sl": "ssj",
-  "es": "ancora",
-  "sv": "talbanken",
-  "th": "orchid",
-  "tr": "imst",
-  "qtd": "sagt",
-  "uk": "iu",
-  "hsb": "ufal",
-  "ur": "udtb",
-  "ug": "udt",
-  "vi": "vtb",
-  "lt": "alksnis",
-  "hyw": "armtdp",
-  "wo": "wtb",
-  "nb": "bokmaal",
-  "mt": "mudt",
-  "swl": "sslc",
-  "cop": "scriptorium",
-  "be": "hse",
-  "zh-hans": "gsdsimp",
-  "lzh": "kyoto",
-  "gd": "arcosg",
-  "olo": "kkpp",
-  "ta": "ttb",
-  "te": "mtg",
-  "orv": "torot",
-  "nn": "nynorsk",
-  "mr": "ufal",
-  "multilingual": "ud"
+    "af": "afribooms",
+    "grc": "proiel",
+    "ar": "padt",
+    "hy": "armtdp",
+    "eu": "bdt",
+    "bg": "btb",
+    "bxr": "bdt",
+    "ca": "ancora",
+    "zh-hant": "gsd",
+    "hr": "set",
+    "cs": "pdt",
+    "cy": "ccg",
+    "da": "ddt",
+    "nl": "alpino",
+    "en": "combined",
+    "et": "edt",
+    "fi": "tdt",
+    "fo": "farpahc",
+    "fr": "gsd",
+    "gl": "ctg",
+    "de": "gsd",
+    "got": "proiel",
+    "el": "gdt",
+    "he": "htb",
+    "hi": "hdtb",
+    "hu": "szeged",
+    "id": "gsd",
+    "is": "icepahc",
+    "ga": "idt",
+    "it": "combined",
+    "ja": "gsd",
+    "kk": "ktb",
+    "ko": "kaist",
+    "kmr": "mg",
+    "la": "ittb",
+    "lv": "lvtb",
+    "pcm": "nsc",
+    "sme": "giella",
+    "cu": "proiel",
+    "fro": "srcmf",
+    "fa": "perdt",
+    "pl": "pdb",
+    "pt": "bosque",
+    "ro": "rrt",
+    "ru": "syntagrus",
+    "sa": "vedic",
+    "sr": "set",
+    "sk": "snk",
+    "sl": "ssj",
+    "es": "ancora",
+    "sv": "talbanken",
+    "th": "orchid",
+    "tr": "imst",
+    "qtd": "sagt",
+    "uk": "iu",
+    "hsb": "ufal",
+    "ur": "udtb",
+    "ug": "udt",
+    "vi": "vtb",
+    "lt": "alksnis",
+    "hyw": "armtdp",
+    "wo": "wtb",
+    "nb": "bokmaal",
+    "mt": "mudt",
+    "swl": "sslc",
+    "cop": "scriptorium",
+    "be": "hse",
+    "zh-hans": "gsdsimp",
+    "lzh": "kyoto",
+    "gd": "arcosg",
+    "olo": "kkpp",
+    "ta": "ttb",
+    "te": "mtg",
+    "orv": "torot",
+    "nn": "nynorsk",
+    "mr": "ufal",
+    "multilingual": "ud",
 }
 
 # default ner for languages
 default_ners = {
-  "af": "nchlt",
-  "ar": "aqmar",
-  "bg": "bsnlp19",
-  "de": "conll03",
-  "en": "ontonotes",
-  "es": "conll02",
-  "fi": "turku",
-  "fr": "wikiner",
-  "hu": "combined",
-  "it": "fbk",
-  "nl": "conll02",
-  "ru": "wikiner",
-  "uk": "languk",
-  "vi": "vlsp",
-  "zh-hans": "ontonotes",
+    "af": "nchlt",
+    "ar": "aqmar",
+    "bg": "bsnlp19",
+    "de": "conll03",
+    "en": "ontonotes",
+    "es": "conll02",
+    "fi": "turku",
+    "fr": "wikiner",
+    "hu": "combined",
+    "it": "fbk",
+    "nl": "conll02",
+    "ru": "wikiner",
+    "uk": "languk",
+    "vi": "vlsp",
+    "zh-hans": "ontonotes",
 }
 
 # default charlms for languages
 default_charlms = {
-  "af": "oscar",
-  "ar": "ccwiki",
-  "bg": "conll17",
-  "de": "newswiki",
-  "en": "1billion",
-  "es": "newswiki",
-  "fi": "conll17",
-  "fr": "newswiki",
-  "it": "conll17",
-  "nl": "ccwiki",
-  "ru": "newswiki",
-  "vi": "conll17",
-  "zh-hans": "gigaword"
+    "af": "oscar",
+    "ar": "ccwiki",
+    "bg": "conll17",
+    "de": "newswiki",
+    "en": "1billion",
+    "es": "newswiki",
+    "fi": "conll17",
+    "fr": "newswiki",
+    "it": "conll17",
+    "nl": "ccwiki",
+    "ru": "newswiki",
+    "vi": "conll17",
+    "zh-hans": "gigaword",
 }
 
 ner_charlms = {
-  "en": {
-    "conll03": "1billion",
-    "ontonotes": "1billion",
-    "anatem": "pubmed",
-    "bc4chemd": "pubmed",
-    "bc5cdr": "pubmed",
-    "bionlp13cg": "pubmed",
-    "i2b2": "mimic",
-    "jnlpba": "pubmed",
-    "linnaeus": "pubmed",
-    "ncbi_disease": "pubmed",
-    "radiology": "mimic",
-    "s800": "pubmed",
-  },
-  "uk": {
-    "languk": None,
-  },
-  "hu": {
-    "combined": None,
-  },
+    "en": {
+        "conll03": "1billion",
+        "ontonotes": "1billion",
+        "anatem": "pubmed",
+        "bc4chemd": "pubmed",
+        "bc5cdr": "pubmed",
+        "bionlp13cg": "pubmed",
+        "i2b2": "mimic",
+        "jnlpba": "pubmed",
+        "linnaeus": "pubmed",
+        "ncbi_disease": "pubmed",
+        "radiology": "mimic",
+        "s800": "pubmed",
+    },
+    "uk": {
+        "languk": None,
+    },
+    "hu": {
+        "combined": None,
+    },
 }
 
 # a few languages have sentiment classifier models
 default_sentiment = {
-  "en": "sstplus",
-  "de": "sb10k",
-  "vi": "vsfc",
-  "zh-hans": "ren",
+    "en": "sstplus",
+    "de": "sb10k",
+    "vi": "vsfc",
+    "zh-hans": "ren",
 }
 
 # also, a few languages (very few, currently) have constituency parser models
 default_constituency = {
-  "en": "wsj",
+    "en": "wsj",
 }
 
 allowed_empty_languages = [
-  # we don't have a lot of Thai support yet
-  "th"
+    # we don't have a lot of Thai support yet
+    "th"
 ]
 
 # map processor name to file ending
 processor_to_ending = {
-  "tokenize": "tokenizer",
-  "mwt": "mwt_expander",
-  "pos": "tagger",
-  "lemma": "lemmatizer",
-  "depparse": "parser",
-  "ner": "nertagger",
-  "sentiment": "sentiment",
-  "constituency": "constituency",
-  "pretrain": "pretrain",
-  "forward_charlm": "forward_charlm",
-  "backward_charlm": "backward_charlm",
-  "langid": "langid"
+    "tokenize": "tokenizer",
+    "mwt": "mwt_expander",
+    "pos": "tagger",
+    "lemma": "lemmatizer",
+    "depparse": "parser",
+    "ner": "nertagger",
+    "sentiment": "sentiment",
+    "constituency": "constituency",
+    "pretrain": "pretrain",
+    "forward_charlm": "forward_charlm",
+    "backward_charlm": "backward_charlm",
+    "langid": "langid",
 }
 ending_to_processor = {j: i for i, j in processor_to_ending.items()}
 
@@ -269,7 +272,7 @@ lcode2lang = {
     "vi": "Vietnamese",
     "cy": "Welsh",
     "hyw": "Western_Armenian",
-    "wo": "Wolof"
+    "wo": "Wolof",
 }
 
 
@@ -297,13 +300,14 @@ def split_model_name(model):
     # sort by key length so that nertagger is checked before tagger, for example
     for processor in sorted(ending_to_processor.keys(), key=lambda x: -len(x)):
         if model.endswith(processor):
-            model = model[:-(len(processor)+1)]
+            model = model[: -(len(processor) + 1)]
             processor = ending_to_processor[processor]
             break
     else:
         raise AssertionError(f"Could not find a processor type in {model}")
     lang, package = model.split('_', 1)
     return lang, package, processor
+
 
 def get_ner_dependencies(lang, package):
     if lang not in ner_charlms or package not in ner_charlms[lang]:
@@ -314,8 +318,11 @@ def get_ner_dependencies(lang, package):
     if charlm_package is None:
         return None
     else:
-        return [{'model': 'forward_charlm', 'package': charlm_package},
-                {'model': 'backward_charlm', 'package': charlm_package}]
+        return [
+            {'model': 'forward_charlm', 'package': charlm_package},
+            {'model': 'backward_charlm', 'package': charlm_package},
+        ]
+
 
 def process_dirs(args):
     dirs = sorted(os.listdir(args.input_dir))
@@ -325,7 +332,8 @@ def process_dirs(args):
         print(f"Processing models in {model_dir}")
         models = sorted(os.listdir(os.path.join(args.input_dir, model_dir)))
         for model in models:
-            if not model.endswith('.pt'): continue
+            if not model.endswith('.pt'):
+                continue
             # get processor
             lang, package, processor = split_model_name(model)
             # copy file
@@ -352,8 +360,10 @@ def process_dirs(args):
             else:
                 dependencies = None
             # maintain resources
-            if lang not in resources: resources[lang] = {}
-            if processor not in resources[lang]: resources[lang][processor] = {}
+            if lang not in resources:
+                resources[lang] = {}
+            if processor not in resources[lang]:
+                resources[lang][processor] = {}
             if dependencies:
                 resources[lang][processor][package] = {'md5': md5, 'dependencies': dependencies}
             else:
@@ -364,15 +374,17 @@ def process_dirs(args):
 def process_defaults(args):
     resources = json.load(open(os.path.join(args.output_dir, 'resources.json')))
     for lang in resources:
-        if lang not in default_treebanks: 
+        if lang not in default_treebanks:
             raise AssertionError(f'{lang} not in default treebanks!!!')
         print(f'Preparing default models for language {lang}')
 
         ud_package = default_treebanks[lang]
         os.chdir(os.path.join(args.output_dir, lang))
         default_processors = {}
-        default_dependencies = {'pos': [{'model': 'pretrain', 'package': ud_package}],
-                                'depparse': [{'model': 'pretrain', 'package': ud_package}]}
+        default_dependencies = {
+            'pos': [{'model': 'pretrain', 'package': ud_package}],
+            'depparse': [{'model': 'pretrain', 'package': ud_package}],
+        }
 
         if lang in default_ners:
             ner_package = default_ners[lang]
@@ -410,18 +422,34 @@ def process_defaults(args):
 
         with zipfile.ZipFile('default.zip', 'w', zipfile.ZIP_DEFLATED) as zipf:
             for processor in processors:
-                if processor == 'ner': package = ner_package
-                elif processor in ['forward_charlm', 'backward_charlm']: package = charlm_package
-                elif processor == 'sentiment': package = sentiment_package
-                elif processor == 'constituency': package = constituency_package
-                elif processor == 'langid': package = 'ud' 
-                else: package = ud_package
+                if processor == 'ner':
+                    package = ner_package
+                elif processor in ['forward_charlm', 'backward_charlm']:
+                    package = charlm_package
+                elif processor == 'sentiment':
+                    package = sentiment_package
+                elif processor == 'constituency':
+                    package = constituency_package
+                elif processor == 'langid':
+                    package = 'ud'
+                else:
+                    package = ud_package
 
                 filename = os.path.join(args.output_dir, lang, processor, package + '.pt')
 
                 if os.path.exists(filename):
                     print("   Model {} package {}: file {}".format(processor, package, filename))
-                    if processor in ['tokenize', 'mwt', 'lemma', 'pos', 'depparse', 'ner', 'sentiment', 'constituency', 'langid']:
+                    if processor in [
+                        'tokenize',
+                        'mwt',
+                        'lemma',
+                        'pos',
+                        'depparse',
+                        'ner',
+                        'sentiment',
+                        'constituency',
+                        'langid',
+                    ]:
                         default_processors[processor] = package
                     zipf.write(os.path.join(processor, package + '.pt'))
                 elif lang in allowed_empty_languages:
@@ -431,13 +459,19 @@ def process_defaults(args):
                     # a few languages use the identity lemmatizer -
                     # there might be a better way to encode that here
                     default_processors[processor] = "identity"
-                    print(" --Model {} package {}: no file {}, assuming identity lemmatizer".format(processor, package, filename))
+                    print(
+                        " --Model {} package {}: no file {}, assuming identity lemmatizer".format(
+                            processor, package, filename
+                        )
+                    )
                 elif processor in ('mwt', 'pretrain'):
                     # some languages don't have MWT, so skip ig
                     # others have pos and depparse built with no pretrain
                     print(" --Model {} package {}: no file {}, skipping".format(processor, package, filename))
                 else:
-                    raise FileNotFoundError(f"Could not find an expected model file for {lang} {processor} {package} : {filename}")
+                    raise FileNotFoundError(
+                        f"Could not find an expected model file for {lang} {processor} {package} : {filename}"
+                    )
         default_md5 = get_md5(os.path.join(args.output_dir, lang, 'default.zip'))
         resources[lang]['default_processors'] = default_processors
         resources[lang]['default_dependencies'] = default_dependencies
@@ -479,4 +513,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

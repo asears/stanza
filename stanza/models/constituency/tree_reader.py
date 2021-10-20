@@ -16,13 +16,16 @@ CLOSE_PAREN = ")"
 # A few specific exception types to clarify parsing errors
 # They store the line number where the error occurred
 
+
 class UnclosedTreeError(ValueError):
     """
     A tree looked like (Foo
     """
+
     def __init__(self, line_num):
         super().__init__("Found an unfinished tree (missing close brackets).  Tree started on line %d" % line_num)
         self.line_num = line_num
+
 
 class UnlabeledTreeError(ValueError):
     """
@@ -30,14 +33,17 @@ class UnlabeledTreeError(ValueError):
 
     This does not actually happen at the root, btw, as ROOT is silently added
     """
+
     def __init__(self, line_num):
         super().__init__("Found a tree with no label on a node!  Line number %d" % line_num)
         self.line_num = line_num
+
 
 class MixedTreeError(ValueError):
     """
     Leaf and constituent children are mixed in the same node
     """
+
     def __init__(self, line_num):
         super().__init__("Found a tree with both text children and bracketed children!  Line number %d" % line_num)
         self.line_num = line_num
@@ -86,11 +92,12 @@ def recursive_open_tree(token_iterator, at_root, broken_ok):
         token = next(token_iterator, None)
     raise UnclosedTreeError(token_iterator.get_mark())
 
+
 def recursive_read_trees(token_iterator, broken_ok):
     """
     Read all of the trees from the token_iterator
 
-    TODO: some of the error cases we hit can be recovered from
+    TODO(John Bauer): some of the error cases we hit can be recovered from
     also, just in general it would be good to unwind the recursion
     """
     trees = []
@@ -111,6 +118,7 @@ def recursive_read_trees(token_iterator, broken_ok):
 
     return trees
 
+
 class TokenIterator:
     """
     A specific iterator for reading trees from a tree file
@@ -119,6 +127,7 @@ class TokenIterator:
     we are processing, so that an error can be logged
     from the correct line
     """
+
     def __init__(self, text):
         self.lines = text.split("\n")
         self.num_lines = len(self.lines)
@@ -171,6 +180,7 @@ class TokenIterator:
 
         return n
 
+
 def read_trees(text, broken_ok=False):
     """
     Reads multiple trees from the text
@@ -178,6 +188,7 @@ def read_trees(text, broken_ok=False):
     token_iterator = TokenIterator(text)
     trees = recursive_read_trees(token_iterator, broken_ok=broken_ok)
     return trees
+
 
 def read_tree_file(filename):
     """
@@ -187,13 +198,15 @@ def read_tree_file(filename):
         trees = read_trees(fin.read())
     return trees
 
+
 def main():
     """
     Reads a sample tree
     """
-    text="( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
     trees = read_trees(text)
     print(trees)
+
 
 if __name__ == '__main__':
     main()

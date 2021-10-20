@@ -4,7 +4,6 @@ Functions for setting up the environments.
 
 import os
 import logging
-import zipfile
 import shutil
 
 from stanza.resources.common import HOME_DIR, request_file, unzip, \

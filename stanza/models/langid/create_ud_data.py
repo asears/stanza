@@ -23,7 +23,10 @@ from stanza.models.common.constant import treebank_to_langid
 
 logger = logging.getLogger('stanza')
 
-DEFAULT_LANGUAGES = "af,ar,be,bg,bxr,ca,cop,cs,cu,da,de,el,en,es,et,eu,fa,fi,fr,fro,ga,gd,gl,got,grc,he,hi,hr,hsb,hu,hy,id,it,ja,kk,kmr,ko,la,lt,lv,lzh,mr,mt,nl,nn,no,olo,orv,pl,pt,ro,ru,sk,sl,sme,sr,sv,swl,ta,te,tr,ug,uk,ur,vi,wo,zh-hans,zh-hant".split(",")
+DEFAULT_LANGUAGES = "af,ar,be,bg,bxr,ca,cop,cs,cu,da,de,el,en,es,et,eu,fa,fi,fr,fro,ga,gd,gl,got,grc,he,hi,hr,hsb,hu,hy,id,it,ja,kk,kmr,ko,la,lt,lv,lzh,mr,mt,nl,nn,no,olo,orv,pl,pt,ro,ru,sk,sl,sme,sr,sv,swl,ta,te,tr,ug,uk,ur,vi,wo,zh-hans,zh-hant".split(
+    ","
+)
+
 
 def parse_args(args=None):
     parser = argparse.ArgumentParser()
@@ -34,8 +37,9 @@ def parse_args(args=None):
     parser.add_argument("--max-window", help="maximum training example length", type=int, default=50)
     parser.add_argument("--ud-path", help="path to ud data")
     parser.add_argument("--save-path", help="path to save data", default=".")
-    parser.add_argument("--splits", help="size of train/dev/test splits in percentages", type=splits_from_list, 
-                        default="0.8,0.1,0.1")
+    parser.add_argument(
+        "--splits", help="size of train/dev/test splits in percentages", type=splits_from_list, default="0.8,0.1,0.1"
+    )
     args = parser.parse_args(args=args)
     return args
 
@@ -52,9 +56,15 @@ def main(args=None):
     lang_to_files = collect_files(args.ud_path, args.languages, data_format=args.data_format)
     logger.info(f"Building UD data for languages: {','.join(args.languages)}")
     for lang_id in tqdm(lang_to_files):
-        lang_examples = generate_examples(lang_id, lang_to_files[lang_id], splits=args.splits, 
-                                          min_window=args.min_window, max_window=args.max_window, 
-                                          eval_length=args.eval_length, data_format=args.data_format)
+        lang_examples = generate_examples(
+            lang_id,
+            lang_to_files[lang_id],
+            splits=args.splits,
+            min_window=args.min_window,
+            max_window=args.max_window,
+            eval_length=args.eval_length,
+            data_format=args.data_format,
+        )
         for (data_set, save_path) in zip(lang_examples, data_paths):
             with open(save_path, "a") as json_file:
                 for json_entry in data_set:
@@ -63,7 +73,7 @@ def main(args=None):
 
 
 def collect_files(ud_path, languages, data_format="ud"):
-    """ 
+    """
     Given path to UD, collect files
     If data_format = "ud", expects files to be of form *.conllu
     If data_format = "one-per-line", expects files to be of form "*.sentences.txt"
@@ -79,14 +89,15 @@ def collect_files(ud_path, languages, data_format="ud"):
             lang_id = ud_file.name.split("_")[0]
         if lang_id not in languages and "all" not in languages:
             continue
-        if not lang_id in lang_to_files:
+        if lang_id not in lang_to_files:
             lang_to_files[lang_id] = []
         lang_to_files[lang_id].append(ud_file)
     return lang_to_files
 
 
-def generate_examples(lang_id, list_of_files, splits=(0.8,0.1,0.1), min_window=10, max_window=50, 
-                      eval_length=10, data_format="ud"):
+def generate_examples(
+    lang_id, list_of_files, splits=(0.8, 0.1, 0.1), min_window=10, max_window=50, eval_length=10, data_format="ud"
+):
     """
     Generate train/dev/test examples for a given language
     """
@@ -113,8 +124,9 @@ def sentences_from_file(ud_file_path, data_format="ud"):
     if data_format == "ud":
         with open(ud_file_path) as ud_file:
             ud_file_contents = ud_file.read().strip()
-            assert "# text = " in ud_file_contents, \
-                   f"{ud_file_path} does not have expected format, \"# text =\" does not appear"
+            assert (
+                "# text = " in ud_file_contents
+            ), f"{ud_file_path} does not have expected format, \"# text =\" does not appear"
             sentences = [x[9:] for x in ud_file_contents.split("\n") if x.startswith("# text = ")]
     elif data_format == "one-per-line":
         with open(ud_file_path) as ud_file:
@@ -130,9 +142,9 @@ def sentence_to_windows(sentence, min_window, max_window):
     words = sentence.split(" ")
     curr_window = ""
     for idx, word in enumerate(words):
-        curr_window += (" " + word)
+        curr_window += " " + word
         curr_window = curr_window.lstrip()
-        next_word_len = len(words[idx+1]) + 1 if idx+1 < len(words) else 0
+        next_word_len = len(words[idx + 1]) + 1 if idx + 1 < len(words) else 0
         if len(curr_window) + next_word_len > max_window:
             curr_window = clean_sentence(curr_window)
             if validate_sentence(curr_window, min_window):
@@ -152,23 +164,24 @@ def validate_sentence(current_window, min_window):
         return False
     return True
 
+
 def find(s, ch):
-    """ 
+    """
     Helper for clean_sentence from LSTM-LID
-    GitHub: https://github.com/AU-DIS/LSTM_langid/blob/main/src/dataset_creator.py 
+    GitHub: https://github.com/AU-DIS/LSTM_langid/blob/main/src/dataset_creator.py
     """
     return [i for i, ltr in enumerate(s) if ltr == ch]
 
 
 def clean_sentence(line):
-    """ 
+    """
     Sentence cleaning from LSTM-LID
     GitHub: https://github.com/AU-DIS/LSTM_langid/blob/main/src/dataset_creator.py
     """
     # We remove some special characters and fix small errors in the data, to improve the quality of the data
-    line = line.replace("\n", '') #{"text": "- Mor.\n", "label": "da"}
-    line = line.replace("- ", '') #{"text": "- Mor.", "label": "da"}
-    line = line.replace("_", '') #{"text": "- Mor.", "label": "da"}
+    line = line.replace("\n", '')  # {"text": "- Mor.\n", "label": "da"}
+    line = line.replace("- ", '')  # {"text": "- Mor.", "label": "da"}
+    line = line.replace("_", '')  # {"text": "- Mor.", "label": "da"}
     line = line.replace("\\", '')
     line = line.replace("\"", '')
     line = line.replace("  ", " ")
@@ -183,12 +196,12 @@ def clean_sentence(line):
         if clean_word[1:].__contains__("I"):
             indices = find(clean_word, "I")
             for indx in indices:
-                if clean_word[indx-1].islower():
+                if clean_word[indx - 1].islower():
                     if len(clean_word) > indx + 1:
-                        if clean_word[indx+1].islower():
-                            s = s[:indx] + "l" + s[indx + 1:]
+                        if clean_word[indx + 1].islower():
+                            s = s[:indx] + "l" + s[indx + 1 :]
                     else:
-                        s = s[:indx] + "l" + s[indx + 1:]
+                        s = s[:indx] + "l" + s[indx + 1 :]
         new_words.append(s)
     new_line = " ".join(new_words)
     return new_line
@@ -202,4 +215,3 @@ def example_json(lang_id, text, eval_length=None):
 
 if __name__ == "__main__":
     main()
-
