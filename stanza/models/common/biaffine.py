@@ -19,6 +19,7 @@ class PairwiseBilinear(nn.Module):
     def forward(self, input1, input2):
         input1_size = list(input1.size())
         input2_size = list(input2.size())
+        # TODO(John Bauer) is there a bug here?  output size is not used, self.output_size used instead.
         output_size = [input1_size[0], input1_size[1], input2_size[1], self.output_size]
 
         # ((N x L1) x D1) * (D1 x (D2 x O)) -> (N x L1) x (D2 x O)
@@ -74,7 +75,7 @@ class DeepBiaffineScorer(nn.Module):
         return self.scorer(self.dropout(self.hidden_func(self.W1(input1))), self.dropout(self.hidden_func(self.W2(input2))))
 
 if __name__ == "__main__":
-    x1 = torch.randn(3,4)
-    x2 = torch.randn(3,5)
+    x1 = torch.randn(3, 4)
+    x2 = torch.randn(3, 5)
     scorer = DeepBiaffineScorer(4, 5, 6, 7)
     print(scorer(x1, x2))

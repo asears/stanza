@@ -7,9 +7,13 @@ Preprocess the WikiNER dataset, by
 import os
 import random
 from collections import Counter
+from typing import List, Optional
+
 random.seed(1234)
 
-def read_sentences(filename, encoding):
+
+def read_sentences(filename, encoding: Optional[str]) -> List[str]:
+    """Read sentences."""
     sents = []
     cache = []
     skipped = 0
@@ -42,7 +46,8 @@ def read_sentences(filename, encoding):
     print("Skipped {} examples due to formatting issues.".format(skipped))
     return sents
 
-def write_sentences_to_file(sents, filename):
+def write_sentences_to_file(sents: List[str], filename) -> None:
+    """Write sentences to file."""
     print(f"Writing {len(sents)} sentences to {filename}")
     with open(filename, 'w') as outfile:
         for sent in sents:
@@ -50,7 +55,8 @@ def write_sentences_to_file(sents, filename):
                 print(f"{pair[0]}\t{pair[1]}", file=outfile)
             print("", file=outfile)
 
-def remap_labels(sents, remap):
+def remap_labels(sents: List[str], remap) -> List[str]:
+    """Remap labels."""
     new_sentences = []
     for sentence in sents:
         new_sent = []
@@ -59,7 +65,8 @@ def remap_labels(sents, remap):
         new_sentences.append(new_sent)
     return new_sentences
 
-def split_wikiner(directory, *in_filenames, encoding="utf-8", prefix="", suffix="bio", remap=None, shuffle=True, train_fraction=0.7, dev_fraction=0.15):
+def split_wikiner(directory, *in_filenames, encoding="utf-8", prefix="", suffix="bio", remap=None, shuffle=True, train_fraction=0.7, dev_fraction=0.15) -> None:
+    """Split WikiNER."""
     sents = []
     for filename in in_filenames:
         new_sents = read_sentences(filename, encoding)

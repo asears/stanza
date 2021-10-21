@@ -1,4 +1,6 @@
 """
+Run UD MWT tools.
+
 This script allows for training or testing on dev / test of the UD mwt tools.
 
 If run with a single treebank name, it will train or test that treebank.
@@ -15,7 +17,6 @@ itself is shadowing arguments, you can specify --extra_args as a
 parameter to mark where the mwt arguments start.
 """
 
-
 import logging
 import math
 
@@ -29,16 +30,17 @@ from stanza.utils.max_mwt_length import max_mwt_length
 
 logger = logging.getLogger('stanza')
 
-def check_mwt(filename):
-    """
-    Checks whether or not there are MWTs in the given conll file
-    """
+def check_mwt(filename) -> bool:
+    """Checks whether or not there are MWTs in the given conll file."""
     doc = CoNLL.conll2doc(filename)
     data = doc.get_mwt_expansions(False)
-    return len(data) > 0
+    has_mwt = len(data) > 0
+
+    return has_mwt
 
 def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
+                 temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
     short_language = short_name.split("_")[0]
 
     mwt_dir          = paths["MWT_DATA_DIR"]
@@ -58,7 +60,7 @@ def run_treebank(mode, paths, treebank, short_name,
     if not check_mwt(train_file):
         logger.info("No training MWTS found for %s.  Skipping" % treebank)
         return
-    
+
     if not check_mwt(dev_in_file):
         logger.warning("No dev MWTS found for %s.  Skipping" % treebank)
         return
@@ -86,11 +88,11 @@ def run_treebank(mode, paths, treebank, short_name,
                     '--shorthand', short_name,
                     '--mode', 'predict']
         dev_args = dev_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info("Running dev step with args: {0}".format(dev_args))
         mwt_expander.main(dev_args)
 
         results = common.run_eval_script_mwt(dev_gold_file, dev_output_file)
-        logger.info("Finished running dev set on\n{}\n{}".format(treebank, results))
+        logger.info("Finished running dev set on\n{0}\n{1}".format(treebank, results))
 
     if mode == Mode.SCORE_TEST:
         test_args = ['--eval_file', test_in_file,
@@ -100,15 +102,16 @@ def run_treebank(mode, paths, treebank, short_name,
                      '--shorthand', short_name,
                      '--mode', 'predict']
         test_args = test_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info("Running test step with args: {0}".format(test_args))
         mwt_expander.main(test_args)
 
         results = common.run_eval_script_mwt(test_gold_file, test_output_file)
-        logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
+        logger.info("Finished running test set on\n{0}\n{1}".format(treebank, results))
 
-def main():
+def main() -> None:
+    """Run treebank."""
     common.main(run_treebank, "mwt", "mwt_expander")
+
 
 if __name__ == "__main__":
     main()
-

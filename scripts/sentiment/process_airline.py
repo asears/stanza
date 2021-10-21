@@ -1,14 +1,19 @@
 """
-Airline tweets from Kaggle
-from https://www.kaggle.com/crowdflower/twitter-airline-sentiment/data#
-Some ratings seem questionable, but it doesn't hurt performance much, if at all
+Airline tweets from Kaggle.
+
+Dataset:
+https://www.kaggle.com/crowdflower/twitter-airline-sentiment/data#
+
+Notes:
+
+Some ratings seem questionable, but it doesn't hurt performance much, if at all.
 
 Files in the airline repo are csv, with quotes in "..." if they contained commas themselves.
 
 Accordingly, we use the csv module to read the files and output them in the format
 <class> <sentence>
 
-Run using 
+Example:
 
 python3 convert_airline.py Tweets.csv train.txt
 
@@ -16,10 +21,10 @@ If the first word is an @, it is removed, and after that, leading @ or # are rem
 For example:
 
 @AngledLuffa you must hate having Mox Opal #banned
--> 
+->
 you must hate having Mox Opal banned
-"""
 
+"""
 import csv
 import os
 import sys
@@ -36,7 +41,7 @@ with open(in_filename, newline='') as fin:
 
 tmp_filename = tempfile.NamedTemporaryFile(delete=False).name
 with open(tmp_filename, "w") as fout:
-    for line in lines[1:]:        
+    for line in lines[1:]:
         sentiment = line[1]
         if sentiment == 'negative':
             sentiment = '0'
@@ -45,7 +50,7 @@ with open(tmp_filename, "w") as fout:
         elif sentiment == 'positive':
             sentiment = '2'
         else:
-            raise ValueError("Unknown sentiment: {}".format(sentiment))
+            raise ValueError("Unknown sentiment: {0}".format(sentiment))
         # some of the tweets have \n in them
         utterance = line[10].replace("\n", " ")
         fout.write("%s %s\n" % (sentiment, utterance))
@@ -62,12 +67,11 @@ lines = [[line[0]] + process_utils.clean_tokenized_tweet(line[1:]) for line in l
 lines = [' '.join(x) for x in lines]
 
 # this would count @s if you cared enough to count
-#ats = Counter()
-#for line in lines:
+# ats = Counter()
+# for line in lines:
 #    ats.update([x for x in line.split() if x[0] == '@'])
 
 with open(out_filename, "w") as fout:
     for line in lines:
         fout.write(line)
         fout.write("\n")
-

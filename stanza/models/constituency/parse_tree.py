@@ -19,10 +19,12 @@ CONSTITUENT_SPLIT = re.compile("[-=#]")
 
 WORDS_TO_PRUNE = ('*E*', '*T*')
 
+
 class Tree(StanzaObject):
     """
     A data structure to represent a parse tree
     """
+
     def __init__(self, label=None, children=None):
         if children is None:
             self.children = EMPTY_CHILDREN
@@ -154,7 +156,7 @@ class Tree(StanzaObject):
 
         constituents = set()
         for tree in trees:
-            tree.visit_preorder(internal = lambda x: constituents.add(x.label))
+            tree.visit_preorder(internal=lambda x: constituents.add(x.label))
         return sorted(constituents)
 
     @staticmethod
@@ -167,7 +169,7 @@ class Tree(StanzaObject):
 
         tags = set()
         for tree in trees:
-            tree.visit_preorder(preterminal = lambda x: tags.add(x.label))
+            tree.visit_preorder(preterminal=lambda x: tags.add(x.label))
         return sorted(tags)
 
     @staticmethod
@@ -180,7 +182,7 @@ class Tree(StanzaObject):
 
         words = set()
         for tree in trees:
-            tree.visit_preorder(leaf = lambda x: words.add(x.label))
+            tree.visit_preorder(leaf=lambda x: words.add(x.label))
         return sorted(words)
 
     @staticmethod
@@ -195,9 +197,9 @@ class Tree(StanzaObject):
 
         words = Counter()
         for tree in trees:
-            tree.visit_preorder(leaf = lambda x: words.update([x.label]))
+            tree.visit_preorder(leaf=lambda x: words.update([x.label]))
         threshold = max(int(len(words) * threshold), 1)
-        return sorted(x[0] for x in words.most_common()[:-threshold-1:-1])
+        return sorted(x[0] for x in words.most_common()[: -threshold - 1 : -1])
 
     @staticmethod
     def get_root_labels(trees):
@@ -271,6 +273,7 @@ class Tree(StanzaObject):
         Returns a new tree
         """
         word_iterator = iter(words)
+
         def recursive_replace_words(subtree):
             if subtree.is_leaf():
                 word = next(word_iterator, None)
@@ -283,7 +286,6 @@ class Tree(StanzaObject):
         if any(True for _ in word_iterator):
             raise ValueError("Too many tags for the given tree")
         return new_tree
-
 
     def prune_none(self):
         """

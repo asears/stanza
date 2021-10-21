@@ -1,4 +1,6 @@
 """
+Run UD Lemmatizer.
+
 This script allows for training or testing on dev / test of the UD lemmatizer.
 
 If run with a single treebank name, it will train or test that treebank.
@@ -29,7 +31,8 @@ from stanza.utils.datasets.prepare_lemma_treebank import check_lemmas
 logger = logging.getLogger('stanza')
 
 def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
+                 temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
     short_language = short_name.split("_")[0]
 
     lemma_dir      = paths["LEMMA_DATA_DIR"]
@@ -55,7 +58,7 @@ def run_treebank(mode, paths, treebank, short_name,
                           "--output_file", dev_pred_file,
                           "--gold_file", dev_gold_file,
                           "--lang", short_name]
-            logger.info("Running identity lemmatizer for {} with args {}".format(treebank, train_args))
+            logger.info("Running identity lemmatizer for {0} with args {1}".format(treebank, train_args))
             identity_lemmatizer.main(train_args)
         elif mode == Mode.SCORE_TEST:
             train_args = ["--train_file", train_file,
@@ -63,8 +66,8 @@ def run_treebank(mode, paths, treebank, short_name,
                           "--output_file", test_pred_file,
                           "--gold_file", test_gold_file,
                           "--lang", short_name]
-            logger.info("Running identity lemmatizer for {} with args {}".format(treebank, train_args))
-            identity_lemmatizer.main(train_args)            
+            logger.info("Running identity lemmatizer for {0} with args {1}".format(treebank, train_args))
+            identity_lemmatizer.main(train_args)
     else:
         if mode == Mode.TRAIN:
             # ('UD_Czech-PDT', 'UD_Russian-SynTagRus', 'UD_German-HDT')
@@ -81,7 +84,7 @@ def run_treebank(mode, paths, treebank, short_name,
                           "--num_epoch", num_epochs,
                           "--mode", "train"]
             train_args = train_args + extra_args
-            logger.info("Running train lemmatizer for {} with args {}".format(treebank, train_args))
+            logger.info("Running train lemmatizer for {0} with args {1}".format(treebank, train_args))
             lemmatizer.main(train_args)
 
         if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -91,7 +94,7 @@ def run_treebank(mode, paths, treebank, short_name,
                         "--lang", short_name,
                         "--mode", "predict"]
             dev_args = dev_args + extra_args
-            logger.info("Running dev lemmatizer for {} with args {}".format(treebank, dev_args))
+            logger.info("Running dev lemmatizer for {0} with args {1}".format(treebank, dev_args))
             lemmatizer.main(dev_args)
 
         if mode == Mode.SCORE_TEST:
@@ -101,12 +104,13 @@ def run_treebank(mode, paths, treebank, short_name,
                          "--lang", short_name,
                          "--mode", "predict"]
             test_args = test_args + extra_args
-            logger.info("Running test lemmatizer for {} with args {}".format(treebank, test_args))
+            logger.info("Running test lemmatizer for {0} with args {1}".format(treebank, test_args))
             lemmatizer.main(test_args)
 
-def main():
+def main() -> None:
+    """Run treebank."""
     common.main(run_treebank, "lemma", "lemmatizer")
+
 
 if __name__ == "__main__":
     main()
-

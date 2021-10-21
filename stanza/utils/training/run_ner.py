@@ -41,10 +41,12 @@ DATASET_EXTRA_ARGS = {
 
 logger = logging.getLogger('stanza')
 
-def add_ner_args(parser):
+def add_ner_args(parser) -> None:
+    """Add NER args."""
     parser.add_argument('--charlm', default=None, type=str, help='Which charlm to run on.  Will use the default charlm for this language/model if not set.  Set to None to turn off charlm for languages with a default charlm')
 
-def find_charlm(direction, language, charlm):
+def find_charlm(direction, language, charlm) -> str:
+    """Find charlm."""
     saved_path = 'saved_models/charlm/{}_{}_{}_charlm.pt'.format(language, charlm, direction)
     if os.path.exists(saved_path):
         logger.info(f'Using model {saved_path} for {direction} charlm')
@@ -57,8 +59,9 @@ def find_charlm(direction, language, charlm):
 
     raise FileNotFoundError(f"Cannot find {direction} charlm in either {saved_path} or {resource_path}")
 
-def find_wordvec_pretrain(language):
-    # TODO: try to extract/remember the specific pretrain for the given model
+def find_wordvec_pretrain(language) -> str:
+    """Find Word Vector pretrain."""
+    # TODO(John Bauer): try to extract/remember the specific pretrain for the given model
     # That would be a good way to archive which pretrains are used for which NER models, anyway
     pretrain_path = '{}/{}/pretrain/*.pt'.format(DEFAULT_MODEL_DIR, language)
     pretrains = glob.glob(pretrain_path)
@@ -74,9 +77,10 @@ def find_wordvec_pretrain(language):
 # (usually not, in fact)
 # However, to keep the naming consistent, we leave the
 # method which does the training as run_treebank
-# TODO: rename treebank -> dataset everywhere
+# TODO(John Bauer): rename treebank -> dataset everywhere
 def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
+                 temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
     ner_dir = paths["NER_DATA_DIR"]
     language, dataset = short_name.split("_")
 
@@ -137,7 +141,7 @@ def run_treebank(mode, paths, treebank, short_name,
             # will throw an error if the pretrain can't be found
             wordvec_pretrain = find_wordvec_pretrain(language)
             train_args = train_args + ['--wordvec_pretrain_file', wordvec_pretrain]
-        logger.info("Running train step with args: {}".format(train_args))
+        logger.info("Running train step with args: {0}".format(train_args))
         ner_tagger.main(train_args)
 
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -146,7 +150,7 @@ def run_treebank(mode, paths, treebank, short_name,
                       '--shorthand', short_name,
                       '--mode', 'predict']
         dev_args = dev_args + charlm_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info("Running dev step with args: {0}".format(dev_args))
         ner_tagger.main(dev_args)
 
     if mode == Mode.SCORE_TEST or mode == Mode.TRAIN:
@@ -155,13 +159,14 @@ def run_treebank(mode, paths, treebank, short_name,
                       '--shorthand', short_name,
                       '--mode', 'predict']
         test_args = test_args + charlm_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info("Running test step with args: {0}".format(test_args))
         ner_tagger.main(test_args)
 
 
-def main():
+def main() -> None:
+    """Run treebank."""
     common.main(run_treebank, "ner", "nertagger", add_ner_args)
+
 
 if __name__ == "__main__":
     main()
-

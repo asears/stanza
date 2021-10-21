@@ -1,4 +1,6 @@
 """
+Run tokenizer.
+
 This script allows for training or testing on dev / test of the UD tokenizer.
 
 If run with a single treebank name, it will train or test that treebank.
@@ -29,8 +31,9 @@ from stanza.utils.training.common import Mode
 
 logger = logging.getLogger('stanza')
 
-def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
+
+def run_treebank(mode, paths, treebank, short_name: str, temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
     tokenize_dir = paths["TOKENIZE_DATA_DIR"]
 
     short_language = short_name.split("_")[0]
@@ -43,7 +46,7 @@ def run_treebank(mode, paths, treebank, short_name,
     train_type = "--txt_file"
     train_file = f"{tokenize_dir}/{short_name}.train.txt"
     train_dev_args = ["--dev_txt_file", dev_file, "--dev_label_file", f"{tokenize_dir}/{short_name}-ud-dev.toklabels"]
-    
+
     if short_language == "zh" or short_language.startswith("zh-"):
         extra_args = ["--skip_newline"] + extra_args
 
@@ -58,39 +61,48 @@ def run_treebank(mode, paths, treebank, short_name,
 
     if mode == Mode.TRAIN:
         seqlen = str(math.ceil(avg_sent_len(label_file) * 3 / 100) * 100)
+        # fmt:off
         train_args = ([label_type, label_file, train_type, train_file, "--lang", short_language,
                        "--max_seqlen", seqlen, "--mwt_json_file", dev_mwt] +
                       train_dev_args +
                       ["--dev_conll_gold", dev_gold, "--conll_file", dev_pred, "--shorthand", short_name] +
                       extra_args)
-        logger.info("Running train step with args: {}".format(train_args))
+        # fmt:on
+        logger.info("Running train step with args: {0}".format(train_args))
         tokenizer.main(train_args)
-    
+
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
+        # fmt: off
         dev_args = ["--mode", "predict", dev_type, dev_file, "--lang", short_language,
                     "--conll_file", dev_pred, "--shorthand", short_name, "--mwt_json_file", dev_mwt]
+        # fmt: on
         dev_args = dev_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info("Running dev step with args: {0}".format(dev_args))
         tokenizer.main(dev_args)
 
-        # TODO: log these results?  The original script logged them to
+        # TODO(John Bauer): log these results?  The original script logged them to
         # echo $results $args >> ${TOKENIZE_DATA_DIR}/${short}.results
 
         results = common.run_eval_script_tokens(dev_gold, dev_pred)
-        logger.info("Finished running dev set on\n{}\n{}".format(treebank, results))
+        logger.info("Finished running dev set on\n{0}\n{1}".format(treebank, results))
 
     if mode == Mode.SCORE_TEST:
+        # fmt: off
         test_args = ["--mode", "predict", test_type, test_file, "--lang", short_language,
                      "--conll_file", test_pred, "--shorthand", short_name, "--mwt_json_file", test_mwt]
+        # fmt: on
         test_args = test_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info("Running test step with args: {0}".format(test_args))
         tokenizer.main(test_args)
 
         results = common.run_eval_script_tokens(test_gold, test_pred)
-        logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
+        logger.info("Finished running test set on\n{0}\n{1}".format(treebank, results))
 
-def main():
+
+def main() -> None:
+    """Run treebank tokenizer."""
     common.main(run_treebank, "tokenize", "tokenizer")
-        
+
+
 if __name__ == "__main__":
     main()

@@ -24,25 +24,38 @@ from stanza.utils.datasets.constituency.convert_it_turin import convert_it_turin
 import stanza.utils.datasets.constituency.vtb_convert as vtb_convert
 import stanza.utils.datasets.constituency.vtb_split as vtb_split
 
+
 def process_it_turin(paths):
-    """
-    Convert the it_turin dataset
+    """Process and convert the it_turin dataset.
+
+    :param paths: List of paths for data dirs.
+    :type paths: [type]
     """
     input_dir = os.path.join(paths["CONSTITUENCY_BASE"], "italian")
     output_dir = paths["CONSTITUENCY_DATA_DIR"]
     convert_it_turin(input_dir, output_dir)
 
-def process_vlsp09(paths):
+
+def process_vlsp09(paths) -> None:
     """
     TODO: this currently doesn't quite work because some files, especially 51496.prd, have broken trees
     """
     short_name = "vi_vlsp09"
-    vlsp_path = os.path.join(paths["CONSTITUENCY_BASE"], "vietnamese", "VietTreebank_VLSP_SP73", "Kho ngu lieu 10000 cay cu phap")
+    vlsp_path = os.path.join(
+        paths["CONSTITUENCY_BASE"], "vietnamese", "VietTreebank_VLSP_SP73", "Kho ngu lieu 10000 cay cu phap"
+    )
     with tempfile.TemporaryDirectory() as tmp_output_path:
         vtb_convert.convert_dir(vlsp_path, tmp_output_path)
         vtb_split.split_files(tmp_output_path, paths["CONSTITUENCY_DATA_DIR"], short_name)
 
-def main(dataset_name):
+
+def main(dataset_name: str) -> None:
+    """Prepare constituency dataset
+
+    :param dataset_name: dataset name
+    :type dataset_name: str
+    :raises ValueError: unhandled dataset
+    """
     paths = default_paths.get_default_paths()
 
     random.seed(1234)
@@ -54,7 +67,6 @@ def main(dataset_name):
     else:
         raise ValueError(f"dataset {dataset_name} currently not handled")
 
+
 if __name__ == '__main__':
     main(sys.argv[1])
-
-

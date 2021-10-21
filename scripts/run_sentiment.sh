@@ -1,5 +1,7 @@
 
-# Run classifier.py to build a sentiment model
+#!/bin/bash
+# Run classifier.py to build a sentiment model.
+#
 # Options:
 #   -b <base directory>
 #   -d sst_fiveclass | sst_binary | sst_threeclass

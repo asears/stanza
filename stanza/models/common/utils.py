@@ -20,8 +20,7 @@ logger = logging.getLogger('stanza')
 
 # filenames
 def get_wordvec_file(wordvec_dir, shorthand, wordvec_type=None):
-    """ Lookup the name of the word vectors file, given a directory and the language shorthand.
-    """
+    """Lookup the name of the word vectors file, given a directory and the language shorthand."""
     lcode, tcode = shorthand.split('_', 1)
     lang = lcode2lang[lcode]
     # locate language folder
@@ -31,13 +30,19 @@ def get_wordvec_file(wordvec_dir, shorthand, wordvec_type=None):
     if wordvec_type is not None:
         lang_dir = os.path.join(wordvec_dir, wordvec_type, lang)
         if not os.path.exists(lang_dir):
-            raise FileNotFoundError("Word vector type {} was specified, but directory {} does not exist".format(wordvec_type, lang_dir))
-    elif os.path.exists(word2vec_dir): # first try word2vec
+            raise FileNotFoundError(
+                "Word vector type {} was specified, but directory {} does not exist".format(wordvec_type, lang_dir)
+            )
+    elif os.path.exists(word2vec_dir):  # first try word2vec
         lang_dir = word2vec_dir
-    elif os.path.exists(fasttext_dir): # otherwise try fasttext
+    elif os.path.exists(fasttext_dir):  # otherwise try fasttext
         lang_dir = fasttext_dir
     else:
-        raise FileNotFoundError("Cannot locate word vector directory for language: {}  Looked in {} and {}".format(lang, word2vec_dir, fasttext_dir))
+        raise FileNotFoundError(
+            "Cannot locate word vector directory for language: {}  Looked in {} and {}".format(
+                lang, word2vec_dir, fasttext_dir
+            )
+        )
     # look for wordvec filename in {lang_dir}
     filename = os.path.join(lang_dir, '{}.vectors'.format(lcode))
     if os.path.exists(filename + ".xz"):
@@ -46,9 +51,10 @@ def get_wordvec_file(wordvec_dir, shorthand, wordvec_type=None):
         filename = filename + ".txt"
     return filename
 
+
 # training schedule
 def get_adaptive_eval_interval(cur_dev_size, thres_dev_size, base_interval):
-    """ Adjust the evaluation interval adaptively.
+    """Adjust the evaluation interval adaptively.
     If cur_dev_size <= thres_dev_size, return base_interval;
     else, linearly increase the interval (round to integer times of base interval).
     """
@@ -58,6 +64,7 @@ def get_adaptive_eval_interval(cur_dev_size, thres_dev_size, base_interval):
         alpha = round(cur_dev_size / thres_dev_size)
         return base_interval * alpha
 
+
 # ud utils
 def ud_scores(gold_conllu_file, system_conllu_file):
     gold_ud = ud_eval.load_conllu_file(gold_conllu_file)
@@ -66,15 +73,19 @@ def ud_scores(gold_conllu_file, system_conllu_file):
 
     return evaluation
 
+
 def harmonic_mean(a, weights=None):
     if any([x == 0 for x in a]):
         return 0
     else:
-        assert weights is None or len(weights) == len(a), 'Weights has length {} which is different from that of the array ({}).'.format(len(weights), len(a))
+        assert weights is None or len(weights) == len(
+            a
+        ), 'Weights has length {} which is different from that of the array ({}).'.format(len(weights), len(a))
         if weights is None:
-            return len(a) / sum([1/x for x in a])
+            return len(a) / sum([1 / x for x in a])
         else:
-            return sum(weights) / sum(w/x for x, w in zip(a, weights))
+            return sum(weights) / sum(w / x for x, w in zip(a, weights))
+
 
 # torch utils
 def get_optimizer(name, parameters, lr, betas=(0.9, 0.999), eps=1e-8, momentum=0):
@@ -85,13 +96,15 @@ def get_optimizer(name, parameters, lr, betas=(0.9, 0.999), eps=1e-8, momentum=0
     elif name == 'adam':
         return torch.optim.Adam(parameters, lr=lr, betas=betas, eps=eps)
     elif name == 'adamax':
-        return torch.optim.Adamax(parameters) # use default lr
+        return torch.optim.Adamax(parameters)  # use default lr
     else:
         raise Exception("Unsupported optimizer: {}".format(name))
+
 
 def change_lr(optimizer, new_lr):
     for param_group in optimizer.param_groups:
         param_group['lr'] = new_lr
+
 
 def flatten_indices(seq_lens, width):
     flat = []
@@ -100,10 +113,12 @@ def flatten_indices(seq_lens, width):
             flat.append(i * width + j)
     return flat
 
+
 def set_cuda(var, cuda):
     if cuda:
         return var.cuda()
     return var
+
 
 def keep_partial_grad(grad, topk):
     """
@@ -113,12 +128,14 @@ def keep_partial_grad(grad, topk):
     grad.data[topk:].zero_()
     return grad
 
+
 # other utils
 def ensure_dir(d, verbose=True):
     if not os.path.exists(d):
         if verbose:
             logger.info("Directory {} does not exist; creating...".format(d))
         os.makedirs(d)
+
 
 def save_config(config, path, verbose=True):
     with open(path, 'w') as outfile:
@@ -127,6 +144,7 @@ def save_config(config, path, verbose=True):
         print("Config saved to file {}".format(path))
     return config
 
+
 def load_config(path, verbose=True):
     with open(path) as f:
         config = json.load(f)
@@ -134,14 +152,17 @@ def load_config(path, verbose=True):
         print("Config loaded from file {}".format(path))
     return config
 
+
 def print_config(config):
     info = "Running with the following configs:\n"
-    for k,v in config.items():
+    for k, v in config.items():
         info += "\t{} : {}\n".format(k, str(v))
     logger.info("\n" + info + "\n")
 
+
 def normalize_text(text):
     return unicodedata.normalize('NFD', text)
+
 
 def unmap_with_copy(indices, src_tokens, vocab):
     """
@@ -154,10 +175,11 @@ def unmap_with_copy(indices, src_tokens, vocab):
             if idx >= 0:
                 words.append(vocab.id2word[idx])
             else:
-                idx = -idx - 1 # flip and minus 1
+                idx = -idx - 1  # flip and minus 1
                 words.append(tokens[idx])
         result += [words]
     return result
+
 
 def prune_decoded_seqs(seqs):
     """
@@ -172,6 +194,7 @@ def prune_decoded_seqs(seqs):
             out += [s]
     return out
 
+
 def prune_hyp(hyp):
     """
     Prune a decoded hypothesis
@@ -182,12 +205,14 @@ def prune_hyp(hyp):
     else:
         return hyp
 
+
 def prune(data_list, lens):
     assert len(data_list) == len(lens)
     nl = []
     for d, l in zip(data_list, lens):
         nl.append(d[:l])
     return nl
+
 
 def sort(packed, ref, reverse=True):
     """
@@ -199,6 +224,7 @@ def sort(packed, ref, reverse=True):
     sorted_packed = [list(t) for t in zip(*sorted(zip(*packed), reverse=reverse))]
     return tuple(sorted_packed[1:])
 
+
 def unsort(sorted_list, oidx):
     """
     Unsort a sorted list, based on the original idx.
@@ -208,6 +234,7 @@ def unsort(sorted_list, oidx):
         return []
     _, unsorted = [list(t) for t in zip(*sorted(zip(oidx, sorted_list)))]
     return unsorted
+
 
 def sort_with_indices(data, key=None, reverse=False):
     """
@@ -226,6 +253,7 @@ def sort_with_indices(data, key=None, reverse=False):
     result = tuple(zip(*ordered))
     return result[1], result[0]
 
+
 def split_into_batches(data, batch_size):
     """
     Returns a list of intervals so that each interval is either <= batch_size or one element long.
@@ -243,8 +271,8 @@ def split_into_batches(data, batch_size):
             # guess we'll just hope the model can handle a batch of this size after all
             if interval_size > 0:
                 intervals.append((interval_start, idx))
-            intervals.append((idx, idx+1))
-            interval_start = idx+1
+            intervals.append((idx, idx + 1))
+            interval_start = idx + 1
             interval_size = 0
         elif len(line) + interval_size > batch_size:
             # this line puts us over batch_size
@@ -257,6 +285,7 @@ def split_into_batches(data, batch_size):
         # there's some leftover
         intervals.append((interval_start, len(data)))
     return intervals
+
 
 def tensor_unsort(sorted_tensor, oidx):
     """
@@ -282,6 +311,7 @@ def set_random_seed(seed, cuda):
         torch.cuda.manual_seed(seed)
     return seed
 
+
 def find_missing_tags(known_tags, test_tags):
     if isinstance(known_tags, list) and isinstance(known_tags[0], list):
         known_tags = set(x for y in known_tags for x in y)
@@ -289,6 +319,7 @@ def find_missing_tags(known_tags, test_tags):
         test_tags = sorted(set(x for y in test_tags for x in y))
     missing_tags = sorted(x for x in test_tags if x not in known_tags)
     return missing_tags
+
 
 def warn_missing_tags(known_tags, test_tags, test_set_name):
     """
@@ -301,6 +332,7 @@ def warn_missing_tags(known_tags, test_tags, test_set_name):
         logger.warning("Found tags in {} missing from the expected tag set: {}".format(test_set_name, missing_tags))
         return True
     return False
+
 
 def get_tqdm():
     """
@@ -316,17 +348,22 @@ def get_tqdm():
       tqdm(list)
     """
     try:
-        ipy_str = str(type(get_ipython()))
+        ipy_str = str(type(get_ipython()))  # noqa:F821
         if 'zmqshell' in ipy_str:
             from tqdm import tqdm_notebook as tqdm
+
             return tqdm
         if 'terminal' in ipy_str:
             from tqdm import tqdm
+
             return tqdm
     except:
         if sys.stderr.isatty():
             from tqdm import tqdm
+
             return tqdm
+
     def tqdm(iterable, **kwargs):
         return iterable
+
     return tqdm

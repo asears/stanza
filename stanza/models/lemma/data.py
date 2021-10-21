@@ -13,6 +13,7 @@ from stanza.models.common.doc import *
 
 logger = logging.getLogger('stanza')
 
+
 class DataLoader:
     def __init__(self, doc, batch_size, args, vocab=None, evaluation=False, conll_only=False, skip=None):
         self.batch_size = batch_size
@@ -23,7 +24,7 @@ class DataLoader:
 
         data = self.load_doc(self.doc)
 
-        if conll_only: # only load conll file
+        if conll_only:  # only load conll file
             return
 
         if skip is not None:
@@ -53,7 +54,7 @@ class DataLoader:
         self.num_examples = len(data)
 
         # chunk into batches
-        data = [data[i:i+batch_size] for i in range(0, len(data), batch_size)]
+        data = [data[i : i + batch_size] for i in range(0, len(data), batch_size)]
         self.data = data
         logger.debug("{} batches created.".format(len(data)))
 
@@ -84,7 +85,7 @@ class DataLoader:
         return len(self.data)
 
     def __getitem__(self, key):
-        """ Get a batch with index. """
+        """Get a batch with index."""
         if not isinstance(key, int):
             raise TypeError
         if key < 0 or key >= len(self.data):

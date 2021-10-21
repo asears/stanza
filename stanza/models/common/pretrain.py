@@ -15,19 +15,21 @@ from stanza.resources.common import DEFAULT_MODEL_DIR
 
 logger = logging.getLogger('stanza')
 
+
 class PretrainedWordVocab(BaseVocab):
     def build_vocab(self):
         self._id2unit = VOCAB_PREFIX + self.data
-        self._unit2id = {w:i for i, w in enumerate(self._id2unit)}
+        self._unit2id = {w: i for i, w in enumerate(self._id2unit)}
 
     def normalize_unit(self, unit):
         unit = super().normalize_unit(unit)
         if unit:
-            unit = unit.replace(" ","\xa0")
+            unit = unit.replace(" ", "\xa0")
         return unit
 
+
 class Pretrain:
-    """ A loader and saver for pretrained embeddings. """
+    """A loader and saver for pretrained embeddings."""
 
     def __init__(self, filename=None, vec_filename=None, max_vocab=-1, save_to_file=True):
         self.filename = filename
@@ -57,11 +59,18 @@ class Pretrain:
             except (KeyboardInterrupt, SystemExit):
                 raise
             except BaseException as e:
-                logger.warning("Pretrained file exists but cannot be loaded from {}, due to the following exception:\n\t{}".format(self.filename, e))
+                logger.warning(
+                    "Pretrained file exists but cannot be loaded from {}, due to the following exception:\n\t{}".format(
+                        self.filename, e
+                    )
+                )
                 vocab, emb = self.read_pretrain()
         else:
             if self.filename is not None:
-                logger.info("Pretrained filename %s specified, but file does not exist.  Attempting to load from text file" % self.filename)
+                logger.info(
+                    "Pretrained filename %s specified, but file does not exist.  Attempting to load from text file"
+                    % self.filename
+                )
             vocab, emb = self.read_pretrain()
 
         self._vocab = vocab
@@ -81,8 +90,9 @@ class Pretrain:
         except (KeyboardInterrupt, SystemExit):
             raise
         except BaseException as e:
-            logger.warning("Saving pretrained data failed due to the following exception... continuing anyway.\n\t{}".format(e))
-
+            logger.warning(
+                "Saving pretrained data failed due to the following exception... continuing anyway.\n\t{}".format(e)
+            )
 
     def write_text(self, filename):
         """
@@ -96,7 +106,6 @@ class Pretrain:
                 fout.write("\t".join(map(str, row)))
                 fout.write("\n")
 
-
     def read_pretrain(self):
         # load from pretrained filename
         if self._vec_filename is None:
@@ -106,22 +115,22 @@ class Pretrain:
         # first try reading as xz file, if failed retry as text file
         try:
             words, emb, failed = self.read_from_file(self._vec_filename, open_func=lzma.open)
-        except lzma.LZMAError as err:
+        except lzma.LZMAError:
             logger.warning("Cannot decode vector file %s as xz file. Retrying as text file..." % self._vec_filename)
             words, emb, failed = self.read_from_file(self._vec_filename, open_func=open)
 
-        if failed > 0: # recover failure
+        if failed > 0:  # recover failure
             emb = emb[:-failed]
         if len(emb) - len(VOCAB_PREFIX) != len(words):
             raise RuntimeError("Loaded number of vectors does not match number of words.")
-        
+
         # Use a fixed vocab size
         if self._max_vocab > len(VOCAB_PREFIX) and self._max_vocab < len(words):
-            words = words[:self._max_vocab - len(VOCAB_PREFIX)]
-            emb = emb[:self._max_vocab]
+            words = words[: self._max_vocab - len(VOCAB_PREFIX)]
+            emb = emb[: self._max_vocab]
 
         vocab = PretrainedWordVocab(words)
-        
+
         return vocab, emb
 
     def read_from_file(self, filename, open_func=open):
@@ -149,7 +158,7 @@ class Pretrain:
                     continue
 
                 line = tab_space_pattern.split((line.rstrip()))
-                emb[i+len(VOCAB_PREFIX)-1-failed, :] = [float(x) for x in line[-cols:]]
+                emb[i + len(VOCAB_PREFIX) - 1 - failed, :] = [float(x) for x in line[-cols:]]
                 # if there were word pieces separated with spaces, rejoin them with nbsp instead
                 # this way, the normalize_unit method in vocab.py can find the word at test time
                 words.append('\xa0'.join(line[:-cols]))
@@ -209,4 +218,3 @@ if __name__ == '__main__':
     # 2nd load: load saved pt file
     pretrain = Pretrain('test.pt', 'test.txt')
     print(pretrain.emb)
-

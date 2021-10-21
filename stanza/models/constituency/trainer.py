@@ -59,7 +59,6 @@ class Trainer:
         torch.save(checkpoint, filename, _use_new_zipfile_serialization=False)
         logger.info("Model saved to %s", filename)
 
-
     @staticmethod
     def load(filename, pt, forward_charlm, backward_charlm, use_gpu, args=None, load_optimizer=False):
         """
@@ -303,7 +302,7 @@ def build_trainer(args, train_trees, dev_trees, pt, forward_charlm, backward_cha
     # pretrain
     # train_trees, dev_trees
     # lists of transitions, internal nodes, and root states the parser needs to be aware of
-
+    # TODO(John Bauer) model_load_file is not defined
     if args['finetune'] or (args['maybe_finetune'] and os.path.exists(model_load_file)):
         logger.info("Loading model to continue training from %s", model_load_file)
         trainer = Trainer.load(model_load_file, pt, forward_charlm, backward_charlm, args['cuda'], args, load_optimizer=True)

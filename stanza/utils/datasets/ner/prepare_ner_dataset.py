@@ -120,7 +120,8 @@ import stanza.utils.datasets.ner.prepare_ner_file as prepare_ner_file
 
 SHARDS = ('train', 'dev', 'test')
 
-def convert_bio_to_json(base_input_path, base_output_path, short_name, suffix="bio"):
+
+def convert_bio_to_json(base_input_path, base_output_path, short_name: str, suffix="bio"):
     """
     Convert BIO files to json
 
@@ -136,6 +137,7 @@ def convert_bio_to_json(base_input_path, base_output_path, short_name, suffix="b
         print("Converting %s to %s" % (input_filename, output_filename))
         prepare_ner_file.process_dataset(input_filename, output_filename)
 
+
 def process_turku(paths):
     short_name = 'fi_turku'
     base_input_path = os.path.join(paths["NERBASE"], short_name)
@@ -147,6 +149,7 @@ def process_turku(paths):
         output_filename = os.path.join(base_output_path, '%s.%s.json' % (short_name, shard))
         prepare_ner_file.process_dataset(input_filename, output_filename)
 
+
 def process_it_fbk(paths):
     short_name = "it_fbk"
     base_input_path = os.path.join(paths["NERBASE"], short_name)
@@ -154,7 +157,9 @@ def process_it_fbk(paths):
     if not os.path.exists(csv_file):
         raise FileNotFoundError("Cannot find the FBK dataset in its expected location: {}".format(csv_file))
     base_output_path = paths["NER_DATA_DIR"]
-    split_wikiner(base_output_path, csv_file, prefix=short_name, suffix="io", shuffle=False, train_fraction=0.8, dev_fraction=0.1)
+    split_wikiner(
+        base_output_path, csv_file, prefix=short_name, suffix="io", shuffle=False, train_fraction=0.8, dev_fraction=0.1
+    )
     convert_bio_to_json(base_output_path, base_output_path, short_name, suffix="io")
 
 
@@ -163,7 +168,9 @@ def process_languk(paths):
     base_input_path = os.path.join(paths["NERBASE"], 'lang-uk', 'ner-uk', 'data')
     base_output_path = paths["NER_DATA_DIR"]
     train_test_split_fname = os.path.join(paths["NERBASE"], 'lang-uk', 'ner-uk', 'doc', 'dev-test-split.txt')
-    convert_bsf_to_beios.convert_bsf_in_folder(base_input_path, base_output_path, train_test_split_file=train_test_split_fname)
+    convert_bsf_to_beios.convert_bsf_in_folder(
+        base_input_path, base_output_path, train_test_split_file=train_test_split_fname
+    )
     for shard in SHARDS:
         input_filename = os.path.join(base_output_path, convert_bsf_to_beios.CORPUS_NAME, "%s.bio" % shard)
         if not os.path.exists(input_filename):
@@ -172,7 +179,7 @@ def process_languk(paths):
         prepare_ner_file.process_dataset(input_filename, output_filename)
 
 
-def process_ijc(paths, short_name):
+def process_ijc(paths, short_name: str) -> None:
     """
     Splits the ijc Hindi dataset in train, dev, test
 
@@ -195,7 +202,10 @@ def process_ijc(paths, short_name):
     train_files = glob.glob(train_input_path)
     train_csv_file = os.path.join(base_output_path, short_name + ".train.csv")
     dev_csv_file = os.path.join(base_output_path, short_name + ".dev.csv")
-    print("Converting training input from %s to space separated files in %s and %s" % (train_input_path, train_csv_file, dev_csv_file))
+    print(
+        "Converting training input from %s to space separated files in %s and %s"
+        % (train_input_path, train_csv_file, dev_csv_file)
+    )
     convert_ijc.convert_split_ijc(train_files, train_csv_file, dev_csv_file)
 
     for csv_file, shard in zip((train_csv_file, dev_csv_file, test_csv_file), SHARDS):
@@ -214,23 +224,24 @@ def process_fire_2013(paths, dataset):
     short_name = treebank_to_short_name(dataset)
     langcode, _ = short_name.split("_")
     short_name = "%s_fire2013" % langcode
-    if not langcode in ("hi", "en", "ta", "bn", "mal"):
+    if langcode not in ("hi", "en", "ta", "bn", "mal"):
         raise ValueError("Language %s not one of the FIRE 2013 languages")
     language = lcode2lang[langcode].lower()
-    
+
     # for example, FIRE2013/hindi_train
     base_input_path = os.path.join(paths["NERBASE"], "FIRE2013", "%s_train" % language)
     base_output_path = paths["NER_DATA_DIR"]
 
     train_csv_file = os.path.join(base_output_path, "%s.train.csv" % short_name)
-    dev_csv_file   = os.path.join(base_output_path, "%s.dev.csv" % short_name)
-    test_csv_file  = os.path.join(base_output_path, "%s.test.csv" % short_name)
+    dev_csv_file = os.path.join(base_output_path, "%s.dev.csv" % short_name)
+    test_csv_file = os.path.join(base_output_path, "%s.test.csv" % short_name)
 
     convert_fire_2013.convert_fire_2013(base_input_path, train_csv_file, dev_csv_file, test_csv_file)
 
     for csv_file, shard in zip((train_csv_file, dev_csv_file, test_csv_file), SHARDS):
         output_filename = os.path.join(base_output_path, '%s.%s.json' % (short_name, shard))
         prepare_ner_file.process_dataset(csv_file, output_filename)
+
 
 def process_wikiner(paths, dataset):
     short_name = treebank_to_short_name(dataset)
@@ -261,10 +272,12 @@ def process_wikiner(paths, dataset):
         print("Converting %s to %s" % (input_filename, output_filename))
         prepare_ner_file.process_dataset(input_filename, output_filename)
 
+
 def get_rgai_input_path(paths):
     return os.path.join(paths["NERBASE"], "hu_rgai")
 
-def process_rgai(paths, short_name):
+
+def process_rgai(paths, short_name: str):
     base_output_path = paths["NER_DATA_DIR"]
     base_input_path = get_rgai_input_path(paths)
 
@@ -283,8 +296,10 @@ def process_rgai(paths, short_name):
     convert_rgai.convert_rgai(base_input_path, base_output_path, short_name, use_business, use_criminal)
     convert_bio_to_json(base_output_path, base_output_path, short_name)
 
+
 def get_nytk_input_path(paths):
     return os.path.join(paths["NERBASE"], "NYTK-NerKor")
+
 
 def process_nytk(paths):
     """
@@ -296,6 +311,7 @@ def process_nytk(paths):
 
     convert_nytk.convert_nytk(base_input_path, base_output_path, short_name)
     convert_bio_to_json(base_output_path, base_output_path, short_name)
+
 
 def concat_files(output_file, *input_files):
     input_lines = []
@@ -333,7 +349,8 @@ def process_hu_combined(paths):
 
     convert_bio_to_json(base_output_path, base_output_path, short_name)
 
-def process_bsnlp(paths, short_name):
+
+def process_bsnlp(paths, short_name: str):
     """
     Process files downloaded from http://bsnlp.cs.helsinki.fi/bsnlp-2019/shared_task.html
 
@@ -349,43 +366,49 @@ def process_bsnlp(paths, short_name):
     base_output_path = paths["NER_DATA_DIR"]
 
     output_train_filename = os.path.join(base_output_path, "%s.train.csv" % short_name)
-    output_dev_filename   = os.path.join(base_output_path, "%s.dev.csv" % short_name)
-    output_test_filename  = os.path.join(base_output_path, "%s.test.csv" % short_name)
+    output_dev_filename = os.path.join(base_output_path, "%s.dev.csv" % short_name)
+    output_test_filename = os.path.join(base_output_path, "%s.test.csv" % short_name)
 
     language = short_name.split("_")[0]
 
     convert_bsnlp.convert_bsnlp(language, base_test_path, output_test_filename)
     convert_bsnlp.convert_bsnlp(language, base_train_path, output_train_filename, output_dev_filename)
 
-    for shard, csv_file in zip(('train', 'dev', 'test'), (output_train_filename, output_dev_filename, output_test_filename)):
+    for shard, csv_file in zip(
+        ('train', 'dev', 'test'), (output_train_filename, output_dev_filename, output_test_filename)
+    ):
         output_filename = os.path.join(base_output_path, '%s.%s.json' % (short_name, shard))
         prepare_ner_file.process_dataset(csv_file, output_filename)
 
+
 NCHLT_LANGUAGE_MAP = {
-    "af":  "NCHLT Afrikaans Named Entity Annotated Corpus",
+    "af": "NCHLT Afrikaans Named Entity Annotated Corpus",
     # none of the following have UD datasets as of 2.8.  Until they
     # exist, we assume the language codes NCHTL are sufficient
-    "nr":  "NCHLT isiNdebele Named Entity Annotated Corpus",
+    "nr": "NCHLT isiNdebele Named Entity Annotated Corpus",
     "nso": "NCHLT Sepedi Named Entity Annotated Corpus",
-    "ss":  "NCHLT Siswati Named Entity Annotated Corpus",
-    "st":  "NCHLT Sesotho Named Entity Annotated Corpus",
-    "tn":  "NCHLT Setswana Named Entity Annotated Corpus",
-    "ts":  "NCHLT Xitsonga Named Entity Annotated Corpus",
-    "ve":  "NCHLT Tshivenda Named Entity Annotated Corpus",
-    "xh":  "NCHLT isiXhosa Named Entity Annotated Corpus",
-    "zu":  "NCHLT isiZulu Named Entity Annotated Corpus",
+    "ss": "NCHLT Siswati Named Entity Annotated Corpus",
+    "st": "NCHLT Sesotho Named Entity Annotated Corpus",
+    "tn": "NCHLT Setswana Named Entity Annotated Corpus",
+    "ts": "NCHLT Xitsonga Named Entity Annotated Corpus",
+    "ve": "NCHLT Tshivenda Named Entity Annotated Corpus",
+    "xh": "NCHLT isiXhosa Named Entity Annotated Corpus",
+    "zu": "NCHLT isiZulu Named Entity Annotated Corpus",
 }
 
-def process_nchlt(paths, short_name):
+
+def process_nchlt(paths, short_name: str):
     language = short_name.split("_")[0]
-    if not language in NCHLT_LANGUAGE_MAP:
+    if language not in NCHLT_LANGUAGE_MAP:
         raise ValueError("Language %s not part of NCHLT" % language)
     short_name = "%s_nchlt" % language
 
     base_input_path = os.path.join(paths["NERBASE"], "NCHLT", NCHLT_LANGUAGE_MAP[language], "*Full.txt")
     input_files = glob.glob(base_input_path)
     if len(input_files) == 0:
-        raise FileNotFoundError("Cannot find NCHLT dataset in '%s'  Did you remember to download the file?" % base_input_path)
+        raise FileNotFoundError(
+            "Cannot find NCHLT dataset in '%s'  Did you remember to download the file?" % base_input_path
+        )
 
     if len(input_files) > 1:
         raise ValueError("Unexpected number of files matched '%s'  There should only be one" % base_input_path)
@@ -395,7 +418,7 @@ def process_nchlt(paths, short_name):
     convert_bio_to_json(base_output_path, base_output_path, short_name)
 
 
-def main(dataset_name):
+def main(dataset_name: str):
     paths = default_paths.get_default_paths()
 
     random.seed(1234)
@@ -424,6 +447,7 @@ def main(dataset_name):
         process_nchlt(paths, dataset_name)
     else:
         raise ValueError(f"dataset {dataset_name} currently not handled")
+
 
 if __name__ == '__main__':
     main(sys.argv[1])

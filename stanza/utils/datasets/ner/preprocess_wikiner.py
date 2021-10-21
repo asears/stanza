@@ -1,12 +1,14 @@
 """
-Converts the WikiNER data format to a format usable by our processing tools
+Converts the WikiNER data format to a format usable by our processing tools.
 
 python preprocess_wikiner input output
 """
 
 import sys
 
-def preprocess_wikiner(input_file, output_file):
+
+def preprocess_wikiner(input_file, output_file) -> None:
+    """Preprocess WikiNER."""
     with open(input_file) as fin:
         with open(output_file, "w") as fout:
             for line in fin:
@@ -32,6 +34,7 @@ def preprocess_wikiner(input_file, output_file):
                         for chunk in subtext:
                             fout.write("{} {}\n".format(chunk, tag))
                 fout.write("\n")
+
 
 if __name__ == '__main__':
     preprocess_wikiner(sys.argv[1], sys.argv[2])

@@ -8,6 +8,7 @@ from six.moves import http_client as HTTPStatus
 
 from stanza.protobuf import Document, parseFromDelimitedString, writeToDelimitedString
 
+
 class Annotator(Process):
     """
     This annotator base class hosts a lightweight server that accepts
@@ -17,6 +18,7 @@ class Annotator(Process):
     This class takes care of defining appropriate endpoints to interface
     with CoreNLP.
     """
+
     @property
     def name(self):
         """
@@ -59,7 +61,7 @@ class Annotator(Process):
             "generic.endpoint": "http://{}:{}".format(self.host, self.port),
             "generic.requires": ",".join(self.requires),
             "generic.provides": ",".join(self.provides),
-            }
+        }
 
     class _Handler(BaseHTTPRequestHandler):
         annotator = None
@@ -71,7 +73,8 @@ class Annotator(Process):
             """
             Handle a ping request
             """
-            if not self.path.endswith("/"): self.path += "/"
+            if not self.path.endswith("/"):
+                self.path += "/"
             if self.path == "/ping/":
                 msg = "pong".encode("UTF-8")
 
@@ -88,7 +91,8 @@ class Annotator(Process):
             """
             Handle an annotate request
             """
-            if not self.path.endswith("/"): self.path += "/"
+            if not self.path.endswith("/"):
+                self.path += "/"
             if self.path == "/annotate/":
                 # Read message
                 length = int(self.headers.get('content-length'))

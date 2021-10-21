@@ -28,6 +28,7 @@ END_CHAR = 'end_char'
 TYPE = 'type'
 SENTIMENT = 'sentiment'
 
+
 def _readonly_setter(self, name):
     full_classname = self.__class__.__module__
     if full_classname is None:
@@ -35,6 +36,7 @@ def _readonly_setter(self, name):
     else:
         full_classname += '.' + self.__class__.__qualname__
     raise ValueError(f'Property "{name}" of "{full_classname}" is read-only.')
+
 
 class StanzaObject(object):
     """
@@ -49,7 +51,9 @@ class StanzaObject(object):
         """
 
         if hasattr(cls, name):
-            raise ValueError(f'Property by the name of {name} already exists in {cls}. Maybe you want to find another name?')
+            raise ValueError(
+                f'Property by the name of {name} already exists in {cls}. Maybe you want to find another name?'
+            )
 
         setattr(cls, f'_{name}', default)
         if getter is None:
@@ -59,12 +63,12 @@ class StanzaObject(object):
 
         setattr(cls, name, property(getter, setter))
 
+
 class Document(StanzaObject):
-    """ A document class that stores attributes of a document and carries a list of sentences.
-    """
+    """A document class that stores attributes of a document and carries a list of sentences."""
 
     def __init__(self, sentences, text=None, comments=None):
-        """ Construct a document given a list of sentences in the form of lists of CoNLL-U dicts.
+        """Construct a document given a list of sentences in the form of lists of CoNLL-U dicts.
 
         Args:
             sentences: a list of sentences, which being a list of token entry, in the form of a CoNLL-U dict.
@@ -83,72 +87,72 @@ class Document(StanzaObject):
 
     @property
     def lang(self):
-        """ Access the language of this document """
+        """Access the language of this document"""
         return self._lang
 
     @lang.setter
     def lang(self, value):
-        """ Set the language of this document """
+        """Set the language of this document"""
         self._lang = value
 
     @property
     def text(self):
-        """ Access the raw text for this document. """
+        """Access the raw text for this document."""
         return self._text
 
     @text.setter
     def text(self, value):
-        """ Set the raw text for this document. """
+        """Set the raw text for this document."""
         self._text = value
 
     @property
     def sentences(self):
-        """ Access the list of sentences for this document. """
+        """Access the list of sentences for this document."""
         return self._sentences
 
     @sentences.setter
     def sentences(self, value):
-        """ Set the list of tokens for this document. """
+        """Set the list of tokens for this document."""
         self._sentences = value
 
     @property
     def num_tokens(self):
-        """ Access the number of tokens for this document. """
+        """Access the number of tokens for this document."""
         return self._num_tokens
 
     @num_tokens.setter
     def num_tokens(self, value):
-        """ Set the number of tokens for this document. """
+        """Set the number of tokens for this document."""
         self._num_tokens = value
 
     @property
     def num_words(self):
-        """ Access the number of words for this document. """
+        """Access the number of words for this document."""
         return self._num_words
 
     @num_words.setter
     def num_words(self, value):
-        """ Set the number of words for this document. """
+        """Set the number of words for this document."""
         self._num_words = value
 
     @property
     def ents(self):
-        """ Access the list of entities in this document. """
+        """Access the list of entities in this document."""
         return self._ents
 
     @ents.setter
     def ents(self, value):
-        """ Set the list of entities in this document. """
+        """Set the list of entities in this document."""
         self._ents = value
 
     @property
     def entities(self):
-        """ Access the list of entities. This is just an alias of `ents`. """
+        """Access the list of entities. This is just an alias of `ents`."""
         return self._ents
 
     @entities.setter
     def entities(self, value):
-        """ Set the list of entities in this document. """
+        """Set the list of entities in this document."""
         self._ents = value
 
     def _process_sentences(self, sentences, comments=None):
@@ -157,7 +161,8 @@ class Document(StanzaObject):
             sentence = Sentence(tokens, doc=self)
             self.sentences.append(sentence)
             begin_idx, end_idx = sentence.tokens[0].start_char, sentence.tokens[-1].end_char
-            if all((self.text is not None, begin_idx is not None, end_idx is not None)): sentence.text = self.text[begin_idx: end_idx]
+            if all((self.text is not None, begin_idx is not None, end_idx is not None)):
+                sentence.text = self.text[begin_idx:end_idx]
             sentence.id = sent_idx
 
         self._count_words()
@@ -175,7 +180,7 @@ class Document(StanzaObject):
         self.num_words = sum([len(sentence.words) for sentence in self.sentences])
 
     def get(self, fields, as_sentences=False, from_token=False):
-        """ Get fields from a list of field names.
+        """Get fields from a list of field names.
         If only one field name (string or singleton list) is provided,
         return a list of that field; if more than one, return a list of list.
         Note that all returned fields are after multi-word expansion.
@@ -234,8 +239,7 @@ class Document(StanzaObject):
         assert not to_sentence or not to_token, "Both to_token and to_sentence set to True, which is very confusing"
 
         if to_sentence:
-            assert len(self.sentences) == len(contents), \
-                "Contents must have the same length as the sentences"
+            assert len(self.sentences) == len(contents), "Contents must have the same length as the sentences"
             for sentence, content in zip(self.sentences, contents):
                 if len(fields) == 1:
                     setattr(sentence, fields[0], content)
@@ -243,8 +247,9 @@ class Document(StanzaObject):
                     for field, piece in zip(fields, content):
                         setattr(sentence, field, piece)
         else:
-            assert (to_token and self.num_tokens == len(contents)) or self.num_words == len(contents), \
-                "Contents must have the same length as the original file."
+            assert (to_token and self.num_tokens == len(contents)) or self.num_words == len(
+                contents
+            ), "Contents must have the same length as the original file."
 
             cidx = 0
             for sentence in self.sentences:
@@ -262,7 +267,7 @@ class Document(StanzaObject):
                     cidx += 1
 
     def set_mwt_expansions(self, expansions):
-        """ Extend the multi-word tokens annotated by tokenizer. A list of list of expansions
+        """Extend the multi-word tokens annotated by tokenizer. A list of list of expansions
         will be expected for each multi-word token.
         """
         idx_e = 0
@@ -270,19 +275,23 @@ class Document(StanzaObject):
             idx_w = 0
             for token in sentence.tokens:
                 idx_w += 1
-                m = (len(token.id) > 1)
+                m = len(token.id) > 1
                 n = multi_word_token_misc.match(token.misc) if token.misc is not None else None
                 if not m and not n:
                     for word in token.words:
-                        token.id = (idx_w, )
+                        token.id = (idx_w,)
                         word.id = idx_w
-                        word.head, word.deprel = None, None # delete dependency information
+                        word.head, word.deprel = None, None  # delete dependency information
                 else:
                     expanded = [x for x in expansions[idx_e].split(' ') if len(x) > 0]
                     idx_e += 1
                     idx_w_end = idx_w + len(expanded) - 1
                     if token.misc:  # None can happen when using a prebuilt doc
-                        token.misc = None if token.misc == 'MWT=Yes' else '|'.join([x for x in token.misc.split('|') if x != 'MWT=Yes'])
+                        token.misc = (
+                            None
+                            if token.misc == 'MWT=Yes'
+                            else '|'.join([x for x in token.misc.split('|') if x != 'MWT=Yes'])
+                        )
                     token.id = (idx_w, idx_w_end)
                     token.words = []
                     for i, e_word in enumerate(expanded):
@@ -300,29 +309,30 @@ class Document(StanzaObject):
 
             sentence.rebuild_dependencies()
 
-        self._count_words() # update number of words & tokens
+        self._count_words()  # update number of words & tokens
         assert idx_e == len(expansions), "{} {}".format(idx_e, len(expansions))
         return
 
     def get_mwt_expansions(self, evaluation=False):
-        """ Get the multi-word tokens. For training, return a list of
+        """Get the multi-word tokens. For training, return a list of
         (multi-word token, extended multi-word token); otherwise, return a list of
         multi-word token only.
         """
         expansions = []
         for sentence in self.sentences:
             for token in sentence.tokens:
-                m = (len(token.id) > 1)
+                m = len(token.id) > 1
                 n = multi_word_token_misc.match(token.misc) if token.misc is not None else None
                 if m or n:
                     src = token.text
                     dst = ' '.join([word.text for word in token.words])
                     expansions.append([src, dst])
-        if evaluation: expansions = [e[0] for e in expansions]
+        if evaluation:
+            expansions = [e[0] for e in expansions]
         return expansions
 
     def build_ents(self):
-        """ Build the list of entities by iterating over all words. Return all entities as a list. """
+        """Build the list of entities by iterating over all words. Return all entities as a list."""
         self.ents = []
         for s in self.sentences:
             s_ents = s.build_ents()
@@ -330,48 +340,43 @@ class Document(StanzaObject):
         return self.ents
 
     def iter_words(self):
-        """ An iterator that returns all of the words in this Document. """
+        """An iterator that returns all of the words in this Document."""
         for s in self.sentences:
             yield from s.words
 
     def iter_tokens(self):
-        """ An iterator that returns all of the tokens in this Document. """
+        """An iterator that returns all of the tokens in this Document."""
         for s in self.sentences:
             yield from s.tokens
 
     def to_dict(self):
-        """ Dumps the whole document into a list of list of dictionary for each token in each sentence in the doc.
-        """
+        """Dumps the whole document into a list of list of dictionary for each token in each sentence in the doc."""
         return [sentence.to_dict() for sentence in self.sentences]
 
     def __repr__(self):
         return json.dumps(self.to_dict(), indent=2, ensure_ascii=False)
 
     def to_serialized(self):
-        """ Dumps the whole document including text to a byte array containing a list of list of dictionaries for each token in each sentence in the doc.
-        """
+        """Dumps the whole document including text to a byte array containing a list of list of dictionaries for each token in each sentence in the doc."""
         return pickle.dumps((self.text, self.to_dict()))
 
     @classmethod
     def from_serialized(cls, serialized_string):
-        """ Create and initialize a new document from a serialized string generated by Document.to_serialized_string():
-        """
+        """Create and initialize a new document from a serialized string generated by Document.to_serialized_string():"""
         try:
             text, sentences = pickle.loads(serialized_string)
             doc = cls(sentences, text)
             doc.build_ents()
             return doc
         except:
-            raise Exception(f"Could not create new Document from serialised string.")
+            raise Exception("Could not create new Document from serialised string.")
 
 
 class Sentence(StanzaObject):
-    """ A sentence class that stores attributes of a sentence and carries a list of tokens.
-    """
+    """A sentence class that stores attributes of a sentence and carries a list of tokens."""
 
     def __init__(self, tokens, doc=None):
-        """ Construct a sentence given a list of tokens in the form of CoNLL-U dicts.
-        """
+        """Construct a sentence given a list of tokens in the form of CoNLL-U dicts."""
         self._tokens = []
         self._words = []
         self._dependencies = []
@@ -388,16 +393,17 @@ class Sentence(StanzaObject):
         st, en = -1, -1
         self.tokens, self.words = [], []
         for i, entry in enumerate(tokens):
-            if ID not in entry: # manually set a 1-based id for word if not exist
-                entry[ID] = (i+1, )
+            if ID not in entry:  # manually set a 1-based id for word if not exist
+                entry[ID] = (i + 1,)
             if isinstance(entry[ID], int):
-                entry[ID] = (entry[ID], )
-            m = (len(entry.get(ID)) > 1)
+                entry[ID] = (entry[ID],)
+            m = len(entry.get(ID)) > 1
             n = multi_word_token_misc.match(entry.get(MISC)) if entry.get(MISC, None) is not None else None
-            if m or n: # if this token is a multi-word token
-                if m: st, en = entry[ID]
+            if m or n:  # if this token is a multi-word token
+                if m:
+                    st, en = entry[ID]
                 self.tokens.append(Token(entry))
-            else: # else this token is a word
+            else:  # else this token is a word
                 new_word = Word(entry)
                 self.words.append(new_word)
                 idx = entry.get(ID)[0]
@@ -417,86 +423,86 @@ class Sentence(StanzaObject):
 
     @property
     def id(self):
-        """ Access the index of this sentence.  Indexed from 1 to match tokens """
+        """Access the index of this sentence.  Indexed from 1 to match tokens"""
         return self._id
 
     @id.setter
     def id(self, value):
-        """ Set the sentence's id value. """
+        """Set the sentence's id value."""
         self._id = value
 
     @property
     def doc(self):
-        """ Access the parent doc of this span. """
+        """Access the parent doc of this span."""
         return self._doc
 
     @doc.setter
     def doc(self, value):
-        """ Set the parent doc of this span. """
+        """Set the parent doc of this span."""
         self._doc = value
 
     @property
     def text(self):
-        """ Access the raw text for this sentence. """
+        """Access the raw text for this sentence."""
         return self._text
 
     @text.setter
     def text(self, value):
-        """ Set the raw text for this sentence. """
+        """Set the raw text for this sentence."""
         self._text = value
 
     @property
     def dependencies(self):
-        """ Access list of dependencies for this sentence. """
+        """Access list of dependencies for this sentence."""
         return self._dependencies
 
     @dependencies.setter
     def dependencies(self, value):
-        """ Set the list of dependencies for this sentence. """
+        """Set the list of dependencies for this sentence."""
         self._dependencies = value
 
     @property
     def tokens(self):
-        """ Access the list of tokens for this sentence. """
+        """Access the list of tokens for this sentence."""
         return self._tokens
 
     @tokens.setter
     def tokens(self, value):
-        """ Set the list of tokens for this sentence. """
+        """Set the list of tokens for this sentence."""
         self._tokens = value
 
     @property
     def words(self):
-        """ Access the list of words for this sentence. """
+        """Access the list of words for this sentence."""
         return self._words
 
     @words.setter
     def words(self, value):
-        """ Set the list of words for this sentence. """
+        """Set the list of words for this sentence."""
         self._words = value
 
     @property
     def ents(self):
-        """ Access the list of entities in this sentence. """
+        """Access the list of entities in this sentence."""
         return self._ents
 
     @ents.setter
     def ents(self, value):
-        """ Set the list of entities in this sentence. """
+        """Set the list of entities in this sentence."""
         self._ents = value
 
     @property
     def entities(self):
-        """ Access the list of entities. This is just an alias of `ents`. """
+        """Access the list of entities. This is just an alias of `ents`."""
         return self._ents
 
     @entities.setter
     def entities(self, value):
-        """ Set the list of entities in this sentence. """
+        """Set the list of entities in this sentence."""
         self._ents = value
 
     def build_ents(self):
-        """ Build the list of entities by iterating over all tokens. Return all entities as a list.
+        """Build the list of entities by iterating over all tokens. Return all entities as a list.
 
         Note that unlike other attributes, since NER requires raw text, the actual tagging are always
         performed at and attached to the `Token`s, instead of `Word`s.
@@ -505,27 +511,27 @@ class Sentence(StanzaObject):
         tags = [w.ner for w in self.tokens]
         decoded = decode_from_bioes(tags)
         for e in decoded:
-            ent_tokens = self.tokens[e['start']:e['end']+1]
+            ent_tokens = self.tokens[e['start'] : e['end'] + 1]
             self.ents.append(Span(tokens=ent_tokens, type=e['type'], doc=self.doc, sent=self))
         return self.ents
 
     @property
     def sentiment(self):
-        """ Returns the sentiment value for this sentence """
+        """Returns the sentiment value for this sentence"""
         return self._sentiment
 
     @sentiment.setter
     def sentiment(self, value):
-        """ Set the sentiment value """
+        """Set the sentiment value"""
         self._sentiment = value
 
     @property
     def comments(self):
-        """ Returns CoNLL-style comments for this sentence """
+        """Returns CoNLL-style comments for this sentence"""
         return self._comments
 
     def add_comment(self, comment):
-        """ Adds a single comment to this sentence.
+        """Adds a single comment to this sentence.
 
         If the comment does not already have # at the start, it will be added.
         """
@@ -537,10 +543,11 @@ class Sentence(StanzaObject):
         # rebuild dependencies if there is dependency info
         is_complete_dependencies = all(word.head is not None and word.deprel is not None for word in self.words)
         is_complete_words = (len(self.words) >= len(self.tokens)) and (len(self.words) == self.words[-1].id)
-        if is_complete_dependencies and is_complete_words: self.build_dependencies()
+        if is_complete_dependencies and is_complete_words:
+            self.build_dependencies()
 
     def build_dependencies(self):
-        """ Build the dependency graph for this sentence. Each dependency graph entry is
+        """Build the dependency graph for this sentence. Each dependency graph entry is
         a list of (head, deprel, word).
         """
         self.dependencies = []
@@ -552,45 +559,44 @@ class Sentence(StanzaObject):
             else:
                 # id is index in words list + 1
                 head = self.words[word.head - 1]
-                assert(word.head == head.id)
+                assert word.head == head.id
             self.dependencies.append((head, word.deprel, word))
 
     def print_dependencies(self, file=None):
-        """ Print the dependencies for this sentence. """
+        """Print the dependencies for this sentence."""
         for dep_edge in self.dependencies:
             print((dep_edge[2].text, dep_edge[0].id, dep_edge[1]), file=file)
 
     def dependencies_string(self):
-        """ Dump the dependencies for this sentence into string. """
+        """Dump the dependencies for this sentence into string."""
         dep_string = io.StringIO()
         self.print_dependencies(file=dep_string)
         return dep_string.getvalue().strip()
 
     def print_tokens(self, file=None):
-        """ Print the tokens for this sentence. """
+        """Print the tokens for this sentence."""
         for tok in self.tokens:
             print(tok.pretty_print(), file=file)
 
     def tokens_string(self):
-        """ Dump the tokens for this sentence into string. """
+        """Dump the tokens for this sentence into string."""
         toks_string = io.StringIO()
         self.print_tokens(file=toks_string)
         return toks_string.getvalue().strip()
 
     def print_words(self, file=None):
-        """ Print the words for this sentence. """
+        """Print the words for this sentence."""
         for word in self.words:
             print(word.pretty_print(), file=file)
 
     def words_string(self):
-        """ Dump the words for this sentence into string. """
+        """Dump the words for this sentence into string."""
         wrds_string = io.StringIO()
         self.print_words(file=wrds_string)
         return wrds_string.getvalue().strip()
 
     def to_dict(self):
-        """ Dumps the sentence into a list of dictionary for each token in the sentence.
-        """
+        """Dumps the sentence into a list of dictionary for each token in the sentence."""
         ret = []
         for token in self.tokens:
             ret += token.to_dict()
@@ -598,6 +604,7 @@ class Sentence(StanzaObject):
 
     def __repr__(self):
         return json.dumps(self.to_dict(), indent=2, ensure_ascii=False)
+
 
 def init_from_misc(unit):
     """Create attributes by parsing from the `misc` field.
@@ -624,14 +631,13 @@ def init_from_misc(unit):
 
 
 class Token(StanzaObject):
-    """ A token class that stores attributes of a token and carries a list of words. A token corresponds to a unit in the raw
+    """A token class that stores attributes of a token and carries a list of words. A token corresponds to a unit in the raw
     text. In some languages such as English, a token has a one-to-one mapping to a word, while in other languages such as French,
     a (multi-word) token might be expanded into multiple words that carry syntactic annotations.
     """
 
     def __init__(self, token_entry, words=None):
-        """ Construct a token given a dictionary format token entry. Optionally link itself to the corresponding words.
-        """
+        """Construct a token given a dictionary format token entry. Optionally link itself to the corresponding words."""
         self._id = token_entry.get(ID)
         self._text = token_entry.get(TEXT)
         assert self._id and self._text, 'id and text should be included for the token'
@@ -647,81 +653,81 @@ class Token(StanzaObject):
 
     @property
     def id(self):
-        """ Access the index of this token. """
+        """Access the index of this token."""
         return self._id
 
     @id.setter
     def id(self, value):
-        """ Set the token's id value. """
+        """Set the token's id value."""
         self._id = value
 
     @property
     def text(self):
-        """ Access the text of this token. Example: 'The' """
+        """Access the text of this token. Example: 'The'"""
         return self._text
 
     @text.setter
     def text(self, value):
-        """ Set the token's text value. Example: 'The' """
+        """Set the token's text value. Example: 'The'"""
         self._text = value
 
     @property
     def misc(self):
-        """ Access the miscellaneousness of this token. """
+        """Access the miscellaneousness of this token."""
         return self._misc
 
     @misc.setter
     def misc(self, value):
-        """ Set the token's miscellaneousness value. """
-        self._misc = value if self._is_null(value) == False else None
+        """Set the token's miscellaneousness value."""
+        self._misc = value if self._is_null(value) is False else None
 
     @property
     def words(self):
-        """ Access the list of syntactic words underlying this token. """
+        """Access the list of syntactic words underlying this token."""
         return self._words
 
     @words.setter
     def words(self, value):
-        """ Set this token's list of underlying syntactic words. """
+        """Set this token's list of underlying syntactic words."""
         self._words = value
         for w in self._words:
             w.parent = self
 
     @property
     def start_char(self):
-        """ Access the start character index for this token in the raw text. """
+        """Access the start character index for this token in the raw text."""
         return self._start_char
 
     @property
     def end_char(self):
-        """ Access the end character index for this token in the raw text. """
+        """Access the end character index for this token in the raw text."""
         return self._end_char
 
     @property
     def ner(self):
-        """ Access the NER tag of this token. Example: 'B-ORG'"""
+        """Access the NER tag of this token. Example: 'B-ORG'"""
         return self._ner
 
     @ner.setter
     def ner(self, value):
-        """ Set the token's NER tag. Example: 'B-ORG'"""
-        self._ner = value if self._is_null(value) == False else None
+        """Set the token's NER tag. Example: 'B-ORG'"""
+        self._ner = value if self._is_null(value) is False else None
 
     @property
     def sent(self):
-        """ Access the pointer to the sentence that this token belongs to. """
+        """Access the pointer to the sentence that this token belongs to."""
         return self._sent
 
     @sent.setter
     def sent(self, value):
-        """ Set the pointer to the sentence that this token belongs to. """
+        """Set the pointer to the sentence that this token belongs to."""
         self._sent = value
 
     def __repr__(self):
         return json.dumps(self.to_dict(), indent=2, ensure_ascii=False)
 
     def to_dict(self, fields=[ID, TEXT, NER, MISC, START_CHAR, END_CHAR]):
-        """ Dumps the token into a list of dictionary for this token with its extended words
+        """Dumps the token into a list of dictionary for this token with its extended words
         if the token is a multi-word token.
         """
         ret = []
@@ -733,32 +739,35 @@ class Token(StanzaObject):
             ret.append(token_dict)
         for word in self.words:
             word_dict = word.to_dict()
-            if len(self.id) == 1 and NER in fields and getattr(self, NER) is not None: # propagate NER label to Word if it is a single-word token
+            if (
+                len(self.id) == 1 and NER in fields and getattr(self, NER) is not None
+            ):  # propagate NER label to Word if it is a single-word token
                 word_dict[NER] = getattr(self, NER)
             ret.append(word_dict)
         return ret
 
     def pretty_print(self):
-        """ Print this token with its extended words in one line. """
+        """Print this token with its extended words in one line."""
         return f"<{self.__class__.__name__} id={'-'.join([str(x) for x in self.id])};words=[{', '.join([word.pretty_print() for word in self.words])}]>"
 
     def _is_null(self, value):
         return (value is None) or (value == '_')
 
+
 class Word(StanzaObject):
-    """ A word class that stores attributes of a word.
-    """
+    """A word class that stores attributes of a word."""
 
     def __init__(self, word_entry):
-        """ Construct a word given a dictionary format word entry.
-        """
+        """Construct a word given a dictionary format word entry."""
         self._id = word_entry.get(ID, None)
         if isinstance(self._id, tuple):
             assert len(self._id) == 1
             self._id = self._id[0]
         self._text = word_entry.get(TEXT, None)
 
-        assert self._id is not None and self._text is not None, 'id and text should be included for the word. {}'.format(word_entry)
+        assert (
+            self._id is not None and self._text is not None
+        ), 'id and text should be included for the word. {}'.format(word_entry)
 
         self._lemma = word_entry.get(LEMMA, None)
         self._upos = word_entry.get(UPOS, None)
@@ -778,154 +787,156 @@ class Word(StanzaObject):
 
     @property
     def id(self):
-        """ Access the index of this word. """
+        """Access the index of this word."""
         return self._id
 
     @id.setter
     def id(self, value):
-        """ Set the word's index value. """
+        """Set the word's index value."""
         self._id = value
 
     @property
     def text(self):
-        """ Access the text of this word. Example: 'The'"""
+        """Access the text of this word. Example: 'The'"""
         return self._text
 
     @text.setter
     def text(self, value):
-        """ Set the word's text value. Example: 'The'"""
+        """Set the word's text value. Example: 'The'"""
         self._text = value
 
     @property
     def lemma(self):
-        """ Access the lemma of this word. """
+        """Access the lemma of this word."""
         return self._lemma
 
     @lemma.setter
     def lemma(self, value):
-        """ Set the word's lemma value. """
-        self._lemma = value if self._is_null(value) == False or self._text == '_' else None
+        """Set the word's lemma value."""
+        self._lemma = value if self._is_null(value) is False or self._text == '_' else None
 
     @property
     def upos(self):
-        """ Access the universal part-of-speech of this word. Example: 'NOUN'"""
+        """Access the universal part-of-speech of this word. Example: 'NOUN'"""
         return self._upos
 
     @upos.setter
     def upos(self, value):
-        """ Set the word's universal part-of-speech value. Example: 'NOUN'"""
-        self._upos = value if self._is_null(value) == False else None
+        """Set the word's universal part-of-speech value. Example: 'NOUN'"""
+        self._upos = value if self._is_null(value) is False else None
 
     @property
     def xpos(self):
-        """ Access the treebank-specific part-of-speech of this word. Example: 'NNP'"""
+        """Access the treebank-specific part-of-speech of this word. Example: 'NNP'"""
         return self._xpos
 
     @xpos.setter
     def xpos(self, value):
-        """ Set the word's treebank-specific part-of-speech value. Example: 'NNP'"""
-        self._xpos = value if self._is_null(value) == False else None
+        """Set the word's treebank-specific part-of-speech value. Example: 'NNP'"""
+        self._xpos = value if self._is_null(value) is False else None
 
     @property
     def feats(self):
-        """ Access the morphological features of this word. Example: 'Gender=Fem'"""
+        """Access the morphological features of this word. Example: 'Gender=Fem'"""
         return self._feats
 
     @feats.setter
     def feats(self, value):
-        """ Set this word's morphological features. Example: 'Gender=Fem'"""
-        self._feats = value if self._is_null(value) == False else None
+        """Set this word's morphological features. Example: 'Gender=Fem'"""
+        self._feats = self.check_value(value)
+
+    def check_value(self, value):
+        return value if self._is_null(value) is False else None
 
     @property
     def head(self):
-        """ Access the id of the governor of this word. """
+        """Access the id of the governor of this word."""
         return self._head
 
     @head.setter
     def head(self, value):
-        """ Set the word's governor id value. """
-        self._head = int(value) if self._is_null(value) == False else None
+        """Set the word's governor id value."""
+        self._head = int(value) if self._is_null(value) is False else None
 
     @property
     def deprel(self):
-        """ Access the dependency relation of this word. Example: 'nmod'"""
+        """Access the dependency relation of this word. Example: 'nmod'"""
         return self._deprel
 
     @deprel.setter
     def deprel(self, value):
-        """ Set the word's dependency relation value. Example: 'nmod'"""
-        self._deprel = value if self._is_null(value) == False else None
+        """Set the word's dependency relation value. Example: 'nmod'"""
+        self._deprel = self.check_value(value)
 
     @property
     def deps(self):
-        """ Access the dependencies of this word. """
+        """Access the dependencies of this word."""
         return self._deps
 
     @deps.setter
     def deps(self, value):
-        """ Set the word's dependencies value. """
-        self._deps = value if self._is_null(value) == False else None
+        """Set the word's dependencies value."""
+        self._deps = self.check_value(value)
 
     @property
     def misc(self):
-        """ Access the miscellaneousness of this word. """
+        """Access the miscellaneousness of this word."""
         return self._misc
 
     @misc.setter
     def misc(self, value):
-        """ Set the word's miscellaneousness value. """
-        self._misc = value if self._is_null(value) == False else None
+        """Set the word's miscellaneousness value."""
+        self._misc = self.check_value(value)
 
     @property
     def start_char(self):
-        """ Access the start character index for this token in the raw text. """
+        """Access the start character index for this token in the raw text."""
         return self._start_char
 
     @property
     def end_char(self):
-        """ Access the end character index for this token in the raw text. """
+        """Access the end character index for this token in the raw text."""
         return self._end_char
 
     @property
     def parent(self):
-        """ Access the parent token of this word. In the case of a multi-word token, a token can be the parent of
+        """Access the parent token of this word. In the case of a multi-word token, a token can be the parent of
         multiple words. Note that this should return a reference to the parent token object.
         """
         return self._parent
 
     @parent.setter
     def parent(self, value):
-        """ Set this word's parent token. In the case of a multi-word token, a token can be the parent of
+        """Set this word's parent token. In the case of a multi-word token, a token can be the parent of
         multiple words. Note that value here should be a reference to the parent token object.
         """
         self._parent = value
 
     @property
     def pos(self):
-        """ Access the universal part-of-speech of this word. Example: 'NOUN'"""
+        """Access the universal part-of-speech of this word. Example: 'NOUN'"""
         return self._upos
 
     @pos.setter
     def pos(self, value):
-        """ Set the word's universal part-of-speech value. Example: 'NOUN'"""
-        self._upos = value if self._is_null(value) == False else None
+        """Set the word's universal part-of-speech value. Example: 'NOUN'"""
+        self._upos = self.check_value(value)
 
     @property
     def sent(self):
-        """ Access the pointer to the sentence that this word belongs to. """
+        """Access the pointer to the sentence that this word belongs to."""
         return self._sent
 
     @sent.setter
     def sent(self, value):
-        """ Set the pointer to the sentence that this word belongs to. """
+        """Set the pointer to the sentence that this word belongs to."""
         self._sent = value
 
     def __repr__(self):
         return json.dumps(self.to_dict(), indent=2, ensure_ascii=False)
 
     def to_dict(self, fields=[ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC, START_CHAR, END_CHAR]):
-        """ Dumps the word into a dictionary.
-        """
+        """Dumps the word into a dictionary."""
         word_dict = {}
         for field in fields:
             if getattr(self, field) is not None:
@@ -933,7 +944,7 @@ class Word(StanzaObject):
         return word_dict
 
     def pretty_print(self):
-        """ Print the word in one line. """
+        """Print the word in one line."""
         features = [ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL]
         feature_str = ";".join(["{}={}".format(k, getattr(self, k)) for k in features if getattr(self, k) is not None])
         return f"<{self.__class__.__name__} {feature_str}>"
@@ -943,16 +954,17 @@ class Word(StanzaObject):
 
 
 class Span(StanzaObject):
-    """ A span class that stores attributes of a textual span. A span can be typed.
+    """A span class that stores attributes of a textual span. A span can be typed.
     A range of objects (e.g., entity mentions) can be represented as spans.
     """
 
     def __init__(self, span_entry=None, tokens=None, type=None, doc=None, sent=None):
-        """ Construct a span given a span entry or a list of tokens. A valid reference to a doc
+        """Construct a span given a span entry or a list of tokens. A valid reference to a doc
         must be provided to construct a span (otherwise the text of the span cannot be initialized).
         """
-        assert span_entry is not None or (tokens is not None and type is not None), \
-                'Either a span_entry or a token list needs to be provided to construct a span.'
+        assert span_entry is not None or (
+            tokens is not None and type is not None
+        ), 'Either a span_entry or a token list needs to be provided to construct a span.'
         assert doc is not None, 'A parent doc must be provided to construct a span.'
         self._text, self._type, self._start_char, self._end_char = [None] * 4
         self._tokens = []
@@ -981,7 +993,7 @@ class Span(StanzaObject):
         self.start_char = self.tokens[0].start_char
         self.end_char = self.tokens[-1].end_char
         # assume doc is already provided and not None
-        self.text = self.doc.text[self.start_char:self.end_char]
+        self.text = self.doc.text[self.start_char : self.end_char]
         # collect the words of the span following tokens
         self.words = [w for t in tokens for w in t.words]
         # set the sentence back-pointer to point to the sentence of the first token
@@ -989,86 +1001,86 @@ class Span(StanzaObject):
 
     @property
     def doc(self):
-        """ Access the parent doc of this span. """
+        """Access the parent doc of this span."""
         return self._doc
 
     @doc.setter
     def doc(self, value):
-        """ Set the parent doc of this span. """
+        """Set the parent doc of this span."""
         self._doc = value
 
     @property
     def text(self):
-        """ Access the text of this span. Example: 'Stanford University'"""
+        """Access the text of this span. Example: 'Stanford University'"""
         return self._text
 
     @text.setter
     def text(self, value):
-        """ Set the span's text value. Example: 'Stanford University'"""
+        """Set the span's text value. Example: 'Stanford University'"""
         self._text = value
 
     @property
     def tokens(self):
-        """ Access reference to a list of tokens that correspond to this span. """
+        """Access reference to a list of tokens that correspond to this span."""
         return self._tokens
 
     @tokens.setter
     def tokens(self, value):
-        """ Set the span's list of tokens. """
+        """Set the span's list of tokens."""
         self._tokens = value
 
     @property
     def words(self):
-        """ Access reference to a list of words that correspond to this span. """
+        """Access reference to a list of words that correspond to this span."""
         return self._words
 
     @words.setter
     def words(self, value):
-        """ Set the span's list of words. """
+        """Set the span's list of words."""
         self._words = value
 
     @property
     def type(self):
-        """ Access the type of this span. Example: 'PERSON'"""
+        """Access the type of this span. Example: 'PERSON'"""
         return self._type
 
     @type.setter
     def type(self, value):
-        """ Set the type of this span. """
+        """Set the type of this span."""
         self._type = value
 
     @property
     def start_char(self):
-        """ Access the start character offset of this span. """
+        """Access the start character offset of this span."""
         return self._start_char
 
     @start_char.setter
     def start_char(self, value):
-        """ Set the start character offset of this span. """
+        """Set the start character offset of this span."""
         self._start_char = value
 
     @property
     def end_char(self):
-        """ Access the end character offset of this span. """
+        """Access the end character offset of this span."""
         return self._end_char
 
     @end_char.setter
     def end_char(self, value):
-        """ Set the end character offset of this span. """
+        """Set the end character offset of this span."""
         self._end_char = value
 
     @property
     def sent(self):
-        """ Access the pointer to the sentence that this span belongs to. """
+        """Access the pointer to the sentence that this span belongs to."""
         return self._sent
 
     @sent.setter
     def sent(self, value):
-        """ Set the pointer to the sentence that this span belongs to. """
+        """Set the pointer to the sentence that this span belongs to."""
         self._sent = value
 
     def to_dict(self):
-        """ Dumps the span into a dictionary. """
+        """Dumps the span into a dictionary."""
         attrs = ['text', 'type', 'start_char', 'end_char']
         span_dict = dict([(attr_name, getattr(self, attr_name)) for attr_name in attrs])
         return span_dict
@@ -1077,7 +1089,7 @@ class Span(StanzaObject):
         return json.dumps(self.to_dict(), indent=2, ensure_ascii=False)
 
     def pretty_print(self):
-        """ Print the span in one line. """
+        """Print the span in one line."""
         span_dict = self.to_dict()
-        feature_str = ";".join(["{}={}".format(k,v) for k,v in span_dict.items()])
+        feature_str = ";".join(["{}={}".format(k, v) for k, v in span_dict.items()])
         return f"<{self.__class__.__name__} {feature_str}>"

@@ -1,4 +1,5 @@
-"""
+"""VietTreebank (VTB) Split.
+
 From a directory of files with VTB Trees, split into train/dev/test set
 with a split of 70/15/15
 
@@ -10,13 +11,18 @@ The script requires two arguments
 import os
 import argparse
 import random
+from typing import List
 
 
-def create_shuffle_list(org_dir):
-    """
-    This function creates the random order with which we use to loop through the files
+def create_shuffle_list(org_dir) -> List[str]:
+    """Create shuffle list.
+
+    Create the random order to loop through the files.
+
     :param org_dir: original directory storing the files that store the trees
+    :type org_dir: Path
     :return: list of file names randomly shuffled
+    :rtype: Dict(str)
     """
     file_names = []
     for filename in os.listdir(org_dir):
@@ -26,9 +32,9 @@ def create_shuffle_list(org_dir):
     return file_names
 
 
-def create_paths(split_dir, short_name):
-    """
-    This function creates the necessary paths for the train/dev/test splits
+def create_paths(split_dir, short_name: str):
+    """Create the necessary paths for the train/dev/test splits.
+
     :param split_dir: directory that stores the splits
     :return: train path, dev path, test path
     """
@@ -44,9 +50,9 @@ def create_paths(split_dir, short_name):
     return train_path, dev_path, test_path
 
 
-def get_num_samples(org_dir, file_names):
-    """
-    Function for obtaining the number of samples
+def get_num_samples(org_dir, file_names) -> int:
+    """Get the number of samples.
+
     :param org_dir: original directory storing the tree files
     :param file_names: list of file names in the directory
     :return: number of samples
@@ -66,7 +72,9 @@ def get_num_samples(org_dir, file_names):
 
     return count
 
-def split_files(org_dir, split_dir, short_name=None):
+
+def split_files(org_dir, split_dir, short_name=None) -> None:
+    """Split files."""
     # Create a random shuffle list of the file names in the original directory
     file_names = create_shuffle_list(org_dir)
 
@@ -102,9 +110,10 @@ def split_files(org_dir, split_dir, short_name=None):
                         writer.write(line)
                         count += 1
 
-def main():
+
+def main() -> None:
     """
-    Main function for the script
+    VTB Split.
 
     Process args, loop through each tree in each file in the directory
     and write the trees to the train/dev/test split with a split of
@@ -113,14 +122,8 @@ def main():
     parser = argparse.ArgumentParser(
         description="Script that splits a list of files of vtb trees into train/dev/test sets",
     )
-    parser.add_argument(
-        'org_dir',
-        help='The location of the original directory storing correctly formatted vtb trees '
-    )
-    parser.add_argument(
-        'split_dir',
-        help='The location of new directory storing the train/dev/test set'
-    )
+    parser.add_argument('org_dir', help='The location of the original directory storing correctly formatted vtb trees ')
+    parser.add_argument('split_dir', help='The location of new directory storing the train/dev/test set')
 
     args = parser.parse_args()
 
@@ -130,6 +133,7 @@ def main():
     random.seed(1234)
 
     split_files(org_dir, split_dir)
+
 
 if __name__ == '__main__':
     main()

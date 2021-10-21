@@ -1,8 +1,9 @@
-
+"""Convert NYTK."""
 import glob
 import os
 
-def convert_nytk(base_input_path, base_output_path, short_name):
+
+def convert_nytk(base_input_path, base_output_path, short_name: str) -> None:
     for shard in ('train', 'dev', 'test'):
         if shard == 'dev':
             base_input_subdir = os.path.join(base_input_path, "data/train-devel-test/devel")

@@ -18,6 +18,7 @@ import argparse
 import glob
 import os
 import sys
+from typing import List
 
 from stanza.utils.datasets.tokenization.process_thai_tokenization import write_section, convert_processed_lines, reprocess_lines
 
@@ -53,10 +54,10 @@ def read_document(lines, spaces_after, split_clauses):
             sentence[-1] = (sentence[-1][0], True)
         document.append(sentence)
         sentence = []
-    # TODO: is there any way to divide up a single document into paragraphs?
+    # TODO(John Bauer): is there any way to divide up a single document into paragraphs?
     return [[document]]
 
-def retokenize_document(lines):
+def retokenize_document(lines) -> List[str]:
     processed_lines = []
     sentence = []
     for line in lines:
@@ -96,7 +97,7 @@ def read_data(input_dir, section, resegment, spaces_after, split_clauses):
         documents.extend(document)
     return documents
 
-def add_lst20_args(parser):
+def add_lst20_args(parser) -> None:
     parser.add_argument('--no_lst20_resegment', action='store_false', dest="lst20_resegment", default=True, help='When processing th_lst20 tokenization, use pythainlp to resegment the text.  The other option is to keep the original sentence segmentation.  Currently our model is not good at that')
     parser.add_argument('--lst20_spaces_after', action='store_true', dest="lst20_spaces_after", default=False, help='When processing th_lst20 without pythainlp, put spaces after each sentence.  This better fits the language but gets lower scores for some reason')
     parser.add_argument('--split_clauses', action='store_true', dest="split_clauses", default=False, help='When processing th_lst20 without pythainlp, turn spaces which are labeled as between clauses into sentence splits')
@@ -108,9 +109,7 @@ def parse_lst20_args():
     add_lst20_args(parser)
     return parser.parse_args()
 
-
-
-def convert(input_dir, output_dir, args):
+def convert(input_dir, output_dir, args) -> None:
     input_dir = os.path.join(input_dir, "thai", "LST20_Corpus")
     if not os.path.exists(input_dir):
         raise FileNotFoundError("Could not find LST20 corpus in {}".format(input_dir))
@@ -123,7 +122,7 @@ def convert(input_dir, output_dir, args):
         print("  Read in %d documents" % len(documents))
         write_section(output_dir, "lst20", out_section, documents)
 
-def main():
+def main() -> None:
     args = parse_lst20_args()
     convert(args.input_dir, args.output_dir, args)
 

@@ -1,24 +1,24 @@
+"""Thai syllable dictionary generator."""
 import glob
 import pathlib
 import argparse
 
 
-def create_dictionary(dataset_dir, save_dir):
+def create_dictionary(dataset_dir, save_dir) -> None:
     syllables = set()
 
-    for p in pathlib.Path(dataset_dir).rglob("*.ssg"): # iterate through all files
+    for p in pathlib.Path(dataset_dir).rglob("*.ssg"):  # iterate through all files
 
-        with open(p) as f: # for each file
+        with open(p) as f:  # for each file
             sentences = f.readlines()
 
         for i in range(len(sentences)):
 
             sentences[i] = sentences[i].replace("\n", "")
             sentences[i] = sentences[i].replace("<s/>", "~")
-            sentences[i] = sentences[i].split("~") # create list of all syllables
+            sentences[i] = sentences[i].split("~")  # create list of all syllables
 
             syllables = syllables.union(sentences[i])
-
 
         print(len(syllables))
 

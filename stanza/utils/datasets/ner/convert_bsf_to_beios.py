@@ -1,12 +1,15 @@
+"""Convert data file with NER markup in Brat Standoff Format (BSF) to BEIOS or IOB format."""
+
 import argparse
+import glob
 import logging
 import os
-import glob
 from collections import namedtuple
 import re
-from typing import Tuple
-from tqdm import tqdm
 from random import choices, shuffle
+from typing import List, Tuple
+
+from tqdm import tqdm
 
 BsfInfo = namedtuple('BsfInfo', 'id, tag, start_idx, end_idx, token')
 
@@ -14,20 +17,33 @@ log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
 
 
-def format_token_as_beios(token: str, tag: str) -> list:
+def format_token_as_beios(token: str, tag: str) -> List[str]:
+    """Format token as BEIOS.
+
+    :param token: token
+    :param tag: tag
+
+    :return: res
+    """
     t_words = token.split()
     res = []
     if len(t_words) == 1:
         res.append(token + ' S-' + tag)
     else:
         res.append(t_words[0] + ' B-' + tag)
-        for t_word in t_words[1: -1]:
+        for t_word in t_words[1:-1]:
             res.append(t_word + ' I-' + tag)
         res.append(t_words[-1] + ' E-' + tag)
     return res
 
 
-def format_token_as_iob(token: str, tag: str) -> list:
+def format_token_as_iob(token: str, tag: str) -> List[str]:
+    """Format token as IOB.
+
+    :param token: token
+    :param tag: tag
+    :return: res
+    """
     t_words = token.split()
     res = []
     if len(t_words) == 1:
@@ -49,7 +65,7 @@ def convert_bsf(data: str, bsf_markup: str, converter: str = 'beios') -> str:
     :return: data in BEIOS or IOB format https://en.wikipedia.org/wiki/Inside–outside–beginning_(tagging)
     """
 
-    def join_simple_chunk(chunk: str) -> list:
+    def join_simple_chunk(chunk: str) -> List[str]:
         if len(chunk.strip()) == 0:
             return []
         tokens = re.split(r'\s', chunk.strip())
@@ -62,7 +78,7 @@ def convert_bsf(data: str, bsf_markup: str, converter: str = 'beios') -> str:
     prev_idx = 0
     m_ln: BsfInfo
     for m_ln in markup:
-        res += join_simple_chunk(data[prev_idx:m_ln.start_idx])
+        res += join_simple_chunk(data[prev_idx : m_ln.start_idx])
 
         convert_f = converters[converter]
         res.extend(convert_f(m_ln.token, m_ln.tag))
@@ -74,7 +90,7 @@ def convert_bsf(data: str, bsf_markup: str, converter: str = 'beios') -> str:
     return '\n'.join(res)
 
 
-def parse_bsf(bsf_data: str) -> list:
+def parse_bsf(bsf_data: str) -> List[str]:
     """
     Convert textual bsf representation to a list of named entities.
 
@@ -95,8 +111,13 @@ def parse_bsf(bsf_data: str) -> list:
 CORPUS_NAME = 'Ukrainian-languk'
 
 
-def convert_bsf_in_folder(src_dir_path: str, dst_dir_path: str, converter: str = 'beios',
-                          doc_delim: str = '\n', train_test_split_file: str = None) -> None:
+def convert_bsf_in_folder(
+    src_dir_path: str,
+    dst_dir_path: str,
+    converter: str = 'beios',
+    doc_delim: str = '\n',
+    train_test_split_file: str = None,
+) -> None:
     """
 
     :param doc_delim: delimiter to be used between documents
@@ -121,7 +142,9 @@ def convert_bsf_in_folder(src_dir_path: str, dst_dir_path: str, converter: str =
     if len(ann_files) == 0 or len(tok_files) == 0:
         raise FileNotFoundError(f'Token and annotation files are not found at specified path {ann_path}')
     if len(ann_files) != len(tok_files):
-        raise RuntimeError(f'Mismatch between Annotation and Token files. Ann files: {len(ann_files)}, token files: {len(tok_files)}')
+        raise RuntimeError(
+            f'Mismatch between Annotation and Token files. Ann files: {len(ann_files)}, token files: {len(tok_files)}'
+        )
 
     train_set = []
     dev_set = []
@@ -172,7 +195,7 @@ def convert_bsf_in_folder(src_dir_path: str, dst_dir_path: str, converter: str =
 
 def read_languk_train_test_split(file_path: str, dev_split: float = 0.1) -> Tuple:
     """
-    Read predefined split of train and test files in data set. 
+    Read predefined split of train and test files in data set.
     Originally located under doc/dev-test-split.txt
     :param file_path: path to dev-test-split.txt file (should include file name with extension)
     :param dev_split: 0 to 1 float value defining how much to allocate to dev split
@@ -193,23 +216,23 @@ def read_languk_train_test_split(file_path: str, dev_split: float = 0.1) -> Tupl
             else:
                 container.append(ln)
 
-    # split in file only contains train and test split. 
+    # split in file only contains train and test split.
     # For Stanza training we need train, dev, test
-    # We will take part of train as dev set 
-    # This way anyone using test set outside of this code base can be sure that there was no data set polution            
+    # We will take part of train as dev set
+    # This way anyone using test set outside of this code base can be sure that there was no data set polution
     shuffle(train_files)
     dev_files = train_files[: int(len(train_files) * dev_split)]
-    train_files = train_files[int(len(train_files) * dev_split):]
+    train_files = train_files[int(len(train_files) * dev_split) :]
 
     assert len(set(train_files).intersection(set(dev_files))) == 0
-    
+
     log.info(f'Files in each set: train={len(train_files)}, dev={len(dev_files)}, test={len(test_files)}')
     return train_files, dev_files, test_files
 
 
 if __name__ == '__main__':
     logging.basicConfig()
-
+    # fmt:off
     parser = argparse.ArgumentParser(description='Convert lang-uk NER data set from BSF format to BEIOS format compatible with Stanza NER model training requirements.\n'
                                                  'Original data set should be downloaded from https://github.com/lang-uk/ner-uk\n'
                                                  'For example, create a directory extern_data/lang_uk, then run "git clone git@github.com:lang-uk/ner-uk.git')
@@ -219,6 +242,7 @@ if __name__ == '__main__':
     parser.add_argument('--doc_delim', type=str, default='\n', help='Delimiter to be used to separate documents in the output data')
     parser.add_argument('--split_file', type=str, help='Name of a file containing Train/Test split (files in train and test set)')
     parser.print_help()
+    # fmt:on
     args = parser.parse_args()
 
     convert_bsf_in_folder(args.src_dataset, args.dst, args.c, args.doc_delim, train_test_split_file=args.split_file)

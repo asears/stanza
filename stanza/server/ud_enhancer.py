@@ -28,7 +28,6 @@ def build_enhancer_request(doc, language, pronouns_pattern):
         num_tokens = num_tokens + sum(len(token.words) for token in sentence.tokens)
 
         graph = request_sentence.basicDependencies
-        nodes = []
         word_index = 0
         for token in sentence.tokens:
             for word in token.words:

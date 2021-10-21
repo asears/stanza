@@ -169,3 +169,13 @@ _site/
 
 # symlink / directory for data files
 extern_data
+
+# CoreNLP Props
+corenlp_server-*.props
+
+# Http code-search
+http.code-search
+
+# vscode line counter extension
+
+.VSCodeCounter

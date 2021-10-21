@@ -1,3 +1,5 @@
+"""Process utilities."""
+
 import csv
 import glob
 import os
@@ -6,13 +8,17 @@ from collections import namedtuple
 
 Split = namedtuple('Split', ['filename', 'weight'])
 
+
 def write_list(out_filename, dataset):
+    """Write list dataset to file."""
     with open(out_filename, 'w') as fout:
         for line in dataset:
             fout.write(line)
             fout.write("\n")
 
+
 def write_splits(out_directory, snippets, splits):
+    """Write splits snippets to files."""
     total_weight = sum(split.weight for split in splits)
     divs = []
     subtotal = 0.0
@@ -23,10 +29,12 @@ def write_splits(out_directory, snippets, splits):
 
     for i, split in enumerate(splits):
         filename = os.path.join(out_directory, split.filename)
-        print("Writing {}:{} to {}".format(divs[i], divs[i+1], filename))
-        write_list(filename, snippets[divs[i]:divs[i+1]])
+        print("Writing {0}:{1} to {2}".format(divs[i], divs[i + 1], filename))
+        write_list(filename, snippets[divs[i] : divs[i + 1]])
+
 
 def clean_tokenized_tweet(line):
+    """Clean tokenized tweet."""
     line = list(line)
     if len(line) > 3 and line[0] == 'RT' and line[1][0] == '@' and line[2] == ':':
         line = line[3:]
@@ -41,7 +49,9 @@ def clean_tokenized_tweet(line):
             line[i] = ' '
     return line
 
+
 def get_scare_snippets(nlp, csv_dir_path, text_id_map, filename_pattern="*.csv"):
+    """Get scare snippets."""
     num_short_items = 0
 
     snippets = []
@@ -64,9 +74,11 @@ def get_scare_snippets(nlp, csv_dir_path, text_id_map, filename_pattern="*.csv")
                 elif sentiment.lower() == 'negative':
                     sentiment = 0
                 else:
-                    raise ValueError("Tell John he screwed up and this is why he can't have Mox Opal: {}".format(sentiment))
+                    raise ValueError(
+                        "Tell John he screwed up and this is why he can't have Mox Opal: {0}".format(sentiment)
+                    )
                 if ann_id not in text_id_map:
-                    print("Found snippet which can't be found: {}-{}".format(csv_filename, ann_id))
+                    print("Found snippet which can't be found: {0}-{1}".format(csv_filename, ann_id))
                     continue
                 snippet = text_id_map[ann_id][begin:end]
                 doc = nlp(snippet)
@@ -75,5 +87,5 @@ def get_scare_snippets(nlp, csv_dir_path, text_id_map, filename_pattern="*.csv")
                 if num_tokens < 4:
                     num_short_items = num_short_items + 1
                 snippets.append("%d %s" % (sentiment, text))
-    print("Number of short items: {}".format(num_short_items))
+    print("Number of short items: {0}".format(num_short_items))
     return snippets

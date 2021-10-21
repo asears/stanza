@@ -18,8 +18,9 @@ from stanza.models.lemma.vocab import MultiVocab
 
 logger = logging.getLogger('stanza')
 
+
 def unpack_batch(batch, use_cuda):
-    """ Unpack a batch from the data loader. """
+    """Unpack a batch from the data loader."""
     if use_cuda:
         inputs = [b.cuda() if b is not None else None for b in batch[:6]]
     else:
@@ -27,8 +28,10 @@ def unpack_batch(batch, use_cuda):
     orig_idx = batch[6]
     return inputs, orig_idx
 
+
 class Trainer(object):
-    """ A trainer for training models. """
+    """A trainer for training models."""
+
     def __init__(self, args=None, vocab=None, emb_matrix=None, model_file=None, use_cuda=False):
         self.use_cuda = use_cuda
         if model_file is not None:
@@ -69,8 +72,7 @@ class Trainer(object):
         log_probs, edit_logits = self.model(src, src_mask, tgt_in, pos)
         if self.args.get('edit', False):
             assert edit_logits is not None
-            loss = self.crit(log_probs.view(-1, self.vocab['char'].size), tgt_out.view(-1), \
-                    edit_logits, edits)
+            loss = self.crit(log_probs.view(-1, self.vocab['char'].size), tgt_out.view(-1), edit_logits, edits)
         else:
             loss = self.crit(log_probs.view(-1, self.vocab['char'].size), tgt_out.view(-1))
         loss_val = loss.data.item()
@@ -89,9 +91,9 @@ class Trainer(object):
         self.model.eval()
         batch_size = src.size(0)
         preds, edit_logits = self.model.predict(src, src_mask, pos=pos, beam_size=beam_size)
-        pred_seqs = [self.vocab['char'].unmap(ids) for ids in preds] # unmap to tokens
+        pred_seqs = [self.vocab['char'].unmap(ids) for ids in preds]  # unmap to tokens
         pred_seqs = utils.prune_decoded_seqs(pred_seqs)
-        pred_tokens = ["".join(seq) for seq in pred_seqs] # join chars to be tokens
+        pred_tokens = ["".join(seq) for seq in pred_seqs]  # join chars to be tokens
         pred_tokens = utils.unsort(pred_tokens, orig_idx)
         if self.args.get('edit', False):
             assert edit_logits is not None
@@ -102,7 +104,7 @@ class Trainer(object):
         return pred_tokens, edits
 
     def postprocess(self, words, preds, edits=None):
-        """ Postprocess, mainly for handing edits. """
+        """Postprocess, mainly for handing edits."""
         assert len(words) == len(preds), "Lemma predictions must have same length as words."
         edited = []
         if self.args.get('edit', False):
@@ -111,13 +113,13 @@ class Trainer(object):
                 lem = edit.edit_word(w, p, e)
                 edited += [lem]
         else:
-            edited = preds # do not edit
+            edited = preds  # do not edit
         # final sanity check
         assert len(edited) == len(words)
         final = []
         for lem, w in zip(edited, words):
             if len(lem) == 0 or constant.UNK in lem:
-                final += [w] # invalid prediction, fall back to word
+                final += [w]  # invalid prediction, fall back to word
             else:
                 final += [lem]
         return final
@@ -126,26 +128,26 @@ class Trainer(object):
         utils.change_lr(self.optimizer, new_lr)
 
     def train_dict(self, triples):
-        """ Train a dict lemmatizer given training (word, pos, lemma) triples. """
+        """Train a dict lemmatizer given training (word, pos, lemma) triples."""
         # accumulate counter
         ctr = Counter()
         ctr.update([(p[0], p[1], p[2]) for p in triples])
         # find the most frequent mappings
         for p, _ in ctr.most_common():
             w, pos, l = p
-            if (w,pos) not in self.composite_dict:
-                self.composite_dict[(w,pos)] = l
+            if (w, pos) not in self.composite_dict:
+                self.composite_dict[(w, pos)] = l
             if w not in self.word_dict:
                 self.word_dict[w] = l
         return
 
     def predict_dict(self, pairs):
-        """ Predict a list of lemmas using the dict model given (word, pos) pairs. """
+        """Predict a list of lemmas using the dict model given (word, pos) pairs."""
         lemmas = []
         for p in pairs:
             w, pos = p
-            if (w,pos) in self.composite_dict:
-                lemmas += [self.composite_dict[(w,pos)]]
+            if (w, pos) in self.composite_dict:
+                lemmas += [self.composite_dict[(w, pos)]]
             elif w in self.word_dict:
                 lemmas += [self.word_dict[w]]
             else:
@@ -153,12 +155,12 @@ class Trainer(object):
         return lemmas
 
     def skip_seq2seq(self, pairs):
-        """ Determine if we can skip the seq2seq module when ensembling with the frequency lexicon. """
+        """Determine if we can skip the seq2seq module when ensembling with the frequency lexicon."""
 
         skip = []
         for p in pairs:
             w, pos = p
-            if (w,pos) in self.composite_dict:
+            if (w, pos) in self.composite_dict:
                 skip.append(True)
             elif w in self.word_dict:
                 skip.append(True)
@@ -167,13 +169,13 @@ class Trainer(object):
         return skip
 
     def ensemble(self, pairs, other_preds):
-        """ Ensemble the dict with statistical model predictions. """
+        """Ensemble the dict with statistical model predictions."""
         lemmas = []
         assert len(pairs) == len(other_preds)
         for p, pred in zip(pairs, other_preds):
             w, pos = p
-            if (w,pos) in self.composite_dict:
-                lemma = self.composite_dict[(w,pos)]
+            if (w, pos) in self.composite_dict:
+                lemma = self.composite_dict[(w, pos)]
             elif w in self.word_dict:
                 lemma = self.word_dict[w]
             else:
@@ -185,11 +187,11 @@ class Trainer(object):
 
     def save(self, filename):
         params = {
-                'model': self.model.state_dict() if self.model is not None else None,
-                'dicts': (self.word_dict, self.composite_dict),
-                'vocab': self.vocab.state_dict(),
-                'config': self.args
-                }
+            'model': self.model.state_dict() if self.model is not None else None,
+            'dicts': (self.word_dict, self.composite_dict),
+            'vocab': self.vocab.state_dict(),
+            'config': self.args,
+        }
         try:
             torch.save(params, filename, _use_new_zipfile_serialization=False)
             logger.info("Model saved to {}".format(filename))

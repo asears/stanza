@@ -1,3 +1,4 @@
+#!bin/bash
 # Convert five class sentiment data into text files of the type you
 # might use a sentence classifier for.
 

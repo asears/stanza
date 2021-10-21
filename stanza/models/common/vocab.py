@@ -13,9 +13,11 @@ ROOT = '<ROOT>'
 ROOT_ID = 3
 VOCAB_PREFIX = [PAD, UNK, EMPTY, ROOT]
 
+
 class BaseVocab:
-    """ A base class for common vocabulary operations. Each subclass should at least 
+    """A base class for common vocabulary operations. Each subclass should at least
     implement its own build_vocab() function."""
+
     def __init__(self, data=None, lang="", idx=0, cutoff=0, lower=False):
         self.data = data
         self.lang = lang
@@ -30,7 +32,7 @@ class BaseVocab:
         raise NotImplementedError()
 
     def state_dict(self):
-        """ Returns a dictionary containing all states that are necessary to recover
+        """Returns a dictionary containing all states that are necessary to recover
         this vocab. Useful for serialization."""
         state = OrderedDict()
         for attr in self.state_attrs:
@@ -40,7 +42,7 @@ class BaseVocab:
 
     @classmethod
     def load_state_dict(cls, state_dict):
-        """ Returns a new Vocab instance constructed from a state dict. """
+        """Returns a new Vocab instance constructed from a state dict."""
         new = cls()
         for attr, value in state_dict.items():
             setattr(new, attr, value)
@@ -89,8 +91,9 @@ class BaseVocab:
     def size(self):
         return len(self)
 
+
 class CompositeVocab(BaseVocab):
-    ''' Vocabulary class that handles parsing and printing composite values such as
+    '''Vocabulary class that handles parsing and printing composite values such as
     compositional XPOS and universal morphological features (UFeats).
 
     Two key options are `keyed` and `sep`. `sep` specifies the separator used between
@@ -132,12 +135,16 @@ class CompositeVocab(BaseVocab):
             # treat multi-valued properties as singletons
             return [self._unit2id[k].get(parts[k], UNK_ID) if k in parts else EMPTY_ID for k in self._unit2id]
         else:
-            return [self._unit2id[i].get(parts[i], UNK_ID) if i < len(parts) else EMPTY_ID for i in range(len(self._unit2id))]
+            return [
+                self._unit2id[i].get(parts[i], UNK_ID) if i < len(parts) else EMPTY_ID
+                for i in range(len(self._unit2id))
+            ]
 
     def id2unit(self, id):
         items = []
         for v, k in zip(id, self._id2unit.keys()):
-            if v == EMPTY_ID: continue
+            if v == EMPTY_ID:
+                continue
             if self.keyed:
                 items.append("{}={}".format(k, self._id2unit[k][v]))
             else:
@@ -164,13 +171,12 @@ class CompositeVocab(BaseVocab):
 
             # special handle for the case where upos/xpos/ufeats are always empty
             if len(self._id2unit) == 0:
-                self._id2unit['_'] = copy(VOCAB_PREFIX) # use an arbitrary key
+                self._id2unit['_'] = copy(VOCAB_PREFIX)  # use an arbitrary key
 
         else:
             self._id2unit = dict()
 
             allparts = [self.unit2parts(u) for u in allunits]
-            maxlen = max([len(p) for p in allparts])
 
             for parts in allparts:
                 for i, p in enumerate(parts):
@@ -181,19 +187,21 @@ class CompositeVocab(BaseVocab):
 
             # special handle for the case where upos/xpos/ufeats are always empty
             if len(self._id2unit) == 0:
-                self._id2unit[0] = copy(VOCAB_PREFIX) # use an arbitrary key
+                self._id2unit[0] = copy(VOCAB_PREFIX)  # use an arbitrary key
 
         self._id2unit = OrderedDict([(k, self._id2unit[k]) for k in sorted(self._id2unit.keys())])
-        self._unit2id = {k: {w:i for i, w in enumerate(self._id2unit[k])} for k in self._id2unit}
+        self._unit2id = {k: {w: i for i, w in enumerate(self._id2unit[k])} for k in self._id2unit}
 
     def lens(self):
         return [len(self._unit2id[k]) for k in self._unit2id]
 
+
 class BaseMultiVocab:
-    """ A convenient vocab container that can store multiple BaseVocab instances, and support 
-    safe serialization of all instances via state dicts. Each subclass of this base class 
-    should implement the load_state_dict() function to specify how a saved state dict 
+    """A convenient vocab container that can store multiple BaseVocab instances, and support
+    safe serialization of all instances via state dicts. Each subclass of this base class
+    should implement the load_state_dict() function to specify how a saved state dict
     should be loaded back."""
+
     def __init__(self, vocab_dict=None):
         self._vocabs = OrderedDict()
         if vocab_dict is None:
@@ -210,7 +218,7 @@ class BaseMultiVocab:
         return self._vocabs[key]
 
     def state_dict(self):
-        """ Build a state dict by iteratively calling state_dict() of all vocabs. """
+        """Build a state dict by iteratively calling state_dict() of all vocabs."""
         state = OrderedDict()
         for k, v in self._vocabs.items():
             state[k] = v.state_dict()
@@ -218,20 +226,18 @@ class BaseMultiVocab:
 
     @classmethod
     def load_state_dict(cls, state_dict):
-        """ Construct a MultiVocab by reading from a state dict."""
+        """Construct a MultiVocab by reading from a state dict."""
         raise NotImplementedError
-
 
 
 class CharVocab(BaseVocab):
     def build_vocab(self):
-        if type(self.data[0][0]) is list: # general data from DataLoader
+        if type(self.data[0][0]) is list:  # general data from DataLoader
             counter = Counter([c for sent in self.data for w in sent for c in w[self.idx]])
             for k in list(counter.keys()):
                 if counter[k] < self.cutoff:
                     del counter[k]
-        else: # special data from Char LM
+        else:  # special data from Char LM
             counter = Counter([c for sent in self.data for c in sent])
         self._id2unit = VOCAB_PREFIX + list(sorted(list(counter.keys()), key=lambda k: (counter[k], k), reverse=True))
-        self._unit2id = {w:i for i, w in enumerate(self._id2unit)}
-
+        self._unit2id = {w: i for i, w in enumerate(self._id2unit)}

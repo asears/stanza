@@ -1,8 +1,15 @@
 #!/bin/bash
 #
-# Train and evaluate character-level language model. Run as:
+# Train and evaluate character-level language model.
+#
+# Example:
 #   ./run_charlm.sh CORPUS DIRECTION OTHER_ARGS
-# where CORPUS is charlm corpus name (e.g., English-1Billion), DIRECTION is either forward or backward, and OTHER_ARGS are additional training arguments (see charlm code) or empty.
+#
+# Options:
+# CORPUS is charlm corpus name (e.g., English-1Billion)
+# DIRECTION is either forward or backward
+# OTHER_ARGS are additional training arguments (see charlm code) or empty.
+#
 # This script assumes UDBASE and CHARLM_DATA_DIR are correctly set in config.sh.
 
 source scripts/config.sh

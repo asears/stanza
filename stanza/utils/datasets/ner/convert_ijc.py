@@ -1,12 +1,12 @@
-import argparse
-import random
-import sys
-
 """
 Converts IJC data to a TSV format.
 
 So far, tested on Hindi.  Not checked on any of the other languages.
 """
+import argparse
+import random
+import sys
+
 
 def convert_tag(tag):
     """
@@ -26,12 +26,14 @@ def convert_tag(tag):
         return "LOC"
     return "MISC"
 
-def read_single_file(input_file, bio_format=True):
+
+def read_single_file(input_file, bio_format=True) -> list:
     """
     Reads an IJC NER file and returns a list of list of lines
     """
     sentences = []
     lineno = 0
+    # fmt: off
     with open(input_file) as fin:
         current_sentence = []
         in_ner = False
@@ -99,8 +101,10 @@ def read_single_file(input_file, bio_format=True):
                     current_sentence.append((pieces[1], tag))
             else:
                 current_sentence.append((pieces[1], "O"))
+    # fmt: on
     assert not current_sentence, "File %s is unclosed!" % input_file
     return sentences
+
 
 def read_ijc_files(input_files, bio_format=True):
     sentences = []
@@ -108,7 +112,8 @@ def read_ijc_files(input_files, bio_format=True):
         sentences.extend(read_single_file(input_file, bio_format))
     return sentences
 
-def convert_ijc(input_files, csv_file, bio_format=True):
+
+def convert_ijc(input_files, csv_file, bio_format=True) -> None:
     sentences = read_ijc_files(input_files, bio_format)
     with open(csv_file, "w") as fout:
         for sentence in sentences:
@@ -116,7 +121,8 @@ def convert_ijc(input_files, csv_file, bio_format=True):
                 fout.write("%s\t%s\n" % word)
             fout.write("\n")
 
-def convert_split_ijc(input_files, train_csv, dev_csv):
+
+def convert_split_ijc(input_files, train_csv, dev_csv) -> None:
     """
     Randomly splits the given list of input files into a train/dev with 85/15 split
 
@@ -137,10 +143,13 @@ def convert_split_ijc(input_files, train_csv, dev_csv):
     convert_ijc(train_files, train_csv)
     convert_ijc(dev_files, dev_csv)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    # fmt: off
     parser.add_argument('--output_path', type=str, default="/home/john/stanza/data/ner/hi_ijc.test.csv", help="Where to output the results")
     parser.add_argument('input_files', metavar='N', nargs='+', help='input files to process')
+    # fmt: on
     args = parser.parse_args()
 
     convert_ijc(args.input_files, args.output_path, False)

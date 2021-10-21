@@ -1,4 +1,6 @@
 """
+Run end-to-end pipeline.
+
 Runs a pipeline end-to-end, reports conll scores.
 
 For example, you can do
@@ -38,9 +40,11 @@ from stanza.utils.training.run_pos import wordvec_args
 logger = logging.getLogger('stanza')
 
 def add_args(parser):
+    """Add args."""
     parser.add_argument('--test_data', default=None, type=str, help='Which data to test on, if not using the default data for this model')
 
-def run_ete(paths, dataset, short_name, command_args, extra_args):
+def run_ete(paths, dataset, short_name, command_args, extra_args) -> None:
+    """Run end to end pipeline."""
     short_language = short_name.split("_")[0]
 
     tokenize_dir = paths["TOKENIZE_DATA_DIR"]
@@ -75,7 +79,7 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                       "--conll_file", tokenizer_output, "--shorthand", short_name]
     tokenizer_args = tokenizer_args + extra_args
     logger.info("-----  TOKENIZER  ----------")
-    logger.info("Running tokenizer step with args: {}".format(tokenizer_args))
+    logger.info("Running tokenizer step with args: {0}".format(tokenizer_args))
     tokenizer.main(tokenizer_args)
 
     # If the data has any MWT in it, there should be an MWT model
@@ -90,7 +94,7 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                     '--shorthand', short_name,
                     '--mode', 'predict']
         mwt_args = mwt_args + extra_args
-        logger.info("Running mwt step with args: {}".format(mwt_args))
+        logger.info("Running mwt step with args: {0}".format(mwt_args))
         mwt_expander.main(mwt_args)
     else:
         logger.info("No MWT in training data.  Skipping")
@@ -107,7 +111,7 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                 '--shorthand', short_name,
                 '--mode', 'predict']
     pos_args = pos_args + wordvec_args(short_language) + extra_args
-    logger.info("Running pos step with args: {}".format(pos_args))
+    logger.info("Running pos step with args: {0}".format(pos_args))
     tagger.main(pos_args)
 
     # Run the LEMMA step.  If there are no lemmas in the training
@@ -121,11 +125,11 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                   '--mode', 'predict']
     lemma_args = lemma_args + extra_args
     if check_lemmas(lemma_train_file):
-        logger.info("Running lemmatizer step with args: {}".format(lemma_args))
+        logger.info("Running lemmatizer step with args: {0}".format(lemma_args))
         lemmatizer.main(lemma_args)
     else:
         logger.info("No lemmas in training data")
-        logger.info("Running identity lemmatizer step with args: {}".format(lemma_args))
+        logger.info("Running identity lemmatizer step with args: {0}".format(lemma_args))
         identity_lemmatizer.main(lemma_args)
 
     # Run the DEPPARSE step.  This is the last step
@@ -143,17 +147,18 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                      '--shorthand', short_name,
                      '--mode', 'predict']
     depparse_args = depparse_args + wordvec_args(short_language) + extra_args
-    logger.info("Running depparse step with args: {}".format(depparse_args))
+    logger.info("Running depparse step with args: {0}".format(depparse_args))
     parser.main(depparse_args)
 
     logger.info("-----  EVALUATION ----------")
     gold_file = f"{tokenize_dir}/{test_short_name}.{dataset}.gold.conllu"
     ete_file = depparse_output
     results = common.run_eval_script(gold_file, ete_file)
-    logger.info("End to end results for {} models on {} {} data:\n{}".format(short_name, test_short_name, dataset, results))
+    logger.info("End to end results for {0} models on {1} {2} data:\n{3}".format(short_name, test_short_name, dataset, results))
 
 def run_treebank(mode, paths, treebank, short_name,
-                 temp_output_file, command_args, extra_args):
+                 temp_output_file, command_args, extra_args) -> None:
+    """Run treebank."""
     if mode == Mode.TRAIN:
         dataset = 'train'
     elif mode == Mode.SCORE_DEV:
@@ -170,7 +175,8 @@ def run_treebank(mode, paths, treebank, short_name,
         os.makedirs(paths["ETE_DATA_DIR"], exist_ok=True)
         run_ete(paths, dataset, short_name, command_args, extra_args)
 
-def main():
+def main() -> None:
+    """Run treebank."""
     common.main(run_treebank, "lemma", "lemmatizer", add_args)
 
 if __name__ == "__main__":

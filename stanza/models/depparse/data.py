@@ -10,6 +10,7 @@ from stanza.models.common.doc import *
 
 logger = logging.getLogger('stanza')
 
+
 def data_to_batches(data, batch_size, eval_mode, sort_during_eval, min_length_to_batch_separately):
     """
     Given a list of lists, where the first element of each sublist
@@ -30,10 +31,10 @@ def data_to_batches(data, batch_size, eval_mode, sort_during_eval, min_length_to
 
     if not eval_mode:
         # sort sentences (roughly) by length for better memory utilization
-        data = sorted(data, key = lambda x: len(x[0]), reverse=random.random() > .5)
+        data = sorted(data, key=lambda x: len(x[0]), reverse=random.random() > 0.5)
         data_orig_idx = None
     elif sort_during_eval:
-        (data, ), data_orig_idx = sort_all([data], [len(x[0]) for x in data])
+        (data,), data_orig_idx = sort_all([data], [len(x[0]) for x in data])
     else:
         data_orig_idx = None
 
@@ -61,10 +62,19 @@ def data_to_batches(data, batch_size, eval_mode, sort_during_eval, min_length_to
 
 
 class DataLoader:
-
-    def __init__(self, doc, batch_size, args, pretrain, vocab=None, evaluation=False, sort_during_eval=False, min_length_to_batch_separately=None):
+    def __init__(
+        self,
+        doc,
+        batch_size,
+        args,
+        pretrain,
+        vocab=None,
+        evaluation=False,
+        sort_during_eval=False,
+        min_length_to_batch_separately=None,
+    ):
         self.batch_size = batch_size
-        self.min_length_to_batch_separately=min_length_to_batch_separately
+        self.min_length_to_batch_separately = min_length_to_batch_separately
         self.args = args
         self.eval = evaluation
         self.shuffled = not self.eval
@@ -77,7 +87,7 @@ class DataLoader:
             self.vocab = self.init_vocab(data)
         else:
             self.vocab = vocab
-        
+
         # handle pretrain; pretrain vocab is used when args['pretrain'] == True and pretrain is not None
         self.pretrain_vocab = None
         if pretrain is not None and args['pretrain']:
@@ -100,7 +110,7 @@ class DataLoader:
         logger.debug("{} batches created.".format(len(self.data)))
 
     def init_vocab(self, data):
-        assert self.eval == False # for eval vocab must exist
+        assert self.eval is False  # for eval vocab must exist
         charvocab = CharVocab(data, self.args['shorthand'])
         wordvocab = WordVocab(data, self.args['shorthand'], cutoff=7, lower=True)
         uposvocab = WordVocab(data, self.args['shorthand'], idx=1)
@@ -108,13 +118,17 @@ class DataLoader:
         featsvocab = FeatureVocab(data, self.args['shorthand'], idx=3)
         lemmavocab = WordVocab(data, self.args['shorthand'], cutoff=7, idx=4, lower=True)
         deprelvocab = WordVocab(data, self.args['shorthand'], idx=6)
-        vocab = MultiVocab({'char': charvocab,
-                            'word': wordvocab,
-                            'upos': uposvocab,
-                            'xpos': xposvocab,
-                            'feats': featsvocab,
-                            'lemma': lemmavocab,
-                            'deprel': deprelvocab})
+        vocab = MultiVocab(
+            {
+                'char': charvocab,
+                'word': wordvocab,
+                'upos': uposvocab,
+                'xpos': xposvocab,
+                'feats': featsvocab,
+                'lemma': lemmavocab,
+                'deprel': deprelvocab,
+            }
+        )
         return vocab
 
     def preprocess(self, data, vocab, pretrain_vocab, args):
@@ -142,7 +156,7 @@ class DataLoader:
         return len(self.data)
 
     def __getitem__(self, key):
-        """ Get a batch with index. """
+        """Get a batch with index."""
         if not isinstance(key, int):
             raise TypeError
         if key < 0 or key >= len(self.data):
@@ -178,7 +192,23 @@ class DataLoader:
         lemma = get_long_tensor(batch[6], batch_size)
         head = get_long_tensor(batch[7], batch_size)
         deprel = get_long_tensor(batch[8], batch_size)
-        return words, words_mask, wordchars, wordchars_mask, upos, xpos, ufeats, pretrained, lemma, head, deprel, orig_idx, word_orig_idx, sentlens, word_lens
+        return (
+            words,
+            words_mask,
+            wordchars,
+            wordchars_mask,
+            upos,
+            xpos,
+            ufeats,
+            pretrained,
+            lemma,
+            head,
+            deprel,
+            orig_idx,
+            word_orig_idx,
+            sentlens,
+            word_lens,
+        )
 
     def load_doc(self, doc):
         data = doc.get([TEXT, UPOS, XPOS, FEATS, LEMMA, HEAD, DEPREL], as_sentences=True)
@@ -204,12 +234,17 @@ class DataLoader:
         random.shuffle(self.data)
 
     def chunk_batches(self, data):
-        batches, data_orig_idx = data_to_batches(data=data, batch_size=self.batch_size,
-                                                 eval_mode=self.eval, sort_during_eval=self.sort_during_eval,
-                                                 min_length_to_batch_separately=self.min_length_to_batch_separately)
+        batches, data_orig_idx = data_to_batches(
+            data=data,
+            batch_size=self.batch_size,
+            eval_mode=self.eval,
+            sort_during_eval=self.sort_during_eval,
+            min_length_to_batch_separately=self.min_length_to_batch_separately,
+        )
         # data_orig_idx might be None at train time, since we don't anticipate unsorting
         self.data_orig_idx = data_orig_idx
         return batches
+
 
 def to_int(string, ignore_error=False):
     try:
@@ -220,4 +255,3 @@ def to_int(string, ignore_error=False):
         else:
             raise err
     return res
-

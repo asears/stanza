@@ -30,6 +30,7 @@ Apparently the random split produced a test set easier than the dev set.
 import os
 import random
 import sys
+from typing import List
 import xml.etree.ElementTree as ET
 
 from stanza.utils.datasets.tokenization.process_thai_tokenization import write_dataset
@@ -91,7 +92,7 @@ allowed_sequences = {
     '<----',
 }
 
-def read_data(input_filename):
+def read_data(input_filename) -> List[str]:
     print("Reading {}".format(input_filename))
     tree = ET.parse(input_filename)
     documents = parse_xml(tree)
@@ -99,7 +100,7 @@ def read_data(input_filename):
     print("Number of paragraphs: {}".format(sum(len(document) for document in documents)))
     return documents
 
-def parse_xml(tree):
+def parse_xml(tree) -> List[str]:
     # we will put each paragraph in a separate block in the output file
     # we won't pay any attention to the document boundaries unless we
     # later find out it was necessary
@@ -147,7 +148,7 @@ def parse_xml(tree):
     return documents
 
 
-def main(*args):
+def main(*args) -> None:
     random.seed(1007)
     if not args:
         args = sys.argv[1:]
