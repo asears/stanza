@@ -1,5 +1,6 @@
-
-# Run classifier.py to build a sentiment model
+#!/bin/bash
+# Run classifier.py to build a sentiment model.
+#
 # Options:
 #   -b <base directory>
 #   -d sst_fiveclass | sst_binary | sst_threeclass
@@ -13,8 +14,7 @@ SST_FIVECLASS_DIR=$SENTIMENT_DATA_DIR/sst-processed/fiveclass
 basedir=$SST_FIVECLASS_DIR
 mode="train"
 
-while getopts "b:d:et" OPTION
-do
+while getopts "b:d:et" OPTION; do
   case $OPTION in
   b)
     basedir=$OPTARG
@@ -28,7 +28,7 @@ do
       basedir=$SST_THREECLASS_DIR
     else
       echo "Unknown dataset $OPTARG"
-      exit  
+      exit
     fi
     ;;
   e)
@@ -40,13 +40,13 @@ do
   esac
 done
 
-shift $((OPTIND -1))
+shift $((OPTIND - 1))
 args=$@
 
 if hash python3 2>/dev/null; then
-    PYTHON=python3
+  PYTHON=python3
 else
-    PYTHON=python
+  PYTHON=python
 fi
 
 if [ "$mode" = "train" ]; then

@@ -1,3 +1,15 @@
+#!/bin/bash
+# Manipulates various downloads from their original form to a form
+# usable by the classifier model
+
+# Notes on the individual datasets can be found in the relevant
+# process_dataset script
+
+# Example:
+# prep_sentiment -lenglish
+# Example:
+# prep_sentiment -lgerman
+
 if hash python3 2>/dev/null; then
     PYTHON=python3
 else
@@ -8,22 +20,12 @@ if [ -z "$SENTIMENT_DATA_DIR" ]; then
     source scripts/config.sh
 fi
 
-# Manipulates various downloads from their original form to a form
-# usable by the classifier model
-
-# Notes on the individual datasets can be found in the relevant
-# process_dataset script
-
-# Run as follows:
-# prep_sentiment -lenglish
-# prep_sentiment -lgerman
-
 language="english"
-while getopts "l:" OPTION
-do
+while getopts "l:" OPTION; do
     case $OPTION in
     l)
         language=$OPTARG
+        ;;
     esac
 done
 
@@ -56,9 +58,9 @@ elif [ "$language" = "german" ]; then
     echo "Usage"
     $PYTHON -m scripts.sentiment.process_usage_german extern_data/sentiment/USAGE
     echo "SB-10k"
-    $PYTHON  -m scripts.sentiment.process_sb10k --csv_filename extern_data/sentiment/german/sb-10k/de_full/de_test.tsv --out_dir extern_data/sentiment/german/sb-10k --split test --sentiment_column 2 --text_column 3
-    $PYTHON  -m scripts.sentiment.process_sb10k --csv_filename extern_data/sentiment/german/sb-10k/de_full/de_train.tsv --out_dir extern_data/sentiment/german/sb-10k --split train_dev --sentiment_column 2 --text_column 3
-    #$PYTHON -m scripts.sentiment.process_sb10k --csv_filename extern_data/sentiment/german/sb-10k/sb_10k.tsv --out_dir extern_data/sentiment/german/sb-10k
+    $PYTHON -m scripts.sentiment.process_sb10k --csv_filename extern_data/sentiment/german/sb-10k/de_full/de_test.tsv --out_dir extern_data/sentiment/german/sb-10k --split test --sentiment_column 2 --text_column 3
+    $PYTHON -m scripts.sentiment.process_sb10k --csv_filename extern_data/sentiment/german/sb-10k/de_full/de_train.tsv --out_dir extern_data/sentiment/german/sb-10k --split train_dev --sentiment_column 2 --text_column 3
+#$PYTHON -m scripts.sentiment.process_sb10k --csv_filename extern_data/sentiment/german/sb-10k/sb_10k.tsv --out_dir extern_data/sentiment/german/sb-10k
 elif [ "$language" = "chinese" ]; then
     echo "PROCESSING CHINESE"
     echo "Ren-CECps"
