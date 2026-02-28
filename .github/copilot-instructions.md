@@ -1,5 +1,7 @@
 Don't use word comprehensive in documentation.
 
+Don't use emoji or `**` emphasis.
+
 Store agents plans and agentic outputs in agents/plans
 
 Project supports Python 3.10 to latest python 3.14

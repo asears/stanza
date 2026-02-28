@@ -3,7 +3,6 @@
 
 import logging
 
-from stanza.models.pos.vocab import WordVocab, XPOSVocab
 from stanza.models.pos.xpos_vocab_utils import XPOSDescription, XPOSType, build_xpos_vocab, choose_simplest_factory
 
 # using a sublogger makes it easier to test in the unittests

@@ -5,9 +5,8 @@ This class runs a Java process to evaluate a treebank prediction using CoreNLP
 from collections import namedtuple
 import sys
 
-import stanza
 from stanza.protobuf import EvaluateParserRequest, EvaluateParserResponse
-from stanza.server.java_protobuf_requests import send_request, build_tree, JavaProtobufContext
+from stanza.server.java_protobuf_requests import build_tree, JavaProtobufContext
 from stanza.models.constituency.tree_reader import read_treebank
 
 EVALUATE_JAVA = "edu.stanford.nlp.parser.metrics.EvaluateExternalParser"
@@ -38,7 +37,7 @@ def build_request(treebank):
             try:
                 parse_result.predicted.append(build_tree(prediction, score))
             except Exception as e:
-                raise RuntimeError("Unable to build parser request from tree {}".format(pred)) from e
+                raise RuntimeError(f"Unable to build parser request from tree {pred}") from e
 
     return request
 
@@ -62,7 +61,7 @@ class EvaluateParser(JavaProtobufContext):
     """
     def __init__(self, classpath=None, kbest=None, silent=False):
         if kbest is not None:
-            extra_args = ["-evalPCFGkBest", "{}".format(kbest), "-evals", "pcfgTopK"]
+            extra_args = ["-evalPCFGkBest", f"{kbest}", "-evals", "pcfgTopK"]
         else:
             extra_args = []
 

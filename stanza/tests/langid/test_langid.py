@@ -11,23 +11,28 @@ from stanza.tests import TEST_MODELS_DIR
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
-#pytestmark = pytest.mark.skip
+# pytestmark = pytest.mark.skip
+
 
 @pytest.fixture(scope="module")
 def basic_multilingual():
     return Pipeline(dir=TEST_MODELS_DIR, lang='multilingual', processors="langid")
 
+
 @pytest.fixture(scope="module")
 def enfr_multilingual():
     return Pipeline(dir=TEST_MODELS_DIR, lang="multilingual", processors="langid", langid_lang_subset=["en", "fr"])
+
 
 @pytest.fixture(scope="module")
 def en_multilingual():
     return Pipeline(dir=TEST_MODELS_DIR, lang="multilingual", processors="langid", langid_lang_subset=["en"])
 
+
 @pytest.fixture(scope="module")
 def clean_multilingual():
     return Pipeline(dir=TEST_MODELS_DIR, lang="multilingual", processors="langid", langid_clean_text=True)
+
 
 def test_langid(basic_multilingual):
     """
@@ -41,6 +46,7 @@ def test_langid(basic_multilingual):
     basic_multilingual(docs)
     predictions = [doc.lang for doc in docs]
     assert predictions == ["en", "fr"]
+
 
 def test_langid_benchmark(basic_multilingual):
     """
@@ -547,11 +553,11 @@ def test_langid_benchmark(basic_multilingual):
     {"text": "التسليح بدون مبرر، واستمرار الأضرار الناجمة عن فرض", "label": "ar"},
     {"text": "Například Pedagogická fakulta Univerzity Karlovy", "label": "cs"},
     {"text": "nostris ut eriperet nos de praesenti saeculo", "label": "la"}]
-    
+
     docs = [Document([], text=example["text"]) for example in examples]
     gold_labels = [example["label"] for example in examples]
     basic_multilingual(docs)
-    accuracy = sum([(doc.lang == label) for doc,label in zip(docs,gold_labels)])/len(docs)
+    accuracy = sum([(doc.lang == label) for doc, label in zip(docs, gold_labels)]) / len(docs)
     assert accuracy >= 0.98
 
 
@@ -562,13 +568,14 @@ def test_text_cleaning(basic_multilingual, clean_multilingual):
     docs = ["Bonjour le monde! #thisisfrench #ilovefrance",
             "Bonjour le monde! https://t.co/U0Zjp3tusD"]
     docs = [Document([], text=text) for text in docs]
-    
+
     basic_multilingual(docs)
     assert [doc.lang for doc in docs] == ["it", "it"]
-    
+
     assert clean_multilingual.processors["langid"]._clean_text
     clean_multilingual(docs)
     assert [doc.lang for doc in docs] == ["fr", "fr"]
+
 
 def test_emoji_cleaning():
     TEXT = ["Sh'reyan has nice antennae :thumbs_up:",
@@ -577,6 +584,7 @@ def test_emoji_cleaning():
                 "This is  a cat"]
     for text, expected in zip(TEXT, EXPECTED):
         assert LangIDProcessor.clean_text(text) == expected
+
 
 def test_lang_subset(basic_multilingual, enfr_multilingual, en_multilingual):
     """
@@ -597,6 +605,7 @@ def test_lang_subset(basic_multilingual, enfr_multilingual, en_multilingual):
     en_multilingual(docs)
     assert [doc.lang for doc in docs] == ["en", "en"]
 
+
 def test_lang_subset_unlikely_language(en_multilingual):
     """
     Test that the language subset masking chooses a legal language, even if all legal languages are supa unlikely
@@ -612,4 +621,3 @@ def test_lang_subset_unlikely_language(en_multilingual):
     en_idx = model.tag_to_idx['en']
     predictions = model(text_tensor)
     assert predictions[0, en_idx] < 0, "If this test fails, then regardless of how unlikely it was, the model is predicting the input string is possibly English.  Update the test by picking a different combination of languages & input"
-

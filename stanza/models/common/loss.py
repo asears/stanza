@@ -30,7 +30,7 @@ def weighted_cross_entropy_loss(labels, log_dampened=False):
     weights = np.sum(weights) / weights
     if log_dampened:
         weights = 1 + np.log(weights)
-    logger.debug("Reweighting cross entropy by {}".format(weights))
+    logger.debug(f"Reweighting cross entropy by {weights}")
     loss = nn.CrossEntropyLoss(
         weight=torch.from_numpy(weights).type('torch.FloatTensor')
     )
@@ -65,11 +65,11 @@ class FocalLoss(nn.Module):
         """
         if len(inputs.shape) == 2 and len(targets.shape) == 1:
             if inputs.shape[0] != targets.shape[0]:
-                raise ValueError("Expected inputs N,C and targets N, but got {} and {}".format(inputs.shape, targets.shape))
+                raise ValueError(f"Expected inputs N,C and targets N, but got {inputs.shape} and {targets.shape}")
         elif len(inputs.shape) == 1 and len(targets.shape) == 0:
             raise NotImplementedError("This would be a reasonable thing to implement, but we haven't done it yet")
         else:
-            raise ValueError("Expected inputs N,C and targets N, but got {} and {}".format(inputs.shape, targets.shape))
+            raise ValueError(f"Expected inputs N,C and targets N, but got {inputs.shape} and {targets.shape}")
 
         raw_loss = self.ce_loss(inputs, targets)
         assert len(raw_loss.shape) == 1 and raw_loss.shape[0] == inputs.shape[0]

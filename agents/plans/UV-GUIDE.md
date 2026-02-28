@@ -4,11 +4,11 @@ This guide helps you use `uv` - a fast, modern Python package manager - for deve
 
 ## What is UV?
 
-**uv** is an extremely fast Python package installer and resolver, written in Rust. It can be 5-10x faster than pip while providing the same interface and reliability.
+uv is an extremely fast Python package installer and resolver, written in Rust. It can be 5-10x faster than pip while providing the same interface and reliability.
 
-- **Official Repository:** https://github.com/astral-sh/uv
-- **Documentation:** https://github.com/astral-sh/uv#readme
-- **Installation:** https://github.com/astral-sh/uv?tab=readme-ov-file#installation
+- Official Repository: https://github.com/astral-sh/uv
+- Documentation: https://github.com/astral-sh/uv#readme
+- Installation: https://github.com/astral-sh/uv?tab=readme-ov-file#installation
 
 ## Quick Start
 
@@ -163,12 +163,12 @@ uv run pytest stanza/tests/common/test_doc.py -s
 
 The GitHub Actions workflow (`.github/workflows/uv-build-checks.yaml`) runs:
 
-1. **Matrix Testing:** Python 3.9-3.13 on Ubuntu, Windows, macOS
-2. **Ruff Format Check:** Ensures consistent code style
-3. **Ruff Linting:** Checks for errors and warnings
-4. **MyPy Type Checking:** Validates type hints
-5. **Pytest Unit Tests:** Runs full test suite
-6. **Coverage Report:** Uploads to Codecov
+1. Matrix Testing: Python 3.9-3.13 on Ubuntu, Windows, macOS
+2. Ruff Format Check: Ensures consistent code style
+3. Ruff Linting: Checks for errors and warnings
+4. MyPy Type Checking: Validates type hints
+5. Pytest Unit Tests: Runs full test suite
+6. Coverage Report: Uploads to Codecov
 
 ### Local Simulation of CI
 
@@ -314,6 +314,6 @@ uv pip list --outdated
 
 ---
 
-**Last Updated:** February 28, 2026  
-**UV Version:** Latest  
-**Python Versions Supported:** 3.9+
+Last Updated: February 28, 2026  
+UV Version: Latest  
+Python Versions Supported: 3.9+

@@ -5,15 +5,14 @@ TODO: could add a bunch more simple tests for the tokenization utils
 """
 
 import pytest
-import stanza
 
 from stanza import Pipeline
-from stanza.tests import *
 from stanza.models.common import doc
-from stanza.models.tokenization import data
-from stanza.models.tokenization import utils
+from stanza.models.tokenization import data, utils
+from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_find_spans():
     """
@@ -34,6 +33,7 @@ def test_find_spans():
     raw = ['<PAD>', 'u', 'n', 'b', 'a', 'n', '<PAD>', 'm', 'o', 'x', ' ', 'o', 'p', 'a', 'l']
     assert utils.find_spans(raw) == [(1, 6), (7, 15)]
 
+
 def check_offsets(doc, expected_offsets):
     """
     Compare the start_char and end_char of the tokens in the doc with the given list of list of offsets
@@ -44,6 +44,7 @@ def check_offsets(doc, expected_offsets):
         for token, offset in zip(sentence.tokens, offsets):
             assert token.start_char == offset[0]
             assert token.end_char == offset[1]
+
 
 def test_match_tokens_with_text():
     """
@@ -66,6 +67,7 @@ def test_match_tokens_with_text():
 
     with pytest.raises(ValueError):
         doc = utils.match_tokens_with_text([["This", "iz", "a", "test"]], "Thisisatest")
+
 
 def test_long_paragraph():
     """
@@ -94,6 +96,7 @@ def test_long_paragraph():
     document = doc.Document(document, raw_text)
     assert len(document.sentences) == 100
 
+
 def test_postprocessor_application():
     """
     Check that the postprocessor behaves correctly by applying the identity postprocessor and hoping that it does indeed return correctly.
@@ -111,6 +114,7 @@ def test_postprocessor_application():
 
     assert res == target_doc
 
+
 def test_reassembly_indexing():
     """
     Check that the reassembly code counts the indicies correctly, and including OOV chars.
@@ -127,6 +131,7 @@ def test_reassembly_indexing():
     res = utils.reassemble_doc_from_tokens(good_tokenization, good_mwts, good_expansions, text)
 
     assert res == target_doc
+
 
 def test_reassembly_reference_failures():
     """
@@ -154,7 +159,6 @@ def test_reassembly_reference_failures():
         utils.reassemble_doc_from_tokens(bad_inline_tokenization, bad_inline_mwts, bad_inline_mwts, text)
 
     utils.reassemble_doc_from_tokens(good_tokenization, good_mwts, good_expansions, text)
-
 
 
 TRAIN_DATA = """
@@ -200,6 +204,7 @@ TRAIN_DATA = """
 
 """.lstrip()
 
+
 def test_lexicon_from_training_data(tmp_path):
     """
     Test a couple aspects of building a lexicon from training data
@@ -217,4 +222,3 @@ def test_lexicon_from_training_data(tmp_path):
     expected_lexicon = ["'d", 'announced', 'baghdad', 'being', 'busted', 'by', 'cells', 'dpa', 'in', 'interior', 'iraqi', 'ministry', 'of', 'officials', 'operating', 'run', 'terrorist', 'that', 'the', 'them', 'they', "they'd", 'three', 'two', 'up', 'were']
     assert lexicon == expected_lexicon
     assert num_dict_feat == max(len(x) for x in lexicon)
-

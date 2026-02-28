@@ -1,8 +1,5 @@
 import numpy as np
-import functools
-import sys
 import torch
-from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.init as init
 
@@ -38,7 +35,7 @@ class FeatureDropoutFunction(torch.autograd.function.InplaceFunction):
     def forward(cls, ctx, input, batch_idxs, p=0.5, train=False, inplace=False):
         if p < 0 or p > 1:
             raise ValueError("dropout probability has to be between 0 and 1, "
-                             "but got {}".format(p))
+                             f"but got {p}")
 
         ctx.p = p
         ctx.train = train
@@ -79,7 +76,7 @@ class FeatureDropout(nn.Module):
         super().__init__()
         if p < 0 or p > 1:
             raise ValueError("dropout probability has to be between 0 and 1, "
-                             "but got {}".format(p))
+                             f"but got {p}")
         self.p = p
         self.inplace = inplace
 
@@ -132,9 +129,9 @@ class ScaledDotProductAttention(nn.Module):
 
         if attn_mask is not None:
             assert attn_mask.size() == attn.size(), \
-                    'Attention mask shape {} mismatch ' \
+                    f'Attention mask shape {attn_mask.size()} mismatch ' \
                     'with Attention logit tensor shape ' \
-                    '{}.'.format(attn_mask.size(), attn.size())
+                    f'{attn.size()}.'
 
             attn.data.masked_fill_(attn_mask, -float('inf'))
 

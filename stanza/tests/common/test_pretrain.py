@@ -1,8 +1,8 @@
 import os
 import tempfile
 
-import pytest
 import numpy as np
+import pytest
 import torch
 
 from stanza.models.common import pretrain
@@ -11,6 +11,7 @@ from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
+
 def check_vocab(vocab):
     # 4 base vectors, plus the 3 vectors actually present in the file
     assert len(vocab) == 7
@@ -18,41 +19,49 @@ def check_vocab(vocab):
     assert 'mox' in vocab
     assert 'opal' in vocab
 
+
 def check_embedding(emb, unk=False):
-    expected = np.array([[ 0.,  0.,  0.,  0.,],
-                         [ 0.,  0.,  0.,  0.,],
-                         [ 0.,  0.,  0.,  0.,],
-                         [ 0.,  0.,  0.,  0.,],
-                         [ 1.,  2.,  3.,  4.,],
-                         [ 5.,  6.,  7.,  8.,],
-                         [ 9., 10., 11., 12.,]])
+    expected = np.array([[0., 0., 0., 0.],
+                         [0., 0., 0., 0.],
+                         [0., 0., 0., 0.],
+                         [0., 0., 0., 0.],
+                         [1., 2., 3., 4.],
+                         [5., 6., 7., 8.],
+                         [9., 10., 11., 12.]])
     if unk:
         expected[UNK_ID] = -1
     np.testing.assert_allclose(emb, expected)
+
 
 def check_pretrain(pt):
     check_vocab(pt.vocab)
     check_embedding(pt.emb)
 
+
 def test_text_pretrain():
     pt = pretrain.Pretrain(vec_filename=f'{TEST_WORKING_DIR}/in/tiny_emb.txt', save_to_file=False)
     check_pretrain(pt)
+
 
 def test_xz_pretrain():
     pt = pretrain.Pretrain(vec_filename=f'{TEST_WORKING_DIR}/in/tiny_emb.xz', save_to_file=False)
     check_pretrain(pt)
 
+
 def test_gz_pretrain():
     pt = pretrain.Pretrain(vec_filename=f'{TEST_WORKING_DIR}/in/tiny_emb.gz', save_to_file=False)
     check_pretrain(pt)
+
 
 def test_zip_pretrain():
     pt = pretrain.Pretrain(vec_filename=f'{TEST_WORKING_DIR}/in/tiny_emb.zip', save_to_file=False)
     check_pretrain(pt)
 
+
 def test_csv_pretrain():
     pt = pretrain.Pretrain(csv_filename=f'{TEST_WORKING_DIR}/in/tiny_emb.csv', save_to_file=False)
     check_pretrain(pt)
+
 
 def test_resave_pretrain():
     """
@@ -68,7 +77,7 @@ def test_resave_pretrain():
         check_pretrain(pt)
 
         pt2 = pretrain.Pretrain(filename=test_pt_file.name,
-                               vec_filename=f'unban_mox_opal')
+                               vec_filename='unban_mox_opal')
         check_pretrain(pt2)
 
         pt3 = torch.load(test_pt_file.name, weights_only=True)
@@ -76,12 +85,14 @@ def test_resave_pretrain():
     finally:
         os.unlink(test_pt_file.name)
 
-SPACE_PRETRAIN="""
+
+SPACE_PRETRAIN = """
 3 4
 unban mox 1 2 3 4
 opal 5 6 7 8
 foo 9 10 11 12
 """.strip()
+
 
 def test_whitespace():
     """
@@ -103,11 +114,13 @@ def test_whitespace():
     finally:
         os.unlink(test_txt_file.name)
 
-NO_HEADER_PRETRAIN="""
+
+NO_HEADER_PRETRAIN = """
 unban 1 2 3 4
 mox 5 6 7 8
 opal 9 10 11 12
 """.strip()
+
 
 def test_no_header():
     """
@@ -120,12 +133,14 @@ def test_no_header():
         pt = pretrain.Pretrain(vec_filename=filename, save_to_file=False)
         check_embedding(pt.emb)
 
-UNK_PRETRAIN="""
+
+UNK_PRETRAIN = """
 unban 1 2 3 4
 mox 5 6 7 8
 opal 9 10 11 12
 <unk> -1 -1 -1 -1
 """.strip()
+
 
 def test_no_header():
     """

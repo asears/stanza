@@ -15,12 +15,9 @@ Data format is same as LSTM_langid as well.
 import argparse
 import json
 import logging
-import os
-import re
-import sys
 
 from pathlib import Path
-from random import randint, random, shuffle
+from random import shuffle
 from string import digits
 from tqdm import tqdm
 

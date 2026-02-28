@@ -68,7 +68,7 @@ def main(args=None):
     elif args.split is Split.TEST:
         process_utils.write_list(os.path.join(args.out_dir, "%s.test.json" % args.short_name), snippets)
     else:
-        raise ValueError("Unknown split method {}".format(args.split))
+        raise ValueError(f"Unknown split method {args.split}")
 
 if __name__ == '__main__':
     random.seed(1234)

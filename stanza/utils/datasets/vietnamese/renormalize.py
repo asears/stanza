@@ -86,7 +86,7 @@ def replace_all(text):
     return text
 
 def convert_file(org_file, new_file):
-    with open(org_file, 'r', encoding='utf-8') as reader, open(new_file, 'w', encoding='utf-8') as writer:
+    with open(org_file, encoding='utf-8') as reader, open(new_file, 'w', encoding='utf-8') as writer:
         content = reader.readlines()
         for line in content:
             new_line = replace_all(line)

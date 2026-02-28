@@ -3,9 +3,14 @@ Integration tests for morphseg
 """
 
 import pytest
+
+# Skip entire module if morphseg is not available
+pytest.importorskip("morphseg")
+
 from morphseg import MorphemeSegmenter
 
-pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.morphseg]
+
 
 class TestIntegration:
 

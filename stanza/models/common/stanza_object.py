@@ -6,7 +6,7 @@ def _readonly_setter(self, name):
         full_classname += '.' + self.__class__.__qualname__
     raise ValueError(f'Property "{name}" of "{full_classname}" is read-only.')
 
-class StanzaObject(object):
+class StanzaObject:
     """
     Base class for all Stanza data objects that allows for some flexibility handling annotations
     """

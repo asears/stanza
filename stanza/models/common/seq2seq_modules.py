@@ -5,8 +5,6 @@ Pytorch implementation of basic sequence to Sequence modules.
 import logging
 import torch
 import torch.nn as nn
-import math
-import numpy as np
 
 import stanza.models.common.seq2seq_constant as constant
 
@@ -212,8 +210,8 @@ class LSTMAttention(nn.Module):
         elif attn_type == 'deep':
             self.attention_layer = DeepAttention(hidden_size)
         else:
-            raise Exception("Unsupported LSTM attention type: {}".format(attn_type))
-        logger.debug("Using {} attention for LSTM.".format(attn_type))
+            raise Exception(f"Unsupported LSTM attention type: {attn_type}")
+        logger.debug(f"Using {attn_type} attention for LSTM.")
 
     def forward(self, input, hidden, ctx, ctx_mask=None, return_logattn=False):
         """Propagate input through the network."""

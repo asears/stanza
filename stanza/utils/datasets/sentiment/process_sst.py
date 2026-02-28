@@ -45,7 +45,7 @@ def get_phrases(dataset, treebank_file, input_dir):
     if not os.path.exists(input_file):
         raise FileNotFoundError(input_file)
     phrases = get_subtrees(input_file, *extra_args)
-    print("Found {} phrases in SST {} {}".format(len(phrases), treebank_file, dataset))
+    print(f"Found {len(phrases)} phrases in SST {treebank_file} {dataset}")
     return phrases
 
 def convert_version(dataset, treebank_file, input_dir, output_dir):

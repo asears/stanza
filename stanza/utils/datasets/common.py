@@ -5,7 +5,6 @@ import glob
 import logging
 import os
 import re
-import subprocess
 import sys
 import unicodedata
 
@@ -193,7 +192,7 @@ def find_treebank_dataset_file(treebank, udbase_dir, dataset, extension, fail=Fa
     files = glob.glob(filename)
     if len(files) == 0:
         if fail:
-            raise FileNotFoundError("Could not find any treebank files which matched {}\nIf you have the data elsewhere, you can change the base directory for the search by changing the {} environment variable".format(filename, env_var))
+            raise FileNotFoundError(f"Could not find any treebank files which matched {filename}\nIf you have the data elsewhere, you can change the base directory for the search by changing the {env_var} environment variable")
         else:
             return None
     elif len(files) == 1:

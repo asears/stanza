@@ -8,7 +8,6 @@ import logging
 
 from stanza.models.common import doc
 from stanza.models.common.exceptions import ForwardCharlmNotFoundError, BackwardCharlmNotFoundError
-from stanza.models.common.utils import unsort
 from stanza.models.ner.data import DataLoader
 from stanza.models.ner.trainer import Trainer
 from stanza.models.ner.utils import merge_tags

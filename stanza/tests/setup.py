@@ -2,6 +2,7 @@ import glob
 import logging
 import os
 import shutil
+
 import stanza
 from stanza.resources import installation
 from stanza.tests import TEST_HOME_VAR, TEST_WORKING_DIR
@@ -17,8 +18,8 @@ if not test_dir:
 in_dir = os.path.join(test_dir, "in")
 out_dir = os.path.join(test_dir, "out")
 scripts_dir = os.path.join(test_dir, "scripts")
-models_dir=os.path.join(test_dir, "models")
-corenlp_dir=os.path.join(test_dir, "corenlp_dir")
+models_dir = os.path.join(test_dir, "models")
+corenlp_dir = os.path.join(test_dir, "corenlp_dir")
 
 os.makedirs(test_dir, exist_ok=True)
 os.makedirs(in_dir, exist_ok=True)
@@ -38,7 +39,7 @@ for emb_file in glob.glob("stanza/tests/data/tiny_emb.*"):
 logger.info("DOWNLOADING MODELS")
 
 stanza.download(lang='en', model_dir=models_dir, logging_level='info')
-stanza.download(lang="en", model_dir=models_dir, package=None, processors={"ner":"ncbi_disease"})
+stanza.download(lang="en", model_dir=models_dir, package=None, processors={"ner": "ncbi_disease"})
 stanza.download(lang='fr', model_dir=models_dir, logging_level='info')
 # Latin ITTB has no case information for the lemmatizer
 stanza.download(lang='he', model_dir=models_dir, processors='tokenize', logging_level='info')

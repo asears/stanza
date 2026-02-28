@@ -91,14 +91,14 @@ def retag_trees(trees, pipelines, xpos=True):
             for tree_idx, (tree, tags) in enumerate(zip(chunk, tag_lists)):
                 try:
                     if any(tag is None for tag in tags):
-                        raise RuntimeError("Tagged tree #{} with a None tag!\n{}\n{}".format(tree_idx, tree, tags))
+                        raise RuntimeError(f"Tagged tree #{tree_idx} with a None tag!\n{tree}\n{tags}")
                     new_tree = tree.replace_tags(tags)
                     new_trees.append(new_tree)
                     pbar.update(1)
                 except ValueError as e:
-                    raise ValueError("Failed to properly retag tree #{}: {}".format(tree_idx, tree)) from e
+                    raise ValueError(f"Failed to properly retag tree #{tree_idx}: {tree}") from e
     if len(new_trees) != len(trees):
-        raise AssertionError("Retagged tree counts did not match: {} vs {}".format(len(new_trees), len(trees)))
+        raise AssertionError(f"Retagged tree counts did not match: {len(new_trees)} vs {len(trees)}")
     return new_trees
 
 
@@ -226,13 +226,13 @@ def verify_transitions(trees, sequences, transition_scheme, unary_limit, reverse
         state = model.initial_state_from_gold_trees([tree])[0]
         for idx, trans in enumerate(sequence):
             if not trans.is_legal(state, model):
-                raise RuntimeError("Tree {} of {} failed: transition {}:{} was not legal in a transition sequence:\nOriginal tree: {}\nTransitions: {}".format(tree_idx, name, idx, trans, tree, sequence))
+                raise RuntimeError(f"Tree {tree_idx} of {name} failed: transition {idx}:{trans} was not legal in a transition sequence:\nOriginal tree: {tree}\nTransitions: {sequence}")
             state = trans.apply(state, model)
         result = model.get_top_constituent(state.constituents)
         if reverse:
             result = result.reverse()
         if tree != result:
-            raise RuntimeError("Tree {} of {} failed: transition sequence did not match for a tree!\nOriginal tree:{}\nTransitions: {}\nResult tree:{}".format(tree_idx, name, tree, sequence, result))
+            raise RuntimeError(f"Tree {tree_idx} of {name} failed: transition sequence did not match for a tree!\nOriginal tree:{tree}\nTransitions: {sequence}\nResult tree:{result}")
 
 def check_constituents(train_constituents, trees, treebank_name, fail=True):
     """
@@ -249,7 +249,7 @@ def check_constituents(train_constituents, trees, treebank_name, fail=True):
                     num_errors += 1
                     if first_error is None:
                         first_error = tree_idx
-            error = "Found constituent label {} in the {} set which don't exist in the train set.  This constituent label occurred in {} trees, with the first tree index at {} counting from 1\nThe error tree (which may have POS tags changed from the retagger and may be missing functional tags or empty nodes) is:\n{:P}".format(con, treebank_name, num_errors, (first_error+1), trees[first_error])
+            error = f"Found constituent label {con} in the {treebank_name} set which don't exist in the train set.  This constituent label occurred in {num_errors} trees, with the first tree index at {first_error+1} counting from 1\nThe error tree (which may have POS tags changed from the retagger and may be missing functional tags or empty nodes) is:\n{trees[first_error]:P}"
             if fail:
                 raise RuntimeError(error)
             else:
@@ -261,7 +261,7 @@ def check_root_labels(root_labels, other_trees, treebank_name):
     """
     for root_state in Tree.get_root_labels(other_trees):
         if root_state not in root_labels:
-            raise RuntimeError("Found root state {} in the {} set which is not a ROOT state in the train set".format(root_state, treebank_name))
+            raise RuntimeError(f"Found root state {root_state} in the {treebank_name} set which is not a ROOT state in the train set")
 
 def remove_duplicate_trees(trees, treebank_name):
     """
@@ -270,7 +270,7 @@ def remove_duplicate_trees(trees, treebank_name):
     new_trees = []
     known_trees = set()
     for tree in trees:
-        tree_str = "{}".format(tree)
+        tree_str = f"{tree}"
         if tree_str in known_trees:
             continue
         known_trees.add(tree_str)

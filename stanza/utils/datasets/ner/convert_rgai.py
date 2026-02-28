@@ -55,7 +55,7 @@ def convert_rgai(base_input_path, base_output_path, short_name, use_business, us
         raw_data = get_rgai_data(base_input_path, use_business, use_criminal)
         for line in raw_data:
             all_data_file.write(line.encode())
-            all_data_file.write("\n".encode())
+            all_data_file.write(b"\n")
         all_data_file.close()
         split_wikiner(base_output_path, all_data_file.name, prefix=short_name)
     finally:

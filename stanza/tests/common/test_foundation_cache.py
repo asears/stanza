@@ -5,11 +5,11 @@ import tempfile
 
 import pytest
 
-import stanza
 from stanza.models.common.foundation_cache import FoundationCache, load_charlm
 from stanza.tests import TEST_MODELS_DIR
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_charlm_cache():
     models_path = os.path.join(TEST_MODELS_DIR, "en", "backward_charlm", "*")

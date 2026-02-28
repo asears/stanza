@@ -55,8 +55,8 @@ class Annotator(Process):
         Defines a Java property to define this annotator to CoreNLP.
         """
         return {
-            "customAnnotatorClass.{}".format(self.name): "edu.stanford.nlp.pipeline.GenericWebServiceAnnotator",
-            "generic.endpoint": "http://{}:{}".format(self.host, self.port),
+            f"customAnnotatorClass.{self.name}": "edu.stanford.nlp.pipeline.GenericWebServiceAnnotator",
+            "generic.endpoint": f"http://{self.host}:{self.port}",
             "generic.requires": ",".join(self.requires),
             "generic.provides": ",".join(self.provides),
             }
@@ -73,7 +73,7 @@ class Annotator(Process):
             """
             if not self.path.endswith("/"): self.path += "/"
             if self.path == "/ping/":
-                msg = "pong".encode("UTF-8")
+                msg = b"pong"
 
                 self.send_response(HTTPStatus.OK)
                 self.send_header("Content-Type", "text/application")

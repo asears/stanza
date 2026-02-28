@@ -2,7 +2,6 @@
 Processor for performing multi-word-token expansion
 """
 
-import io
 
 import torch
 

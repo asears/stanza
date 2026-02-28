@@ -4,8 +4,8 @@ from stanza.tests import compare_ignoring_whitespace
 
 pytestmark = [pytest.mark.travis, pytest.mark.client]
 
+from stanza.server import ssurgeon
 from stanza.utils.conll import CoNLL
-import stanza.server.ssurgeon as ssurgeon
 
 SAMPLE_DOC_INPUT = """
 # sent_id = 271
@@ -43,9 +43,9 @@ def test_ssurgeon_same_length():
     ssurgeon_response = ssurgeon.process_doc_one_operation(doc, semgrex_pattern, ssurgeon_edits)
     updated_doc = ssurgeon.convert_response_to_doc(doc, ssurgeon_response, add_missing_text=False)
 
-    result = "{:C}".format(updated_doc)
-    #print(result)
-    #print(SAMPLE_DOC_EXPECTED)
+    result = f"{updated_doc:C}"
+    # print(result)
+    # print(SAMPLE_DOC_EXPECTED)
     compare_ignoring_whitespace(result, SAMPLE_DOC_EXPECTED)
 
 
@@ -78,17 +78,18 @@ def test_ssurgeon_different_length():
     ssurgeon_edits = ["addDep -gov antennae -reln amod -word blue -lemma blue -cpos ADJ -pos JJ -ner O -position -antennae -after \" \""]
 
     doc = CoNLL.conll2doc(input_str=ADD_WORD_DOC_INPUT)
-    #print()
-    #print("{:C}".format(doc))
+    # print()
+    # print("{:C}".format(doc))
 
     ssurgeon_response = ssurgeon.process_doc_one_operation(doc, semgrex_pattern, ssurgeon_edits)
     updated_doc = ssurgeon.convert_response_to_doc(doc, ssurgeon_response, add_missing_text=False)
 
-    result = "{:C}".format(updated_doc)
-    #print(result)
-    #print(ADD_WORD_DOC_EXPECTED)
+    result = f"{updated_doc:C}"
+    # print(result)
+    # print(ADD_WORD_DOC_EXPECTED)
 
     compare_ignoring_whitespace(result, ADD_WORD_DOC_EXPECTED)
+
 
 BECOME_MWT_DOC_INPUT = """
 # sent_id = 25
@@ -113,6 +114,7 @@ BECOME_MWT_DOC_EXPECTED = """
 5	!	!	PUNCT	.	_	4	punct	_	_
 """
 
+
 def test_ssurgeon_become_mwt():
     """
     Test that converting a document, adding a new MWT, works as expected
@@ -126,8 +128,9 @@ def test_ssurgeon_become_mwt():
     ssurgeon_response = ssurgeon.process_doc_one_operation(doc, semgrex_pattern, ssurgeon_edits)
     updated_doc = ssurgeon.convert_response_to_doc(doc, ssurgeon_response, add_missing_text=False)
 
-    result = "{:C}".format(updated_doc)
+    result = f"{updated_doc:C}"
     compare_ignoring_whitespace(result, BECOME_MWT_DOC_EXPECTED)
+
 
 EXISTING_MWT_DOC_INPUT = """
 # sent_id = newsgroup-groups.google.com_GayMarriage_0ccbb50b41a5830b_ENG_20050321_181500-0005
@@ -154,6 +157,7 @@ EXISTING_MWT_DOC_EXPECTED = """
 6	”	"	PUNCT	''	_	4	punct	_	_
 """
 
+
 def test_ssurgeon_existing_mwt_no_change():
     """
     Test that converting a document with an MWT works as expected
@@ -175,8 +179,9 @@ def test_ssurgeon_existing_mwt_no_change():
     ssurgeon_response = ssurgeon.process_doc_one_operation(doc, semgrex_pattern, ssurgeon_edits)
     updated_doc = ssurgeon.convert_response_to_doc(doc, ssurgeon_response, add_missing_text=False)
 
-    result = "{:C}".format(updated_doc)
+    result = f"{updated_doc:C}"
     compare_ignoring_whitespace(result, EXISTING_MWT_DOC_EXPECTED)
+
 
 def check_empty_test(input_text, expected=None, echo=False):
     if expected is None:
@@ -188,7 +193,7 @@ def check_empty_test(input_text, expected=None, echo=False):
     ssurgeon_response = ssurgeon.process_doc(doc, [])
     updated_doc = ssurgeon.convert_response_to_doc(doc, ssurgeon_response, add_missing_text=False)
 
-    result = "{:C}".format(updated_doc)
+    result = f"{updated_doc:C}"
     if echo:
         print("INPUT")
         print(input_text)
@@ -197,6 +202,7 @@ def check_empty_test(input_text, expected=None, echo=False):
         print("RESULT")
         print(result)
     compare_ignoring_whitespace(result, expected)
+
 
 ITALIAN_MWT_INPUT = """
 # sent_id = train_78
@@ -212,6 +218,7 @@ ITALIAN_MWT_INPUT = """
 7	cervello	cervello	NOUN	S	Gender=Masc|Number=Sing	3	obl	_	_
 """
 
+
 def test_ssurgeon_mwt_text():
     """
     Test that an MWT which is split into pieces which don't make up
@@ -222,7 +229,8 @@ def test_ssurgeon_mwt_text():
     """
     check_empty_test(ITALIAN_MWT_INPUT)
 
-ITALIAN_SPACES_AFTER_INPUT="""
+
+ITALIAN_SPACES_AFTER_INPUT = """
 # sent_id = train_1114
 # text = ““““ buona scuola ““““
 # twittiro = EXPLICIT	OTHER
@@ -238,7 +246,7 @@ ITALIAN_SPACES_AFTER_INPUT="""
 10	“	“	PUNCT	FB	_	6	punct	_	SpacesAfter=\\n
 """
 
-ITALIAN_SPACES_AFTER_YES_INPUT="""
+ITALIAN_SPACES_AFTER_YES_INPUT = """
 # sent_id = train_1114
 # text = ““““ buona scuola ““““
 # twittiro = EXPLICIT	OTHER
@@ -263,11 +271,13 @@ def test_ssurgeon_spaces_after_text():
     """
     check_empty_test(ITALIAN_SPACES_AFTER_INPUT)
 
+
 def test_ssurgeon_spaces_after_yes():
     """
     Test that an unnecessary SpaceAfter=Yes is eliminated
     """
     check_empty_test(ITALIAN_SPACES_AFTER_YES_INPUT, ITALIAN_SPACES_AFTER_INPUT)
+
 
 EMPTY_VALUES_INPUT = """
 # text = Jennifer has lovely antennae.
@@ -280,6 +290,7 @@ EMPTY_VALUES_INPUT = """
 5	.	_	_	_	_	2	punct	_	ner=O
 """
 
+
 def test_ssurgeon_blank_values():
     """
     Check that various None fields such as lemma & xpos are not turned into blanks
@@ -287,6 +298,7 @@ def test_ssurgeon_blank_values():
     Tests, like regulations, are often written in blood
     """
     check_empty_test(EMPTY_VALUES_INPUT)
+
 
 # first couple sentences of UD_Cantonese-HK
 # we change the order of the misc column in word 3 to make sure the
@@ -318,6 +330,7 @@ CANTONESE_MISC_WORDS_INPUT = """
 13	。	。	PUNCT	_	_	2	punct	_	SpaceAfter=No
 """
 
+
 def test_ssurgeon_misc_words():
     """
     Check that various None fields such as lemma & xpos are not turned into blanks
@@ -325,6 +338,7 @@ def test_ssurgeon_misc_words():
     Tests, like regulations, are often written in blood
     """
     check_empty_test(CANTONESE_MISC_WORDS_INPUT)
+
 
 ITALIAN_MWT_SPACE_AFTER_INPUT = """
 # sent_id = train_78
@@ -340,6 +354,7 @@ ITALIAN_MWT_SPACE_AFTER_INPUT = """
 7	cervello	cervello	NOUN	S	Gender=Masc|Number=Sing	3	obl	_	RandomFeature=foo
 """
 
+
 def test_ssurgeon_mwt_space_after():
     """
     Check the SpaceAfter=No on an MWT (rather than a word)
@@ -348,6 +363,7 @@ def test_ssurgeon_mwt_space_after():
     version of passing in MWT misc features
     """
     check_empty_test(ITALIAN_MWT_SPACE_AFTER_INPUT)
+
 
 ITALIAN_MWT_MISC_INPUT = """
 # sent_id = train_78
@@ -364,6 +380,7 @@ ITALIAN_MWT_MISC_INPUT = """
 7	cervello	cervello	NOUN	S	Gender=Masc|Number=Sing	3	obl	_	RandomFeature=foo
 """
 
+
 def test_ssurgeon_mwt_misc():
     """
     Check the SpaceAfter=No on an MWT (rather than a word)
@@ -372,6 +389,7 @@ def test_ssurgeon_mwt_misc():
     version of passing in MWT misc features
     """
     check_empty_test(ITALIAN_MWT_MISC_INPUT)
+
 
 SINDHI_ROOT_EXAMPLE = """
 # sent_id = 1
@@ -404,6 +422,7 @@ SINDHI_EDIT = """
 setRoots root
 """
 
+
 def test_ssurgeon_rewrite_sindhi_roots():
     """
     A user / contributor sent a dependency file with blank roots
@@ -421,5 +440,5 @@ def test_ssurgeon_rewrite_sindhi_roots():
     response = ssurgeon.process_doc(blank_dep_doc, edits)
     updated_doc = ssurgeon.convert_response_to_doc(blank_dep_doc, response, add_missing_text=False)
 
-    result = "{:C}".format(updated_doc)
+    result = f"{updated_doc:C}"
     assert result == SINDHI_ROOT_EXPECTED

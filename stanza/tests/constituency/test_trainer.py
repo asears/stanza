@@ -1,28 +1,22 @@
-from collections import defaultdict
 import logging
 import pathlib
 import tempfile
+from collections import defaultdict
 
 import pytest
 import torch
-from torch import nn
-from torch import optim
+from torch import nn, optim
 
 from stanza import Pipeline
-
 from stanza.models import constituency_parser
-from stanza.models.common import pretrain
-from stanza.models.common.bert_embedding import load_bert, load_tokenizer
+from stanza.models.common.bert_embedding import load_bert
 from stanza.models.common.foundation_cache import FoundationCache
 from stanza.models.common.utils import set_random_seed
-from stanza.models.constituency import lstm_model
+from stanza.models.constituency import lstm_model, parser_training, trainer, tree_reader
 from stanza.models.constituency.parse_transitions import Transition
-from stanza.models.constituency import parser_training
-from stanza.models.constituency import trainer
-from stanza.models.constituency import tree_reader
 from stanza.tests import *
 
-pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
 
 logger = logging.getLogger('stanza.constituency.trainer')
 logger.setLevel(logging.WARNING)
@@ -58,6 +52,7 @@ TREEBANK = """
     (. .)))
 """
 
+
 def build_trainer(wordvec_pretrain_file, *args, treebank=TREEBANK):
     # TODO: build a fake embedding some other way?
     train_trees = tree_reader.read_trees(treebank)
@@ -74,6 +69,7 @@ def build_trainer(wordvec_pretrain_file, *args, treebank=TREEBANK):
     model, _, _, _ = parser_training.build_trainer(args, train_trees, dev_trees, silver_trees, foundation_cache, model_load_name)
     assert isinstance(model.model, lstm_model.LSTMModel)
     return model
+
 
 class TestTrainer:
     @pytest.fixture(scope="class")
@@ -120,7 +116,6 @@ class TestTrainer:
         args = ['wordvec_pretrain_file', wordvec_pretrain_file]
         build_trainer(wordvec_pretrain_file)
 
-
     def test_save_load_model(self, wordvec_pretrain_file):
         """
         Just tests that saving and loading works without crashs.
@@ -141,7 +136,7 @@ class TestTrainer:
             # load it back in
             tr2 = tr.load(filename)
             trans2 = tr2.model.transitions
-            assert(transitions == trans2)
+            assert (transitions == trans2)
             assert all(isinstance(x, Transition) for x in trans2)
 
     def test_relearn_structure(self, wordvec_pretrain_file):
@@ -238,7 +233,7 @@ class TestTrainer:
         assert tr.scheduler is not None
         assert tr.epochs_trained == num_epochs
 
-        for i in range(1, num_epochs+1):
+        for i in range(1, num_epochs + 1):
             model_name = each_name % i
             assert os.path.exists(model_name)
             tr = trainer.Trainer.load(model_name, load_optimizer=True, foundation_cache=retag_pipeline.foundation_cache, peft_name=trained_model.model.peft_name)
@@ -389,7 +384,6 @@ class TestTrainer:
                 assert tr.epochs_trained == i
                 assert isinstance(tr.optimizer, optim.AdamW)
 
-
     def test_grad_clip_hooks(self, wordvec_pretrain_file):
         """
         Verify that grad clipping is not saved with the model, but is attached at training time
@@ -451,32 +445,36 @@ class TestTrainer:
             checkpoint = torch.load(args['save_name'], lambda storage, loc: storage, weights_only=True)
             params = checkpoint['params']
             # check that the bert model wasn't saved in the model
-            assert all(not x.startswith("bert_model.") for x in params['model'].keys())
+            assert all(not x.startswith("bert_model.") for x in params['model'])
             # make sure we're looking at the right thing
-            assert any(x.startswith("output_layers.") for x in params['model'].keys())
+            assert any(x.startswith("output_layers.") for x in params['model'])
 
             # check that the cached model is used as expected when loading a bert model
             trained_model = trainer.Trainer.load(args['save_name'], foundation_cache=foundation_cache)
             assert trained_model.model.bert_model is bert_model
 
+    @pytest.mark.transformers
     def test_bert_frozen(self, wordvec_pretrain_file):
         """
         Check that the parameters of the bert model don't change when training a basic model
         """
         self.frozen_transformer_test(wordvec_pretrain_file, 'hf-internal-testing/tiny-bert')
 
+    @pytest.mark.transformers
     def test_xlnet_frozen(self, wordvec_pretrain_file, tiny_random_xlnet):
         """
         Check that the parameters of an xlnet model don't change when training a basic model
         """
         self.frozen_transformer_test(wordvec_pretrain_file, tiny_random_xlnet)
 
+    @pytest.mark.transformers
     def test_bart_frozen(self, wordvec_pretrain_file, tiny_random_bart):
         """
         Check that the parameters of an xlnet model don't change when training a basic model
         """
         self.frozen_transformer_test(wordvec_pretrain_file, tiny_random_bart)
 
+    @pytest.mark.transformers
     def test_bert_finetune_one_epoch(self, wordvec_pretrain_file):
         """
         Check that the parameters the bert model DO change over a single training step
@@ -529,18 +527,21 @@ class TestTrainer:
             assert not trained_model.model.args['stage1_bert_finetune']
             assert trained_model.model.bert_model is not bert_model
 
+    @pytest.mark.transformers
     def test_bert_finetune(self, wordvec_pretrain_file):
         """
         Check that the parameters of a bert model DO change when using bert_finetune
         """
         self.finetune_transformer_test(wordvec_pretrain_file, 'hf-internal-testing/tiny-bert')
 
+    @pytest.mark.transformers
     def test_xlnet_finetune(self, wordvec_pretrain_file, tiny_random_xlnet):
         """
         Check that the parameters of an xlnet model DO change when using bert_finetune
         """
         self.finetune_transformer_test(wordvec_pretrain_file, tiny_random_xlnet)
 
+    @pytest.mark.transformers
     def test_stage1_bert_finetune(self, wordvec_pretrain_file):
         """
         Check that the parameters the bert model DO change when using stage1_bert_finetune, but only for the first couple steps
@@ -562,7 +563,7 @@ class TestTrainer:
             no_finetune_args = self.training_args(wordvec_pretrain_file, tmpdirname, None, None, "--no_bert_finetune", "--no_stage1_bert_finetune", '--bert_model', bert_model_name, '--optim', 'adamw')
             num_epochs = trained_model.model.args['epochs']
             each_name = os.path.join(tmpdirname, 'each_%02d.pt')
-            for i in range(1, num_epochs+1):
+            for i in range(1, num_epochs + 1):
                 model_name = each_name % i
                 assert os.path.exists(model_name)
                 tr = trainer.Trainer.load(model_name, args=no_finetune_args, foundation_cache=foundation_cache)
@@ -577,7 +578,6 @@ class TestTrainer:
             tr_1 = trainer.Trainer.load(model_name_1, args=no_finetune_args, foundation_cache=foundation_cache)
             tr_2 = trainer.Trainer.load(model_name_2, args=no_finetune_args, foundation_cache=foundation_cache)
             assert not self.bert_weights_allclose(tr_1.model.bert_model, tr_2)
-
 
     def one_layer_finetune_transformer_test(self, wordvec_pretrain_file, transformer_name):
         """
@@ -605,17 +605,21 @@ class TestTrainer:
                 else:
                     assert torch.allclose(parameter.cpu(), other_parameter.cpu())
 
+    @pytest.mark.transformers
     def test_bert_finetune_one_layer(self, wordvec_pretrain_file):
         self.one_layer_finetune_transformer_test(wordvec_pretrain_file, 'hf-internal-testing/tiny-bert')
 
+    @pytest.mark.transformers
     def test_xlnet_finetune_one_layer(self, wordvec_pretrain_file, tiny_random_xlnet):
         self.one_layer_finetune_transformer_test(wordvec_pretrain_file, tiny_random_xlnet)
 
+    @pytest.mark.transformers
     def test_peft_finetune(self, tmp_path, wordvec_pretrain_file):
         transformer_name = 'hf-internal-testing/tiny-bert'
         args = ['--bert_model', transformer_name, '--bert_finetune', '--optim', 'adamw', '--use_peft']
         args, trained_model = self.run_train_test(wordvec_pretrain_file, str(tmp_path), extra_args=args)
 
+    @pytest.mark.transformers
     def test_peft_twostage_finetune(self, wordvec_pretrain_file):
         with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as tmpdirname:
             num_epochs = 6
@@ -624,7 +628,7 @@ class TestTrainer:
             args, trained_model = self.run_train_test(wordvec_pretrain_file, tmpdirname, num_epochs=num_epochs, extra_args=args)
             for epoch in range(num_epochs):
                 filename_prev = args['save_each_name'] % epoch
-                filename_next = args['save_each_name'] % (epoch+1)
+                filename_next = args['save_each_name'] % (epoch + 1)
                 trainer_prev = trainer.Trainer.load(filename_prev, args=args, load_optimizer=False)
                 trainer_next = trainer.Trainer.load(filename_next, args=args, load_optimizer=False)
 

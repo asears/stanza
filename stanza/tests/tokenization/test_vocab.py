@@ -1,9 +1,9 @@
 import pytest
 
-from stanza.models.common.vocab import UNK, PAD
 from stanza.models.tokenization.vocab import Vocab
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_build():
     """

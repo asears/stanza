@@ -55,6 +55,7 @@ SAMPLE_BAD_TEXT = """
 19	.	.	PUNCT	.	_	9	punct	9:punct	_
 """.lstrip()
 
+
 def test_check_mwt_composition(tmp_path):
     mwt_file = tmp_path / "good.mwt"
     with open(mwt_file, "w", encoding="utf-8") as fout:

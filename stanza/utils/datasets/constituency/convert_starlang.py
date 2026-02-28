@@ -4,7 +4,6 @@ import re
 
 from tqdm import tqdm
 
-from stanza.models.constituency import parse_tree
 from stanza.models.constituency import tree_reader
 
 TURKISH_RE = re.compile(r"[{]turkish=([^}]+)[}]")
@@ -26,7 +25,7 @@ def read_tree(text):
     for label in labels:
         match = TURKISH_RE.search(label)
         if match is None:
-            raise ValueError("Could not find word in |{}|".format(label))
+            raise ValueError(f"Could not find word in |{label}|")
         word = match.group(1)
         word = word.replace("-LCB-", "{").replace("-RCB-", "}")
         new_labels.append(word)
@@ -35,7 +34,7 @@ def read_tree(text):
     #tree = tree.remap_constituent_labels(LABEL_MAP)
     con_labels = tree.get_unique_constituent_labels([tree])
     if any(label in DISALLOWED_LABELS for label in con_labels):
-        raise ValueError("found an unexpected phrasal node {}".format(label))
+        raise ValueError(f"found an unexpected phrasal node {label}")
     return tree
 
 def read_files(filenames, conversion, log):
@@ -49,7 +48,7 @@ def read_files(filenames, conversion, log):
                 trees.append(tree)
         except ValueError as e:
             if log:
-                print("-----------------\nFound an error in {}: {} Original text: {}".format(filename, e, text))
+                print(f"-----------------\nFound an error in {filename}: {e} Original text: {text}")
     return trees
 
 def read_starlang(paths, conversion=read_tree, log=True):

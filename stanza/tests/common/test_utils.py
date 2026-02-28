@@ -4,11 +4,11 @@ import tempfile
 
 import pytest
 
-import stanza
-import stanza.models.common.utils as utils
+from stanza.models.common import utils
 from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_wordvec_not_found():
     """
@@ -37,6 +37,7 @@ def test_word2vec_xz():
         filename = utils.get_wordvec_file(wordvec_dir=temp_dir, shorthand='en_foo')
         assert filename == fake_file
 
+
 def test_fasttext_txt():
     """
     Test searching for fasttext and txt files
@@ -54,6 +55,7 @@ def test_fasttext_txt():
         # get_wordvec_file should now find this fake file
         filename = utils.get_wordvec_file(wordvec_dir=temp_dir, shorthand='en_foo')
         assert filename == fake_file
+
 
 def test_wordvec_type():
     """
@@ -77,6 +79,7 @@ def test_wordvec_type():
         with pytest.raises(FileNotFoundError):
             utils.get_wordvec_file(wordvec_dir=temp_dir, shorthand='en_foo')
 
+
 def test_sort_with_indices():
     data = [[1, 2, 3], [4, 5], [6]]
     ordered, orig_idx = utils.sort_with_indices(data, key=len)
@@ -86,13 +89,14 @@ def test_sort_with_indices():
     unsorted = utils.unsort(ordered, orig_idx)
     assert data == unsorted
 
+
 def test_empty_sort_with_indices():
     ordered, orig_idx = utils.sort_with_indices([])
     assert len(ordered) == 0
     assert len(orig_idx) == 0
 
     unsorted = utils.unsort(ordered, orig_idx)
-    assert [] == unsorted
+    assert unsorted == []
 
 
 def test_split_into_batches():
@@ -145,7 +149,7 @@ def test_open_read_text():
             fout.write(TEXT)
         with utils.open_read_text(filename) as fin:
             in_text = fin.read()
-            assert TEXT == in_text
+            assert in_text == TEXT
 
         assert fin.closed
 
@@ -164,7 +168,7 @@ def test_open_read_text():
             fout.write(TEXT)
         with utils.open_read_text(filename) as finxz:
             in_text = finxz.read()
-            assert TEXT == in_text
+            assert in_text == TEXT
 
         assert finxz.closed
 
@@ -192,6 +196,7 @@ def test_checkpoint_name():
     checkpoint = utils.checkpoint_name("saved_models", "kk_oscar_forward_charlm", "othername.pt")
     assert os.path.split(checkpoint) == ("saved_models", "othername.pt")
 
+
 def test_punct_simplification():
     """
     Test a punctuation simplification that should make it so unexpected
@@ -207,4 +212,3 @@ def test_punct_simplification():
     test = utils.simplify_punct(test)
     expected = [[['!'], ['!'], ['?'], ['?'], ['?'], ['?foo'], ['bar!']]]
     assert test == expected
-

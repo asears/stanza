@@ -288,21 +288,21 @@ def merge_tags(*sequences):
 
             # at this point, we know we have a B-... sequence
             if not sequence[idx].startswith("B-"):
-                raise ValueError("Got unexpected tag sequence at idx {}: {}".format(idx, sequence))
+                raise ValueError(f"Got unexpected tag sequence at idx {idx}: {sequence}")
 
             # take the block of tags which are B- through E-
             start_idx = idx
             end_idx = start_idx + 1
             while end_idx < len(sequence):
                 if sequence[end_idx][2:] != sequence[start_idx][2:]:
-                    raise ValueError("Unexpected tag sequence at idx {}: {}".format(end_idx, sequence))
+                    raise ValueError(f"Unexpected tag sequence at idx {end_idx}: {sequence}")
                 if sequence[end_idx].startswith("E-"):
                     break
                 if not sequence[end_idx].startswith("I-"):
-                    raise ValueError("Unexpected tag sequence at idx {}: {}".format(end_idx, sequence))
+                    raise ValueError(f"Unexpected tag sequence at idx {end_idx}: {sequence}")
                 end_idx += 1
             if end_idx == len(sequence):
-                raise ValueError("Got a sequence with an unclosed tag: {}".format(sequence))
+                raise ValueError(f"Got a sequence with an unclosed tag: {sequence}")
             end_idx = end_idx + 1
 
             # if all tags in the original are O, we can overwrite

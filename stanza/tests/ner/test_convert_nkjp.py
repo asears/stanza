@@ -1,10 +1,15 @@
-import pytest
-
-import io
 import os
 import xml.etree.ElementTree as ET
 
-from stanza.utils.datasets.ner.convert_nkjp import MORPH_FILE, NER_FILE, extract_entities_from_subfolder, extract_entities_from_sentence, extract_unassigned_subfolder_entities
+import pytest
+
+from stanza.utils.datasets.ner.convert_nkjp import (
+    MORPH_FILE,
+    NER_FILE,
+    extract_entities_from_sentence,
+    extract_entities_from_subfolder,
+    extract_unassigned_subfolder_entities,
+)
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
@@ -12,15 +17,15 @@ EXPECTED_ENTITIES = {
     '1-p': {
         '1.39-s': [{'ent_id': 'named_1.39-s_n1', 'index': 0, 'orth': 'Sił Zbrojnych', 'ner_type': 'orgName', 'ner_subtype': None, 'targets': ['1.37-seg', '1.38-seg']}],
         '1.56-s': [],
-        '1.79-s': []
+        '1.79-s': [],
     },
     '2-p': {
         '2.30-s': [],
-        '2.45-s': []
+        '2.45-s': [],
     },
     '3-p': {
-        '3.70-s': []
-    }
+        '3.70-s': [],
+    },
 }
 
 
@@ -37,11 +42,13 @@ def dataset(tmp_path_factory):
         fout.write(SAMPLE_MORPHO)
     return dataset_path
 
+
 EXPECTED_TOKENS = [
     {'seg_id': '1.1-seg', 'i': 0, 'orth': '2', 'text': '2', 'tag': '_', 'ner': 'O', 'ner_subtype': None},
     {'seg_id': '1.37-seg', 'i': 36, 'orth': 'Sił', 'text': 'Sił', 'tag': '_', 'ner': 'B-orgName', 'ner_subtype': None},
     {'seg_id': '1.38-seg', 'i': 37, 'orth': 'Zbrojnych', 'text': 'Zbrojnych', 'tag': '_', 'ner': 'I-orgName', 'ner_subtype': None},
 ]
+
 
 def test_extract_entities_from_subfolder(dataset):
     entities = extract_entities_from_subfolder("sample", dataset)
@@ -56,6 +63,7 @@ def test_extract_entities_from_subfolder(dataset):
 def test_extract_unassigned(dataset):
     entities = extract_unassigned_subfolder_entities("sample", dataset)
     assert entities == EXPECTED_ENTITIES
+
 
 SENTENCE_SAMPLE = """
           <s xmlns="http://www.tei-c.org/ns/1.0" xmlns:xi="http://www.w3.org/2001/XInclude" xml:id="named_1.39-s" corresp="ann_morphosyntax.xml#morph_1.39-s">
@@ -83,6 +91,7 @@ SENTENCE_SAMPLE = """
 
 EMPTY_SENTENCE = """<s xml:id="named_1.56-s" corresp="ann_morphosyntax.xml#morph_1.56-s"/>"""
 
+
 def test_extract_entities_from_sentence():
     rt = ET.fromstring(SENTENCE_SAMPLE)
     entities = extract_entities_from_sentence(rt)
@@ -91,7 +100,6 @@ def test_extract_entities_from_sentence():
     rt = ET.fromstring(EMPTY_SENTENCE)
     entities = extract_entities_from_sentence(rt)
     assert entities == []
-
 
 
 # picked completely at random, one sample file for testing:
@@ -141,7 +149,6 @@ SAMPLE_ANN = """
   </TEI>
 </teiCorpus>
 """.lstrip()
-
 
 
 SAMPLE_MORPHO = """

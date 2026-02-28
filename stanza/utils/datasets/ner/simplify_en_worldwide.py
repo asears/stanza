@@ -2,9 +2,7 @@ import argparse
 import os
 import tempfile
 
-import stanza
 from stanza.utils.default_paths import get_default_paths
-from stanza.utils.datasets.ner.utils import read_tsv
 from stanza.utils.get_tqdm import get_tqdm
 
 tqdm = get_tqdm()

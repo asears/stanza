@@ -3,8 +3,8 @@ Basic testing of part of speech tagging
 """
 
 import pytest
-import stanza
 
+import stanza
 from stanza.tests import *
 
 pytestmark = pytest.mark.pipeline
@@ -21,13 +21,16 @@ EN_DOC_GOLD = """
 <Token id=7;words=[<Word id=7;text=.;upos=PUNCT;xpos=.>]>
 """.strip()
 
+
 @pytest.fixture(scope="module")
 def pos_pipeline():
-    return stanza.Pipeline(**{'processors': 'tokenize,pos', 'dir': TEST_MODELS_DIR, 'download_method': None, 'lang': 'en'})
+    return stanza.Pipeline(processors='tokenize,pos', dir=TEST_MODELS_DIR, download_method=None, lang='en')
+
 
 def test_part_of_speech(pos_pipeline):
     doc = pos_pipeline(EN_DOC)
-    assert EN_DOC_GOLD == '\n\n'.join([sent.tokens_string() for sent in doc.sentences])
+    assert '\n\n'.join([sent.tokens_string() for sent in doc.sentences]) == EN_DOC_GOLD
+
 
 def test_get_known_xpos(pos_pipeline):
     tags = pos_pipeline.processors['pos'].get_known_xpos()
@@ -35,6 +38,7 @@ def test_get_known_xpos(pos_pipeline):
     assert 'DT' in tags
     # ... and not upos
     assert 'DET' not in tags
+
 
 def test_get_known_upos(pos_pipeline):
     tags = pos_pipeline.processors['pos'].get_known_upos()

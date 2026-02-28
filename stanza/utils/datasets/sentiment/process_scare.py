@@ -50,9 +50,9 @@ def get_scare_snippets(nlp, csv_dir_path, text_id_map, filename_pattern="*.csv")
                 elif sentiment.lower() == 'negative':
                     sentiment = 0
                 else:
-                    raise ValueError("Tell John he screwed up and this is why he can't have Mox Opal: {}".format(sentiment))
+                    raise ValueError(f"Tell John he screwed up and this is why he can't have Mox Opal: {sentiment}")
                 if ann_id not in text_id_map:
-                    print("Found snippet which can't be found: {}-{}".format(csv_filename, ann_id))
+                    print(f"Found snippet which can't be found: {csv_filename}-{ann_id}")
                     continue
                 snippet = text_id_map[ann_id][begin:end]
                 doc = nlp(snippet)
@@ -61,7 +61,7 @@ def get_scare_snippets(nlp, csv_dir_path, text_id_map, filename_pattern="*.csv")
                 if num_tokens < 4:
                     num_short_items = num_short_items + 1
                 snippets.append(SentimentDatum(sentiment, text))
-    print("Number of short items: {}".format(num_short_items))
+    print(f"Number of short items: {num_short_items}")
     return snippets
 
 
@@ -83,7 +83,7 @@ def main(in_directory, out_directory, short_name):
                     continue
                 key, value = line.split(maxsplit=1)
                 if key in text_id_map:
-                    raise ValueError("Duplicate key {}".format(key))
+                    raise ValueError(f"Duplicate key {key}")
                 text_id_map[key] = value
 
     print("Found %d total sentiment ratings" % len(text_id_map))

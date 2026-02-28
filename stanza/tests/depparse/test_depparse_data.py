@@ -2,11 +2,13 @@
 Test some pieces of the depparse dataloader
 """
 import pytest
+
 from stanza.models import parser
-from stanza.models.depparse.data import data_to_batches, DataLoader
+from stanza.models.depparse.data import DataLoader, data_to_batches
 from stanza.utils.conll import CoNLL
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def make_fake_data(*lengths):
     data = []
@@ -16,6 +18,7 @@ def make_fake_data(*lengths):
         data.append(chunk)
     return data
 
+
 def check_batches(batched_data, expected_sizes, expected_order):
     for chunk, size in zip(batched_data, expected_sizes):
         assert sum(len(x[0]) for x in chunk) == size
@@ -24,6 +27,7 @@ def check_batches(batched_data, expected_sizes, expected_order):
         for sentence in chunk:
             word_order.append(sentence[0][0])
     assert word_order == expected_order
+
 
 def test_data_to_batches_eval_mode():
     """
@@ -107,4 +111,3 @@ def test_punct_simplification():
 
 if __name__ == '__main__':
     test_data_to_batches()
-

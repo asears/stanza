@@ -1,16 +1,21 @@
 import pytest
 import torch
 
-from stanza.models.common.bert_embedding import load_bert, extract_bert_embeddings
+# Skip entire module if transformers is not available
+pytest.importorskip("transformers")
 
-pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+from stanza.models.common.bert_embedding import extract_bert_embeddings, load_bert
+
+pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.transformers]
 
 BERT_MODEL = "hf-internal-testing/tiny-bert"
+
 
 @pytest.fixture(scope="module")
 def tiny_bert():
     m, t = load_bert(BERT_MODEL)
     return m, t
+
 
 def test_load_bert(tiny_bert):
     """
@@ -18,10 +23,12 @@ def test_load_bert(tiny_bert):
     """
     m, t = tiny_bert
 
+
 def test_run_bert(tiny_bert):
     m, t = tiny_bert
     device = next(m.parameters()).device
     extract_bert_embeddings(BERT_MODEL, t, m, [["This", "is", "a", "test"]], device, True)
+
 
 def test_run_bert_empty_word(tiny_bert):
     m, t = tiny_bert

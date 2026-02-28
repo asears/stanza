@@ -8,16 +8,16 @@ This document summarizes all new development infrastructure, automation, and too
 ## 📋 Files Created
 
 ### 1. `.github/dependabot.yml` (1.7 KB)
-**Purpose:** Automated dependency management and security updates
+Purpose: Automated dependency management and security updates
 
-**Features:**
+Features:
 - Tracks 3 ecosystems: pip, github-actions, uv
 - Weekly update checks (Mondays at 3:00 AM UTC)
 - Automatic PR creation with detailed changelogs
 - Pre-release versions ignored for stability
 - Reserved reviewers and custom labels
 
-**Key Configurations:**
+Key Configurations:
 ```yaml
 - pip ecosystem: 10 max PRs/week
 - github-actions: 5 max PRs/week  
@@ -27,19 +27,19 @@ This document summarizes all new development infrastructure, automation, and too
 ---
 
 ### 2. `pyproject.toml` (6.1 KB)
-**Purpose:** Modern Python packaging configuration (PEP 517/518 compliant)
+Purpose: Modern Python packaging configuration (PEP 517/518 compliant)
 
-**Key Sections:**
-- **[project]** - Package metadata (name, version, description, authors)
-- **[project.dependencies]** - Core dependencies (numpy, torch, protobuf, etc.)
-- **[project.optional-dependencies]** - 8 feature groups
-- **[tool.ruff]** - Linter/formatter configuration
-- **[tool.black]** - Code formatter settings
-- **[tool.mypy]** - Type checker configuration
-- **[tool.pytest.ini_options]** - Test runner settings
-- **[tool.coverage.run]** - Code coverage settings
+Key Sections:
+- [project] - Package metadata (name, version, description, authors)
+- [project.dependencies] - Core dependencies (numpy, torch, protobuf, etc.)
+- [project.optional-dependencies] - 8 feature groups
+- [tool.ruff] - Linter/formatter configuration
+- [tool.black] - Code formatter settings
+- [tool.mypy] - Type checker configuration
+- [tool.pytest.ini_options] - Test runner settings
+- [tool.coverage.run] - Code coverage settings
 
-**Optional Dependency Groups:**
+Optional Dependency Groups:
 ```
 ✓ dev      - Development tools
 ✓ test     - Testing dependencies
@@ -56,20 +56,20 @@ This document summarizes all new development infrastructure, automation, and too
 ---
 
 ### 3. `.github/workflows/uv-build-checks.yaml` (4.9 KB)
-**Purpose:** Comprehensive CI/CD pipeline with quality checks
+Purpose: CI/CD pipeline with quality checks
 
-**Jobs:**
-1. **build-and-test** - Matrix testing across 15 configurations
-2. **code-quality** - Ruff, mypy, pytest, coverage
-3. **security** - Dependency scanning and analysis
-4. **lint-and-format** - Comprehensive linting reports
+Jobs:
+1. build-and-test - Matrix testing across 15 configurations
+2. code-quality - Ruff, mypy, pytest, coverage
+3. security - Dependency scanning and analysis
+4. lint-and-format - Linting reports
 
-**Build Matrix:**
-- **OS:** Ubuntu, Windows, macOS (3)
-- **Python:** 3.9, 3.10, 3.11, 3.12, 3.13 (5)
-- **Total:** 15 combinations tested
+Build Matrix:
+- OS: Ubuntu, Windows, macOS (3)
+- Python: 3.9, 3.10, 3.11, 3.12, 3.13 (5)
+- Total: 15 combinations tested
 
-**Quality Checks (Sequential):**
+Quality Checks (Sequential):
 ```
 ✓ Ruff format check (diff output)
 ✓ Ruff linting (E, W, F rules)
@@ -81,9 +81,9 @@ This document summarizes all new development infrastructure, automation, and too
 ---
 
 ### 4. `DEPENDENCIES.md` (10.7 KB)
-**Purpose:** Complete inventory of all project dependencies
+Purpose: Complete inventory of all project dependencies
 
-**Sections:**
+Sections:
 - Core dependencies (10 packages)
 - Optional dependencies by feature (6 groups)
 - Development dependencies
@@ -93,13 +93,13 @@ This document summarizes all new development infrastructure, automation, and too
 - Installation profiles
 - Security considerations
 
-**Notable Statistics:**
-- **35 unique file types** in repository
-- **547 Python files** (.py)
-- **55+ dependencies** tracked
-- **Python 3.9-3.13** supported
+Notable Statistics:
+- 35 unique file types in repository
+- 547 Python files (.py)
+- 55+ dependencies tracked
+- Python 3.9-3.13 supported
 
-**File Types Documented:**
+File Types Documented:
 ```
 .py (547)   .md (8)      .ipynb (6)   .txt (5)
 .ttf (3)    .sh (2)      .ps1 (2)     .yml (2)
@@ -110,9 +110,9 @@ This document summarizes all new development infrastructure, automation, and too
 ---
 
 ### 5. `UV_GUIDE.md` (7.7 KB)
-**Purpose:** Comprehensive guide to using the UV package manager
+Purpose: Guide to using the UV package manager
 
-**Sections:**
+Sections:
 - What is UV? (benefits and features)
 - Quick start (installation on all platforms)
 - Common commands (pip, ruff, mypy, pytest)
@@ -122,7 +122,7 @@ This document summarizes all new development infrastructure, automation, and too
 - Troubleshooting and solutions
 - Advanced usage patterns
 
-**Quick Command Reference:**
+Quick Command Reference:
 ```bash
 # Install UV
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -141,9 +141,9 @@ uv run pytest stanza/tests -v
 ---
 
 ### 6. `SETUP_IMPROVEMENTS.md` (8.7 KB)
-**Purpose:** Summary of all improvements and migration notes
+Purpose: Summary of all improvements and migration notes
 
-**Content:**
+Content:
 - What's new overview
 - Quick start for developers
 - File inventory (new and updated)
@@ -155,7 +155,7 @@ uv run pytest stanza/tests -v
 - Performance metrics
 - FAQ and troubleshooting
 
-**Performance Improvements:**
+Performance Improvements:
 - Installation: 3-5x faster (thanks to UV)
 - Dependency resolution: 5-10x faster
 - Overall CI/CD: 20-30% faster builds
@@ -183,7 +183,7 @@ uv run pytest stanza/tests -v
 - Security vulnerability scanning
 - Pre-release filtering
 
-### 🧪 Comprehensive CI/CD
+### 🧪 CI/CD
 - Matrix testing: 15 configurations
 - Quality checks: ruff + mypy
 - Test execution: pytest on all platforms
@@ -191,11 +191,11 @@ uv run pytest stanza/tests -v
 - 5 Python versions supported
 
 ### 🛠️ Code Quality Tools
-- **Ruff:** Fast linting and formatting
-- **MyPy:** Type safety validation
-- **Black:** Code formatting (integrated via ruff)
-- **Pytest:** Unit testing with coverage
-- **Coverage:** Code coverage analysis
+- Ruff: Fast linting and formatting
+- MyPy: Type safety validation
+- Black: Code formatting (integrated via ruff)
+- Pytest: Unit testing with coverage
+- Coverage: Code coverage analysis
 
 ---
 
@@ -228,9 +228,9 @@ uv run pytest stanza/tests -v
 ✅ Pre-release versions filtered
 
 ### Critical Dependencies Tracked
-- **torch >=1.13.0** - Core ML framework
-- **protobuf >=3.15.0** - Data serialization
-- **peft >=0.6.1** - Model safety
+- torch >=1.13.0 - Core ML framework
+- protobuf >=3.15.0 - Data serialization
+- peft >=0.6.1 - Model safety
 
 ---
 
@@ -255,7 +255,7 @@ uv run pytest stanza/tests -v
 
 ## ✅ Backward Compatibility
 
-All changes are **fully backward compatible**:
+All changes are fully backward compatible:
 - ✅ Existing `setup.py` untouched and working
 - ✅ `pip install stanza` still works
 - ✅ All tests pass with both pip and UV
@@ -305,7 +305,7 @@ git push origin feature/my-feature
 | `DEPENDENCIES.md` | 10.7 KB | Dependency inventory |
 | `UV_GUIDE.md` | 7.7 KB | UV usage guide |
 | `SETUP_IMPROVEMENTS.md` | 8.7 KB | Improvements summary |
-| **Total** | **39 KB** | **Complete documentation** |
+| Total | 39 KB | Complete documentation |
 
 ---
 
@@ -360,10 +360,10 @@ git push origin feature/my-feature
 ## 📞 Support
 
 For questions or issues:
-- **UV Questions:** See [UV_GUIDE.md](./UV_GUIDE.md)
-- **Dependencies:** See [DEPENDENCIES.md](./DEPENDENCIES.md)
-- **General Setup:** See [SETUP_IMPROVEMENTS.md](./SETUP_IMPROVEMENTS.md)
-- **GitHub Issues:** [stanza/issues](https://github.com/stanfordnlp/stanza/issues)
+- UV Questions: See [UV_GUIDE.md](./UV_GUIDE.md)
+- Dependencies: See [DEPENDENCIES.md](./DEPENDENCIES.md)
+- General Setup: See [SETUP_IMPROVEMENTS.md](./SETUP_IMPROVEMENTS.md)
+- GitHub Issues: [stanza/issues](https://github.com/stanfordnlp/stanza/issues)
 
 ---
 
@@ -383,8 +383,8 @@ For questions or issues:
 
 ---
 
-**Created:** February 28, 2026  
-**Repository:** stanfordnlp/stanza  
-**Status:** ✅ Production Ready  
-**Backward Compatible:** ✅ Yes  
-**Performance Improvement:** 📈 20-30% faster builds
+Created: February 28, 2026  
+Repository: stanfordnlp/stanza  
+Status: ✅ Production Ready  
+Backward Compatible: ✅ Yes  
+Performance Improvement: 📈 20-30% faster builds

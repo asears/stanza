@@ -60,7 +60,7 @@ def get_num_samples(org_dir, file_names):
             continue
         # File is .mrg. Start processing
         file_dir = os.path.join(org_dir, filename)
-        with open(file_dir, 'r', encoding='utf-8') as reader:
+        with open(file_dir, encoding='utf-8') as reader:
             content = reader.readlines()
             for line in content:
                 count += 1
@@ -71,7 +71,7 @@ def split_files(org_dir, split_dir, short_name=None, train_size=0.7, dev_size=0.
     os.makedirs(split_dir, exist_ok=True)
 
     if train_size + dev_size >= 1.0:
-        print("Not making a test slice with the given ratios: train {} dev {}".format(train_size, dev_size))
+        print(f"Not making a test slice with the given ratios: train {train_size} dev {dev_size}")
 
     # Create a random shuffle list of the file names in the original directory
     file_names = create_shuffle_list(org_dir)
@@ -83,24 +83,24 @@ def split_files(org_dir, split_dir, short_name=None, train_size=0.7, dev_size=0.
     # TODO: if we ever wanted to split files with <s> </s> in them,
     # this particular code would need some updating to pay attention to the ids
     num_samples = get_num_samples(org_dir, file_names)
-    print("Found {} total lines in {}".format(num_samples, org_dir))
+    print(f"Found {num_samples} total lines in {org_dir}")
 
     stop_train = int(num_samples * train_size)
     if train_size + dev_size >= 1.0:
         stop_dev = num_samples
         output_limits = (stop_train, stop_dev)
         output_names = (train_path, dev_path)
-        print("Splitting {} train, {} dev".format(stop_train, stop_dev - stop_train))
+        print(f"Splitting {stop_train} train, {stop_dev - stop_train} dev")
     elif train_size + dev_size > 0.0:
         stop_dev = int(num_samples * (train_size + dev_size))
         output_limits = (stop_train, stop_dev, num_samples)
         output_names = (train_path, dev_path, test_path)
-        print("Splitting {} train, {} dev, {} test".format(stop_train, stop_dev - stop_train, num_samples - stop_dev))
+        print(f"Splitting {stop_train} train, {stop_dev - stop_train} dev, {num_samples - stop_dev} test")
     else:
         stop_dev = 0
         output_limits = (num_samples,)
         output_names = (test_path,)
-        print("Copying all {} lines to test".format(num_samples))
+        print(f"Copying all {num_samples} lines to test")
 
     # Count how much stuff we've written.
     # We will switch to the next output file when we're written enough

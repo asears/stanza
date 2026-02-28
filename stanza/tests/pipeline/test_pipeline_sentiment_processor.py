@@ -1,20 +1,19 @@
 import gc
 
 import pytest
-import stanza
-from stanza.utils.conll import CoNLL
-from stanza.models.common.doc import Document
 
+import stanza
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
 # data for testing
-EN_DOCS = ["Ragavan is terrible and should go away.",  "Today is okay.",  "Urza's Saga is great."]
+EN_DOCS = ["Ragavan is terrible and should go away.", "Today is okay.", "Urza's Saga is great."]
 
 EN_DOC = "  ".join(EN_DOCS)
 
 EXPECTED = [0, 1, 2]
+
 
 class TestSentimentPipeline:
     @pytest.fixture(scope="class")
@@ -31,13 +30,13 @@ class TestSentimentPipeline:
             doc = pipeline(text)
             assert len(doc.sentences) == 1
             results.append(doc.sentences[0].sentiment)
-        assert EXPECTED == results
+        assert results == EXPECTED
 
     def test_multiple_sentences(self, pipeline):
         doc = pipeline(EN_DOC)
         assert len(doc.sentences) == 3
         results = [sentence.sentiment for sentence in doc.sentences]
-        assert EXPECTED == results
+        assert results == EXPECTED
 
     def test_empty_text(self, pipeline):
         """

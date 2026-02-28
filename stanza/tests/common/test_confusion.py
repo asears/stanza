@@ -3,11 +3,13 @@ Test a couple simple confusion matrices and output formats
 """
 
 from collections import defaultdict
+
 import pytest
 
-from stanza.utils.confusion import format_confusion, confusion_to_f1, confusion_to_macro_f1, confusion_to_weighted_f1
+from stanza.utils.confusion import confusion_to_macro_f1, confusion_to_weighted_f1, format_confusion
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 @pytest.fixture
 def simple_confusion():
@@ -18,6 +20,7 @@ def simple_confusion():
     confusion["E-ORG"]["E-PER"] = 1
     confusion["O"]["O"] = 4
     return confusion
+
 
 @pytest.fixture
 def short_confusion():
@@ -31,6 +34,7 @@ def short_confusion():
     confusion["E-ORG"]["E-PER"] = 1
     confusion["O"]["O"] = 4
     return confusion
+
 
 EXPECTED_SIMPLE_OUTPUT = """
      t\\p      O B-ORG E-ORG B-PER E-PER
@@ -59,18 +63,23 @@ EXPECTED_HIDE_BLANK_SHORT_OUTPUT = """
     E-ORG     0     0     1     0     1
 """[1:-1]
 
+
 def test_simple_output(simple_confusion):
-    assert EXPECTED_SIMPLE_OUTPUT == format_confusion(simple_confusion)
+    assert format_confusion(simple_confusion) == EXPECTED_SIMPLE_OUTPUT
+
 
 def test_short_output(short_confusion):
-    assert EXPECTED_SHORT_OUTPUT == format_confusion(short_confusion)
+    assert format_confusion(short_confusion) == EXPECTED_SHORT_OUTPUT
+
 
 def test_hide_blank_short_output(short_confusion):
-    assert EXPECTED_HIDE_BLANK_SHORT_OUTPUT == format_confusion(short_confusion, hide_blank=True)
+    assert format_confusion(short_confusion, hide_blank=True) == EXPECTED_HIDE_BLANK_SHORT_OUTPUT
+
 
 def test_macro_f1(simple_confusion, short_confusion):
     assert confusion_to_macro_f1(simple_confusion) == pytest.approx(0.466666666666)
     assert confusion_to_macro_f1(short_confusion) == pytest.approx(0.277777777777)
+
 
 def test_weighted_f1(simple_confusion, short_confusion):
     assert confusion_to_weighted_f1(simple_confusion) == pytest.approx(0.83333333)
@@ -78,4 +87,3 @@ def test_weighted_f1(simple_confusion, short_confusion):
 
     assert confusion_to_weighted_f1(simple_confusion, exclude=["O"]) == pytest.approx(0.66666666)
     assert confusion_to_weighted_f1(short_confusion, exclude=["O"]) == pytest.approx(0.33333333)
-

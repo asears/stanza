@@ -7,14 +7,15 @@ were split into individual pieces instead of reassembled as expected
 """
 
 import pytest
-import stanza
 
+import stanza
 from stanza.tests import TEST_MODELS_DIR
 
 pytestmark = pytest.mark.pipeline
 
+
 def test_arabic_pos_pipeline():
-    pipe = stanza.Pipeline(**{'processors': 'tokenize,pos', 'dir': TEST_MODELS_DIR, 'download_method': None, 'lang': 'ar'})
+    pipe = stanza.Pipeline(processors='tokenize,pos', dir=TEST_MODELS_DIR, download_method=None, lang='ar')
     text = "ولم يتم اعتقال احد بحسب المتحدث باسم الشرطة."
 
     doc = pipe(text)

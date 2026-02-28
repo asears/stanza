@@ -3,12 +3,9 @@ Entry point for training and evaluating a character-level neural language model.
 """
 
 import argparse
-from copy import copy
 import logging
-import lzma
 import math
 import os
-import random
 import time
 from types import GeneratorType
 import numpy as np
@@ -17,7 +14,6 @@ import torch
 from stanza.models.common.char_model import build_charlm_vocab, CharacterLanguageModel, CharacterLanguageModelTrainer
 from stanza.models.common.vocab import CharVocab
 from stanza.models.common import utils
-from stanza.models import _training_logging
 
 logger = logging.getLogger('stanza')
 
@@ -57,7 +53,7 @@ def load_data(path, vocab, direction):
     if os.path.isdir(path):
         filenames = sorted(os.listdir(path))
         for filename in filenames:
-            logger.info('Loading data from {}'.format(filename))
+            logger.info(f'Loading data from {filename}')
             data = load_file(os.path.join(path, filename), vocab, direction)
             yield data
     else:
@@ -182,23 +178,18 @@ def evaluate_and_save(args, vocab, data, trainer, best_loss, model_file, checkpo
     if previous_lr != current_lr:
         logger.info("Updating learning rate to %f", current_lr)
     logger.info(
-        "| eval checkpoint @ global step {:10d} | time elapsed {:6d}s | loss {:5.2f} | ppl {:8.2f}".format(
-            trainer.global_step,
-            elapsed,
-            loss,
-            ppl,
-        )
+        f"| eval checkpoint @ global step {trainer.global_step:10d} | time elapsed {elapsed:6d}s | loss {loss:5.2f} | ppl {ppl:8.2f}"
     )
     if best_loss is None or loss < best_loss:
         best_loss = loss
         trainer.save(model_file, full=False)
-        logger.info('new best model saved at step {:10d}'.format(trainer.global_step))
+        logger.info(f'new best model saved at step {trainer.global_step:10d}')
     if writer:
         writer.add_scalar('dev_loss', loss, global_step=trainer.global_step)
         writer.add_scalar('dev_ppl', ppl, global_step=trainer.global_step)
     if checkpoint_file:
         trainer.save(checkpoint_file, full=True)
-        logger.info('new checkpoint saved at step {:10d}'.format(trainer.global_step))
+        logger.info(f'new checkpoint saved at step {trainer.global_step:10d}')
 
     return loss, ppl, best_loss
 
@@ -346,10 +337,7 @@ def evaluate(args):
     
     loss = evaluate_epoch(args, vocab, data, model, criterion)
     logger.info(
-        "| best model | loss {:5.2f} | ppl {:8.2f}".format(
-            loss,
-            math.exp(loss),
-        )
+        f"| best model | loss {loss:5.2f} | ppl {math.exp(loss):8.2f}"
     )
     return
 

@@ -8,11 +8,9 @@ multiple sentences, they will be split using the stanza tokenizer.
 import argparse
 import io
 import logging
-import os
 
 import numpy as np
 
-import stanza
 from stanza.utils.datasets.constituency import selftrain
 from stanza.utils.get_tqdm import get_tqdm
 

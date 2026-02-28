@@ -3,9 +3,14 @@ Shared pytest fixtures and configuration
 """
 
 import pytest
+
+# Skip entire module if morphseg is not available
+pytest.importorskip("morphseg")
+
 from morphseg import MorphemeSegmenter
 
-pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.morphseg]
+
 
 @pytest.fixture(scope="session")
 def english_segmenter():
@@ -31,8 +36,8 @@ def pytest_configure(config):
     Custom pytest configuration
     """
     config.addinivalue_line(
-        "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')"
+        "markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     )
     config.addinivalue_line(
-        "markers", "multilingual: marks tests that test multiple languages"
+        "markers", "multilingual: marks tests that test multiple languages",
     )

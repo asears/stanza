@@ -10,7 +10,6 @@ import logging
 import os
 from pathlib import Path
 import requests
-import shutil
 import tempfile
 import zipfile
 
@@ -18,7 +17,7 @@ from platformdirs import user_cache_dir
 from tqdm.auto import tqdm
 
 from stanza.utils.helper_func import make_table
-from stanza.pipeline._constants import TOKENIZE, MWT, POS, LEMMA, DEPPARSE, NER, SENTIMENT
+from stanza.pipeline._constants import TOKENIZE, MWT, LEMMA
 from stanza.pipeline.registry import PIPELINE_NAMES, PROCESSOR_VARIANTS
 from stanza.resources.default_packages import PACKAGES
 from stanza._version import __resources_version__
@@ -291,7 +290,7 @@ def maintain_processor_list(resources, lang, package, processors, allow_pretrain
                             f'{key}: {package} is overwritten by '
                             f'{key}: {processors[key]}.'
                         )
-            if not flag: logger.warning((f'Can not find package: {package}.'))
+            if not flag: logger.warning(f'Can not find package: {package}.')
     processor_list = [[key, [ModelSpecification(processor=key, package=value, dependencies=None) for value in plist]] for key, plist in processor_list.items()]
     processor_list = sort_processors(processor_list)
     return processor_list

@@ -1,5 +1,4 @@
 import pytest
-
 import torch
 
 from stanza.models.common.relative_attn import RelativeAttention
@@ -32,6 +31,7 @@ def test_shorter_sequence():
     assert torch.allclose(result[:, -1, :], value[:, -1, :], atol=1e-06)
     assert not torch.allclose(result[:, 0, :], value[:, 0, :])
 
+
 def test_reverse():
     foo = RelativeAttention(d_model=100, num_heads=2, window=8, reverse=True, dropout=0.0)
     bar = torch.randn(10, 13, 100)
@@ -42,5 +42,3 @@ def test_reverse():
         raise ValueError(result[:, 0, :] - value[:, 0, :])
     assert torch.allclose(result[:, 0, :], value[:, 0, :], atol=1e-06)
     assert not torch.allclose(result[:, -1, :], value[:, -1, :])
-
-

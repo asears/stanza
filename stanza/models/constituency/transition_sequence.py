@@ -6,7 +6,6 @@ Supports multiple transition schemes - TOP_DOWN and variants, IN_ORDER
 
 import logging
 
-from stanza.models.common import utils
 from stanza.models.constituency.parse_transitions import Shift, CompoundUnary, OpenConstituent, CloseConstituent, TransitionScheme, Finalize
 from stanza.models.constituency.tree_reader import read_trees
 from stanza.utils.get_tqdm import get_tqdm
@@ -115,9 +114,9 @@ def yield_in_order_compound_sequence(tree, transition_scheme):
             yield CompoundUnary(*labels)
 
     if len(tree.children) == 0:
-        raise ValueError("Cannot build {} on an empty tree".format(transition_scheme))
+        raise ValueError(f"Cannot build {transition_scheme} on an empty tree")
     if len(tree.children) != 1:
-        raise ValueError("Cannot build {} with a tree that has two top level nodes: {}".format(transition_scheme, tree))
+        raise ValueError(f"Cannot build {transition_scheme} with a tree that has two top level nodes: {tree}")
 
     for t in helper(tree.children[0]):
         yield t

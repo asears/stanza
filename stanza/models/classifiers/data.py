@@ -1,7 +1,6 @@
 """Stanza models classifier data functions."""
 
 import collections
-from collections import namedtuple
 import logging
 import json
 import random
@@ -66,7 +65,7 @@ def update_text(sentence: List[str], wordvec_type: WVType) -> List[str]:
     elif wordvec_type == WVType.OTHER:
         return sentence
     else:
-        raise ValueError("Unknown wordvec_type {}".format(wordvec_type))
+        raise ValueError(f"Unknown wordvec_type {wordvec_type}")
 
 
 def read_dataset(dataset, wordvec_type: WVType, min_len: int) -> List[SentimentDatum]:

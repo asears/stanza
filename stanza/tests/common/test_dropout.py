@@ -1,11 +1,10 @@
 import pytest
-
 import torch
 
-import stanza
 from stanza.models.common.dropout import WordDropout
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_word_dropout():
     """

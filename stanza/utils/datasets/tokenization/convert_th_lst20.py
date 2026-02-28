@@ -17,7 +17,6 @@ Unlike Orchid and BEST, LST20 has train/eval/test splits, which we relabel train
 import argparse
 import glob
 import os
-import sys
 
 from stanza.utils.datasets.tokenization.process_thai_tokenization import write_section, convert_processed_lines, reprocess_lines
 
@@ -82,9 +81,9 @@ def retokenize_document(lines):
 def read_data(input_dir, section, resegment, spaces_after, split_clauses):
     glob_path = os.path.join(input_dir, section, "*.txt")
     filenames = glob.glob(glob_path)
-    print("  Found {} files in {}".format(len(filenames), glob_path))
+    print(f"  Found {len(filenames)} files in {glob_path}")
     if len(filenames) == 0:
-        raise FileNotFoundError("Could not find any files for the {} section.  Is LST20 installed in {}?".format(section, input_dir))
+        raise FileNotFoundError(f"Could not find any files for the {section} section.  Is LST20 installed in {input_dir}?")
     documents = []
     for filename in filenames:
         with open(filename) as fin:
@@ -113,7 +112,7 @@ def parse_lst20_args():
 def convert(input_dir, output_dir, args):
     input_dir = os.path.join(input_dir, "thai", "LST20_Corpus")
     if not os.path.exists(input_dir):
-        raise FileNotFoundError("Could not find LST20 corpus in {}".format(input_dir))
+        raise FileNotFoundError(f"Could not find LST20 corpus in {input_dir}")
 
     for (in_section, out_section) in (("train", "train"),
                                       ("eval", "dev"),

@@ -105,7 +105,7 @@ def read_xml_file(input_filename):
     """
     Convert an XML file into a list of trees - each <s> becomes its own object
     """
-    print("Reading {}".format(input_filename))
+    print(f"Reading {input_filename}")
     with open(input_filename, encoding="utf-8") as fin:
         lines = fin.readlines()
 
@@ -115,7 +115,7 @@ def read_xml_file(input_filename):
     for line_idx, line in enumerate(lines):
         if line.startswith("<s "):
             if len(current_sentence) > 0:
-                raise ValueError("Found the start of a sentence inside an existing sentence, line {}".format(line_idx))
+                raise ValueError(f"Found the start of a sentence inside an existing sentence, line {line_idx}")
             in_sentence = True
 
         if in_sentence:
@@ -138,7 +138,7 @@ def read_xml_file(input_filename):
             tree = ET.parse(sentence)
             xml_sentences.append(tree)
         except ET.ParseError as e:
-            raise ValueError("Failed to parse sentence {}".format(sent_idx))
+            raise ValueError(f"Failed to parse sentence {sent_idx}")
 
     return xml_sentences
 
@@ -171,7 +171,7 @@ def process_nodes(root_id, words, nodes, visited):
         children = [process_nodes(child, words, nodes, visited) for child in node.children]
         return Tree(label=node.label, children=children)
     else:
-        raise BrokenLinkError("Unknown id! {}".format(root_id))
+        raise BrokenLinkError(f"Unknown id! {root_id}")
 
 def check_words(tree, tsurgeon_processor):
     """
@@ -201,7 +201,7 @@ def check_words(tree, tsurgeon_processor):
 
         sorted_indices = sorted(indices)
         if indices == sorted_indices:
-            raise ValueError("Skipped index!  This should already be accounted for  {}".format(tree))
+            raise ValueError(f"Skipped index!  This should already be accounted for  {tree}")
 
         if word_idx == 0:
             return None
@@ -238,25 +238,25 @@ def process_tree(sentence):
     sentence = sentence.getroot()
     sent_id = sentence.get("id")
     if sent_id is None:
-        raise ValueError("Tree {} does not have an id".format(sent_id))
+        raise ValueError(f"Tree {sent_id} does not have an id")
     if len(sentence) > 1:
-        raise ValueError("Longer than expected number of items in {}".format(sent_id))
+        raise ValueError(f"Longer than expected number of items in {sent_id}")
     graph = sentence.find("graph")
     if graph is None:
-        raise ValueError("Unexpected tree structure in {} : top tag is not 'graph'".format(sent_id))
+        raise ValueError(f"Unexpected tree structure in {sent_id} : top tag is not 'graph'")
 
     root_id = graph.get("root")
     if root_id is None:
-        raise ValueError("Tree has no root id in {}".format(sent_id))
+        raise ValueError(f"Tree has no root id in {sent_id}")
 
     terminals = graph.find("terminals")
     if terminals is None:
-        raise ValueError("No terminals in tree {}".format(sent_id))
+        raise ValueError(f"No terminals in tree {sent_id}")
     # some Arboretum graphs have two sets of nonterminals,
     # apparently intentionally, so we ignore that possible error
     nonterminals = graph.find("nonterminals")
     if nonterminals is None:
-        raise ValueError("No nonterminals in tree {}".format(sent_id))
+        raise ValueError(f"No nonterminals in tree {sent_id}")
 
     # read the words.  the words have ids, text, and tags which we care about
     words = {}
@@ -264,16 +264,16 @@ def process_tree(sentence):
         if word.tag == 'parentes-udeladt' or word.tag == 'note':
             continue
         if word.tag != "t":
-            raise ValueError("Unexpected tree structure in {} : word with tag other than t".format(sent_id))
+            raise ValueError(f"Unexpected tree structure in {sent_id} : word with tag other than t")
         word_id = word.get("id")
         if not word_id:
-            raise ValueError("Word had no id in {}".format(sent_id))
+            raise ValueError(f"Word had no id in {sent_id}")
         word_text = word.get("word")
         if not word_text:
-            raise ValueError("Word had no text in {}".format(sent_id))
+            raise ValueError(f"Word had no text in {sent_id}")
         word_pos = word.get("pos")
         if not word_pos:
-            raise ValueError("Word had no pos in {}".format(sent_id))
+            raise ValueError(f"Word had no pos in {sent_id}")
         words[word_id] = Word(word_text, word_pos)
 
     # read the nodes.  the nodes have ids, labels, and children
@@ -281,27 +281,27 @@ def process_tree(sentence):
     nodes = {}
     for nt in nonterminals:
         if nt.tag != "nt":
-            raise ValueError("Unexpected tree structure in {} : node with tag other than nt".format(sent_id))
+            raise ValueError(f"Unexpected tree structure in {sent_id} : node with tag other than nt")
         nt_id = nt.get("id")
         if not nt_id:
-            raise ValueError("NT has no id in {}".format(sent_id))
+            raise ValueError(f"NT has no id in {sent_id}")
         nt_label = nt.get("cat")
         if not nt_label:
-            raise ValueError("NT has no label in {}".format(sent_id))
+            raise ValueError(f"NT has no label in {sent_id}")
 
         children = []
         for child in nt:
             if child.tag != "edge" and child.tag != "secedge":
-                raise ValueError("NT has unexpected child in {} : {}".format(sent_id, child.tag))
+                raise ValueError(f"NT has unexpected child in {sent_id} : {child.tag}")
             if child.tag == "edge":
                 child_id = child.get("idref")
                 if not child_id:
-                    raise ValueError("Child is missing an id in {}".format(sent_id))
+                    raise ValueError(f"Child is missing an id in {sent_id}")
                 children.append(child_id)
         nodes[nt_id] = Node(nt_label, children)
 
     if root_id not in nodes:
-        raise ValueError("Could not find root in nodes in {}".format(sent_id))
+        raise ValueError(f"Could not find root in nodes in {sent_id}")
 
     tree = process_nodes(root_id, words, nodes, set())
     return tree, words
@@ -351,7 +351,7 @@ def split_underscores(tree):
                 continue
 
             if child.label.split("-")[0] not in WORD_TO_PHRASE:
-                raise ValueError("SPLITTING {}".format(child))
+                raise ValueError(f"SPLITTING {child}")
             pieces = []
             for piece in child.children[0].label.split("_"):
                 # This may not be accurate, but we already retag the treebank anyway
@@ -428,12 +428,12 @@ def convert_tiger_treebank(input_filename):
                 broken_links += 1
                 # print("Unable to process {} because of broken links: {}".format(sentence.getroot().get("id"), e))
 
-    print("Found {} trees with empty nodes".format(dangling))
-    print("Found {} trees with unattached words".format(missing_words))
-    print("Found {} trees with confusing constituent labels".format(weird_constituents))
-    print("Not able to rearrange {} nodes".format(unfixable))
-    print("Unable to handle {} trees because of broken links, eg names in another tree".format(broken_links))
-    print("Parsed {} trees from {}".format(len(trees), input_filename))
+    print(f"Found {dangling} trees with empty nodes")
+    print(f"Found {missing_words} trees with unattached words")
+    print(f"Found {weird_constituents} trees with confusing constituent labels")
+    print(f"Not able to rearrange {unfixable} nodes")
+    print(f"Unable to handle {broken_links} trees because of broken links, eg names in another tree")
+    print(f"Parsed {len(trees)} trees from {input_filename}")
     return trees
 
 def main():

@@ -4,7 +4,6 @@ This file contains code used to train a baseline transformer model to classify o
 
 import argparse
 import os
-import sys
 import logging
 
 import torch
@@ -14,7 +13,6 @@ import torch.optim as optim
 from stanza.models.lemma_classifier.base_trainer import BaseLemmaClassifierTrainer
 from stanza.models.lemma_classifier.constants import DEFAULT_BATCH_SIZE
 from stanza.models.lemma_classifier.transformer_model import LemmaClassifierWithTransformer
-from stanza.models.common.utils import default_device
 
 logger = logging.getLogger('stanza.lemmaclassifier')
 

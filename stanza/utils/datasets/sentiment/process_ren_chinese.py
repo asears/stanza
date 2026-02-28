@@ -5,7 +5,6 @@ import sys
 
 import xml.etree.ElementTree as ET
 
-from collections import namedtuple
 
 import stanza
 
@@ -44,7 +43,7 @@ def get_phrases(filename):
                             polarity = inner
                             break
                     if polarity is None:
-                        print("Found sentence with no polarity in {}: {}".format(filename, text))
+                        print(f"Found sentence with no polarity in {filename}: {text}")
                         continue
                     if polarity.text == '消极':
                         sentiment = "0"
@@ -53,7 +52,7 @@ def get_phrases(filename):
                     elif polarity.text == '积极':
                         sentiment = "2"
                     else:
-                        raise ValueError("Unknown polarity {} in {}".format(polarity.text, filename))
+                        raise ValueError(f"Unknown polarity {polarity.text} in {filename}")
                     fragments.append(SentimentDatum(sentiment, text))
 
     return fragments
@@ -75,7 +74,7 @@ def read_snippets(xml_directory):
 def main(xml_directory, out_directory, short_name):
     snippets = read_snippets(xml_directory)
 
-    print("Found {} phrases".format(len(snippets)))
+    print(f"Found {len(snippets)} phrases")
     os.makedirs(out_directory, exist_ok=True)
     process_utils.write_splits(out_directory,
                                snippets,

@@ -64,7 +64,7 @@ def main():
                 print("%d trees already chosen.  Adding %d more" % (len(train_dataset), needed_trees))
                 train_dataset.extend(random.choices(train_trees, k=needed_trees))
         output_filename = os.path.join(base_path, "%s_train.mrg" % dataset_name)
-        print("Writing {} trees to {}".format(len(train_dataset), output_filename))
+        print(f"Writing {len(train_dataset)} trees to {output_filename}")
         Tree.write_treebank(train_dataset, output_filename)
 
 

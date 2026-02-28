@@ -25,9 +25,7 @@ Europarl: A Parallel Corpus for Statistical Machine Translation
 import argparse
 import logging
 import os
-import random
 
-import stanza
 from stanza.models.common.foundation_cache import FoundationCache
 from stanza.utils.datasets.constituency import selftrain
 from stanza.utils.get_tqdm import get_tqdm

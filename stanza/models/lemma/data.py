@@ -1,12 +1,9 @@
 import random
-import numpy as np
-import os
-from collections import Counter
 import logging
 import torch
 
 import stanza.models.common.seq2seq_constant as constant
-from stanza.models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
+from stanza.models.common.data import get_long_tensor, sort_all
 from stanza.models.common.vocab import DeltaVocab
 from stanza.models.lemma.vocab import Vocab, MultiVocab
 from stanza.models.lemma import edit
@@ -61,7 +58,7 @@ class DataLoader:
         # chunk into batches
         data = [data[i:i+batch_size] for i in range(0, len(data), batch_size)]
         self.data = data
-        logger.debug("{} batches created.".format(len(data)))
+        logger.debug(f"{len(data)} batches created.")
 
     def init_vocab(self, data):
         assert self.eval is False, "Vocab file must exist for evaluation"

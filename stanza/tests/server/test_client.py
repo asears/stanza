@@ -2,17 +2,17 @@
 Tests that call a running CoreNLPClient.
 """
 
-from http.server import BaseHTTPRequestHandler, HTTPServer
 import multiprocessing
-import pytest
-import requests
-import stanza.server as corenlp
-import stanza.server.client as client
 import shlex
 import subprocess
 import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import pytest
+
+import stanza.server as corenlp
 from stanza.models.constituency import tree_reader
+from stanza.server import client
 from stanza.tests import *
 
 # set the marker for this module
@@ -41,6 +41,7 @@ Tokens:
 [Text=. CharacterOffsetBegin=66 CharacterOffsetEnd=67 PartOfSpeech=.]
 """.strip()
 
+
 def run_webserver(port, timeout_secs):
     class HTTPTimeoutHandler(BaseHTTPRequestHandler):
         def do_POST(self):
@@ -51,6 +52,7 @@ def run_webserver(port, timeout_secs):
             self.wfile.write("HTTPMockServerTimeout")
 
     HTTPServer(('127.0.0.1', port), HTTPTimeoutHandler).serve_forever()
+
 
 class HTTPMockServerTimeoutContext:
     """ For launching an HTTP server on certain port with an specified delay at responses """
@@ -66,6 +68,7 @@ class HTTPMockServerTimeoutContext:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.p.terminate()
 
+
 class TestCoreNLPClient:
     @pytest.fixture(scope="class")
     def corenlp_client(self):
@@ -75,12 +78,10 @@ class TestCoreNLPClient:
         yield client
         client.stop()
 
-
     def test_connect(self, corenlp_client):
         corenlp_client.ensure_alive()
         assert corenlp_client.is_active
         assert corenlp_client.is_alive()
-
 
     def test_context_manager(self):
         with corenlp.CoreNLPClient(annotators="tokenize,ssplit",
@@ -98,12 +99,10 @@ class TestCoreNLPClient:
         ann = corenlp_client.annotate(TEXT)
         assert corenlp.to_text(ann.sentence[0]) == TEXT[:-1]
 
-
     def test_update(self, corenlp_client):
         ann = corenlp_client.annotate(TEXT)
         ann = corenlp_client.update(ann)
         assert corenlp.to_text(ann.sentence[0]) == TEXT[:-1]
-
 
     def test_tokensregex(self, corenlp_client):
         pattern = '([ner: PERSON]+) /wrote/ /an?/ []{0,3} /sentence|article/'
@@ -119,11 +118,10 @@ class TestCoreNLPClient:
                     "1": {
                         "text": "Chris",
                         "begin": 0,
-                        "end": 1
+                        "end": 1,
                     }},
-                "length": 1
-            },]}
-
+                "length": 1,
+            }]}
 
     def test_semgrex(self, corenlp_client):
         pattern = '{word:wrote} >nsubj {}=subject >obj {}=object'
@@ -136,14 +134,14 @@ class TestCoreNLPClient:
                 "$subject": {
                     "text": "Chris",
                     "begin": 0,
-                    "end": 1
+                    "end": 1,
                 },
                 "$object": {
                     "text": "sentence",
                     "begin": 4,
-                    "end": 5
+                    "end": 5,
                 },
-                "sentence": 0,}]
+                "sentence": 0}]
 
     def test_tregex(self, corenlp_client):
         # the PP should be easy to parse
@@ -154,8 +152,8 @@ class TestCoreNLPClient:
             'sentences': [
                 {'0': {'sentIndex': 0, 'characterOffsetBegin': 45, 'codepointOffsetBegin': 45, 'characterOffsetEnd': 66, 'codepointOffsetEnd': 66,
                        'match': '(PP (IN with)\n  (NP (NNP Stanford) (NNP CoreNLP)))\n',
-                       'spanString': 'with Stanford CoreNLP', 'namedNodes': []}}
-            ]
+                       'spanString': 'with Stanford CoreNLP', 'namedNodes': []}},
+            ],
         }
 
     def test_tregex_trees(self, corenlp_client):
@@ -168,8 +166,8 @@ class TestCoreNLPClient:
         assert matches == {
             'sentences': [
                 {'0': {'sentIndex': 0, 'match': '(VP (VBZ has)\n  (NP (JJ blue) (NN skin)))\n', 'spanString': 'has blue skin', 'namedNodes': []}},
-                {'0': {'sentIndex': 1, 'match': '(VP (VBP like)\n  (NP (PRP$ her) (NNS antennae)))\n', 'spanString': 'like her antennae', 'namedNodes': []}}
-            ]
+                {'0': {'sentIndex': 1, 'match': '(VP (VBP like)\n  (NP (PRP$ her) (NNS antennae)))\n', 'spanString': 'like her antennae', 'namedNodes': []}},
+            ],
         }
 
     @pytest.fixture
@@ -194,7 +192,7 @@ class TestCoreNLPClient:
 
     def test_external_server_available(self, external_server_9001):
         """ Test starting up an external available server and accessing with a client with start_server=StartServer.DONT_START """
-        time.sleep(5) # wait and make sure the external CoreNLP server is up and running
+        time.sleep(5)  # wait and make sure the external CoreNLP server is up and running
         with corenlp.CoreNLPClient(start_server=corenlp.StartServer.DONT_START, endpoint="http://localhost:9001") as external_server_client:
             ann = external_server_client.annotate(TEXT, annotators='tokenize,ssplit,pos', output_format='text')
         assert ann.strip() == EN_GOLD
@@ -208,14 +206,14 @@ class TestCoreNLPClient:
     def test_external_server_timeout(self):
         """ Test starting up an external server with long response time (20 seconds) and accessing with a client with start_server=StartServer.DONT_START and timeout=5000"""
         with HTTPMockServerTimeoutContext(9001, 20):
-            time.sleep(5) # wait and make sure the external HTTPMockServer server is up and running
+            time.sleep(5)  # wait and make sure the external HTTPMockServer server is up and running
             with pytest.raises(corenlp.TimeoutException):
                 with corenlp.CoreNLPClient(start_server=corenlp.StartServer.DONT_START, endpoint="http://localhost:9001", timeout=5000) as external_server_client:
                     ann = external_server_client.annotate(TEXT, annotators='tokenize,ssplit,pos', output_format='text')
 
     def test_external_server_try_start_with_external(self, external_server_9001):
         """ Test starting up an external server and accessing with a client with start_server=StartServer.TRY_START """
-        time.sleep(5) # wait and make sure the external CoreNLP server is up and running
+        time.sleep(5)  # wait and make sure the external CoreNLP server is up and running
         with corenlp.CoreNLPClient(start_server=corenlp.StartServer.TRY_START,
                                    annotators='tokenize,ssplit,pos',
                                    endpoint="http://localhost:9001") as external_server_client:
@@ -233,7 +231,7 @@ class TestCoreNLPClient:
 
     def test_external_server_force_start(self, external_server_9001):
         """ Test starting up an external server and accessing with a client with start_server=StartServer.FORCE_START """
-        time.sleep(5) # wait and make sure the external CoreNLP server is up and running
+        time.sleep(5)  # wait and make sure the external CoreNLP server is up and running
         with pytest.raises(corenlp.PermanentlyFailedException):
             with corenlp.CoreNLPClient(start_server=corenlp.StartServer.FORCE_START, endpoint="http://localhost:9001") as external_server_client:
                 ann = external_server_client.annotate(TEXT, annotators='tokenize,ssplit,pos', output_format='text')

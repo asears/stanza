@@ -7,26 +7,18 @@ For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal
 """
 
 import logging
-import sys
 import os
-import shutil
 import time
 from datetime import datetime
 import argparse
 import numpy as np
-import random
-import torch
-from torch import nn, optim
 
 from stanza.models.lemma.data import DataLoader
-from stanza.models.lemma.vocab import Vocab
 from stanza.models.lemma.trainer import Trainer
 from stanza.models.lemma import scorer, edit
 from stanza.models.common import utils
-import stanza.models.common.seq2seq_constant as constant
 from stanza.models.common.doc import *
 from stanza.utils.conll import CoNLL
-from stanza.models import _training_logging
 
 logger = logging.getLogger('stanza')
 
@@ -168,10 +160,10 @@ def train(args):
     logger.info("Evaluating on dev set...")
     dev_preds = trainer.predict_dict(dev_batch.doc.get([TEXT, UPOS]))
     dev_batch.doc.set([LEMMA], dev_preds)
-    system_pred_file = "{:C}\n\n".format(dev_batch.doc)
+    system_pred_file = f"{dev_batch.doc:C}\n\n"
     system_pred_file = io.StringIO(system_pred_file)
     _, _, dev_f = scorer.score(system_pred_file, gold_file)
-    logger.info("Dev F1 = {:.2f}".format(dev_f * 100))
+    logger.info(f"Dev F1 = {dev_f * 100:.2f}")
 
     if args.get('dict_only', False):
         # save dictionaries
@@ -223,12 +215,12 @@ def train(args):
                 logger.info("[Ensembling dict with seq2seq model...]")
                 dev_preds = trainer.ensemble(dev_batch.doc.get([TEXT, UPOS]), dev_preds)
             dev_batch.doc.set([LEMMA], dev_preds)
-            system_pred_file = "{:C}\n\n".format(dev_batch.doc)
+            system_pred_file = f"{dev_batch.doc:C}\n\n"
             system_pred_file = io.StringIO(system_pred_file)
             _, _, dev_score = scorer.score(system_pred_file, gold_file)
 
             train_loss = train_loss / train_batch.num_examples * args['batch_size'] # avg loss per batch
-            logger.info("epoch {}: train_loss = {:.6f}, dev_score = {:.4f}".format(epoch, train_loss, dev_score))
+            logger.info(f"epoch {epoch}: train_loss = {train_loss:.6f}, dev_score = {dev_score:.4f}")
 
             if args['wandb']:
                 wandb.log({'train_loss': train_loss, 'dev_score': dev_score})
@@ -248,13 +240,13 @@ def train(args):
             dev_score_history += [dev_score]
             logger.info("")
 
-        logger.info("Training ended with {} epochs.".format(epoch))
+        logger.info(f"Training ended with {epoch} epochs.")
 
         if args['wandb']:
             wandb.finish()
 
         best_f, best_epoch = max(dev_score_history)*100, np.argmax(dev_score_history)+1
-        logger.info("Best dev F1 = {:.2f}, at epoch = {}".format(best_f, best_epoch))
+        logger.info(f"Best dev F1 = {best_f:.2f}, at epoch = {best_epoch}")
 
 def evaluate(args):
     # file paths
@@ -306,7 +298,7 @@ def evaluate(args):
     if system_pred_file:
         CoNLL.write_doc2conll(batch.doc, system_pred_file)
 
-    system_pred_file = "{:C}\n\n".format(batch.doc)
+    system_pred_file = f"{batch.doc:C}\n\n"
     system_pred_file = io.StringIO(system_pred_file)
     _, _, score = scorer.score(system_pred_file, args['eval_file'])
     logger.info("Finished evaluation\nLemma score:\n{} {:.2f}".format(args['shorthand'], score*100))

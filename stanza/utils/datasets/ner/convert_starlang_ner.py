@@ -30,13 +30,13 @@ def read_tree(text):
     for label in tree.leaf_labels():
         match = TURKISH_WORD_RE.search(label)
         if match is None:
-            raise ValueError("Could not find word in |{}|".format(label))
+            raise ValueError(f"Could not find word in |{label}|")
         word = match.group(1)
         word = word.replace("-LCB-", "{").replace("-RCB-", "}")
 
         match = TURKISH_LABEL_RE.search(label)
         if match is None:
-            raise ValueError("Could not find ner in |{}|".format(label))
+            raise ValueError(f"Could not find ner in |{label}|")
         tag = match.group(1)
         if tag == 'NONE' or tag == "null":
             tag = 'O'

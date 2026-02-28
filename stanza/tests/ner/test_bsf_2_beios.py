@@ -3,13 +3,16 @@ Tests the conversion code for the lang_uk NER dataset
 """
 
 import unittest
-from stanza.utils.datasets.ner.convert_bsf_to_beios import convert_bsf, parse_bsf, BsfInfo
 
 import pytest
+
+from stanza.utils.datasets.ner.convert_bsf_to_beios import BsfInfo, convert_bsf, parse_bsf
+
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
+
 class TestBsf2Beios(unittest.TestCase):
-    
+
     def test_empty_markup(self):
         res = convert_bsf('', '')
         self.assertEqual('', res)

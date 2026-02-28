@@ -6,7 +6,6 @@ Such a file should be suitable for training an LM
 
 import argparse
 import logging
-import sys
 
 from stanza.models.constituency import tree_reader
 from stanza.utils.get_tqdm import get_tqdm

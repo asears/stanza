@@ -1,10 +1,11 @@
 import pytest
 
 import stanza
+from stanza.models.common.doc import CONSTITUENCY, ID, NER, SENTIMENT, TEXT, Document
 from stanza.tests import *
-from stanza.models.common.doc import Document, ID, TEXT, NER, CONSTITUENCY, SENTIMENT
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 @pytest.fixture
 def sentences_dict():
@@ -14,10 +15,12 @@ def sentences_dict():
             [{ID: 4, TEXT: "ban"},
              {ID: 5, TEXT: "Lurrus"}]]
 
+
 @pytest.fixture
 def doc(sentences_dict):
     doc = Document(sentences_dict)
     return doc
+
 
 def test_basic_values(doc, sentences_dict):
     """
@@ -31,6 +34,7 @@ def test_basic_values(doc, sentences_dict):
         for token, raw_token in zip(sentence.tokens, raw_sentence):
             assert token.text == raw_token[TEXT]
 
+
 def test_set_sentence(doc):
     """
     Test setting a field on the sentences themselves
@@ -41,6 +45,7 @@ def test_set_sentence(doc):
 
     assert doc.sentences[0].sentiment == "4"
     assert doc.sentences[1].sentiment == "0"
+
 
 def test_set_tokens(doc):
     """
@@ -84,6 +89,7 @@ def test_constituency_comment(doc):
         assert len(constituency_comments) == 1
         assert constituency_comments[0].endswith(expected)
 
+
 def test_sentiment_comment(doc):
     """
     Test that setting the sentiment on a doc sets the sentiment comment
@@ -113,6 +119,7 @@ def test_sentiment_comment(doc):
         assert len(sentiment_comments) == 1
         assert sentiment_comments[0].endswith(expected)
 
+
 def test_sent_id_comment(doc):
     """
     Test that setting the sent_id on a sentence sets the sentiment comment
@@ -136,6 +143,7 @@ def test_sent_id_comment(doc):
     assert "# sent_id = bar" in doc.sentences[0].comments
     assert len([x for x in doc.sentences[0].comments if x.startswith("# sent_id")]) == 1
 
+
 def test_doc_id_comment(doc):
     """
     Test that setting the doc_id on a sentence sets the document comment
@@ -152,9 +160,11 @@ def test_doc_id_comment(doc):
     assert len([x for x in doc.sentences[0].comments if x.startswith("# doc_id")]) == 1
     assert doc.sentences[0].doc_id == "bar"
 
+
 @pytest.fixture(scope="module")
 def pipeline():
     return stanza.Pipeline(dir=TEST_MODELS_DIR)
+
 
 def test_serialized(pipeline):
     """

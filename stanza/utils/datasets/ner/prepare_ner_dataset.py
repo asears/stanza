@@ -543,7 +543,7 @@ def process_it_fbk(paths, short_name):
     base_input_path = os.path.join(paths["NERBASE"], short_name)
     csv_file = os.path.join(base_input_path, "all-wiki-split.tsv")
     if not os.path.exists(csv_file):
-        raise FileNotFoundError("Cannot find the FBK dataset in its expected location: {}".format(csv_file))
+        raise FileNotFoundError(f"Cannot find the FBK dataset in its expected location: {csv_file}")
     base_output_path = paths["NER_DATA_DIR"]
     split_wikiner(base_output_path, csv_file, prefix=short_name, suffix="io", shuffle=False, train_fraction=0.8, dev_fraction=0.1)
     convert_bio_to_json(base_output_path, base_output_path, short_name, suffix="io")
@@ -598,10 +598,10 @@ def process_il_ner(paths, short_name):
     assert lang in lang_paths, "IL-NER only supports %s" % (", ".join(lang_paths.keys()))
     ilner_path = os.path.join(paths["NERBASE"], "indic", "IL-NER")
     if not os.path.exists(ilner_path):
-        raise FileNotFounderror("Cannot find the IL-NER dataset in its expected location: {}".format(ilner_path))
+        raise FileNotFounderror(f"Cannot find the IL-NER dataset in its expected location: {ilner_path}")
     ilner_path = os.path.join(ilner_path, "Datasets", lang_paths[lang])
     if not os.path.exists(ilner_path):
-        raise FileNotFoundError("IL-NER not in the layout expected: directory not found {}".format(ilner_path))
+        raise FileNotFoundError(f"IL-NER not in the layout expected: directory not found {ilner_path}")
     filenames = os.listdir(ilner_path)
 
     base_output_path = paths["NER_DATA_DIR"]
@@ -1049,8 +1049,8 @@ def process_fa_arman(paths, short_name):
     if not os.path.exists(train_input_file) or not os.path.exists(test_input_file):
         full_corpus_file = os.path.join(base_input_path, "ArmanPersoNERCorpus.zip")
         if os.path.exists(full_corpus_file):
-            raise FileNotFoundError("Please unzip the file {}".format(full_corpus_file))
-        raise FileNotFoundError("Cannot find the arman corpus in the expected directory: {}".format(base_input_path))
+            raise FileNotFoundError(f"Please unzip the file {full_corpus_file}")
+        raise FileNotFoundError(f"Cannot find the arman corpus in the expected directory: {base_input_path}")
 
     base_output_path = paths["NER_DATA_DIR"]
     test_output_file = os.path.join(base_output_path, "%s.test.bio" % short_name)
@@ -1085,7 +1085,7 @@ def process_sv_suc3shuffle(paths, short_name):
     if not os.path.exists(train_input_file):
         train_input_file = train_input_file[:-4]
     if not os.path.exists(train_input_file):
-        raise FileNotFoundError("Unable to find the SUC3 dataset in {}.bz2".format(train_input_file))
+        raise FileNotFoundError(f"Unable to find the SUC3 dataset in {train_input_file}.bz2")
 
     base_output_path = paths["NER_DATA_DIR"]
     train_output_file = os.path.join(base_output_path, "sv_suc3shuffle.bio")
@@ -1182,8 +1182,8 @@ def process_ja_gsd(paths, short_name):
             base_input_path = ver
 
     if base_input_path is None:
-        raise FileNotFoundError("Could not find any copies of the NE conversion of ja_gsd here: {}".format(search_path))
-    print("Most recent version found: {}".format(base_input_path))
+        raise FileNotFoundError(f"Could not find any copies of the NE conversion of ja_gsd here: {search_path}")
+    print(f"Most recent version found: {base_input_path}")
 
     input_files = ["ja_gsd-ud-train.ne.conllu", "ja_gsd-ud-dev.ne.conllu", "ja_gsd-ud-test.ne.conllu"]
 
@@ -1253,7 +1253,7 @@ def process_de_germeval2014(paths, short_name):
         sentences = read_tsv(in_file, 1, 2, remap_tag_fn=remap_germeval_tag)
         datasets.append(sentences)
     tags = get_tags(datasets)
-    print("Found the following tags: {}".format(sorted(tags)))
+    print(f"Found the following tags: {sorted(tags)}")
     write_dataset(datasets, base_output_path, short_name)
 
 def process_hiner(paths, short_name):

@@ -12,8 +12,7 @@ import spacy
 from spacy import displacy
 from spacy.tokens import Doc
 from IPython.display import display, HTML
-import typing
-from typing import List, Tuple, Any
+from typing import List, Any
 
 from stanza.utils.visualization.utils import find_nth, round_base
 

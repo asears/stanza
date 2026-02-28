@@ -1,10 +1,10 @@
 import pytest
 
+from stanza.models.ner import trainer
 from stanza.tests import *
 
-from stanza.models.ner import trainer
-
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_fix_singleton_tags():
     TESTS = [
@@ -27,6 +27,6 @@ def test_fix_singleton_tags():
         (["B-PER", "I-PER", "E-PER", "O", "B-PER", "I-PER"], ["B-PER", "I-PER", "E-PER", "O", "B-PER", "E-PER"]),
         (["I-PER", "I-PER", "I-PER", "O", "I-PER", "I-PER"], ["B-PER", "I-PER", "E-PER", "O", "B-PER", "E-PER"]),
     ]
-             
+
     for unfixed, expected in TESTS:
-        assert trainer.fix_singleton_tags(unfixed) == expected, "Error converting {} to {}".format(unfixed, expected)
+        assert trainer.fix_singleton_tags(unfixed) == expected, f"Error converting {unfixed} to {expected}"

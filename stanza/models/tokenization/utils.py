@@ -1,5 +1,4 @@
 from collections import Counter
-from copy import copy
 import json
 import numpy as np
 import re
@@ -9,7 +8,7 @@ import os
 from torch.utils.data import DataLoader as TorchDataLoader
 
 import stanza.utils.default_paths as default_paths
-from stanza.models.common.utils import ud_scores, harmonic_mean
+from stanza.models.common.utils import harmonic_mean
 from stanza.models.common.doc import Document
 from stanza.utils.conll import CoNLL
 from stanza.models.common.doc import *
@@ -101,7 +100,7 @@ def create_lexicon(shorthand=None, train_path=None, external_path=None):
         if not os.path.isfile(external_path):
             raise FileNotFoundError(f"Cannot open external dictionary at {external_path}")
 
-        with open(external_path, "r", encoding="utf-8") as external_file:
+        with open(external_path, encoding="utf-8") as external_file:
             lines = external_file.readlines()
         for line in lines:
             word = line.lower()
@@ -151,7 +150,7 @@ def load_mwt_dict(filename):
     if filename is None:
         return None
 
-    with open(filename, 'r') as f:
+    with open(filename) as f:
         mwt_dict0 = json.load(f)
 
     mwt_dict = dict()

@@ -1,11 +1,11 @@
 import pytest
 
-from stanza.models.constituency.parse_tree import Tree
 from stanza.models.constituency import tree_reader
-
+from stanza.models.constituency.parse_tree import Tree
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 def test_leaf_preterminal():
     foo = Tree(label="foo")
@@ -35,11 +35,13 @@ def test_yield_preterminals():
     assert len(preterminals) == 3
     assert str(preterminals) == "[(VB Unban), (NNP Mox), (NNP Opal)]"
 
+
 def test_depth():
     text = "(foo) ((S (VP (VB Unban)) (NP (NNP Mox) (NNP Opal))))"
     trees = tree_reader.read_trees(text)
     assert trees[0].depth() == 0
     assert trees[1].depth() == 4
+
 
 def test_unique_labels():
     """
@@ -47,7 +49,7 @@ def test_unique_labels():
 
     Assumes tree_reader works, which should be fine since it is tested elsewhere
     """
-    text="((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?))) ((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?))) ((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
 
     trees = tree_reader.read_trees(text)
 
@@ -55,11 +57,12 @@ def test_unique_labels():
     expected = ['NP', 'PP', 'ROOT', 'SBARQ', 'SQ', 'VP', 'WHNP']
     assert labels == expected
 
+
 def test_unique_tags():
     """
     Test getting the unique tags from a tree
     """
-    text="((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
 
     trees = tree_reader.read_trees(text)
 
@@ -72,7 +75,7 @@ def test_unique_words():
     """
     Test getting the unique words from a tree
     """
-    text="((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
 
     trees = tree_reader.read_trees(text)
 
@@ -80,11 +83,12 @@ def test_unique_words():
     expected = ['?', 'Who', 'in', 'seat', 'sits', 'this']
     assert words == expected
 
+
 def test_rare_words():
     """
     Test getting the unique words from a tree
     """
-    text="((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))  ((SBARQ (NP (DT this) (NN seat)) (. ?)))"
+    text = "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))  ((SBARQ (NP (DT this) (NN seat)) (. ?)))"
 
     trees = tree_reader.read_trees(text)
 
@@ -92,11 +96,12 @@ def test_rare_words():
     expected = ['Who', 'in', 'sits']
     assert words == expected
 
+
 def test_common_words():
     """
     Test getting the unique words from a tree
     """
-    text="((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))  ((SBARQ (NP (DT this) (NN seat)) (. ?)))"
+    text = "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))  ((SBARQ (NP (DT this) (NN seat)) (. ?)))"
 
     trees = tree_reader.read_trees(text)
 
@@ -104,26 +109,28 @@ def test_common_words():
     expected = ['?', 'seat', 'this']
     assert words == expected
 
-def test_root_labels():
-    text="( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
-    trees = tree_reader.read_trees(text)
-    assert ["ROOT"] == Tree.get_root_labels(trees)
 
-    text=("( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))" +
+def test_root_labels():
+    text = "( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    trees = tree_reader.read_trees(text)
+    assert Tree.get_root_labels(trees) == ["ROOT"]
+
+    text = ("( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))" +
           "( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))" +
           "( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))")
     trees = tree_reader.read_trees(text)
-    assert ["ROOT"] == Tree.get_root_labels(trees)
+    assert Tree.get_root_labels(trees) == ["ROOT"]
 
-    text="(FOO) (BAR)"
+    text = "(FOO) (BAR)"
     trees = tree_reader.read_trees(text)
-    assert ["BAR", "FOO"] == Tree.get_root_labels(trees)
+    assert Tree.get_root_labels(trees) == ["BAR", "FOO"]
+
 
 def test_prune_none():
-    text=["((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (-NONE- in) (NP (DT this) (NN seat))))) (. ?)))", # test one dead node
-          "((SBARQ (WHNP (-NONE- Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))", # test recursive dead nodes
-          "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (-NONE- this) (-NONE- seat))))) (. ?)))"] # test all children dead
-    expected=["(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (NP (DT this) (NN seat))))) (. ?)))",
+    text = ["((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (-NONE- in) (NP (DT this) (NN seat))))) (. ?)))",  # test one dead node
+          "((SBARQ (WHNP (-NONE- Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))",  # test recursive dead nodes
+          "((SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (-NONE- this) (-NONE- seat))))) (. ?)))"]  # test all children dead
+    expected = ["(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (NP (DT this) (NN seat))))) (. ?)))",
               "(ROOT (SBARQ (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))",
               "(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"]
 
@@ -133,37 +140,41 @@ def test_prune_none():
         tree = trees[0].prune_none()
         assert e == str(tree)
 
+
 def test_simplify_labels():
-    text="( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (- -))))) (. ?)))"
+    text = "( (SBARQ-FOO (WHNP-BAR (WP Who)) (SQ#ASDF (VP=1 (VBZ sits) (PP (IN in) (NP (DT this) (- -))))) (. ?)))"
     expected = "(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (- -))))) (. ?)))"
     trees = tree_reader.read_trees(text)
     trees = [t.simplify_labels() for t in trees]
     assert len(trees) == 1
     assert expected == str(trees[0])
 
-def test_remap_constituent_labels():
-    text="(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
-    expected="(ROOT (FOO (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
 
-    label_map = { "SBARQ": "FOO" }
+def test_remap_constituent_labels():
+    text = "(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
+    expected = "(ROOT (FOO (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
+
+    label_map = {"SBARQ": "FOO"}
     trees = tree_reader.read_trees(text)
     trees = [t.remap_constituent_labels(label_map) for t in trees]
     assert len(trees) == 1
     assert expected == str(trees[0])
 
-def test_remap_constituent_words():
-    text="(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
-    expected="(ROOT (SBARQ (WHNP (WP unban)) (SQ (VP (VBZ mox) (PP (IN opal)))) (. ?)))"
 
-    word_map = { "Who": "unban", "sits": "mox", "in": "opal" }
+def test_remap_constituent_words():
+    text = "(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
+    expected = "(ROOT (SBARQ (WHNP (WP unban)) (SQ (VP (VBZ mox) (PP (IN opal)))) (. ?)))"
+
+    word_map = {"Who": "unban", "sits": "mox", "in": "opal"}
     trees = tree_reader.read_trees(text)
     trees = [t.remap_words(word_map) for t in trees]
     assert len(trees) == 1
     assert expected == str(trees[0])
 
+
 def test_replace_words():
-    text="(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
-    expected="(ROOT (SBARQ (WHNP (WP unban)) (SQ (VP (VBZ mox) (PP (IN opal)))) (. ?)))"
+    text = "(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
+    expected = "(ROOT (SBARQ (WHNP (WP unban)) (SQ (VP (VBZ mox) (PP (IN opal)))) (. ?)))"
     new_words = ["unban", "mox", "opal", "?"]
 
     trees = tree_reader.read_trees(text)
@@ -175,17 +186,18 @@ def test_replace_words():
 
 def test_compound_constituents():
     # TODO: add skinny trees like this to the various transition tests
-    text="((VP (VB Unban)))"
+    text = "((VP (VB Unban)))"
     trees = tree_reader.read_trees(text)
     assert Tree.get_compound_constituents(trees) == [('ROOT', 'VP')]
 
-    text="(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
+    text = "(ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
     trees = tree_reader.read_trees(text)
     assert Tree.get_compound_constituents(trees) == [('PP',), ('ROOT', 'SBARQ'), ('SQ', 'VP'), ('WHNP',)]
 
-    text="((VP (VB Unban)))   (ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
+    text = "((VP (VB Unban)))   (ROOT (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in)))) (. ?)))"
     trees = tree_reader.read_trees(text)
     assert Tree.get_compound_constituents(trees) == [('PP',), ('ROOT', 'SBARQ'), ('ROOT', 'VP'), ('SQ', 'VP'), ('WHNP',)]
+
 
 def test_equals():
     """
@@ -296,13 +308,15 @@ def test_count_unaries():
     assert len(trees) == 1
     assert trees[0].count_unary_depth() == 5
 
+
 def test_str_bracket_labels():
     text = "((S (VP (VB Unban)) (NP (NNP Mox) (NNP Opal))))"
     expected = "(_ROOT (_S (_VP (_VB Unban )_VB )_VP (_NP (_NNP Mox )_NNP (_NNP Opal )_NNP )_NP )_S )_ROOT"
 
     trees = tree_reader.read_trees(text)
     assert len(trees) == 1
-    assert "{:L}".format(trees[0]) == expected
+    assert f"{trees[0]:L}" == expected
+
 
 def test_all_leaves_are_preterminals():
     text = "((S (VP (VB Unban)) (NP (NNP Mox) (NNP Opal))))"
@@ -315,6 +329,7 @@ def test_all_leaves_are_preterminals():
     assert len(trees) == 1
     assert not trees[0].all_leaves_are_preterminals()
 
+
 def test_latex():
     """
     Test the latex format for trees
@@ -322,8 +337,9 @@ def test_latex():
     expected = "\\Tree [.S [.NP Jennifer ] [.VP has [.NP nice antennae ] ] ]"
     tree = "(ROOT (S (NP (NNP Jennifer)) (VP (VBZ has) (NP (JJ nice) (NNS antennae)))))"
     tree = tree_reader.read_trees(tree)[0]
-    text = "{:T}".format(tree)
+    text = f"{tree:T}"
     assert text == expected
+
 
 def test_pretty_print():
     """
@@ -339,7 +355,7 @@ def test_pretty_print():
     (NP (NNP Mox) (NNP Opal))))
 """
 
-    assert "{:P}".format(trees[0]) == expected
+    assert f"{trees[0]:P}" == expected
 
     expected = """(ROOT
   (S
@@ -357,9 +373,10 @@ def test_pretty_print():
           (IN at)
           (NP (NNP Tucson) (NNP Electric)))))))
 """
-    assert "{:P}".format(trees[1]) == expected
+    assert f"{trees[1]:P}" == expected
 
     assert text == "{:O} {:O}".format(*trees)
+
 
 def test_reverse():
     text = "(ROOT (S (NP (PRP I)) (VP (VBP want) (S (VP (TO to) (VP (VB lick) (NP (NP (NNP Jennifer) (POS 's)) (NNS antennae))))))))"

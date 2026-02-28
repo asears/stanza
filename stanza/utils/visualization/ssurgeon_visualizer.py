@@ -2,9 +2,7 @@
 Visualization tooling for Ssurgeon
 """
 import os
-import sys
 import stanza.utils.visualization.semgrex_visualizer as sv
-import stanza.server.ssurgeon
 from stanza.server.ssurgeon import process_doc_one_operation, convert_response_to_doc
 from stanza.utils.conll import CoNLL
 from stanza.utils.visualization.constants import *
@@ -58,10 +56,10 @@ def main():
     SSURGEON_JAVA = "edu.stanford.nlp.semgraph.semgrex.ssurgeon.ProcessSsurgeonRequest"
     doc = CoNLL.conll2doc(input_str=SAMPLE_SSURGEON_DOC)
 
-    print("{:C}".format(doc))
+    print(f"{doc:C}")
     ssurgeon_response = process_doc_one_operation(doc, semgrex, ssurgeon)
     updated_doc = convert_response_to_doc(doc, ssurgeon_response)
-    print("{:C}".format(updated_doc))
+    print(f"{updated_doc:C}")
     print(generate_edited_deprel_unadjusted(updated_doc, lang_code='en', visualize_xpos=False))
     visualize_ssurgeon_deprel_adjusted_str_input(SAMPLE_SSURGEON_DOC, semgrex, ssurgeon)
 

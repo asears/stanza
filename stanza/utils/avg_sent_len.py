@@ -3,12 +3,12 @@ import json
 
 def avg_sent_len(toklabels):
     if toklabels.endswith('.json'):
-        with open(toklabels, 'r') as f:
+        with open(toklabels) as f:
             l = json.load(f)
 
         l = [''.join([str(x[1]) for x in para]) for para in l]
     else:
-        with open(toklabels, 'r') as f:
+        with open(toklabels) as f:
             l = ''.join(f.readlines())
 
         l = l.split('\n\n')

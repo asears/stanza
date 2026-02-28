@@ -3,11 +3,16 @@ Tests for setting request properties of servers
 """
 
 import json
-import pytest
-import stanza.server as corenlp
+import os
 
+import pytest
+
+import stanza.server as corenlp
 from stanza.protobuf import Document
-from stanza.tests import TEST_WORKING_DIR, compare_ignoring_whitespace
+from stanza.tests import compare_ignoring_whitespace
+
+# Get path to test data directory
+TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
 
 pytestmark = pytest.mark.client
 
@@ -147,7 +152,10 @@ advmod(jours-13, tôt-15)
 punct(fait-4, .-16)
 """
 
-FRENCH_JSON_GOLD = json.loads(open(f'{TEST_WORKING_DIR}/out/example_french.json', encoding="utf-8").read())
+# TODO: Refactor to use pathlib and fixtures instead of module-level file loading
+# See agents/plans/pathlib-migration.md for migration plan
+with open(os.path.join(TEST_DATA_DIR, 'example_french.json'), encoding="utf-8") as f:
+    FRENCH_JSON_GOLD = json.loads(f.read())
 
 ES_DOC = 'Andrés Manuel López Obrador es el presidente de México.'
 
@@ -185,6 +193,7 @@ nmod:de(presidente-7, México-9)
 punct(presidente-7, .-10)
 """
 
+
 class TestServerRequest:
     @pytest.fixture(scope="class")
     def corenlp_client(self):
@@ -193,14 +202,12 @@ class TestServerRequest:
         yield client
         client.stop()
 
-
     def test_basic(self, corenlp_client):
         """ Basic test of making a request, test default output format is a Document """
         ann = corenlp_client.annotate(EN_DOC, output_format="text")
         compare_ignoring_whitespace(ann, EN_DOC_GOLD)
         ann = corenlp_client.annotate(EN_DOC)
         assert isinstance(ann, Document)
-
 
     def test_python_dict(self, corenlp_client):
         """ Test using a Python dictionary to specify all request properties """
@@ -209,12 +216,10 @@ class TestServerRequest:
         ann = corenlp_client.annotate(FRENCH_DOC, properties=FRENCH_CUSTOM_PROPS)
         compare_ignoring_whitespace(ann, FRENCH_CUSTOM_GOLD)
 
-
     def test_lang_setting(self, corenlp_client):
         """ Test using a Stanford CoreNLP supported languages as a properties key """
         ann = corenlp_client.annotate(GERMAN_DOC, properties="german", output_format="text")
         compare_ignoring_whitespace(ann, GERMAN_DOC_GOLD)
-
 
     def test_annotators_and_output_format(self, corenlp_client):
         """ Test setting the annotators and output_format """

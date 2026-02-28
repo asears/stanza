@@ -4,7 +4,6 @@ Processor for determining language of text.
 
 import emoji
 import re
-import stanza
 import torch
 
 from stanza.models.common.doc import Document

@@ -4,11 +4,15 @@ Tests the morpheme segmentation processor within the Stanza pipeline
 """
 
 import pytest
+
+# Skip entire module if morphseg is not available
+pytest.importorskip("morphseg")
+
 import stanza
-from stanza.models.common.doc import Document
 from stanza.tests import TEST_MODELS_DIR
 
-pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.morphseg]
+
 
 class TestMorphSegProcessor:
     """Tests for the MorphSeg processor in Stanza pipeline"""
@@ -20,7 +24,7 @@ class TestMorphSegProcessor:
             lang='en',
             processors='tokenize,morphseg',
             model_dir=TEST_MODELS_DIR,
-            download_method=None
+            download_method=None,
         )
 
     def test_processor_loads(self, en_pipeline):
@@ -160,7 +164,7 @@ class TestMultilingualMorphSeg:
             nlp = stanza.Pipeline(
                 lang=lang,
                 processors='tokenize,morphseg',
-                download_method=None
+                download_method=None,
             )
             doc = nlp(text)
 
@@ -183,7 +187,7 @@ class TestMorphSegWithOtherProcessors:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,mwt,morphseg',
-            download_method=None
+            download_method=None,
         )
 
         doc = nlp("The dogs are running.")
@@ -198,7 +202,7 @@ class TestMorphSegWithOtherProcessors:
             nlp = stanza.Pipeline(
                 lang='en',
                 processors='tokenize,pos,morphseg',
-                download_method=None
+                download_method=None,
             )
 
             doc = nlp("running quickly")
@@ -218,7 +222,7 @@ class TestMorphSegWithOtherProcessors:
             nlp = stanza.Pipeline(
                 lang='en',
                 processors='tokenize,pos,lemma,morphseg',
-                download_method=None
+                download_method=None,
             )
 
             doc = nlp("The dogs were running quickly.")
@@ -241,7 +245,7 @@ class TestMorphSegDeterminism:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
         text = "running dogs aviation"
@@ -262,13 +266,13 @@ class TestMorphSegDeterminism:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
         texts = [
             "The dogs are running.",
             "Aviation is amazing.",
-            "Known facts are helpful."
+            "Known facts are helpful.",
         ]
 
         # Process multiple times
@@ -294,7 +298,7 @@ class TestMorphSegEdgeCases:
         return stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
     def test_numbers(self, en_pipeline):
@@ -375,7 +379,7 @@ class TestMorphSegConfiguration:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
         doc = nlp("testing")
         assert len(doc.sentences) > 0
@@ -393,7 +397,7 @@ class TestMorphSegConfiguration:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
         # Verify tokenize is present
@@ -409,7 +413,7 @@ class TestMorphSegOutputFormat:
         return stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
     def test_morphemes_is_list(self, en_pipeline):
@@ -458,13 +462,13 @@ class TestMorphSegRepeatedly:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
         texts = [
             "The dogs are running.",
             "Aviation is fascinating.",
-            "Programming requires patience."
+            "Programming requires patience.",
         ]
 
         for text in texts:
@@ -479,7 +483,7 @@ class TestMorphSegRepeatedly:
         nlp = stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            download_method=None
+            download_method=None,
         )
 
         doc = nlp("The dogs are running. Aviation is fascinating. Programming requires patience.")

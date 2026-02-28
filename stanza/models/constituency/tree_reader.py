@@ -54,7 +54,7 @@ class MixedTreeError(ValueError):
     Leaf and constituent children are mixed in the same node
     """
     def __init__(self, line_num, child_label, children):
-        super().__init__("Found a tree with both text children and bracketed children!  Line number {}  Child label {}  Children {}".format(line_num, child_label, children))
+        super().__init__(f"Found a tree with both text children and bracketed children!  Line number {line_num}  Child label {child_label}  Children {children}")
         self.line_num = line_num
         self.child_label = child_label
         self.children = children
@@ -258,7 +258,7 @@ def read_treebank(filename, tree_callback=None):
 
     illegal_trees = [t for t in trees if len(t.children) > 1]
     if len(illegal_trees) > 0:
-        raise ValueError("Found {} tree(s) which had non-unary transitions at the ROOT.  First illegal tree: {:P}".format(len(illegal_trees), illegal_trees[0]))
+        raise ValueError(f"Found {len(illegal_trees)} tree(s) which had non-unary transitions at the ROOT.  First illegal tree: {illegal_trees[0]:P}")
 
     return trees
 

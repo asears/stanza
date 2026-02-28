@@ -3,7 +3,6 @@ Misc tests for the server
 """
 
 import pytest
-import re
 
 from stanza.server import CoreNLPClient
 
@@ -14,7 +13,7 @@ tags = {}
 
 # Italian examples
 tokens["italian"] = [
-    "È vero , tutti possiamo essere sostituiti .\n Alcune chiamate partirono da il Quirinale ."
+    "È vero , tutti possiamo essere sostituiti .\n Alcune chiamate partirono da il Quirinale .",
 ]
 tags["italian"] = [
     [
@@ -29,12 +28,12 @@ tokens["french"] = [
     (
      "Les études durent six ans mais leur contenu diffère donc selon les Facultés .\n"
      "Il est fêté le 22 mai ."
-    )
+    ),
 ]
 tags["french"] = [
     [
         ["DET", "NOUN", "VERB", "NUM", "NOUN", "CCONJ", "DET", "NOUN", "VERB", "ADV", "ADP", "DET", "PROPN", "PUNCT"],
-        ["PRON", "AUX", "VERB", "DET", "NUM", "NOUN", "PUNCT"]
+        ["PRON", "AUX", "VERB", "DET", "NUM", "NOUN", "PUNCT"],
     ],
 ]
 

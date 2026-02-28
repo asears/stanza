@@ -154,7 +154,7 @@ class TransformerTreeStack(nn.Module):
             if inputs.shape[0] == 1:
                 inputs = inputs.squeeze(0)
             else:
-                raise ValueError("Expected the inputs to be of shape 1xBxI, got {}".format(inputs.shape))
+                raise ValueError(f"Expected the inputs to be of shape 1xBxI, got {inputs.shape}")
 
         new_keys = self.w_key(inputs)
         key_stack = torch.zeros(batch_len, max_len+1, self.output_size, device=device)

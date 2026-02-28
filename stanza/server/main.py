@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Simple shell program to pipe in 
 """
@@ -8,9 +7,7 @@ import corenlp
 
 import json
 import re
-import csv
 import sys
-from collections import namedtuple, OrderedDict
 
 FLOAT_RE = re.compile(r"\d*\.\d+")
 INT_RE = re.compile(r"\d+")

@@ -1,10 +1,11 @@
 import pytest
 
 from stanza import Pipeline
-from stanza.utils.conll import CoNLL
 from stanza.tests import TEST_MODELS_DIR
+from stanza.utils.conll import CoNLL
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 def test_from_conllu():
     """
@@ -18,7 +19,7 @@ def test_from_conllu():
     # the default NER model ought to find these three
     assert ents == ['February', 'Seattle', 'Pritchett']
 
-    doc_conllu = "{:C}\n\n".format(doc)
+    doc_conllu = f"{doc:C}\n\n"
     doc = CoNLL.conll2doc(input_str=doc_conllu)
     pipe = Pipeline("en", dir=TEST_MODELS_DIR, processors="tokenize,ner", tokenize_pretokenized=True, download_method=None)
     pipe(doc)

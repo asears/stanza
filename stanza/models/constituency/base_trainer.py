@@ -81,7 +81,7 @@ class BaseTrainer:
 
         if not os.path.exists(filename):
             if args.get('save_dir', None) is None:
-                raise FileNotFoundError("Cannot find model in {} and args['save_dir'] is None".format(filename))
+                raise FileNotFoundError(f"Cannot find model in {filename} and args['save_dir'] is None")
             elif os.path.exists(os.path.join(args['save_dir'], filename)):
                 filename = os.path.join(args['save_dir'], filename)
             else:

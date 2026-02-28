@@ -4,9 +4,8 @@ import os
 import re
 
 import stanza
-from stanza.models.lemma_classifier import utils
 
-from typing import List, Tuple, Any
+from typing import List
 
 """
 The code in this file processes a CoNLL dataset by taking its sentences and filtering out all sentences that do not contain the target token.
@@ -21,7 +20,7 @@ def load_doc_from_conll_file(path: str):
     return stanza.utils.conll.CoNLL.conll2doc(path)
 
 
-class DataProcessor():
+class DataProcessor:
 
     def __init__(self, target_word: str, target_upos: List[str], allowed_lemmas: str):
         self.target_word = target_word

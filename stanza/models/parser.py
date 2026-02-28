@@ -12,8 +12,6 @@ Training and evaluation for the parser.
 import io
 import sys
 import os
-import copy
-import shutil
 import time
 import argparse
 import logging
@@ -21,10 +19,7 @@ import numpy as np
 import random
 import zipfile
 
-import torch
-from torch import nn, optim
 
-import stanza.models.depparse.data as data
 from stanza.models.depparse.data import DataLoader
 from stanza.models.depparse.trainer import Trainer
 from stanza.models.depparse import scorer
@@ -33,9 +28,7 @@ from stanza.models.common import pretrain
 from stanza.models.common.data import augment_punct
 from stanza.models.common.doc import *
 from stanza.models.common.peft_config import add_peft_args, resolve_peft_args
-from stanza.models.common.utils import log_training_args
 from stanza.utils.conll import CoNLL
-from stanza.models import _training_logging
 
 logger = logging.getLogger('stanza')
 
@@ -283,14 +276,14 @@ def train(args):
                     train_str = fin.read()
                     train_str = train_str.decode("utf-8")
                     train_file_data, _, _ = CoNLL.conll2dict(input_str=train_str)
-                    logger.info("Train File {} from {}, Data Size: {}".format(zipped_train_file, train_file, len(train_file_data)))
+                    logger.info(f"Train File {zipped_train_file} from {train_file}, Data Size: {len(train_file_data)}")
                     train_data.extend(train_file_data)
     else:
         train_data, _, _ = CoNLL.conll2dict(input_file=args['train_file'])
-        logger.info("Train File {}, Data Size: {}".format(train_file, len(train_data)))
+        logger.info(f"Train File {train_file}, Data Size: {len(train_data)}")
     # possibly augment the training data with some amount of fake data
     # based on the options chosen
-    logger.info("Original data size: {}".format(len(train_data)))
+    logger.info(f"Original data size: {len(train_data)}")
     if args['train_size']:
         if len(train_data) < args['train_size']:
             random.shuffle(train_data)
@@ -310,7 +303,7 @@ def train(args):
     vocab = train_batch.vocab
     train_data.extend(augment_punct(train_data, args['augment_nopunct'],
                                     keep_original_sentences=False))
-    logger.info("Augmented data size: {}".format(len(train_data)))
+    logger.info(f"Augmented data size: {len(train_data)}")
     train_doc = Document(train_data)
     train_batch = DataLoader(train_doc, args['batch_size'], args, pretrain, vocab=vocab, evaluation=False)
     dev_doc = CoNLL.conll2doc(input_file=args['eval_file'])
@@ -377,12 +370,12 @@ def train(args):
 
                 dev_batch.doc.set([HEAD, DEPREL], [y for x in dev_preds for y in x])
 
-                system_pred_file = "{:C}\n\n".format(dev_batch.doc)
+                system_pred_file = f"{dev_batch.doc:C}\n\n"
                 system_pred_file = io.StringIO(system_pred_file)
                 _, _, dev_score = scorer.score(system_pred_file, args['eval_file'])
 
                 train_loss = train_loss / args['eval_interval'] # avg loss per batch
-                logger.info("step {}: train_loss = {:.6f}, dev_score = {:.4f}".format(trainer.global_step, train_loss, dev_score))
+                logger.info(f"step {trainer.global_step}: train_loss = {train_loss:.6f}, dev_score = {dev_score:.4f}")
 
                 if args['wandb']:
                     wandb.log({'train_loss': train_loss, 'dev_score': dev_score})
@@ -415,7 +408,7 @@ def train(args):
 
                     dev_preds = predict_dataset(trainer, dev_batch)
                     dev_batch.doc.set([HEAD, DEPREL], [y for x in dev_preds for y in x])
-                    system_pred_file = "{:C}\n\n".format(dev_batch.doc)
+                    system_pred_file = f"{dev_batch.doc:C}\n\n"
                     system_pred_file = io.StringIO(system_pred_file)
                     _, _, dev_score = scorer.score(system_pred_file, args['eval_file'])
                     logger.info("Reloaded model with dev score %.4f", dev_score)
@@ -447,7 +440,7 @@ def train(args):
 
         train_batch.reshuffle()
 
-    logger.info("Training ended with {} steps.".format(trainer.global_step))
+    logger.info(f"Training ended with {trainer.global_step} steps.")
 
     if args['wandb']:
         wandb.finish()
@@ -473,7 +466,7 @@ def evaluate(args):
                  'charlm_backward_file': args.get('charlm_backward_file', None)}
 
     # load model
-    logger.info("Loading model from: {}".format(model_file))
+    logger.info(f"Loading model from: {model_file}")
     trainer = Trainer(pretrain=pretrain, model_file=model_file, device=args['device'], args=load_args)
     if args['log_norms']:
         trainer.model.log_norms()
@@ -510,7 +503,7 @@ def evaluate_trainer(args, trainer, pretrain):
                     raise ValueError("Gold document {} has a None at sentence {} word {}\n{:C}".format(args['eval_file'], sent_idx, word_idx, sentence))
 
         scorer.score_named_dependencies(batch.doc, gold_doc, args['output_latex'])
-        system_pred_file = "{:C}\n\n".format(batch.doc)
+        system_pred_file = f"{batch.doc:C}\n\n"
         system_pred_file = io.StringIO(system_pred_file)            
         _, _, score = scorer.score(system_pred_file, args['eval_file'])
 

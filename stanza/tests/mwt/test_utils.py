@@ -6,10 +6,10 @@ import pytest
 
 import stanza
 from stanza.models.mwt.utils import resplit_mwt
-
 from stanza.tests import TEST_MODELS_DIR
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 @pytest.fixture(scope="module")
 def pipeline():

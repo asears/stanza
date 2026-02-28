@@ -6,9 +6,8 @@ Uses a small section of the dataset as a test
 
 import pytest
 
-from stanza.utils.datasets.constituency import selftrain_vi_quad
-
 from stanza.tests import *
+from stanza.utils.datasets.constituency import selftrain_vi_quad
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
@@ -17,6 +16,7 @@ SAMPLE_TEXT = """
 """
 
 EXPECTED = ['Tên gọi nào được Phạm Văn Đồng sử dụng khi làm Phó chủ nhiệm cơ quan Biện sự xứ tại Quế Lâm?', 'Phạm Văn Đồng giữ chức vụ gì trong bộ máy Nhà nước Cộng hòa Xã hội chủ nghĩa Việt Nam?', 'Giai đoạn năm 1955-1976, Phạm Văn Đồng nắm giữ chức vụ gì?', 'Sự kiện quan trọng nào đã diễn ra vào ngày 20/7/1954?', 'Chức vụ mà Phạm Văn Đồng đảm nhiệm tại Hội nghị Genève về Đông Dương?', 'Hội nghị Genève về Đông Dương có tính chất như thế nào?']
+
 
 def test_read_file():
     results = selftrain_vi_quad.parse_quad(SAMPLE_TEXT)

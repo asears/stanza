@@ -3,23 +3,22 @@ Test some of the functions used for converting an AMT json to a Stanza json
 """
 
 
-import os
-
 import pytest
 
 import stanza
-from stanza.utils.datasets.ner import convert_amt
-
 from stanza.tests import TEST_MODELS_DIR
+from stanza.utils.datasets.ner import convert_amt
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
 TEXT = "Jennifer Sh'reyan has lovely antennae."
 
+
 def fake_label(label, start_char, end_char):
     return {'label': label,
             'startOffset': start_char,
             'endOffset': end_char}
+
 
 LABELS = [
     fake_label('Person', 0, 8),
@@ -33,11 +32,14 @@ LABELS = [
     fake_label('Appendage', 29, 38),
 ]
 
+
 def fake_labels(*indices):
     return [LABELS[x] for x in indices]
 
+
 def fake_docs(*indices):
     return [(TEXT, fake_labels(*indices))]
+
 
 def test_remove_nesting():
     """
@@ -54,7 +56,7 @@ def test_remove_nesting():
     # this should just have one copy
     result = convert_amt.remove_nesting(fake_docs(0, 0))
     assert result == fake_docs(0)
-    
+
     # outer one preferred
     result = convert_amt.remove_nesting(fake_docs(0, 2))
     assert result == fake_docs(2)
@@ -67,12 +69,13 @@ def test_remove_nesting():
     assert result == fake_docs(2, 4)
     result = convert_amt.remove_nesting(fake_docs(2, 4, 0))
     assert result == fake_docs(2, 4)
-    
+
     # first one preferred
     result = convert_amt.remove_nesting(fake_docs(0, 3))
     assert result == fake_docs(0)
     result = convert_amt.remove_nesting(fake_docs(3, 0))
     assert result == fake_docs(3)
+
 
 def test_process_doc():
     nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, processors="tokenize", download_method=None)
@@ -100,5 +103,3 @@ def test_process_doc():
     # test a period at the end of a text - should not be captured
     doc = convert_amt.process_doc(TEXT, fake_labels(7, 8), nlp)
     check_results(doc, "B-Person", "O", "O", "O", "B-Appendage", "O")
-
-    

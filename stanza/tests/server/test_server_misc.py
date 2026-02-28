@@ -3,7 +3,7 @@ Misc tests for the server
 """
 
 import pytest
-import re
+
 import stanza.server as corenlp
 from stanza.tests import compare_ignoring_whitespace
 
@@ -53,6 +53,7 @@ Tokens:
 [Text=. CharacterOffsetBegin=29 CharacterOffsetEnd=30 PartOfSpeech=.]
 """
 
+
 def test_english_request():
     """ Test case of starting server with Spanish defaults, and then requesting default English properties """
     with corenlp.CoreNLPClient(properties='spanish', server_id='test_spanish_english_request') as client:
@@ -73,19 +74,21 @@ def test_default_annotators():
     """
     with corenlp.CoreNLPClient(server_id='test_default_annotators',
                                output_format='text',
-                               annotators=['tokenize','ssplit','pos','lemma','ner','depparse']) as client:
+                               annotators=['tokenize', 'ssplit', 'pos', 'lemma', 'ner', 'depparse']) as client:
         with corenlp.CoreNLPClient(start_server=False,
                                    output_format='text',
-                                   annotators=['tokenize','ssplit','pos']) as client2:
+                                   annotators=['tokenize', 'ssplit', 'pos']) as client2:
             ann = client2.annotate(EN_DOC)
+
 
 expected_codepoints = ((0, 1), (2, 4), (5, 8), (9, 15), (16, 20))
 expected_characters = ((0, 1), (2, 4), (5, 10), (11, 17), (18, 22))
 codepoint_doc = "I am 𝒚̂𝒊 random text"
 
+
 def test_codepoints():
     """ Test case of asking for codepoints from the English tokenizer """
-    with corenlp.CoreNLPClient(annotators=['tokenize','ssplit'], # 'depparse','coref'],
+    with corenlp.CoreNLPClient(annotators=['tokenize', 'ssplit'],  # 'depparse','coref'],
                                properties={'tokenize.codepoint': 'true'}) as client:
         ann = client.annotate(codepoint_doc)
         for i, (codepoints, characters) in enumerate(zip(expected_codepoints, expected_characters)):
@@ -95,12 +98,13 @@ def test_codepoints():
             assert token.beginChar == characters[0]
             assert token.endChar == characters[1]
 
+
 def test_codepoint_text():
     """ Test case of extracting the correct sentence text using codepoints """
 
     text = 'Unban mox opal 🐱.  This is a second sentence.'
 
-    with corenlp.CoreNLPClient(annotators=["tokenize","ssplit"],
+    with corenlp.CoreNLPClient(annotators=["tokenize", "ssplit"],
                                properties={'tokenize.codepoint': 'true'}) as client:
         ann = client.annotate(text)
 

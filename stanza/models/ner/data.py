@@ -3,8 +3,8 @@ import logging
 import torch
 
 from stanza.models.common.bert_embedding import filter_data, needs_length_filter
-from stanza.models.common.data import map_to_ids, get_long_tensor, sort_all
-from stanza.models.common.vocab import PAD_ID, VOCAB_PREFIX
+from stanza.models.common.data import get_long_tensor, sort_all
+from stanza.models.common.vocab import PAD_ID
 from stanza.models.pos.vocab import CharVocab, CompositeVocab, WordVocab
 from stanza.models.ner.vocab import MultiVocab
 from stanza.models.common.doc import *
@@ -50,7 +50,7 @@ class DataLoader:
 
         # chunk into batches
         self.data = self.chunk_batches(data)
-        logger.debug("{} batches created.".format(len(self.data)))
+        logger.debug(f"{len(self.data)} batches created.")
 
     def init_vocab(self, data):
         def from_model(model_filename):

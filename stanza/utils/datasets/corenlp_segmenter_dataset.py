@@ -9,7 +9,6 @@ such as
 
 import argparse
 import os
-import sys
 import tempfile
 
 import stanza.utils.datasets.common as common

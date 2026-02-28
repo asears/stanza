@@ -36,12 +36,10 @@ from pathlib import Path
 import argparse
 import stanza
 
-from stanza.models.constituency import tree_reader
 from stanza.utils.default_paths import get_default_paths
 from stanza.utils.get_tqdm import get_tqdm
 from stanza.utils.datasets.coref.utils import process_document
 
-from stanza.utils.conll import CoNLL
 from collections import defaultdict
 
 tqdm = get_tqdm()
@@ -180,7 +178,7 @@ def extract_chains_from_conll(gold_coref_conll):
             dictionary of document_id to list of paragraphs into
             list of coref chains in OntoNotes style, keyed by document ID
     """
-    with open(gold_coref_conll, 'r') as df:
+    with open(gold_coref_conll) as df:
         gold_coref_conll = df.readlines()
     # we want to first separate the document into sentence-level
     # chunks; we assume that the ordering of the sentences are correct in the

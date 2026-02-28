@@ -7,9 +7,6 @@ or a text file within a zip
 Main program extracts a piece of the zip file from the Danish DDT dataset
 """
 
-import io
-import zipfile
-from zipfile import ZipFile
 from stanza.utils.conll import CoNLL
 
 def process_conll(input_file, output_file, zip_file=None, conversion=None, attr_prefix="name", allow_empty=False):
@@ -39,7 +36,7 @@ def process_conll(input_file, output_file, zip_file=None, conversion=None, attr_
                     if allow_empty:
                         ner = "O"
                     else:
-                        raise ValueError("Could not find ner tag in document {}, sentence {}, token {}".format(input_file, sentence_idx, token_idx))
+                        raise ValueError(f"Could not find ner tag in document {input_file}, sentence {sentence_idx}, token {token_idx}")
 
                 if ner != "O" and conversion is not None:
                     if isinstance(conversion, dict):

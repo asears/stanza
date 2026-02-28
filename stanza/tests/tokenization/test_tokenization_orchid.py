@@ -1,21 +1,17 @@
 import os
 import tempfile
+import xml.etree.ElementTree as ET
 
 import pytest
 
-import xml.etree.ElementTree as ET
-
-import stanza
 from stanza.tests import *
-
-from stanza.utils.datasets.common import convert_conllu_to_txt
 from stanza.utils.datasets.tokenization.convert_th_orchid import parse_xml
 from stanza.utils.datasets.tokenization.process_thai_tokenization import write_section
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
 
-SMALL_DOC="""
+SMALL_DOC = """
 <corpus>
 <document TPublisher="ศูนย์เทคโนโลยีอิเล็กทรอนิกส์และคอมพิวเตอร์แห่งชาติ, กระทรวงวิทยาศาสตร์ เทคโนโลยีและการพลังงาน" EPublisher="National Electronics and Computer Technology Center, Ministry of Science, Technology and Energy" TInbook="การประชุมทางวิชาการ ครั้งที่ 1, โครงการวิจัยและพัฒนาอิเล็กทรอนิกส์และคอมพิวเตอร์, ปีงบประมาณ 2531, เล่ม 1" TTitle="การประชุมทางวิชาการ ครั้งที่ 1" Year="1989" EInbook="The 1st Annual Conference, Electronics and Computer Research and Development Project, Fiscal Year 1988, Book 1" ETitle="[1st Annual Conference]">
 <paragraph id="1" line_num="12">
@@ -52,7 +48,7 @@ SMALL_DOC="""
 """
 
 
-EXPECTED_RESULTS="""
+EXPECTED_RESULTS = """
 1	การ	_	_	_	_	0	root	0:root	SpaceAfter=No|NewPar=Yes
 2	ประชุม	_	_	_	_	1	dep	1:dep	SpaceAfter=No
 3	ทาง	_	_	_	_	2	dep	2:dep	SpaceAfter=No
@@ -73,17 +69,18 @@ EXPECTED_RESULTS="""
 6	2532	_	_	_	_	5	dep	5:dep	_
 """.strip()
 
-EXPECTED_TEXT="""การประชุมทางวิชาการ ครั้งที่ 1 โครงการวิจัยและพัฒนาอิเล็กทรอนิกส์และคอมพิวเตอร์
+EXPECTED_TEXT = """การประชุมทางวิชาการ ครั้งที่ 1 โครงการวิจัยและพัฒนาอิเล็กทรอนิกส์และคอมพิวเตอร์
 
 วันที่ 15-16 สิงหาคม 2532
 
 """
 
-EXPECTED_LABELS="""0010000010010000001000001000020000000000000000000010000000000000100100000000002
+EXPECTED_LABELS = """0010000010010000001000001000020000000000000000000010000000000000100100000000002
 
 0010000011010000000100002
 
 """
+
 
 def check_results(documents, expected_conllu, expected_txt, expected_labels):
     with tempfile.TemporaryDirectory() as output_dir:
@@ -100,8 +97,8 @@ def check_results(documents, expected_conllu, expected_txt, expected_labels):
 
         assert len(txt) == len(labels)
 
+
 def test_orchid():
     tree = ET.ElementTree(ET.fromstring(SMALL_DOC))
     documents = parse_xml(tree)
     check_results(documents, EXPECTED_RESULTS, EXPECTED_TEXT, EXPECTED_LABELS)
-

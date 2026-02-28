@@ -7,9 +7,7 @@ Kazakh Transliteration:
 
 import argparse
 import os
-from re import M
 import string
-import sys
 
 from stanza.models.common.utils import open_read_text, get_tqdm
 tqdm = get_tqdm()

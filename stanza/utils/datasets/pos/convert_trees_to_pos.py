@@ -18,7 +18,6 @@ To run this:
 import argparse
 import os
 import shutil
-import sys
 
 from stanza.models.constituency import tree_reader
 import stanza.utils.default_paths as default_paths

@@ -4,7 +4,6 @@ Transformer with partitioned content and position features.
 See section 3 of https://arxiv.org/pdf/1805.01052.pdf
 """
 
-import copy
 import math
 
 import torch
@@ -18,7 +17,7 @@ class FeatureDropoutFunction(torch.autograd.function.InplaceFunction):
     def forward(ctx, input, p=0.5, train=False, inplace=False):
         if p < 0 or p > 1:
             raise ValueError(
-                "dropout probability has to be between 0 and 1, but got {}".format(p)
+                f"dropout probability has to be between 0 and 1, but got {p}"
             )
 
         ctx.p = p

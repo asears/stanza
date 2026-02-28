@@ -31,7 +31,7 @@ def convert_lst20(paths, short_name, include_space_char=True):
         with open(output_path, 'w', encoding='utf-8') as fout:
             for text in text_list:
                 lst = []
-                with open(os.path.join(input_folder, text), 'r', encoding='utf-8') as fin:
+                with open(os.path.join(input_folder, text), encoding='utf-8') as fin:
                     lines = fin.readlines()
 
                 for line_idx, line in enumerate(lines):
@@ -67,7 +67,7 @@ def convert_lst20(paths, short_name, include_space_char=True):
                             if "ABB" in tag or tag == "DDEM" or tag == "I" or tag == "__":
                                 tag = "O"
 
-                            fout.write('{}\t{}'.format(word, tag))
+                            fout.write(f'{word}\t{tag}')
                             fout.write('\n')
                     else:
                         fout.write('\n')

@@ -15,7 +15,6 @@ import glob
 import json
 import lzma
 import os
-import sys
 from stanza.models.common.utils import open_read_text
 
 def extract_file(output_directory, input_filename, use_xz):

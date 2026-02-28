@@ -83,7 +83,7 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
     tokenizer_charlm_args = build_tokenizer_charlm_args(short_language, package, command_args.charlm)
     tokenizer_args = tokenizer_args + tokenizer_charlm_args + extra_args
     logger.info("-----  TOKENIZER  ----------")
-    logger.info("Running tokenizer step with args: {}".format(tokenizer_args))
+    logger.info(f"Running tokenizer step with args: {tokenizer_args}")
     tokenizer.main(tokenizer_args)
 
     # If the data has any MWT in it, there should be an MWT model
@@ -98,7 +98,7 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                     '--shorthand', short_name,
                     '--mode', 'predict']
         mwt_args = mwt_args + extra_args
-        logger.info("Running mwt step with args: {}".format(mwt_args))
+        logger.info(f"Running mwt step with args: {mwt_args}")
         mwt_expander.main(mwt_args)
     else:
         logger.info("No MWT in training data.  Skipping")
@@ -123,7 +123,7 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
     pos_charlm_args = build_pos_charlm_args(short_language, package, command_args.charlm)
 
     pos_args = pos_args + build_pos_wordvec_args(short_language, package, extra_args) + pos_charlm_args + extra_args
-    logger.info("Running pos step with args: {}".format(pos_args))
+    logger.info(f"Running pos step with args: {pos_args}")
     tagger.main(pos_args)
 
     # Run the LEMMA step.  If there are no lemmas in the training
@@ -138,12 +138,12 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
     if check_lemmas(lemma_train_file):
         lemma_charlm_args = build_lemma_charlm_args(short_language, package, command_args.charlm)
         lemma_args = lemma_args + lemma_charlm_args + extra_args
-        logger.info("Running lemmatizer step with args: {}".format(lemma_args))
+        logger.info(f"Running lemmatizer step with args: {lemma_args}")
         lemmatizer.main(lemma_args)
     else:
         lemma_args = lemma_args + extra_args
         logger.info("No lemmas in training data")
-        logger.info("Running identity lemmatizer step with args: {}".format(lemma_args))
+        logger.info(f"Running identity lemmatizer step with args: {lemma_args}")
         identity_lemmatizer.main(lemma_args)
 
     # Run the DEPPARSE step.  This is the last step
@@ -164,14 +164,14 @@ def run_ete(paths, dataset, short_name, command_args, extra_args):
                      '--no_gold_labels']
     depparse_charlm_args = build_depparse_charlm_args(short_language, package, command_args.charlm)
     depparse_args = depparse_args + build_depparse_wordvec_args(short_language, package, extra_args) + depparse_charlm_args + extra_args
-    logger.info("Running depparse step with args: {}".format(depparse_args))
+    logger.info(f"Running depparse step with args: {depparse_args}")
     parser.main(depparse_args)
 
     logger.info("-----  EVALUATION ----------")
     gold_file = f"{tokenize_dir}/{test_short_name}.{dataset}.gold.conllu"
     ete_file = depparse_output
     results = common.run_eval_script(gold_file, ete_file)
-    logger.info("{} {} models on {} {} data:\n{}".format(RESULTS_STRING, short_name, test_short_name, dataset, results))
+    logger.info(f"{RESULTS_STRING} {short_name} models on {test_short_name} {dataset} data:\n{results}")
 
 def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
     if mode == Mode.TRAIN:

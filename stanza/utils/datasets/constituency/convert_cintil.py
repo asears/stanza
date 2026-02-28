@@ -18,7 +18,7 @@ def read_xml_file(input_filename):
     trees = []
     for sentence in corpus:
         if sentence.tag != "{http://nlx.di.fc.ul.pt}sentence":
-            raise ValueError("Unexpected sentence tag: {}".format(sentence.tag))
+            raise ValueError(f"Unexpected sentence tag: {sentence.tag}")
         id_node = None
         raw_node = None
         tree_nodde = None
@@ -30,9 +30,9 @@ def read_xml_file(input_filename):
             elif node.tag == '{http://nlx.di.fc.ul.pt}tree':
                 tree_node = node
             else:
-                raise ValueError("Unexpected tag in sentence {}: {}".format(sentence, node.tag))
+                raise ValueError(f"Unexpected tag in sentence {sentence}: {node.tag}")
         if id_node is None or raw_node is None or tree_node is None:
-            raise ValueError("Missing node in sentence {}".format(sentence))
+            raise ValueError(f"Missing node in sentence {sentence}")
         tree_id = "".join(id_node.itertext())
         tree_text = "".join(tree_node.itertext())
         trees.append((tree_id, tree_text))

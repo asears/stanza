@@ -3,10 +3,8 @@ A trainer class to handle training and testing of models.
 """
 
 import copy
-import sys
 import logging
 import torch
-from torch import nn
 
 try:
     import transformers
@@ -14,7 +12,7 @@ except ImportError:
     pass
 
 from stanza.models.common.trainer import Trainer as BaseTrainer
-from stanza.models.common import utils, loss
+from stanza.models.common import utils
 from stanza.models.common.foundation_cache import load_bert, load_bert_with_peft, NoTransformerFoundationCache
 from stanza.models.common.chuliu_edmonds import chuliu_edmonds_one_root
 from stanza.models.common.peft_config import build_peft_wrapper, load_peft_wrapper
@@ -187,7 +185,7 @@ class Trainer(BaseTrainer):
 
         try:
             torch.save(params, filename, _use_new_zipfile_serialization=False)
-            logger.info("Model saved to {}".format(filename))
+            logger.info(f"Model saved to {filename}")
         except BaseException as e:
             logger.warning("Saving failed... continuing anyway.  Error was: %s" % e)
 
@@ -199,7 +197,7 @@ class Trainer(BaseTrainer):
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         except BaseException:
-            logger.error("Cannot load model from {}".format(filename))
+            logger.error(f"Cannot load model from {filename}")
             raise
         self.args = checkpoint['config']
         if args is not None: self.args.update(args)

@@ -1,9 +1,8 @@
 
 import pytest
-import stanza
-from stanza.utils.conll import CoNLL
-from stanza.models.common.doc import Document
 
+import stanza
+from stanza.models.common.doc import Document
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
@@ -15,29 +14,29 @@ EXPECTED_ENTS = [[{
     "text": "Barack Obama",
     "type": "PERSON",
     "start_char": 0,
-    "end_char": 12
+    "end_char": 12,
 }, {
     "text": "Hawaii",
     "type": "GPE",
     "start_char": 25,
-    "end_char": 31
+    "end_char": 31,
 }],
 [{
     "text": "2008",
     "type": "DATE",
     "start_char": 28,
-    "end_char": 32
+    "end_char": 32,
 }],
 [{
     "text": "Obama",
     "type": "PERSON",
     "start_char": 0,
-    "end_char": 5
+    "end_char": 5,
 }, {
   "text": "Harvard",
   "type": "ORG",
   "start_char": 15,
-  "end_char": 22
+  "end_char": 22,
 }]]
 
 
@@ -49,6 +48,7 @@ def check_entities_equal(doc, expected):
     for doc_entity, expected_entity in zip(doc.ents, expected):
         for k in expected_entity:
             assert getattr(doc_entity, k) == expected_entity[k]
+
 
 class TestNERProcessor:
     @pytest.fixture(scope="class")
@@ -62,7 +62,6 @@ class TestNERProcessor:
     def processed_doc(self, pipeline):
         """ Document created by running full English pipeline on a few sentences """
         return [pipeline(text) for text in EN_DOCS]
-
 
     @pytest.fixture(scope="class")
     def processed_bulk(self, pipeline):
@@ -80,26 +79,27 @@ class TestNERProcessor:
         for doc, expected in zip(processed_doc, EXPECTED_ENTS):
             check_entities_equal(doc, expected)
 
+
 EXPECTED_MULTI_ENTS = [{
   "text": "John Bauer",
   "type": "PERSON",
   "start_char": 0,
-  "end_char": 10
+  "end_char": 10,
 }, {
   "text": "Stanford",
   "type": "ORG",
   "start_char": 20,
-  "end_char": 28
+  "end_char": 28,
 }, {
   "text": "hip arthritis",
   "type": "DISEASE",
   "start_char": 37,
-  "end_char": 50
+  "end_char": 50,
 }, {
   "text": "Chris Manning",
   "type": "PERSON",
   "start_char": 66,
-  "end_char": 79
+  "end_char": 79,
 }]
 
 
@@ -118,8 +118,7 @@ EXPECTED_MULTI_NER = [
      ('O', 'O'),
      ('O', 'O'),
      ('O', 'B-PERSON'),
-     ('O', 'E-PERSON'),]]
-
+     ('O', 'E-PERSON')]]
 
 
 class TestMultiNERProcessor:

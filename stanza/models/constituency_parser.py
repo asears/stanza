@@ -164,7 +164,6 @@ import os
 import random
 import re
 
-import torch
 
 import stanza
 from stanza.models.common import constant
@@ -523,9 +522,9 @@ def build_argparse():
     # 0.0002 0.819506
     # 0.001 0.819018
 
-    parser.add_argument('--learning_rate', default=None, type=float, help='Learning rate for the optimizer.  Reasonable values are 1.0 for adadelta or 0.001 for SGD.  None uses a default for the given optimizer: {}'.format(DEFAULT_LEARNING_RATES))
-    parser.add_argument('--learning_eps', default=None, type=float, help='eps value to use in the optimizer.  None uses a default for the given optimizer: {}'.format(DEFAULT_LEARNING_EPS))
-    parser.add_argument('--learning_momentum', default=None, type=float, help='Momentum.  None uses a default for the given optimizer: {}'.format(DEFAULT_MOMENTUM))
+    parser.add_argument('--learning_rate', default=None, type=float, help=f'Learning rate for the optimizer.  Reasonable values are 1.0 for adadelta or 0.001 for SGD.  None uses a default for the given optimizer: {DEFAULT_LEARNING_RATES}')
+    parser.add_argument('--learning_eps', default=None, type=float, help=f'eps value to use in the optimizer.  None uses a default for the given optimizer: {DEFAULT_LEARNING_EPS}')
+    parser.add_argument('--learning_momentum', default=None, type=float, help=f'Momentum.  None uses a default for the given optimizer: {DEFAULT_MOMENTUM}')
     # weight decay values other than adadelta have not been thoroughly tested.
     # When using adadelta, weight_decay of 0.01 to 0.001 had the best results.
     # 0.1 was very clearly too high. 0.0001 might have been okay.

@@ -3,7 +3,6 @@ import os
 import pytest
 import torch
 
-from stanza.models.common import pretrain
 from stanza.models.common.utils import set_random_seed
 from stanza.models.constituency import parse_transitions
 from stanza.tests import *
@@ -12,9 +11,11 @@ from stanza.tests.constituency.test_trainer import build_trainer
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
+
 @pytest.fixture(scope="module")
 def pretrain_file():
     return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
+
 
 def build_model(pretrain_file, *args):
     # By default, we turn off multistage, since that can turn off various other structures in the initial training
@@ -22,12 +23,15 @@ def build_model(pretrain_file, *args):
     trainer = build_trainer(pretrain_file, *args)
     return trainer.model
 
+
 @pytest.fixture(scope="module")
 def unary_model(pretrain_file):
     return build_model(pretrain_file, "--transition_scheme", "TOP_DOWN_UNARY")
 
+
 def test_initial_state(unary_model):
     test_parse_transitions.test_initial_state(unary_model)
+
 
 def test_shift(pretrain_file):
     # TODO: might be good to include some tests specifically for shift
@@ -35,25 +39,32 @@ def test_shift(pretrain_file):
     model = build_model(pretrain_file)
     test_parse_transitions.test_shift(model)
 
+
 def test_unary(unary_model):
     test_parse_transitions.test_unary(unary_model)
+
 
 def test_unary_requires_root(unary_model):
     test_parse_transitions.test_unary_requires_root(unary_model)
 
+
 def test_open(unary_model):
     test_parse_transitions.test_open(unary_model)
+
 
 def test_compound_open(pretrain_file):
     model = build_model(pretrain_file, '--transition_scheme', "TOP_DOWN_COMPOUND")
     test_parse_transitions.test_compound_open(model)
 
+
 def test_in_order_open(pretrain_file):
     model = build_model(pretrain_file, '--transition_scheme', "IN_ORDER")
     test_parse_transitions.test_in_order_open(model)
 
+
 def test_close(unary_model):
     test_parse_transitions.test_close(unary_model)
+
 
 def run_forward_checks(model, num_states=1):
     """
@@ -93,6 +104,7 @@ def run_forward_checks(model, num_states=1):
 
     model(states)
 
+
 def test_unary_forward(unary_model):
     """
     Checks that the forward pass doesn't crash when run after various operations
@@ -101,10 +113,12 @@ def test_unary_forward(unary_model):
     """
     run_forward_checks(unary_model)
 
+
 def test_lstm_forward(pretrain_file):
     model = build_model(pretrain_file)
     run_forward_checks(model, num_states=1)
     run_forward_checks(model, num_states=2)
+
 
 def test_lstm_layers(pretrain_file):
     model = build_model(pretrain_file, '--num_lstm_layers', '1')
@@ -113,6 +127,7 @@ def test_lstm_layers(pretrain_file):
     run_forward_checks(model)
     model = build_model(pretrain_file, '--num_lstm_layers', '3')
     run_forward_checks(model)
+
 
 def test_multiple_output_forward(pretrain_file):
     """
@@ -127,6 +142,7 @@ def test_multiple_output_forward(pretrain_file):
     model = build_model(pretrain_file, '--num_output_layers', '3', '--num_lstm_layers', '2')
     run_forward_checks(model)
 
+
 def test_no_tag_embedding_forward(pretrain_file):
     """
     Test that the model continues to work if the tag embedding is turned on or off
@@ -137,6 +153,7 @@ def test_no_tag_embedding_forward(pretrain_file):
     model = build_model(pretrain_file, '--tag_embedding_dim', '0')
     run_forward_checks(model)
 
+
 def test_forward_combined_dummy(pretrain_file):
     """
     Tests combined dummy and open node embeddings
@@ -146,6 +163,7 @@ def test_forward_combined_dummy(pretrain_file):
 
     model = build_model(pretrain_file, '--no_combined_dummy_embedding')
     run_forward_checks(model)
+
 
 def test_nonlinearity_init(pretrain_file):
     """
@@ -159,6 +177,7 @@ def test_nonlinearity_init(pretrain_file):
 
     model = build_model(pretrain_file, '--nonlinearity', 'silu')
     run_forward_checks(model)
+
 
 def test_forward_charlm(pretrain_file):
     """
@@ -178,6 +197,8 @@ def test_forward_charlm(pretrain_file):
     model = build_model(pretrain_file, '--charlm_forward_file', forward_charlm_path, '--charlm_backward_file', backward_charlm_path, '--sentence_boundary_vectors', 'words')
     run_forward_checks(model)
 
+
+@pytest.mark.transformers
 def test_forward_bert(pretrain_file):
     """
     Test on a tiny Bert, which hopefully does not take up too much disk space or memory
@@ -188,6 +209,7 @@ def test_forward_bert(pretrain_file):
     run_forward_checks(model)
 
 
+@pytest.mark.transformers
 def test_forward_xlnet(pretrain_file):
     """
     Test on a tiny xlnet, which hopefully does not take up too much disk space or memory
@@ -210,6 +232,7 @@ def test_forward_sentence_boundaries(pretrain_file):
 
     model = build_model(pretrain_file, '--sentence_boundary_vectors', 'none')
     run_forward_checks(model)
+
 
 def test_forward_constituency_composition(pretrain_file):
     """
@@ -245,6 +268,7 @@ def test_forward_constituency_composition(pretrain_file):
     model = build_model(pretrain_file, '--constituency_composition', 'attn')
     run_forward_checks(model, num_states=2)
 
+
 def test_forward_key_position(pretrain_file):
     """
     Test KEY and UNTIED_KEY either with or without reduce_position
@@ -275,6 +299,7 @@ def test_forward_attn_hidden_size(pretrain_file):
     assert model.hidden_size == 130
     assert model.reduce_heads == 10
 
+
 def test_forward_partitioned_attention(pretrain_file):
     """
     Test with & without partitioned attention layers
@@ -284,6 +309,7 @@ def test_forward_partitioned_attention(pretrain_file):
 
     model = build_model(pretrain_file, '--pattn_num_heads', '0', '--pattn_num_layers', '0')
     run_forward_checks(model)
+
 
 def test_forward_labeled_attention(pretrain_file):
     """
@@ -297,6 +323,7 @@ def test_forward_labeled_attention(pretrain_file):
 
     model = build_model(pretrain_file, '--lattn_d_proj', '64', '--lattn_d_l', '16', '--lattn_combined_input')
     run_forward_checks(model)
+
 
 def test_lattn_partitioned(pretrain_file):
     model = build_model(pretrain_file, '--lattn_d_proj', '64', '--lattn_d_l', '16', '--lattn_partitioned')
@@ -326,6 +353,7 @@ def test_lattn_projection(pretrain_file):
     model = build_model(pretrain_file, '--lattn_d_proj', '64', '--lattn_d_l', '16', '--lattn_d_input_proj', '0')
     run_forward_checks(model)
 
+
 def test_forward_timing_choices(pretrain_file):
     """
     Test different timing / position encodings
@@ -335,6 +363,7 @@ def test_forward_timing_choices(pretrain_file):
 
     model = build_model(pretrain_file, '--pattn_num_heads', '4', '--pattn_num_layers', '4', '--pattn_timing', 'learned')
     run_forward_checks(model)
+
 
 def test_transition_stack(pretrain_file):
     """
@@ -355,6 +384,7 @@ def test_transition_stack(pretrain_file):
                         '--transition_stack', 'lstm')
     run_forward_checks(model)
 
+
 def test_constituent_stack(pretrain_file):
     """
     Test different constituent stack types: lstm & attention
@@ -373,6 +403,7 @@ def test_constituent_stack(pretrain_file):
                         '--pattn_num_layers', '0', '--lattn_d_proj', '0',
                         '--constituent_stack', 'lstm')
     run_forward_checks(model)
+
 
 def test_different_transition_sizes(pretrain_file):
     """
@@ -414,9 +445,11 @@ def test_different_transition_sizes(pretrain_file):
                         '--sentence_boundary_vectors', 'none')
     run_forward_checks(model)
 
+
 def test_relative_attention(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--no_rattn_cat')
     run_forward_checks(model)
+
 
 def test_relative_attention_cat(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--rattn_cat')
@@ -428,12 +461,14 @@ def test_relative_attention_cat(pretrain_file):
     no_cat_size = model.word_input_size
     assert cat_size > no_cat_size
 
+
 def test_relative_attention_directional(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--no_rattn_forward', '--no_rattn_cat')
     run_forward_checks(model)
 
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--no_rattn_reverse', '--no_rattn_cat')
     run_forward_checks(model)
+
 
 def test_relative_attention_sinks(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--no_rattn_cat', '--rattn_window', '2', '--rattn_sinks', '1')
@@ -445,6 +480,7 @@ def test_relative_attention_sinks(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--no_rattn_cat', '--rattn_sinks', '2')
     run_forward_checks(model)
 
+
 def test_relative_attention_cat_sinks(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--rattn_cat', '--rattn_window', '2', '--rattn_sinks', '1')
     run_forward_checks(model)
@@ -455,6 +491,7 @@ def test_relative_attention_cat_sinks(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--rattn_cat', '--rattn_sinks', '2')
     run_forward_checks(model)
 
+
 def test_relative_attention_endpoint_sinks(pretrain_file):
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--rattn_use_endpoint_sinks', '--rattn_window', '2', '--rattn_sinks', '1')
     run_forward_checks(model)
@@ -464,6 +501,7 @@ def test_relative_attention_endpoint_sinks(pretrain_file):
     run_forward_checks(model)
     model = build_model(pretrain_file, '--no_use_lattn', '--use_rattn', '--rattn_heads', '10', '--rattn_use_endpoint_sinks', '--rattn_sinks', '2')
     run_forward_checks(model)
+
 
 def test_lstm_tree_forward(pretrain_file):
     """
@@ -476,6 +514,7 @@ def test_lstm_tree_forward(pretrain_file):
     model = build_model(pretrain_file, '--num_tree_lstm_layers', '3', '--constituency_composition', 'tree_lstm')
     run_forward_checks(model)
 
+
 def test_lstm_tree_cx_forward(pretrain_file):
     """
     Test the LSTM_TREE_CX forward pass
@@ -486,6 +525,7 @@ def test_lstm_tree_cx_forward(pretrain_file):
     run_forward_checks(model)
     model = build_model(pretrain_file, '--num_tree_lstm_layers', '3', '--constituency_composition', 'tree_lstm_cx')
     run_forward_checks(model)
+
 
 def test_maxout(pretrain_file):
     """
@@ -504,6 +544,7 @@ def test_maxout(pretrain_file):
     model = build_model(pretrain_file, '--maxout_k', '3')
     run_forward_checks(model)
     assert model.output_layers[-1].linear.weight.shape[0] == len(model.transitions) * 3
+
 
 def check_structure_test(pretrain_file, args1, args2):
     """
@@ -551,6 +592,7 @@ def check_structure_test(pretrain_file, args1, args2):
         assert torch.allclose(i.lstm_hx, j.lstm_hx)
         assert torch.allclose(i.lstm_cx, j.lstm_cx)
 
+
 def test_copy_with_new_structure_same(pretrain_file):
     """
     Test that copying the structure with no changes works as expected
@@ -558,6 +600,7 @@ def test_copy_with_new_structure_same(pretrain_file):
     check_structure_test(pretrain_file,
                          ['--pattn_num_layers', '0', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10'],
                          ['--pattn_num_layers', '0', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10'])
+
 
 def test_copy_with_new_structure_untied(pretrain_file):
     """
@@ -567,20 +610,24 @@ def test_copy_with_new_structure_untied(pretrain_file):
                          ['--pattn_num_layers', '0', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--constituency_composition', 'MAX'],
                          ['--pattn_num_layers', '0', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--constituency_composition', 'UNTIED_MAX'])
 
+
 def test_copy_with_new_structure_pattn(pretrain_file):
     check_structure_test(pretrain_file,
                          ['--pattn_num_layers', '0', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10'],
                          ['--pattn_num_layers', '1', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--pattn_d_model', '20', '--pattn_num_heads', '2'])
 
+
 def test_copy_with_new_structure_both(pretrain_file):
     check_structure_test(pretrain_file,
-                         ['--pattn_num_layers', '0', '--lattn_d_proj',  '0', '--hidden_size', '20', '--delta_embedding_dim', '10'],
+                         ['--pattn_num_layers', '0', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10'],
                          ['--pattn_num_layers', '1', '--lattn_d_proj', '32', '--hidden_size', '20', '--delta_embedding_dim', '10', '--pattn_d_model', '20', '--pattn_num_heads', '2'])
+
 
 def test_copy_with_new_structure_lattn(pretrain_file):
     check_structure_test(pretrain_file,
-                         ['--pattn_num_layers', '1', '--lattn_d_proj',  '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--pattn_d_model', '20', '--pattn_num_heads', '2'],
+                         ['--pattn_num_layers', '1', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--pattn_d_model', '20', '--pattn_num_heads', '2'],
                          ['--pattn_num_layers', '1', '--lattn_d_proj', '32', '--hidden_size', '20', '--delta_embedding_dim', '10', '--pattn_d_model', '20', '--pattn_num_heads', '2'])
+
 
 def test_parse_tagged_words(pretrain_file):
     """

@@ -7,7 +7,6 @@ Saving the optimizer allows for easy restarting of training
 import logging
 import os
 import torch
-import torch.optim as optim
 from types import SimpleNamespace
 
 import stanza.models.classifiers.data as data
@@ -62,17 +61,17 @@ class Trainer:
         if save_optimizer and self.optimizer is not None:
             params['optimizer_state_dict'] = {opt_name: opt.state_dict() for opt_name, opt in self.optimizer.items()}
         torch.save(params, filename, _use_new_zipfile_serialization=False)
-        logger.info("Model saved to {}".format(filename))
+        logger.info(f"Model saved to {filename}")
 
     @staticmethod
     def load(filename, args, foundation_cache=None, load_optimizer=False):
         if not os.path.exists(filename):
             if args.save_dir is None:
-                raise FileNotFoundError("Cannot find model in {} and args.save_dir is None".format(filename))
+                raise FileNotFoundError(f"Cannot find model in {filename} and args.save_dir is None")
             elif os.path.exists(os.path.join(args.save_dir, filename)):
                 filename = os.path.join(args.save_dir, filename)
             else:
-                raise FileNotFoundError("Cannot find model in {} or in {}".format(filename, os.path.join(args.save_dir, filename)))
+                raise FileNotFoundError(f"Cannot find model in {filename} or in {os.path.join(args.save_dir, filename)}")
         try:
             # TODO: can remove the try/except once the new version is out
             #checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
@@ -82,9 +81,9 @@ class Trainer:
                 checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=False)
                 warnings.warn("The saved classifier has an old format using SimpleNamespace and/or Enum instead of a dict to store config.  This version of Stanza can support reading both the new and the old formats.  Future versions will only allow loading with weights_only=True.  Please resave the pretrained classifier using this version ASAP.")
         except BaseException:
-            logger.exception("Cannot load model from {}".format(filename))
+            logger.exception(f"Cannot load model from {filename}")
             raise
-        logger.debug("Loaded model {}".format(filename))
+        logger.debug(f"Loaded model {filename}")
 
         epochs_trained = checkpoint.get('epochs_trained', 0)
         global_step = checkpoint.get('global_step', 0)
@@ -182,13 +181,13 @@ class Trainer:
                                                                    labels=model_params['labels'],
                                                                    args=model_params['config'])
         else:
-            raise ValueError("Unknown model type {}".format(model_type))
+            raise ValueError(f"Unknown model type {model_type}")
         model.load_state_dict(model_params['model'], strict=False)
         model = model.to(args.device)
 
         logger.debug("-- MODEL CONFIG --")
         for k in model.config.__dict__:
-            logger.debug("  --{}: {}".format(k, model.config.__dict__[k]))
+            logger.debug(f"  --{k}: {model.config.__dict__[k]}")
 
         logger.debug("-- MODEL LABELS --")
         logger.debug("  {}".format(" ".join(model.labels)))
@@ -211,19 +210,19 @@ class Trainer:
         if args.wordvec_pretrain_file:
             pretrain_file = args.wordvec_pretrain_file
         elif args.wordvec_type:
-            pretrain_file = '{}/{}.{}.pretrain.pt'.format(args.save_dir, args.shorthand, args.wordvec_type.name.lower())
+            pretrain_file = f'{args.save_dir}/{args.shorthand}.{args.wordvec_type.name.lower()}.pretrain.pt'
         else:
             raise RuntimeError("TODO: need to get the wv type back from get_wordvec_file")
 
-        logger.debug("Looking for pretrained vectors in {}".format(pretrain_file))
+        logger.debug(f"Looking for pretrained vectors in {pretrain_file}")
         if os.path.exists(pretrain_file):
             return load_pretrain(pretrain_file, foundation_cache)
         elif args.wordvec_raw_file:
             vec_file = args.wordvec_raw_file
-            logger.debug("Pretrain not found.  Looking in {}".format(vec_file))
+            logger.debug(f"Pretrain not found.  Looking in {vec_file}")
         else:
             vec_file = utils.get_wordvec_file(args.wordvec_dir, args.shorthand, args.wordvec_type.name.lower())
-            logger.debug("Pretrain not found.  Looking in {}".format(vec_file))
+            logger.debug(f"Pretrain not found.  Looking in {vec_file}")
         pretrain = Pretrain(pretrain_file, vec_file, args.pretrain_max_vocab)
         logger.debug("Embedding shape: %s" % str(pretrain.emb.shape))
         return pretrain
@@ -292,7 +291,7 @@ class Trainer:
                                                                    args=args)
             model = model.to(args.device)
         else:
-            raise ValueError("Unhandled model type {}".format(args.model_type))
+            raise ValueError(f"Unhandled model type {args.model_type}")
 
         optimizer = Trainer.build_optimizer(model, args)
 

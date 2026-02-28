@@ -10,30 +10,21 @@ composing the MWT, a classifier over the characters is used instead of the seq2s
 """
 
 import io
-import sys
 import os
-import shutil
 import time
 from datetime import datetime
 import argparse
 import logging
 import math
 import numpy as np
-import random
-import torch
-from torch import nn, optim
 import copy
 
 from stanza.models.mwt.data import DataLoader, BinaryDataLoader
 from stanza.models.mwt.utils import mwts_composed_of_words
-from stanza.models.mwt.vocab import Vocab
 from stanza.models.mwt.trainer import Trainer
 from stanza.models.mwt import scorer
 from stanza.models.common import utils
-import stanza.models.common.seq2seq_constant as constant
-from stanza.models.common.doc import Document
 from stanza.utils.conll import CoNLL
-from stanza.models import _training_logging
 
 logger = logging.getLogger('stanza')
 
@@ -174,10 +165,10 @@ def train(args):
     dev_preds = trainer.predict_dict(dev_batch.doc.get_mwt_expansions(evaluation=True))
     doc = copy.deepcopy(dev_batch.doc)
     doc.set_mwt_expansions(dev_preds, fake_dependencies=True)
-    system_preds = "{:C}\n\n".format(doc)
+    system_preds = f"{doc:C}\n\n"
     system_preds = io.StringIO(system_preds)
     _, _, dev_f = scorer.score(system_preds, gold_file)
-    logger.info("Dev F1 = {:.2f}".format(dev_f * 100))
+    logger.info(f"Dev F1 = {dev_f * 100:.2f}")
 
     if args.get('dict_only', False):
         # save dictionaries
@@ -229,11 +220,11 @@ def train(args):
                 dev_preds = trainer.ensemble(dev_batch.doc.get_mwt_expansions(evaluation=True), dev_preds)
             doc = copy.deepcopy(dev_batch.doc)
             doc.set_mwt_expansions(dev_preds, fake_dependencies=True)
-            system_preds = "{:C}\n\n".format(doc)
+            system_preds = f"{doc:C}\n\n"
             system_preds = io.StringIO(system_preds)
             _, _, dev_score = scorer.score(system_preds, gold_file)
             train_loss = train_loss / train_batch.num_examples * args['batch_size'] # avg loss per batch
-            logger.info("epoch {}: train_loss = {:.6f}, dev_score = {:.4f}".format(epoch, train_loss, dev_score))
+            logger.info(f"epoch {epoch}: train_loss = {train_loss:.6f}, dev_score = {dev_score:.4f}")
 
             if args['wandb']:
                 wandb.log({'train_loss': train_loss, 'dev_score': dev_score})
@@ -251,13 +242,13 @@ def train(args):
 
             dev_score_history += [dev_score]
 
-        logger.info("Training ended with {} epochs.".format(epoch))
+        logger.info(f"Training ended with {epoch} epochs.")
 
         if args['wandb']:
             wandb.finish()
 
         best_f, best_epoch = max(dev_score_history)*100, np.argmax(dev_score_history)+1
-        logger.info("Best dev F1 = {:.2f}, at epoch = {}".format(best_f, best_epoch))
+        logger.info(f"Best dev F1 = {best_f:.2f}, at epoch = {best_epoch}")
 
         # try ensembling with dict if necessary
         if args.get('ensemble_dict', False):
@@ -265,10 +256,10 @@ def train(args):
             dev_preds = trainer.ensemble(dev_batch.doc.get_mwt_expansions(evaluation=True), best_dev_preds)
             doc = copy.deepcopy(dev_batch.doc)
             doc.set_mwt_expansions(dev_preds, fake_dependencies=True)
-            system_preds = "{:C}\n\n".format(doc)
+            system_preds = f"{doc:C}\n\n"
             system_preds = io.StringIO(system_preds)
             _, _, dev_score = scorer.score(system_preds, gold_file)
-            logger.info("Ensemble dev F1 = {:.2f}".format(dev_score*100))
+            logger.info(f"Ensemble dev F1 = {dev_score*100:.2f}")
             best_f = max(best_f, dev_score)
 
     return trainer, _
@@ -318,7 +309,7 @@ def evaluate(args):
     if system_pred_file is not None:
         CoNLL.write_doc2conll(doc, system_pred_file)
     else:
-        system_pred_file = "{:C}\n\n".format(doc)
+        system_pred_file = f"{doc:C}\n\n"
         system_pred_file = io.StringIO(system_pred_file)
 
     if gold_file is not None:

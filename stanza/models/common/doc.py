@@ -17,7 +17,7 @@ from stanza.models.common.stanza_object import StanzaObject
 from stanza.models.common.utils import misc_to_space_after, space_after_to_misc, misc_to_space_before, space_before_to_misc
 from stanza.models.ner.utils import decode_from_bioes
 from stanza.models.constituency import tree_reader
-from stanza.models.coref.coref_chain import CorefMention, CorefChain, CorefAttachment
+from stanza.models.coref.coref_chain import CorefMention, CorefAttachment
 
 class MWTProcessingType(Enum):
     FLATTEN = 0 # flatten the current token into one ID instead of MWT
@@ -426,7 +426,7 @@ class Document(StanzaObject):
                 sentence.rebuild_dependencies()
 
         self._count_words() # update number of words & tokens
-        assert idx_e == len(expansions), "{} {}".format(idx_e, len(expansions))
+        assert idx_e == len(expansions), f"{idx_e} {len(expansions)}"
         return
 
     def get_mwt_expansions(self, evaluation=False):
@@ -932,7 +932,7 @@ class Sentence(StanzaObject):
                 try:
                     head = self.words[word.head - 1]
                 except IndexError as e:
-                    raise IndexError("Word head {} is not a valid word index for word {}".format(word.head, word.id)) from e
+                    raise IndexError(f"Word head {word.head} is not a valid word index for word {word.id}") from e
                 if word.head != head.id:
                     raise ValueError("Dependency tree is incorrectly constructed")
             self.dependencies.append((head, word.deprel, word))
@@ -1075,7 +1075,7 @@ def dict_to_conll_text(token_dict, id_connector="-"):
     # in the token_dict
     for key in [START_CHAR, END_CHAR, NER]:
         if key in token_dict:
-            misc.append("{}={}".format(key, token_dict[key]))
+            misc.append(f"{key}={token_dict[key]}")
 
     if COREF_CHAINS in token_dict:
         chains = token_dict[COREF_CHAINS]
@@ -1409,7 +1409,7 @@ class Word(StanzaObject):
                 self._id = self._id[0]
         self._text = word_entry.get(TEXT, None)
 
-        assert self._id is not None and self._text is not None, 'id and text should be included for the word. {}'.format(word_entry)
+        assert self._id is not None and self._text is not None, f'id and text should be included for the word. {word_entry}'
 
         self._lemma = word_entry.get(LEMMA, None)
         self._upos = word_entry.get(UPOS, None)
@@ -1692,7 +1692,7 @@ class Word(StanzaObject):
     def pretty_print(self):
         """ Print the word in one line. """
         features = [ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL]
-        feature_str = ";".join(["{}={}".format(k, getattr(self, k)) for k in features if getattr(self, k) is not None])
+        feature_str = ";".join([f"{k}={getattr(self, k)}" for k in features if getattr(self, k) is not None])
         return f"<{self.__class__.__name__} {feature_str}>"
 
     def _is_null(self, value):
@@ -1851,5 +1851,5 @@ class Span(StanzaObject):
     def pretty_print(self):
         """ Print the span in one line. """
         span_dict = self.to_dict()
-        feature_str = ";".join(["{}={}".format(k,v) for k,v in span_dict.items()])
+        feature_str = ";".join([f"{k}={v}" for k,v in span_dict.items()])
         return f"<{self.__class__.__name__} {feature_str}>"

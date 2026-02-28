@@ -132,7 +132,7 @@ class TokenizationDataset:
             elif feat_func == 'numeric':
                 func = lambda x: 1 if (NUMERIC_RE.match(x) is not None) else 0
             else:
-                raise ValueError('Feature function "{}" is undefined.'.format(feat_func))
+                raise ValueError(f'Feature function "{feat_func}" is undefined.')
 
             funcs.append(func)
 
@@ -283,7 +283,7 @@ class DataLoader(TokenizationDataset):
         if punct_move_back_prob > 0.0:
             self.move_punct = build_move_punct_set(self.data, punct_move_back_prob)
             if len(self.move_punct) > 0:
-                logger.debug('Based on the training data, will augment space/punct combinations {}'.format(self.move_punct))
+                logger.debug(f'Based on the training data, will augment space/punct combinations {self.move_punct}')
             else:
                 logger.debug('Based on the training data, no punct are eligible to be rearranged with extra whitespace')
 

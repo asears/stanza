@@ -5,7 +5,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, pack_sequence, pad_sequence, PackedSequence
+from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, pad_sequence, PackedSequence
 
 from stanza.models.common.bert_embedding import extract_bert_embeddings
 from stanza.models.common.biaffine import DeepBiaffineScorer
@@ -14,7 +14,7 @@ from stanza.models.common.hlstm import HighwayLSTM
 from stanza.models.common.dropout import WordDropout
 from stanza.models.common.utils import attach_bert_model
 from stanza.models.common.vocab import CompositeVocab
-from stanza.models.common.char_model import CharacterModel, CharacterLanguageModel
+from stanza.models.common.char_model import CharacterModel
 from stanza.models.common import utils
 
 logger = logging.getLogger('stanza')

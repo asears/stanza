@@ -68,8 +68,8 @@ def choose_tagger_model(short_language, dataset, tagger_model, args):
             if len(best_candidates) == 1:
                 return best_candidates[0]
             if len(best_candidates) > 1:
-                raise FileNotFoundError("Could not choose among the candidate taggers... please pick one with --tagger_model: {}".format(best_candidates))
-        raise FileNotFoundError("Could not choose among the candidate taggers... please pick one with --tagger_model: {}".format(candidates))
+                raise FileNotFoundError(f"Could not choose among the candidate taggers... please pick one with --tagger_model: {best_candidates}")
+        raise FileNotFoundError(f"Could not choose among the candidate taggers... please pick one with --tagger_model: {candidates}")
 
     if not args.download_tagger:
         return None
@@ -134,12 +134,12 @@ def process_treebank(treebank, model_type, paths, args) -> None:
                            "--output_file", retagged]
             # fmt: on
             tagger_args = base_args + tagger_args
-            logger.info("Running tagger to retag {} to {}\n  Args: {}".format(original, retagged, tagger_args))
+            logger.info(f"Running tagger to retag {original} to {retagged}\n  Args: {tagger_args}")
             tagger.main(tagger_args)
 
         prepare_tokenizer_treebank.copy_conllu_treebank(treebank, model_type, paths, paths["DEPPARSE_DATA_DIR"], retag_dataset)
     else:
-        raise ValueError("Unknown tags method: {}".format(args.tag_method))
+        raise ValueError(f"Unknown tags method: {args.tag_method}")
 
 
 def main() -> None:

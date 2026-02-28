@@ -1,5 +1,4 @@
 import os 
-import sys 
 import streamlit as st
 import streamlit.components.v1 as components
 import stanza.utils.visualization.ssurgeon_visualizer as ssv

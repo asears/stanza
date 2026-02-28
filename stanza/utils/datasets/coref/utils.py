@@ -1,7 +1,7 @@
 from collections import defaultdict
-from functools import lru_cache
+from functools import lru_cache, cache
 
-class DynamicDepth():
+class DynamicDepth:
     """
     Implements a cache + dynamic programming to find the relative depth of every word in a subphrase given the head word for every word.
     """
@@ -23,7 +23,7 @@ class DynamicDepth():
 
         return depths
 
-    @lru_cache(maxsize=None)
+    @cache
     def _get_depth_recursive(self, index):
         """Recursively get the depths of every index using a cache and recursion
 

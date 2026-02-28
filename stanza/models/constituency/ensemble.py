@@ -30,7 +30,6 @@ then take the trees which match from the files
 import argparse
 import copy
 import logging
-import os
 
 import torch
 import torch.nn as nn
@@ -75,7 +74,7 @@ class Ensemble(nn.Module):
 
         for model_idx, model in enumerate(self.models):
             if self.models[0].transition_scheme() != model.transition_scheme():
-                raise ValueError("Models {} and {} are incompatible.  {} vs {}".format(filenames[0], filenames[model_idx], self.models[0].transition_scheme(), model.transition_scheme()))
+                raise ValueError(f"Models {filenames[0]} and {filenames[model_idx]} are incompatible.  {self.models[0].transition_scheme()} vs {model.transition_scheme()}")
             if self.models[0].transitions != model.transitions:
                 raise ValueError(f"Models {filenames[0]} and {filenames[model_idx]} are incompatible: different transitions\n{filenames[0]}:\n{self.models[0].transitions}\n{filenames[model_idx]}:\n{model.transitions}")
             if self.models[0].constituents != model.constituents:
@@ -172,7 +171,7 @@ class Ensemble(nn.Module):
         lines = ["NORMS FOR MODEL PARAMETERS"]
         for name, param in self.named_parameters():
             if param.requires_grad:
-                lines.append("{} {}".format(name, param.shape))
+                lines.append(f"{name} {param.shape}")
         logger.info("\n".join(lines))
 
     def get_params(self):

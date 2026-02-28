@@ -2,7 +2,6 @@ import argparse
 import glob
 import logging
 import os
-import pathlib
 import random
 import sys
 
@@ -10,7 +9,7 @@ from enum import Enum
 try:
     from udtools.udeval import build_evaluation_table
 except ImportError:
-    from udtools.src.udtools.udeval import build_evaluation_table
+    pass
 
 from stanza.resources.default_packages import default_charlms, lemma_charlms, tokenizer_charlms, pos_charlms, depparse_charlms, TRANSFORMERS, TRANSFORMER_LAYERS
 from stanza.resources.default_packages import no_pretrain_languages, pos_pretrains, depparse_pretrains, default_pretrains
@@ -234,9 +233,9 @@ def find_wordvec_pretrain(language, default_pretrains, dataset_pretrains=None, d
         default_pt = dataset_pretrains.get(language, {}).get(dataset, default_pt)
 
     if default_pt is not None:
-        default_pt_path = '{}/{}/pretrain/{}.pt'.format(model_dir, language, default_pt)
+        default_pt_path = f'{model_dir}/{language}/pretrain/{default_pt}.pt'
         if not os.path.exists(default_pt_path):
-            logger.info("Default pretrain should be {}  Attempting to download".format(default_pt_path))
+            logger.info(f"Default pretrain should be {default_pt_path}  Attempting to download")
             try:
                 download(lang=language, package=None, processors={"pretrain": default_pt}, model_dir=model_dir)
             except UnknownLanguageError:
@@ -250,7 +249,7 @@ def find_wordvec_pretrain(language, default_pretrains, dataset_pretrains=None, d
                 logger.info(f"Using default pretrain for language {language}, found in {default_pt_path}  To use a different pretrain, specify --wordvec_pretrain_file")
             return default_pt_path
 
-    pretrain_path = '{}/{}/pretrain/*.pt'.format(model_dir, language)
+    pretrain_path = f'{model_dir}/{language}/pretrain/*.pt'
     pretrains = glob.glob(pretrain_path)
     if len(pretrains) == 0:
         # we already tried to download the default pretrain once
@@ -285,12 +284,12 @@ def find_charlm_file(direction, language, charlm, model_dir=DEFAULT_MODEL_DIR):
 
     If we can figure out the package, but can't find it anywhere, we try to download it
     """
-    saved_path = 'saved_models/charlm/{}_{}_{}_charlm.pt'.format(language, charlm, direction)
+    saved_path = f'saved_models/charlm/{language}_{charlm}_{direction}_charlm.pt'
     if os.path.exists(saved_path):
         logger.info(f'Using model {saved_path} for {direction} charlm')
         return saved_path
 
-    resource_path = '{}/{}/{}_charlm/{}.pt'.format(model_dir, language, direction, charlm)
+    resource_path = f'{model_dir}/{language}/{direction}_charlm/{charlm}.pt'
     if os.path.exists(resource_path):
         logger.info(f'Using model {resource_path} for {direction} charlm')
         return resource_path
@@ -432,7 +431,7 @@ def build_wordvec_args(short_language, dataset, extra_args, task_pretrains):
     if short_language in no_pretrain_languages:
         # we couldn't find word vectors for a few languages...:
         # coptic, naija, old russian, turkish german, swedish sign language
-        logger.warning("No known word vectors for language {}  If those vectors can be found, please update the training scripts.".format(short_language))
+        logger.warning(f"No known word vectors for language {short_language}  If those vectors can be found, please update the training scripts.")
         return ["--no_pretrain"]
     else:
         if short_language in task_pretrains and dataset in task_pretrains[short_language]:

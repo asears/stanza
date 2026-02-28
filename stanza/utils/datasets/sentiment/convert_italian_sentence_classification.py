@@ -45,7 +45,7 @@ def read_label_map(label_filename):
             if k_idx >= 12 and k_idx <= 129:
                 k = "sent_%05d" % (k_idx - 1)
             else:
-                raise ValueError("Unexpected key offset for line {}: {}".format(line_idx, line))
+                raise ValueError(f"Unexpected key offset for line {line_idx}: {line}")
 
         if v == "neg":
             v = "0"

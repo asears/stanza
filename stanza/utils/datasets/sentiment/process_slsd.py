@@ -46,7 +46,7 @@ def get_phrases(in_directory):
         elif sentiment == '1':
             sentiment = '2'
         else:
-            raise ValueError("Unknown sentiment: {}".format(sentiment))
+            raise ValueError(f"Unknown sentiment: {sentiment}")
         phrases.append(SentimentDatum(sentiment, utterance))
 
     return phrases

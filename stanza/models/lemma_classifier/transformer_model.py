@@ -1,12 +1,10 @@
 import torch
 import torch.nn as nn
-import os
-import sys
 import logging
 
 from transformers import AutoTokenizer, AutoModel
-from typing import Mapping, List, Tuple, Any
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, pad_sequence
+from typing import List
+from collections.abc import Mapping
 from stanza.models.common.bert_embedding import extract_bert_embeddings
 from stanza.models.lemma_classifier.base_model import LemmaClassifier
 from stanza.models.lemma_classifier.constants import ModelType

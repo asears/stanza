@@ -73,7 +73,7 @@ def get_augment_ratio(train_data, should_augment_predicate, can_augment_predicat
         raise AssertionError("can_augment_predicate allowed sentences not allowed by should_augment_predicate")
 
     if n_can_augment == 0:
-        logger.warning("Found no sentences which matched can_augment_predicate {}".format(can_augment_predicate))
+        logger.warning(f"Found no sentences which matched can_augment_predicate {can_augment_predicate}")
         return 0.0
     n_needed = n_data * desired_ratio - (n_data - n_should_augment)
     # if we want 10%, for example, and more than 10% already matches, we can skip

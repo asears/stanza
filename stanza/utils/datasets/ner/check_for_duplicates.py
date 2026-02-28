@@ -42,7 +42,7 @@ def check_for_duplicates(output_filenames, fail=False, check_self=False, print_a
                     if duplicates == 0 and not print_all:
                         print("First duplicate:")
                     if duplicates == 0 or print_all:                    
-                        print("{}\nFound in {} and {}".format(sentence, other_file, output_filename))
+                        print(f"{sentence}\nFound in {other_file} and {output_filename}")
                     duplicates = duplicates + 1
             sentence_map[sentence] = output_filename
         if duplicates > 0:

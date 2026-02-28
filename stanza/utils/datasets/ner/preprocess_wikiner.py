@@ -25,12 +25,12 @@ def preprocess_wikiner(input_file, output_file, encoding="utf-8"):
                     # but the original .pl conversion script didn't take that into account
                     subtext = text.split("_")
                     if tag.startswith("B-") and len(subtext) > 1:
-                        fout.write("{} {}\n".format(subtext[0], tag))
+                        fout.write(f"{subtext[0]} {tag}\n")
                         for chunk in subtext[1:]:
-                            fout.write("{} I-{}\n".format(chunk, tag[2:]))
+                            fout.write(f"{chunk} I-{tag[2:]}\n")
                     else:
                         for chunk in subtext:
-                            fout.write("{} {}\n".format(chunk, tag))
+                            fout.write(f"{chunk} {tag}\n")
                 fout.write("\n")
 
 if __name__ == '__main__':

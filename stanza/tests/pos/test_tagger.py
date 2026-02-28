@@ -5,16 +5,16 @@ Uses a couple sentences of UD_English-EWT as training/dev data
 """
 
 import os
-import pytest
 
+import pytest
 import torch
 
 import stanza
 from stanza.models import tagger
 from stanza.models.common import pretrain
 from stanza.models.pos.trainer import Trainer
-from stanza.tests import TEST_WORKING_DIR, TEST_MODELS_DIR
-from stanza.utils.training.common import choose_pos_charlm, build_charlm_args
+from stanza.tests import TEST_MODELS_DIR, TEST_WORKING_DIR
+from stanza.utils.training.common import build_charlm_args, choose_pos_charlm
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
@@ -122,6 +122,7 @@ DEV_DATA = """
 7	:	:	PUNCT	:	_	4	punct	4:punct	_
 
 """.lstrip()
+
 
 class TestTagger:
     @pytest.fixture(scope="class")
@@ -268,7 +269,7 @@ class TestTagger:
             xpos_unchanged += torch.allclose(t1.model.xpos_clf.W_bilin.weight, t2.model.xpos_clf.W_bilin.weight)
             ufeats_unchanged += all(torch.allclose(f1.W_bilin.weight, f2.W_bilin.weight) for f1, f2 in zip(t1.model.ufeats_clf, t2.model.ufeats_clf))
         upos_norms = [torch.linalg.norm(t.model.upos_clf.weight) for t in saved_trainers]
-        assert upos_unchanged == 1, "Unchanged: {} {} {} {}".format(upos_unchanged, xpos_unchanged, ufeats_unchanged, upos_norms)
+        assert upos_unchanged == 1, f"Unchanged: {upos_unchanged} {xpos_unchanged} {ufeats_unchanged} {upos_norms}"
         assert xpos_unchanged == 1, "Unchanged: %d %d %d" % (upos_unchanged, xpos_unchanged, ufeats_unchanged)
         assert ufeats_unchanged == 1, "Unchanged: %d %d %d" % (upos_unchanged, xpos_unchanged, ufeats_unchanged)
 
@@ -276,21 +277,24 @@ class TestTagger:
         extra_args = ['--save_each']
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=extra_args)
         save_each_name = tagger.save_each_file_name(trainer.args)
-        expected_models = sorted(set([save_each_name % i for i in range(0, trainer.args['max_steps']+1, trainer.args['eval_interval'])]))
+        expected_models = sorted(set([save_each_name % i for i in range(0, trainer.args['max_steps'] + 1, trainer.args['eval_interval'])]))
         assert len(expected_models) == 6
         for model_name in expected_models:
             assert os.path.exists(model_name)
 
-
+    @pytest.mark.transformers
     def test_with_bert(self, tmp_path, wordvec_pretrain_file):
         self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert'])
 
+    @pytest.mark.transformers
     def test_with_bert_nlayers(self, tmp_path, wordvec_pretrain_file):
         self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert', '--bert_hidden_layers', '2'])
 
+    @pytest.mark.transformers
     def test_with_bert_finetune(self, tmp_path, wordvec_pretrain_file):
         self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert', '--bert_finetune', '--bert_learning_rate', '0.01', '--bert_hidden_layers', '2'])
 
+    @pytest.mark.transformers
     def test_bert_pipeline(self, tmp_path, wordvec_pretrain_file):
         """
         Test training the tagger, then using it in a pipeline

@@ -7,9 +7,10 @@ import tempfile
 from zipfile import ZipFile
 
 import pytest
+
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
-import stanza.utils.datasets.ner.suc_conll_to_iob as suc_conll_to_iob
+from stanza.utils.datasets.ner import suc_conll_to_iob
 
 TEST_CONLL = """
 1	Den	den	PN	PN	UTR|SIN|DEF|SUB/OBJ	_	_	_	_	O	_	ac01b-030:2328
@@ -53,6 +54,7 @@ myntat	O
 :	O
 """
 
+
 def test_read_zip():
     """
     Test creating a fake zip file, then converting it to an .iob file
@@ -60,9 +62,8 @@ def test_read_zip():
     with tempfile.TemporaryDirectory() as tempdir:
         zip_name = os.path.join(tempdir, "test.zip")
         in_filename = "conll"
-        with ZipFile(zip_name, "w") as zout:
-            with zout.open(in_filename, "w") as fout:
-                fout.write(TEST_CONLL.encode())
+        with ZipFile(zip_name, "w") as zout, zout.open(in_filename, "w") as fout:
+            fout.write(TEST_CONLL.encode())
 
         out_filename = os.path.join(tempdir, "iob")
         num = suc_conll_to_iob.extract_from_zip(zip_name, in_filename, out_filename)
@@ -71,6 +72,7 @@ def test_read_zip():
         with open(out_filename) as fin:
             result = fin.read()
         assert EXPECTED_IOB.strip() == result.strip()
+
 
 def test_read_raw():
     """

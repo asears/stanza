@@ -6,7 +6,6 @@ Uses the expected log format from the depparse.  Will not work otherwise.
 
 import argparse
 import re
-import sys
 
 dev_re = re.compile(".*INFO: step ([0-9]+).*dev_score = ([.0-9]+).*")
 

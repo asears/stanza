@@ -4,12 +4,10 @@ Defines a series of transitions (open a constituent, close a constituent, etc)
 
 from abc import ABC, abstractmethod
 import ast
-from collections import defaultdict
 from enum import Enum
 import functools
 import logging
 
-from stanza.models.constituency.parse_tree import Tree
 
 logger = logging.getLogger('stanza')
 
@@ -126,7 +124,7 @@ class Transition(ABC):
             label = self.label[0]
         else:
             label = self.label
-        return "{}({})".format(self.short_name(), label)
+        return f"{self.short_name()}({label})"
 
     def __lt__(self, other):
         # put the Shift at the front of a list, and otherwise sort alphabetically
@@ -302,7 +300,7 @@ class CompoundUnary(Transition):
     def __hash__(self):
         return hash(self.label)
 
-class Dummy():
+class Dummy:
     """
     Takes a space on the constituent stack to represent where an Open transition occurred
     """
@@ -320,7 +318,7 @@ class Dummy():
         raise ValueError("Unhandled spec: %s" % spec)
 
     def __str__(self):
-        return "Dummy({})".format(self.label)
+        return f"Dummy({self.label})"
 
     def __eq__(self, other):
         if self is other:
@@ -437,7 +435,7 @@ class OpenConstituent(Transition):
         return "Open"
 
     def __repr__(self):
-        return "OpenConstituent({})".format(self.label)
+        return f"OpenConstituent({self.label})"
 
     def __eq__(self, other):
         if self is other:
@@ -632,7 +630,7 @@ def check_transitions(train_transitions, other_transitions, treebank_name):
         if trans not in train_transitions:
             for component in trans.components():
                 if component not in train_transitions:
-                    raise RuntimeError("Found transition {} in the {} set which don't exist in the train set".format(trans, treebank_name))
+                    raise RuntimeError(f"Found transition {trans} in the {treebank_name} set which don't exist in the train set")
             unknown_transitions.add(trans)
     if len(unknown_transitions) > 0:
         logger.warning("Found transitions where the components are all valid transitions, but the complete transition is unknown: %s", sorted(unknown_transitions))

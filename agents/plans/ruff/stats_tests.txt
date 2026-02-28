@@ -1,0 +1,109 @@
+271	F405   	[ ] undefined-local-with-import-star-usage
+268	RUF001 	[ ] ambiguous-unicode-character-string
+222	PLR2004	[ ] magic-value-comparison
+183	PLR6301	[ ] no-self-use
+ 88	PTH118 	[ ] os-path-join
+ 79	PTH123 	[ ] builtin-open
+ 55	F403   	[ ] undefined-local-with-import-star
+ 44	FURB103	[ ] write-whole-file
+ 42	DOC201 	[ ] docstring-missing-returns
+ 35	ERA001 	[*] commented-out-code
+ 31	PLW1514	[*] unspecified-encoding
+ 30	PTH110 	[ ] os-path-exists
+ 28	T201   	[*] print
+ 26	PT011  	[ ] pytest-raises-too-broad
+ 26	RET504 	[*] unnecessary-assign
+ 20	PT009  	[*] pytest-unittest-assertion
+ 20	UP031  	[ ] printf-string-formatting
+ 18	FBT003 	[ ] boolean-positional-value-in-call
+ 18	C419   	[*] unnecessary-comprehension-in-call
+ 18	N806   	[ ] non-lowercase-variable-in-function
+ 16	ARG005 	[ ] unused-lambda-argument
+ 16	E402   	[ ] module-import-not-at-top-of-file
+ 14	E302   	[ ] blank-lines-top-level
+ 14	FURB101	[ ] read-whole-file
+ 13	FBT002 	[ ] boolean-default-value-positional-argument
+ 13	B007   	[ ] unused-loop-control-variable
+ 13	EM101  	[*] raw-string-in-exception
+ 13	PTH207 	[ ] glob
+ 13	PLC0415	[ ] import-outside-top-level
+ 12	PTH103 	[ ] os-makedirs
+ 12	TRY003 	[ ] raise-vanilla-args
+ 11	W291   	[*] trailing-whitespace
+ 10	PLR6104	[*] non-augmented-assignment
+  9	FIX002 	[ ] line-contains-todo
+  9	TD002  	[ ] missing-todo-author
+  9	TD003  	[ ] missing-todo-link
+  8	C405   	[*] unnecessary-literal-set
+  8	PT012  	[ ] pytest-raises-with-multiple-statements
+  8	ARG002 	[ ] unused-method-argument
+  8	DOC501 	[ ] docstring-missing-exception
+  8	PLR0913	[ ] too-many-arguments
+  8	PLR0917	[ ] too-many-positional-arguments
+  6	C416   	[*] unnecessary-comprehension
+  6	SIM117 	[ ] multiple-with-statements
+  5	PT017  	[ ] pytest-assert-in-except
+  5	SIM115 	[ ] open-file-with-context-handler
+  5	E711   	[*] none-comparison
+  5	E731   	[*] lambda-assignment
+  4	BLE001 	[ ] blind-except
+  4	ARG001 	[ ] unused-function-argument
+  4	FLY002 	[*] static-join-to-f-string
+  4	F811   	[ ] redefined-while-unused
+  4	PLR6201	[*] literal-membership
+  3	S106   	[ ] hardcoded-password-func-arg
+  3	S314   	[ ] suspicious-xml-element-tree-usage
+  3	C403   	[*] unnecessary-list-comprehension-set
+  3	ISC002 	[ ] multi-line-implicit-string-concatenation
+  3	PTH112 	[ ] os-path-isdir
+  3	N802   	[ ] invalid-function-name
+  3	PERF401	[ ] manual-list-comprehension
+  3	PLC1901	[ ] compare-to-empty-string
+  3	RUF005 	[*] collection-literal-concatenation
+  2	       	[ ] syntax-error
+  2	S108   	[ ] hardcoded-temp-file
+  2	S405   	[ ] suspicious-xml-etree-import
+  2	B011   	[*] assert-false
+  2	C408   	[*] unnecessary-collection-call
+  2	PT006  	[*] pytest-parametrize-names-wrong-type
+  2	PT015  	[ ] pytest-assert-always-false
+  2	PTH108 	[ ] os-unlink
+  2	PTH113 	[ ] os-path-isfile
+  2	PTH120 	[ ] os-path-dirname
+  2	E305   	[ ] blank-lines-after-function-or-class
+  2	DOC402 	[ ] docstring-missing-yields
+  2	PLE1300	[ ] bad-string-format-character
+  2	PLR0904	[ ] too-many-public-methods
+  2	PLW2901	[ ] redefined-loop-name
+  2	FURB113	[*] repeated-append
+  2	RUF012 	[ ] mutable-class-default
+  2	TRY300 	[ ] try-consider-else
+  2	TRY301 	[ ] raise-within-try
+  1	S105   	[ ] hardcoded-password-string
+  1	S404   	[ ] suspicious-subprocess-import
+  1	S603   	[ ] subprocess-without-shell-equals-true
+  1	B006   	[*] mutable-argument-default
+  1	B028   	[ ] no-explicit-stacklevel
+  1	A002   	[ ] builtin-argument-shadowing
+  1	COM812 	[ ] missing-trailing-comma
+  1	ISC003 	[ ] explicit-string-concatenation
+  1	G004   	[ ] logging-f-string
+  1	PT013  	[ ] pytest-incorrect-pytest-import
+  1	PT018  	[*] pytest-composite-assertion
+  1	PTH100 	[ ] os-path-abspath
+  1	PTH102 	[ ] os-mkdir
+  1	PTH106 	[ ] os-rmdir
+  1	PTH107 	[ ] os-remove
+  1	PTH119 	[ ] os-path-basename
+  1	NPY002 	[ ] numpy-legacy-random
+  1	N803   	[ ] invalid-argument-name
+  1	PERF203	[ ] try-except-in-loop
+  1	E113   	[ ] unexpected-indentation
+  1	E116   	[ ] unexpected-indentation-comment
+  1	E117   	[ ] over-indented
+  1	W293   	[*] blank-line-with-whitespace
+  1	F821   	[ ] undefined-name
+  1	PLR0124	[ ] comparison-with-itself
+  1	PLR0914	[ ] too-many-locals
+  1	FURB148	[*] unnecessary-enumerate
+  1	RUF015 	[*] unnecessary-iterable-allocation-for-first-element

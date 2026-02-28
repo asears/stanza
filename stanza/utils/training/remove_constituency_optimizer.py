@@ -62,7 +62,7 @@ def main():
         charlm = common.choose_charlm(language, dataset, args.charlm, default_charlms, {})
         charlm_args = common.build_charlm_args(language, charlm, base_args=False)
 
-        base_name = '{}_constituency.pt'.format(short_name)
+        base_name = f'{short_name}_constituency.pt'
         load_name = os.path.join(args.load_dir, base_name)
         save_name = os.path.join(args.save_dir, base_name)
         resave_args = ['--mode', 'remove_optimizer',

@@ -1,24 +1,23 @@
 import glob
 import os
-
-import pytest
+from pathlib import Path
 
 import numpy as np
+import pytest
 import torch
 
 import stanza
-import stanza.models.classifier as classifier
-import stanza.models.classifiers.data as data
+from stanza.models import classifier
+from stanza.models.classifiers import data
 from stanza.models.classifiers.trainer import Trainer
-from stanza.models.common import pretrain
-from stanza.models.common import utils
-
+from stanza.models.common import pretrain, utils
 from stanza.tests import TEST_MODELS_DIR
-from stanza.tests.classifiers.test_data import train_file, dev_file, test_file, DATASET, SENTENCES
+from stanza.tests.classifiers.test_data import SENTENCES
 
-pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
 
 EMB_DIM = 5
+
 
 @pytest.fixture(scope="module")
 def fake_embeddings(tmp_path_factory):
@@ -30,7 +29,7 @@ def fake_embeddings(tmp_path_factory):
     words = words[:-1]
     embedding_dir = tmp_path_factory.mktemp("data")
     embedding_txt = embedding_dir / "embedding.txt"
-    embedding_pt  = embedding_dir / "embedding.pt"
+    embedding_pt = embedding_dir / "embedding.pt"
     embedding = np.random.random((len(words), EMB_DIM))
 
     with open(embedding_txt, "w", encoding="utf-8") as fout:
@@ -42,8 +41,9 @@ def fake_embeddings(tmp_path_factory):
 
     pt = pretrain.Pretrain(str(embedding_pt), str(embedding_txt))
     pt.load()
-    assert os.path.exists(embedding_pt)
+    assert Path(embedding_pt).exists()
     return embedding_pt
+
 
 class TestClassifier:
     def build_model(self, tmp_path, fake_embeddings, train_file, dev_file, extra_args=None, checkpoint_file=None):
@@ -79,7 +79,7 @@ class TestClassifier:
         dev_set = data.read_dataset(args.dev_file, args.wordvec_type, args.min_train_len)
         labels = data.dataset_labels(train_set)
 
-        save_filename = os.path.join(args.save_dir, args.save_name)
+        save_filename = str(Path(args.save_dir) / args.save_name)
         if checkpoint_file is None:
             checkpoint_file = utils.checkpoint_name(args.save_dir, save_filename, args.checkpoint_save_name)
         classifier.train_model(trainer, save_filename, checkpoint_file, args, train_set, dev_set, labels)
@@ -97,7 +97,7 @@ class TestClassifier:
         """
         trainer, _, args = self.build_model(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20"])
 
-        save_filename = os.path.join(args.save_dir, args.save_name)
+        save_filename = str(Path(args.save_dir) / args.save_name)
         trainer.save(save_filename)
 
         args.load_name = args.save_name
@@ -154,6 +154,7 @@ class TestClassifier:
         # 50 = 2x15 for the 2d conv (over 5 dim embeddings) + 20
         assert trainer.model.fc_input_size == 50
 
+    @pytest.mark.transformers
     def test_train_bert(self, tmp_path, fake_embeddings, train_file, dev_file):
         """
         Test on a tiny Bert WITHOUT finetuning, which hopefully does not take up too much disk space or memory
@@ -161,12 +162,13 @@ class TestClassifier:
         bert_model = "hf-internal-testing/tiny-bert"
 
         trainer, save_filename, _ = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model])
-        assert os.path.exists(save_filename)
+        assert Path(save_filename).exists()
         saved_model = torch.load(save_filename, lambda storage, loc: storage, weights_only=True)
         # check that the bert model wasn't saved as part of the classifier
         assert not saved_model['params']['config']['force_bert_saved']
-        assert not any(x.startswith("bert_model") for x in saved_model['params']['model'].keys())
+        assert not any(x.startswith("bert_model") for x in saved_model['params']['model'])
 
+    @pytest.mark.transformers
     def test_finetune_bert(self, tmp_path, fake_embeddings, train_file, dev_file):
         """
         Test on a tiny Bert WITH finetuning, which hopefully does not take up too much disk space or memory
@@ -174,12 +176,13 @@ class TestClassifier:
         bert_model = "hf-internal-testing/tiny-bert"
 
         trainer, save_filename, _ = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune"])
-        assert os.path.exists(save_filename)
+        assert Path(save_filename).exists()
         saved_model = torch.load(save_filename, lambda storage, loc: storage, weights_only=True)
         # after finetuning the bert model, make sure that the save file DOES contain parts of the transformer
         assert saved_model['params']['config']['force_bert_saved']
-        assert any(x.startswith("bert_model") for x in saved_model['params']['model'].keys())
+        assert any(x.startswith("bert_model") for x in saved_model['params']['model'])
 
+    @pytest.mark.transformers
     def test_finetune_bert_layers(self, tmp_path, fake_embeddings, train_file, dev_file):
         """Test on a tiny Bert WITH finetuning, which hopefully does not take up too much disk space or memory, using 2 layers
 
@@ -192,22 +195,22 @@ class TestClassifier:
         bert_model = "hf-internal-testing/tiny-bert"
 
         trainer, save_filename, checkpoint_file = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune", "--bert_hidden_layers", "2", "--save_intermediate_models"])
-        assert os.path.exists(save_filename)
+        assert Path(save_filename).exists()
 
-        save_path = os.path.split(save_filename)[0]
+        save_path = Path(save_filename).parent
 
-        initial_model = glob.glob(os.path.join(save_path, "*E0000*"))
+        initial_model = glob.glob(str(save_path / "*E0000*"))
         assert len(initial_model) == 1
         initial_model = initial_model[0]
         initial_model = torch.load(initial_model, lambda storage, loc: storage, weights_only=True)
 
-        second_model_file = glob.glob(os.path.join(save_path, "*E0002*"))
+        second_model_file = glob.glob(str(save_path / "*E0002*"))
         assert len(second_model_file) == 1
         second_model_file = second_model_file[0]
         second_model = torch.load(second_model_file, lambda storage, loc: storage, weights_only=True)
 
         for layer_idx in range(2):
-            bert_names = [x for x in second_model['params']['model'].keys() if x.startswith("bert_model") and "layer.%d." % layer_idx in x]
+            bert_names = [x for x in second_model['params']['model'] if x.startswith("bert_model") and "layer.%d." % layer_idx in x]
             assert len(bert_names) > 0
             assert all(x in initial_model['params']['model'] and x in second_model['params']['model'] for x in bert_names)
             assert not all(torch.allclose(initial_model['params']['model'].get(x), second_model['params']['model'].get(x)) for x in bert_names)
@@ -220,22 +223,23 @@ class TestClassifier:
 
         trainer, save_filename, checkpoint_file = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune", "--bert_hidden_layers", "2", "--save_intermediate_models", "--max_epochs", "5"], checkpoint_file=checkpoint_file)
 
-        second_model_file_redo = glob.glob(os.path.join(save_path, "*E0002*"))
+        second_model_file_redo = glob.glob(str(save_path / "*E0002*"))
         assert len(second_model_file_redo) == 1
         assert second_model_file == second_model_file_redo[0]
         second_model = torch.load(second_model_file, lambda storage, loc: storage, weights_only=True)
         assert "asdf" in second_model
 
-        fifth_model_file = glob.glob(os.path.join(save_path, "*E0005*"))
+        fifth_model_file = glob.glob(str(save_path / "*E0005*"))
         assert len(fifth_model_file) == 1
 
         final_model = torch.load(fifth_model_file[0], lambda storage, loc: storage, weights_only=True)
         for layer_idx in range(2):
-            bert_names = [x for x in final_model['params']['model'].keys() if x.startswith("bert_model") and "layer.%d." % layer_idx in x]
+            bert_names = [x for x in final_model['params']['model'] if x.startswith("bert_model") and "layer.%d." % layer_idx in x]
             assert len(bert_names) > 0
             assert all(x in final_model['params']['model'] and x in second_model['params']['model'] for x in bert_names)
             assert not all(torch.allclose(final_model['params']['model'].get(x), second_model['params']['model'].get(x)) for x in bert_names)
 
+    @pytest.mark.transformers
     def test_finetune_peft(self, tmp_path, fake_embeddings, train_file, dev_file):
         """
         Test on a tiny Bert with PEFT finetuning
@@ -243,7 +247,7 @@ class TestClassifier:
         bert_model = "hf-internal-testing/tiny-bert"
 
         trainer, save_filename, _ = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune", "--use_peft", "--lora_modules_to_save", "pooler"])
-        assert os.path.exists(save_filename)
+        assert Path(save_filename).exists()
         saved_model = torch.load(save_filename, lambda storage, loc: storage, weights_only=True)
         # after finetuning the bert model, make sure that the save file DOES contain parts of the transformer, but only in peft form
         assert saved_model['params']['config']['bert_model'] == bert_model
@@ -256,7 +260,7 @@ class TestClassifier:
         assert len(saved_model['params']['bert_lora']) > 0
         assert any(x.find(".pooler.") >= 0 for x in saved_model['params']['bert_lora'])
         assert any(x.find(".encoder.") >= 0 for x in saved_model['params']['bert_lora'])
-        assert not any(x.startswith("bert_model") for x in saved_model['params']['model'].keys())
+        assert not any(x.startswith("bert_model") for x in saved_model['params']['model'])
 
         # The Pipeline should load and run a PEFT trained model,
         # although obviously we don't expect the results to do
@@ -264,6 +268,7 @@ class TestClassifier:
         pipeline = stanza.Pipeline("en", download_method=None, model_dir=TEST_MODELS_DIR, processors="tokenize,sentiment", sentiment_model_path=save_filename, sentiment_pretrain_path=str(fake_embeddings))
         doc = pipeline("This is a test")
 
+    @pytest.mark.transformers
     def test_finetune_peft_restart(self, tmp_path, fake_embeddings, train_file, dev_file):
         """
         Test that if we restart training on a peft model, the peft weights change
@@ -272,26 +277,25 @@ class TestClassifier:
 
         trainer, save_file, checkpoint_file = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune", "--use_peft", "--lora_modules_to_save", "pooler", "--save_intermediate_models"])
 
-        assert os.path.exists(save_file)
+        assert Path(save_file).exists()
         saved_model = torch.load(save_file, lambda storage, loc: storage, weights_only=True)
         assert any(x.find(".encoder.") >= 0 for x in saved_model['params']['bert_lora'])
 
-
         trainer, save_file, checkpoint_file = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune", "--use_peft", "--lora_modules_to_save", "pooler", "--save_intermediate_models", "--max_epochs", "5"], checkpoint_file=checkpoint_file)
 
-        save_path = os.path.split(save_file)[0]
+        save_path = Path(save_file).parent
 
-        initial_model_file = glob.glob(os.path.join(save_path, "*E0000*"))
+        initial_model_file = glob.glob(str(save_path / "*E0000*"))
         assert len(initial_model_file) == 1
         initial_model_file = initial_model_file[0]
         initial_model = torch.load(initial_model_file, lambda storage, loc: storage, weights_only=True)
 
-        second_model_file = glob.glob(os.path.join(save_path, "*E0002*"))
+        second_model_file = glob.glob(str(save_path / "*E0002*"))
         assert len(second_model_file) == 1
         second_model_file = second_model_file[0]
         second_model = torch.load(second_model_file, lambda storage, loc: storage, weights_only=True)
 
-        final_model_file = glob.glob(os.path.join(save_path, "*E0005*"))
+        final_model_file = glob.glob(str(save_path / "*E0005*"))
         assert len(final_model_file) == 1
         final_model_file = final_model_file[0]
         final_model = torch.load(final_model_file, lambda storage, loc: storage, weights_only=True)
@@ -314,4 +318,3 @@ class TestClassifier:
                     if side != "_A.":  # the A tensors don't move very much, if at all
                         assert not torch.allclose(initial_lora.get(x), second_lora.get(x))
                         assert not torch.allclose(second_lora.get(x), final_lora.get(y))
-

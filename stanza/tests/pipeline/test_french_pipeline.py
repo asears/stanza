@@ -6,11 +6,11 @@ for languages with MWT in them
 """
 
 import pytest
+
 import stanza
 from stanza.models.common.doc import Document
-
 from stanza.tests import *
-from stanza.tests.pipeline.pipeline_device_tests import check_on_gpu, check_on_cpu
+from stanza.tests.pipeline.pipeline_device_tests import check_on_cpu, check_on_gpu
 
 pytestmark = pytest.mark.pipeline
 
@@ -313,6 +313,7 @@ EXPECTED_RESULT = """
   ]
 ]
 """
+
 
 class TestFrenchPipeline:
     @pytest.fixture(scope="class")

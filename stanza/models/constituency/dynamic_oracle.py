@@ -115,7 +115,7 @@ def find_in_order_constituent_end(gold_sequence, cur_index):
         cur_index = cur_index + 1
     return None
 
-class DynamicOracle():
+class DynamicOracle:
     def __init__(self, root_labels, oracle_level, repair_types, additional_levels, deactivated_levels):
         self.root_labels = root_labels
         # default oracle_level will be the UNKNOWN repair type (which each oracle should have)

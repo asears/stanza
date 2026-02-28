@@ -6,27 +6,22 @@ to produce NER predictions.
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
-import sys
 import os
 import time
 from datetime import datetime
 import argparse
 import logging
 import numpy as np
-import random
 import re
 import json
 import torch
-from torch import nn, optim
 
 from stanza.models.ner.data import DataLoader
 from stanza.models.ner.trainer import Trainer
 from stanza.models.ner import scorer
 from stanza.models.common import utils
 from stanza.models.common.pretrain import Pretrain
-from stanza.utils.conll import CoNLL
 from stanza.models.common.doc import *
-from stanza.models import _training_logging
 
 from stanza.models.common.peft_config import add_peft_args, resolve_peft_args
 from stanza.utils.confusion import confusion_to_weighted_f1, format_confusion
@@ -225,11 +220,11 @@ def train(args):
         logger.warning('Finetune is ON. Using model from "{}"'.format(args['finetune_load_name']))
         _, trainer, vocab = load_model(args, args['finetune_load_name'])
     elif args['finetune'] and os.path.exists(model_file):
-        logger.warning('Finetune is ON. Using model from "{}"'.format(model_file))
+        logger.warning(f'Finetune is ON. Using model from "{model_file}"')
         _, trainer, vocab = load_model(args, model_file)
     else:
         if args['finetune']:
-            raise FileNotFoundError('Finetune is set to true but model file is not found: {}'.format(model_file))
+            raise FileNotFoundError(f'Finetune is set to true but model file is not found: {model_file}')
 
         pretrain = load_pretrain(args)
 
@@ -346,7 +341,7 @@ def train(args):
                 _, _, dev_score, _ = scorer.score_by_entity(dev_preds, dev_gold_tags, ignore_tags=args['ignore_tag_scores'])
 
                 train_loss = train_loss / args['eval_interval'] # avg loss per batch
-                logger.info("step {}: train_loss = {:.6f}, dev_score = {:.4f}".format(global_step, train_loss, dev_score))
+                logger.info(f"step {global_step}: train_loss = {train_loss:.6f}, dev_score = {dev_score:.4f}")
                 if args['wandb']:
                     wandb.log({'train_loss': train_loss, 'dev_score': dev_score})
                 train_loss = 0
@@ -372,7 +367,7 @@ def train(args):
             current_lr = trainer.optimizer.param_groups[0]['lr']
             if (global_step - last_best_step) >= args['max_steps_no_improve'] or global_step >= args['max_steps'] or current_lr <= args['min_lr']:
                 if (global_step - last_best_step) >= args['max_steps_no_improve']:
-                    logger.info("{} steps without improvement...".format((global_step - last_best_step)))
+                    logger.info(f"{global_step - last_best_step} steps without improvement...")
                 if not is_second_optim and args['second_optim'] is not None:
                     logger.info("Switching to second optimizer: {}".format(args['second_optim']))
                     logger.info('Reloading best model to continue from current local optimum')
@@ -391,7 +386,7 @@ def train(args):
 
         train_batch.reshuffle()
 
-    logger.info("Training ended with {} steps.".format(global_step))
+    logger.info(f"Training ended with {global_step} steps.")
 
     if args['wandb']:
         wandb.finish()
@@ -463,7 +458,7 @@ def evaluate_model(loaded_args, trainer, vocab, eval_file):
     logger.info("NER tagger score: %s %s %s %.2f", loaded_args['shorthand'], model_file, eval_file, score*100)
     entity_f1_lines = ["%s: %.2f" % (x, y*100) for x, y in entity_f1.items()]
     logger.info("NER Entity F1 scores:\n  %s", "\n  ".join(entity_f1_lines))
-    logger.info("NER token confusion matrix:\n{}".format(format_confusion(confusion)))
+    logger.info(f"NER token confusion matrix:\n{format_confusion(confusion)}")
 
     if loaded_args['eval_output_file']:
         write_ner_results(loaded_args['eval_output_file'], batch, preds, trainer.args['predict_tagset'])

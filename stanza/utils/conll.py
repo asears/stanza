@@ -1,12 +1,11 @@
 """
 Utility functions for the loading and conversion of CoNLL-format files.
 """
-import os
 import io
 from zipfile import ZipFile
 
 from stanza.models.common.doc import Document
-from stanza.models.common.doc import ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC, NER, START_CHAR, END_CHAR
+from stanza.models.common.doc import ID, TEXT, LEMMA, FEATS, HEAD
 from stanza.models.common.doc import FIELD_TO_IDX, FIELD_NUM
 from stanza.models.common.doc import LINE_NUMBER
 
@@ -96,7 +95,7 @@ class CoNLL:
         Output: CoNLL-U format data as a list of list of list for each token in each sentence in the data.
         """
         doc = Document(doc_dict)
-        text = "{:c}".format(doc)
+        text = f"{doc:c}"
         sentences = text.split("\n\n")
         doc_conll = [[x.split("\t") for x in sentence.split("\n")] for sentence in sentences]
         return doc_conll
@@ -210,7 +209,7 @@ class CoNLL:
         Note that the output needs an extra \n\n at the end to be a legal output file
         """
         if hasattr(filename, "write"):
-            filename.write("{:C}\n\n".format(doc))
+            filename.write(f"{doc:C}\n\n")
         else:
             with open(filename, mode, encoding=encoding) as outfile:
-                outfile.write("{:C}\n\n".format(doc))
+                outfile.write(f"{doc:C}\n\n")

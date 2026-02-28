@@ -16,11 +16,9 @@ There is no license specifically chosen; they just ask people to cite the paper 
 """
 
 
-import math
 
 import torch
 import torch.nn as nn
-import torch.nn.init as init
 import torch.nn.functional as F
 
 

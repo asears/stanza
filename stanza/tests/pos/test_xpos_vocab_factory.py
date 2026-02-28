@@ -1,11 +1,11 @@
 """
 Test some pieces of the depparse dataloader
 """
-import pytest
-
 import logging
 import os
 import tempfile
+
+import pytest
 
 from stanza.models import tagger
 from stanza.models.common import pretrain
@@ -13,16 +13,14 @@ from stanza.models.pos.data import Dataset
 from stanza.models.pos.trainer import Trainer
 from stanza.models.pos.vocab import WordVocab, XPOSVocab
 from stanza.models.pos.xpos_vocab_factory import xpos_vocab_factory
-from stanza.models.pos.xpos_vocab_utils import XPOSDescription, XPOSType, build_xpos_vocab, choose_simplest_factory
-from stanza.utils.conll import CoNLL
-
 from stanza.tests import TEST_WORKING_DIR
+from stanza.utils.conll import CoNLL
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
 logger = logging.getLogger('stanza.models.pos.xpos_vocab_factory')
 
-EN_EXAMPLE="""
+EN_EXAMPLE = """
 1	Sh'reyan	Sh'reyan	PROPN	NNP%(tag)s	Number=Sing	3	nmod:poss	3:nmod:poss	_
 2	's	's	PART	POS%(tag)s	_	1	case	1:case	_
 3	antennae	antenna	NOUN%(tag)s	NNS	Number=Plur	6	nsubj	6:nsubj	_
@@ -33,6 +31,7 @@ EN_EXAMPLE="""
 
 EMPTY_TAG = lambda x: ""
 DASH_TAGS = lambda x: "-%d" % x
+
 
 def build_doc(iterations, suffix):
     """
@@ -47,6 +46,7 @@ def build_doc(iterations, suffix):
     doc = CoNLL.conll2doc(input_str=text)
     return doc
 
+
 def build_data(iterations, suffix):
     """
     Same thing, but passes the Doc through a POS Tagger DataLoader
@@ -54,6 +54,7 @@ def build_data(iterations, suffix):
     doc = build_doc(iterations, suffix)
     data = Dataset.load_doc(doc)
     return data
+
 
 class ErrorFatalHandler(logging.Handler):
     """
@@ -68,6 +69,7 @@ class ErrorFatalHandler(logging.Handler):
 
     def emit(self, record):
         raise AssertionError("Oh no, we printed an error")
+
 
 class TestXPOSVocabFactory:
     @classmethod
@@ -106,7 +108,6 @@ class TestXPOSVocabFactory:
         vocab = xpos_vocab_factory(data, "en_ewt")
         assert isinstance(vocab, WordVocab)
 
-
     def test_basic_en_unknown(self):
         """
         With only 6 tags, it should use a basic vocab for an unknown dataset
@@ -114,7 +115,6 @@ class TestXPOSVocabFactory:
         data = build_data(10, EMPTY_TAG)
         vocab = xpos_vocab_factory(data, "en_unknown")
         assert isinstance(vocab, WordVocab)
-
 
     def test_dash_en_unknown(self):
         """
@@ -180,4 +180,3 @@ class TestXPOSVocabFactory:
         Test that building a model with an unknown xpos vocab, saving it, and loading it gets back an xpos vocab
         """
         self.check_reload(pt, "en_unknown", 10, DASH_TAGS, XPOSVocab)
-

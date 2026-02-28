@@ -81,7 +81,7 @@ class Processor(ABC):
         if model is None:
             return name
         else:
-            return "{}({})".format(name, model)
+            return f"{name}({model})"
 
 
     @abstractmethod

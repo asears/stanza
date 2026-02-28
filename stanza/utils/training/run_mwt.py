@@ -21,7 +21,6 @@ import logging
 import math
 
 from stanza.models import mwt_expander
-from stanza.models.common.doc import Document
 from stanza.utils.conll import CoNLL
 from stanza.utils.training import common
 from stanza.utils.training.common import Mode
@@ -82,7 +81,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                       '--mode', 'train',
                       '--max_dec_len', str(max_mwt_len)]
         train_args = train_args + extra_args
-        logger.info("Running train step with args: {}".format(train_args))
+        logger.info(f"Running train step with args: {train_args}")
         mwt_expander.main(train_args)
 
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -94,14 +93,14 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
         if command_args.save_output:
             dev_args.extend(['--output_file', dev_output_file])
         dev_args = dev_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info(f"Running dev step with args: {dev_args}")
         _, dev_doc = mwt_expander.main(dev_args)
         if not command_args.save_output:
-            dev_output_file = "{:C}\n\n".format(dev_doc)
+            dev_output_file = f"{dev_doc:C}\n\n"
             dev_output_file = io.StringIO(dev_output_file)
 
         results = common.run_eval_script_mwt(gold_file if gold_file else dev_gold_file, dev_output_file)
-        logger.info("Finished running dev set on\n{}\n{}".format(treebank, results))
+        logger.info(f"Finished running dev set on\n{treebank}\n{results}")
 
     if mode == Mode.SCORE_TEST:
         test_args = ['--eval_file', eval_file if eval_file else test_in_file,
@@ -112,14 +111,14 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
         if command_args.save_output:
             test_args.extend(['--output_file', test_output_file])
         test_args = test_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info(f"Running test step with args: {test_args}")
         _, test_doc = mwt_expander.main(test_args)
         if not command_args.save_output:
-            test_output_file = "{:C}\n\n".format(test_doc)
+            test_output_file = f"{test_doc:C}\n\n"
             test_output_file = io.StringIO(test_output_file)
 
         results = common.run_eval_script_mwt(gold_file if gold_file else test_gold_file, test_output_file)
-        logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
+        logger.info(f"Finished running test set on\n{treebank}\n{results}")
 
 def main():
     common.main(run_treebank, "mwt", "mwt_expander", sub_argparse=mwt_expander.build_argparse())

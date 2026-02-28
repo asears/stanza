@@ -2,17 +2,14 @@
 An identity lemmatizer that mimics the behavior of a normal lemmatizer but directly uses word as lemma.
 """
 
-import os
 import argparse
 import logging
 import random
 
 from stanza.models.lemma.data import DataLoader
 from stanza.models.lemma import scorer
-from stanza.models.common import utils
 from stanza.models.common.doc import *
 from stanza.utils.conll import CoNLL
-from stanza.models import _training_logging
 
 logger = logging.getLogger('stanza')
 
@@ -58,7 +55,7 @@ def main(args=None):
     if system_pred_file is not None:
         CoNLL.write_doc2conll(batch.doc, system_pred_file)
     if gold_file is not None:
-        system_pred_file = "{:C}\n\n".format(batch.doc)
+        system_pred_file = f"{batch.doc:C}\n\n"
         system_pred_file = io.StringIO(system_pred_file)
         _, _, score = scorer.score(system_pred_file, gold_file)
 

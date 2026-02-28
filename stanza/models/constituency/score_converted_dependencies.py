@@ -42,7 +42,7 @@ def score_converted_dependencies(args):
         _, _, score = scorer.score(output_path, args['eval_file'])
 
         print("Parser score:")
-        print("{} {:.2f}".format(constituency_package, score*100))
+        print(f"{constituency_package} {score*100:.2f}")
 
 
 def main():

@@ -3,13 +3,11 @@ A trainer class to handle training and testing of models.
 """
 
 import os
-import sys
 import numpy as np
 from collections import Counter
 import logging
 import torch
 from torch import nn
-import torch.nn.init as init
 
 import stanza.models.common.seq2seq_constant as constant
 from stanza.models.common.doc import TEXT, UPOS
@@ -30,7 +28,7 @@ def unpack_batch(batch, device):
     text = batch[7]
     return inputs, orig_idx, text
 
-class Trainer(object):
+class Trainer:
     """ A trainer for training models. """
     def __init__(self, args=None, vocab=None, emb_matrix=None, model_file=None, device=None, foundation_cache=None, lemma_classifier_args=None):
         if model_file is not None:
@@ -290,13 +288,13 @@ class Trainer(object):
         if save_dir:
             os.makedirs(os.path.split(filename)[0], exist_ok=True)
         torch.save(params, filename, _use_new_zipfile_serialization=False)
-        logger.info("Model saved to {}".format(filename))
+        logger.info(f"Model saved to {filename}")
 
     def load(self, filename, args, foundation_cache, lemma_classifier_args=None):
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         except BaseException:
-            logger.error("Cannot load model from {}".format(filename))
+            logger.error(f"Cannot load model from {filename}")
             raise
         self.args = checkpoint['config']
         if args is not None:

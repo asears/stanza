@@ -4,7 +4,6 @@ Processors related to SudachiPy in the pipeline.
 GitHub Home: https://github.com/WorksApplications/SudachiPy
 """
 
-import re
 
 from stanza.models.common import doc
 from stanza.pipeline._constants import TOKENIZE
@@ -36,7 +35,6 @@ class SudachiPyTokenizer(ProcessorVariant):
             raise Exception("SudachiPy tokenizer is only allowed in Japanese pipelines.")
 
         check_sudachipy()
-        from sudachipy import tokenizer
         from sudachipy import dictionary
 
         self.tokenizer = dictionary.Dictionary().create()

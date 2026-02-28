@@ -184,7 +184,7 @@ def read_languk_train_test_split(file_path: str, dev_split: float = 0.1) -> Tupl
     log.info(f'Trying to read train/dev/test split from file "{file_path}". Dev allocation = {dev_split}')
     train_files, test_files, dev_files = [], [], []
     container = test_files
-    with open(file_path, 'r') as f:
+    with open(file_path) as f:
         for ln in f:
             ln = ln.strip()
             if ln == 'DEV':

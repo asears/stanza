@@ -1,14 +1,15 @@
 import json
+
 import pytest
 
-import stanza.models.classifiers.data as data
+from stanza.models.classifiers import data
 from stanza.models.classifiers.utils import WVType
 from stanza.models.common.vocab import PAD, UNK
 from stanza.models.constituency.parse_tree import Tree
 
 SENTENCES = [
     ["I", "hate", "the", "Opal", "banning"],
-    ["Tell", "my", "wife", "hello"], # obviously this is the neutral result
+    ["Tell", "my", "wife", "hello"],  # obviously this is the neutral result
     ["I", "like", "Sh'reyan", "'s", "antennae"],
 ]
 
@@ -30,6 +31,7 @@ DATASET_WITH_TREES = [
     {"sentiment": "2", "text": SENTENCES[2], "constituency": TREES[2]},
 ]
 
+
 @pytest.fixture(scope="module")
 def train_file(tmp_path_factory):
     train_set = DATASET * 20
@@ -37,6 +39,7 @@ def train_file(tmp_path_factory):
     with open(train_filename, "w", encoding="utf-8") as fout:
         json.dump(train_set, fout, ensure_ascii=False)
     return train_filename
+
 
 @pytest.fixture(scope="module")
 def dev_file(tmp_path_factory):
@@ -46,6 +49,7 @@ def dev_file(tmp_path_factory):
         json.dump(dev_set, fout, ensure_ascii=False)
     return dev_filename
 
+
 @pytest.fixture(scope="module")
 def test_file(tmp_path_factory):
     test_set = DATASET
@@ -53,6 +57,7 @@ def test_file(tmp_path_factory):
     with open(test_filename, "w", encoding="utf-8") as fout:
         json.dump(test_set, fout, ensure_ascii=False)
     return test_filename
+
 
 @pytest.fixture(scope="module")
 def train_file_with_trees(tmp_path_factory):
@@ -62,6 +67,7 @@ def train_file_with_trees(tmp_path_factory):
         json.dump(train_set, fout, ensure_ascii=False)
     return train_filename
 
+
 @pytest.fixture(scope="module")
 def dev_file_with_trees(tmp_path_factory):
     dev_set = DATASET_WITH_TREES * 2
@@ -69,6 +75,7 @@ def dev_file_with_trees(tmp_path_factory):
     with open(dev_filename, "w", encoding="utf-8") as fout:
         json.dump(dev_set, fout, ensure_ascii=False)
     return dev_filename
+
 
 class TestClassifierData:
     def test_read_data(self, train_file):
@@ -127,4 +134,3 @@ class TestClassifierData:
         data.check_labels(labels, train_set)
         with pytest.raises(RuntimeError):
             data.check_labels(labels[:1], train_set)
-

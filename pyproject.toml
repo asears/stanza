@@ -1,7 +1,3 @@
-[build-system]
-requires = ["uv_build"]
-build-backend = "uv_build"
-
 [project]
 name = "stanza"
 version = "2.0.0"
@@ -59,6 +55,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "check-manifest",
+    "rust-just",
 ]
 test = [
     "coverage",
@@ -111,23 +108,28 @@ Documentation = "https://stanfordnlp.github.io/stanza/"
 "Bug Tracker" = "https://github.com/stanfordnlp/stanza/issues"
 "Source Code" = "https://github.com/stanfordnlp/stanza"
 
-# TODO(AS): Convert to uv
-# [tool.setuptools]
-# packages = ["stanza"]
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
 
-# [tool.setuptools.package-data]
-# stanza = [
-#     "pipeline/demo/*ttf",
-#     "pipeline/demo/*css",
-#     "pipeline/demo/*html",
-#     "pipeline/demo/*js",
-#     "pipeline/demo/*gif",
-# ]
+[tool.uv.build-backend]
+module-root = "."
+module-name = "stanza"
+
+[tool.setuptools.package-data]
+stanza = [
+    "pipeline/demo/*ttf",
+    "pipeline/demo/*css",
+    "pipeline/demo/*html",
+    "pipeline/demo/*js",
+    "pipeline/demo/*gif",
+]
 
 # Dependency Groups (PEP 735 - replacement for optional-dependencies)
 [dependency-groups]
 dev = [
     "check-manifest",
+    "rust-just",
 ]
 test = [
     "pytest>=7.0",
@@ -224,9 +226,14 @@ addopts = [
     "--timeout=300",
 ]
 markers = [
+    "pipeline: mark test as testing pipeline functionality",
     "travis: mark test to run on Travis CI",
     "slow: mark test as slow",
     "gpu: mark test as requiring GPU",
+    "client: all tests that are related to the CoreNLP client interface",
+    "pipeline: all tests that are related to the Stanza neural pipeline",
+    "morphseg: all tests that are related to morpheme segmentation",
+    "transformers: mark test as requiring transformers library",
 ]
 filterwarnings = [
     "ignore::DeprecationWarning",

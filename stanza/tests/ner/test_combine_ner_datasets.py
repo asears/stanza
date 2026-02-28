@@ -1,11 +1,12 @@
 import json
 import os
+
 import pytest
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
 from stanza.models.common.doc import Document
-from stanza.tests.ner.test_ner_training import write_temp_file, EN_TRAIN_BIO, EN_DEV_BIO
+from stanza.tests.ner.test_ner_training import EN_DEV_BIO, EN_TRAIN_BIO, write_temp_file
 from stanza.utils.datasets.ner import combine_ner_datasets
 
 
@@ -36,4 +37,3 @@ def test_combine(tmp_path):
         with open(filename, encoding="utf-8") as fin:
             doc = Document(json.load(fin))
             assert len(doc.sentences) == (s_num + 1) * 3
-

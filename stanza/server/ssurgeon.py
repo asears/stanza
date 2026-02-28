@@ -14,12 +14,12 @@ import os
 import re
 import sys
 
-from stanza.models.common.utils import misc_to_space_after, space_after_to_misc
+from stanza.models.common.utils import space_after_to_misc
 from stanza.protobuf import SsurgeonRequest, SsurgeonResponse
 from stanza.server import java_protobuf_requests
 from stanza.utils.conll import CoNLL
 
-from stanza.models.common.doc import ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC, START_CHAR, END_CHAR, NER, Word, Token, Sentence
+from stanza.models.common.doc import ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC, START_CHAR, END_CHAR, NER, Sentence
 
 SSURGEON_JAVA = "edu.stanford.nlp.semgraph.semgrex.ssurgeon.ProcessSsurgeonRequest"
 
@@ -77,7 +77,7 @@ def build_request(doc, ssurgeon_edits):
 
                     word_idx = word_idx + 1
     except Exception as e:
-        raise RuntimeError("Failed to process sentence {}:\n{:C}".format(sent_idx, sentence)) from e
+        raise RuntimeError(f"Failed to process sentence {sent_idx}:\n{sentence:C}") from e
 
     return request
 
@@ -207,7 +207,7 @@ def convert_response_to_doc(doc, semgrex_response, add_missing_text):
 
             sentence.rebuild_dependencies()
     except Exception as e:
-        raise RuntimeError("Ssurgeon could not process sentence {}\nSsurgeon result:\n{}\nOriginal sentence:\n{:C}".format(sent_idx, ssurgeon_result, sentence)) from e
+        raise RuntimeError(f"Ssurgeon could not process sentence {sent_idx}\nSsurgeon result:\n{ssurgeon_result}\nOriginal sentence:\n{sentence:C}") from e
     return doc
 
 class Ssurgeon(java_protobuf_requests.JavaProtobufContext):
@@ -311,15 +311,15 @@ def main():
 
     for doc, output in input_output:
         if args.print_input:
-            print("{:C}".format(doc))
+            print(f"{doc:C}")
         ssurgeon_request = build_request(doc, ssurgeon_edits)
         ssurgeon_response = send_ssurgeon_request(ssurgeon_request)
         updated_doc = convert_response_to_doc(doc, ssurgeon_response, args.add_missing_text)
         if output is not None:
             with open(output, "w", encoding="utf-8") as fout:
-                fout.write("{:C}\n\n".format(updated_doc))
+                fout.write(f"{updated_doc:C}\n\n")
         if args.stdout:
-            print("{:C}\n".format(updated_doc))
+            print(f"{updated_doc:C}\n")
 
 if __name__ == '__main__':
     main()

@@ -25,7 +25,7 @@ def parse_args():
 args = parse_args()
 pt = pretrain.Pretrain(args.pretrain)
 pt.load()
-print("Pretrain stats: {} vectors, {} dim".format(len(pt.vocab), pt.emb[0].shape[0]))
+print(f"Pretrain stats: {len(pt.vocab)} vectors, {pt.emb[0].shape[0]} dim")
 
 for treebank in args.treebanks:
     print(treebank)

@@ -11,21 +11,20 @@ import pytest
 
 from stanza.models.common import pretrain
 from stanza.models.constituency import tree_reader
-
 from stanza.tests.constituency.test_trainer import build_trainer
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
-VI_TREEBANK               = '(ROOT (S-TTL (NP (" ") (N-H Đảo) (Np Đài Loan) (" ") (PP (E-H ở) (NP (N-H đồng bằng) (NP (N-H sông) (Np Cửu Long))))) (. .)))'
+VI_TREEBANK = '(ROOT (S-TTL (NP (" ") (N-H Đảo) (Np Đài Loan) (" ") (PP (E-H ở) (NP (N-H đồng bằng) (NP (N-H sông) (Np Cửu Long))))) (. .)))'
 
-VI_TREEBANK_UNDERSCORE    = '(ROOT (S-TTL (NP (" ") (N-H Đảo) (Np Đài_Loan) (" ") (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .)))'
+VI_TREEBANK_UNDERSCORE = '(ROOT (S-TTL (NP (" ") (N-H Đảo) (Np Đài_Loan) (" ") (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .)))'
 
-VI_TREEBANK_SIMPLE        = '(ROOT (S (NP (" ") (N Đảo) (Np Đài Loan) (" ") (PP (E ở) (NP (N đồng bằng) (NP (N sông) (Np Cửu Long))))) (. .)))'
+VI_TREEBANK_SIMPLE = '(ROOT (S (NP (" ") (N Đảo) (Np Đài Loan) (" ") (PP (E ở) (NP (N đồng bằng) (NP (N sông) (Np Cửu Long))))) (. .)))'
 
-VI_TREEBANK_PAREN         = '(ROOT (S-TTL (NP (PUNCT -LRB-) (N-H Đảo) (Np Đài Loan) (PUNCT -RRB-) (PP (E-H ở) (NP (N-H đồng bằng) (NP (N-H sông) (Np Cửu Long))))) (. .)))'
-VI_TREEBANK_VLSP          = '<s>\n(S-TTL (NP (PUNCT LBKT) (N-H Đảo) (Np Đài_Loan) (PUNCT RBKT) (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .))\n</s>'
-VI_TREEBANK_VLSP_50       = '<s id=50>\n(S-TTL (NP (PUNCT LBKT) (N-H Đảo) (Np Đài_Loan) (PUNCT RBKT) (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .))\n</s>'
-VI_TREEBANK_VLSP_100      = '<s id=100>\n(S-TTL (NP (PUNCT LBKT) (N-H Đảo) (Np Đài_Loan) (PUNCT RBKT) (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .))\n</s>'
+VI_TREEBANK_PAREN = '(ROOT (S-TTL (NP (PUNCT -LRB-) (N-H Đảo) (Np Đài Loan) (PUNCT -RRB-) (PP (E-H ở) (NP (N-H đồng bằng) (NP (N-H sông) (Np Cửu Long))))) (. .)))'
+VI_TREEBANK_VLSP = '<s>\n(S-TTL (NP (PUNCT LBKT) (N-H Đảo) (Np Đài_Loan) (PUNCT RBKT) (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .))\n</s>'
+VI_TREEBANK_VLSP_50 = '<s id=50>\n(S-TTL (NP (PUNCT LBKT) (N-H Đảo) (Np Đài_Loan) (PUNCT RBKT) (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .))\n</s>'
+VI_TREEBANK_VLSP_100 = '<s id=100>\n(S-TTL (NP (PUNCT LBKT) (N-H Đảo) (Np Đài_Loan) (PUNCT RBKT) (PP (E-H ở) (NP (N-H đồng_bằng) (NP (N-H sông) (Np Cửu_Long))))) (. .))\n</s>'
 
 EXPECTED_LABELED_BRACKETS = '(_ROOT (_S (_NP (_" " )_" (_N Đảo )_N (_Np Đài_Loan )_Np (_" " )_" (_PP (_E ở )_E (_NP (_N đồng_bằng )_N (_NP (_N sông )_N (_Np Cửu_Long )_Np )_NP )_NP )_PP )_NP (_. . )_. )_S )_ROOT'
 
@@ -44,6 +43,7 @@ def test_read_vi_tree():
     assert node.is_preterminal()
     assert node.children[0].label == "Đài Loan"
 
+
 VI_EMBEDDING = """
 4 4
 Đảo          0.11 0.21 0.31 0.41
@@ -51,6 +51,7 @@ VI_EMBEDDING = """
 đồng bằng    0.13 0.23 0.33 0.43
 sông         0.14 0.24 0.34 0.44
 """.strip()
+
 
 def test_vi_embedding():
     """
@@ -83,8 +84,9 @@ def test_space_formatting():
     assert len(trees) == 1
     assert str(trees[0]) == text
 
-    assert "{}".format(trees[0]) == VI_TREEBANK
-    assert "{:_O}".format(trees[0]) == VI_TREEBANK_UNDERSCORE
+    assert f"{trees[0]}" == VI_TREEBANK
+    assert f"{trees[0]:_O}" == VI_TREEBANK_UNDERSCORE
+
 
 def test_vlsp_formatting():
     text = VI_TREEBANK_PAREN.split("\n")[0]
@@ -92,19 +94,20 @@ def test_vlsp_formatting():
     assert len(trees) == 1
     assert str(trees[0]) == text
 
-    assert "{:_V}".format(trees[0]) == VI_TREEBANK_VLSP
+    assert f"{trees[0]:_V}" == VI_TREEBANK_VLSP
     trees[0].tree_id = 50
-    assert "{:_Vi}".format(trees[0]) == VI_TREEBANK_VLSP_50
+    assert f"{trees[0]:_Vi}" == VI_TREEBANK_VLSP_50
     trees[0].tree_id = 100
-    assert "{:_Vi}".format(trees[0]) == VI_TREEBANK_VLSP_100
+    assert f"{trees[0]:_Vi}" == VI_TREEBANK_VLSP_100
 
     empty = tree_reader.read_trees("(ROOT)")[0]
     with pytest.raises(ValueError):
-        "{:V}".format(empty)
+        f"{empty:V}"
 
     branches = tree_reader.read_trees("(ROOT (1) (2) (3))")[0]
     with pytest.raises(ValueError):
-        "{:V}".format(branches)
+        f"{branches:V}"
+
 
 def test_language_formatting():
     """
@@ -116,6 +119,5 @@ def test_language_formatting():
     assert len(trees) == 1
     assert str(trees[0]) == VI_TREEBANK_SIMPLE
 
-    text = "{:L}".format(trees[0])
+    text = f"{trees[0]:L}"
     assert text == EXPECTED_LABELED_BRACKETS
-

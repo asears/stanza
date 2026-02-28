@@ -92,11 +92,11 @@ allowed_sequences = {
 }
 
 def read_data(input_filename):
-    print("Reading {}".format(input_filename))
+    print(f"Reading {input_filename}")
     tree = ET.parse(input_filename)
     documents = parse_xml(tree)
-    print("Number of documents: {}".format(len(documents)))
-    print("Number of paragraphs: {}".format(sum(len(document) for document in documents)))
+    print(f"Number of documents: {len(documents)}")
+    print(f"Number of paragraphs: {sum(len(document) for document in documents)}")
     return documents
 
 def parse_xml(tree):
@@ -111,21 +111,21 @@ def parse_xml(tree):
     for document in root:
         # these should all be documents
         if document.tag != 'document':
-            raise ValueError("Unexpected orchid xml layout: {}".format(document.tag))
+            raise ValueError(f"Unexpected orchid xml layout: {document.tag}")
         paragraphs = []
         for paragraph in document:
             if paragraph.tag != 'paragraph':
-                raise ValueError("Unexpected orchid xml layout: {} under {}".format(paragraph.tag, document.tag))
+                raise ValueError(f"Unexpected orchid xml layout: {paragraph.tag} under {document.tag}")
             sentences = []
             for sentence in paragraph:
                 if sentence.tag != 'sentence':
-                    raise ValueError("Unexpected orchid xml layout: {} under {}".format(sentence.tag, document.tag))
+                    raise ValueError(f"Unexpected orchid xml layout: {sentence.tag} under {document.tag}")
                 if sentence.attrib['line_num'] in skipped_lines:
                     continue
                 words = []
                 for word_idx, word in enumerate(sentence):
                     if word.tag != 'word':
-                        raise ValueError("Unexpected orchid xml layout: {} under {}".format(word.tag, sentence.tag))
+                        raise ValueError(f"Unexpected orchid xml layout: {word.tag} under {sentence.tag}")
                     word = word.attrib['surface']
                     word = escape_sequences.get(word, word)
                     if word == '<space>':
@@ -135,7 +135,7 @@ def parse_xml(tree):
                             words[-1] = (words[-1][0], True)
                             continue
                     if len(word) > 1 and word[0] == '<' and word not in allowed_sequences:
-                        raise ValueError("Unknown escape sequence {}".format(word))
+                        raise ValueError(f"Unknown escape sequence {word}")
                     words.append((word, False))
                 if len(words) == 0:
                     continue

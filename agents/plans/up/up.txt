@@ -1,0 +1,1095 @@
+demo\semgrex.py:14:11: UP031 Use format specifiers instead of percent format
+demo\semgrex.py:18:11: UP031 Use format specifiers instead of percent format
+stanza\models\charlm.py:224:21: UP031 Use format specifiers instead of percent format
+stanza\models\charlm.py:243:68: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:176:30: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:187:31: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:292:13: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:293:21: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:295:25: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:423:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:459:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:501:62: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:558:37: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:567:21: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:579:25: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:587:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:598:21: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:599:21: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:637:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifier.py:653:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\cnn_classifier.py:69:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\classifiers\cnn_classifier.py:297:22: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\cnn_classifier.py:298:22: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\cnn_classifier.py:299:22: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\cnn_classifier.py:305:30: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\config.py:2:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\classifiers\config.py:35:31: UP006 Use `list` instead of `List` for type annotation
+stanza\models\classifiers\config.py:36:30: UP006 Use `list` instead of `List` for type annotation
+stanza\models\classifiers\constituency_classifier.py:22:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\classifiers\constituency_classifier.py:55:30: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\data.py:8:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\classifiers\data.py:38:27: UP006 Use `list` instead of `List` for type annotation
+stanza\models\classifiers\data.py:38:63: UP006 Use `list` instead of `List` for type annotation
+stanza\models\classifiers\data.py:71:66: UP006 Use `list` instead of `List` for type annotation
+stanza\models\classifiers\iterate_test.py:44:13: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\iterate_test.py:51:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\iterate_test.py:55:21: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\iterate_test.py:62:17: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\trainer.py:227:22: UP031 Use format specifiers instead of percent format
+stanza\models\classifiers\trainer.py:287:25: UP031 Use format specifiers instead of percent format
+stanza\models\common\bert_embedding.py:17:26: UP031 Use format specifiers instead of percent format
+stanza\models\common\build_short_name_to_treebank.py:23:36: UP031 Use format specifiers instead of percent format
+stanza\models\common\build_short_name_to_treebank.py:28:30: UP031 Use format specifiers instead of percent format
+stanza\models\common\build_short_name_to_treebank.py:31:30: UP031 Use format specifiers instead of percent format
+stanza\models\common\build_short_name_to_treebank.py:37:7: UP031 Use format specifiers instead of percent format
+stanza\models\common\constant.py:396:30: UP031 Use format specifiers instead of percent format
+stanza\models\common\constant.py:520:36: UP031 Use format specifiers instead of percent format
+stanza\models\common\constant.py:552:30: UP031 Use format specifiers instead of percent format
+stanza\models\common\convert_pretrain.py:32:15: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:191:34: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:193:27: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:195:34: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:416:37: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:416:59: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:529:20: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:894:34: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:945:25: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:1094:36: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:1539:33: UP031 Use format specifiers instead of percent format
+stanza\models\common\doc.py:1541:33: UP031 Use format specifiers instead of percent format
+stanza\models\common\foundation_cache.py:61:25: UP031 Use format specifiers instead of percent format
+stanza\models\common\hlstm.py:14:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\hlstm.py:63:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\large_margin_loss.py:40:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\loss.py:53:30: UP031 Use format specifiers instead of percent format
+stanza\models\common\peft_config.py:28:69: UP031 Use format specifiers instead of percent format
+stanza\models\common\peft_config.py:29:70: UP031 Use format specifiers instead of percent format
+stanza\models\common\peft_config.py:30:74: UP031 Use format specifiers instead of percent format
+stanza\models\common\peft_config.py:31:79: UP031 Use format specifiers instead of percent format
+stanza\models\common\peft_config.py:32:80: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:88:29: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:121:28: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:126:38: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:253:22: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:256:22: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:260:22: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:263:22: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:269:26: UP031 Use format specifiers instead of percent format
+stanza\models\common\pretrain.py:272:26: UP031 Use format specifiers instead of percent format
+stanza\models\common\seq2seq_modules.py:18:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\seq2seq_modules.py:62:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\seq2seq_modules.py:110:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\seq2seq_modules.py:154:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\seq2seq_modules.py:197:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\common\utils.py:163:27: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:174:27: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:194:42: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:271:103: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:315:108: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:590:17: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:601:18: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:752:12: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:763:12: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:810:34: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:810:69: UP031 Use format specifiers instead of percent format
+stanza\models\common\utils.py:919:22: UP031 Use format specifiers instead of percent format
+stanza\models\common\vocab.py:75:20: UP031 Use format specifiers instead of percent format
+stanza\models\common\vocab.py:77:16: UP031 Use format specifiers instead of percent format
+stanza\models\common\vocab.py:157:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\base_trainer.py:116:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\base_trainer.py:152:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:81:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:83:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:85:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:87:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:161:24: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:162:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:166:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:398:25: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:398:109: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:422:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:447:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\ensemble.py:449:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\in_order_oracle.py:400:36: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\in_order_oracle.py:519:36: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\in_order_oracle.py:582:36: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\label_attention.py:90:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\constituency\label_attention.py:114:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\constituency\label_attention.py:156:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\constituency\label_attention.py:321:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\constituency\label_attention.py:379:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\constituency\label_attention.py:396:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\label_attention.py:648:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\lstm_model.py:442:38: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\lstm_model.py:642:42: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\lstm_model.py:701:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\lstm_model.py:708:32: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\lstm_model.py:712:20: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:153:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:155:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:157:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:167:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:289:16: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:315:20: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:317:20: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:318:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_transitions.py:491:16: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:147:31: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:152:31: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:154:35: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:160:31: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:238:38: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:269:31: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parse_tree.py:277:31: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:220:68: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:360:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:432:48: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:435:50: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:438:63: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:443:13: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:444:13: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:445:13: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:446:13: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:447:13: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:448:13: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:551:78: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:713:76: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:747:86: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\parser_training.py:778:22: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\partitioned_transformer.py:257:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\retagging.py:90:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\score_converted_dependencies.py:32:11: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\state.py:92:16: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\state.py:95:16: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\text_processing.py:56:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\text_processing.py:63:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\text_processing.py:109:21: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\top_down_oracle.py:20:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\top_down_oracle.py:115:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\top_down_oracle.py:263:36: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\top_down_oracle.py:372:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\top_down_oracle.py:423:36: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\trainer.py:88:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\transition_sequence.py:121:5: UP028 Replace `yield` over `for` loop with `yield from`
+stanza\models\constituency\tree_embedding.py:18:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\constituency\tree_embedding.py:103:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\tree_reader.py:31:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\tree_reader.py:39:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\tree_reader.py:49:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\tree_reader.py:208:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\tree_reader.py:219:30: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\tree_stack.py:50:9: UP028 Replace `yield` over `for` loop with `yield from`
+stanza\models\constituency\tree_stack.py:54:16: UP031 Use format specifiers instead of percent format
+stanza\models\constituency\utils.py:86:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency_parser.py:757:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency_parser.py:766:22: UP031 Use format specifiers instead of percent format
+stanza\models\constituency_parser.py:767:22: UP031 Use format specifiers instead of percent format
+stanza\models\constituency_parser.py:769:26: UP031 Use format specifiers instead of percent format
+stanza\models\constituency_parser.py:906:34: UP031 Use format specifiers instead of percent format
+stanza\models\constituency_parser.py:912:37: UP031 Use format specifiers instead of percent format
+stanza\models\coref\bert.py:4:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\bert.py:30:15: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:4:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\cluster_checker.py:4:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\coref\cluster_checker.py:44:40: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:44:45: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:45:40: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:45:45: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:115:19: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:115:24: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:116:24: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:116:29: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:116:49: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\cluster_checker.py:140:19: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:140:24: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:141:24: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:141:29: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:178:18: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:178:23: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:179:23: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:179:28: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:207:26: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:207:31: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:207:63: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\cluster_checker.py:207:68: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\config.py:7:1: UP035 `typing.Dict` is deprecated, use `dict` instead
+stanza\models\coref\config.py:7:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\config.py:46:26: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\config.py:47:27: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\config.py:62:23: UP006 Use `dict` instead of `Dict` for type annotation
+stanza\models\coref\conll.py:7:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\conll.py:15:27: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\conll.py:15:32: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\conll.py:16:24: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\const.py:4:1: UP035 `typing.Dict` is deprecated, use `dict` instead
+stanza\models\coref\const.py:4:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\const.py:4:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\coref\const.py:12:7: UP006 Use `dict` instead of `Dict` for type annotation
+stanza\models\coref\const.py:13:8: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\const.py:22:20: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\const.py:22:25: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\const.py:23:20: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\const.py:23:25: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\const.py:27:13: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\model.py:9:1: UP035 `typing.Dict` is deprecated, use `dict` instead
+stanza\models\coref\model.py:9:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\model.py:9:1: UP035 `typing.Set` is deprecated, use `set` instead
+stanza\models\coref\model.py:9:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\coref\model.py:86:21: UP006 Use `dict` instead of `Dict` for type annotation
+stanza\models\coref\model.py:86:31: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\model.py:121:23: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\model.py:121:36: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\model.py:141:37: UP031 Use format specifiers instead of percent format
+stanza\models\coref\model.py:219:39: UP006 Use `set` instead of `Set` for type annotation
+stanza\models\coref\model.py:265:43: UP006 Use `set` instead of `Set` for type annotation
+stanza\models\coref\model.py:320:37: UP006 Use `set` instead of `Set` for type annotation
+stanza\models\coref\model.py:324:37: UP031 Use format specifiers instead of percent format
+stanza\models\coref\model.py:326:37: UP031 Use format specifiers instead of percent format
+stanza\models\coref\model.py:379:23: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\model.py:427:18: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\model.py:427:23: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\model.py:458:34: UP031 Use format specifiers instead of percent format
+stanza\models\coref\model.py:703:25: UP006 Use `dict` instead of `Dict` for type annotation
+stanza\models\coref\model.py:716:26: UP006 Use `dict` instead of `Dict` for type annotation
+stanza\models\coref\model.py:717:26: UP006 Use `dict` instead of `Dict` for type annotation
+stanza\models\coref\model.py:801:39: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\pairwise_encoder.py:4:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\pairwise_encoder.py:74:35: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\rough_scorer.py:5:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\coref\rough_scorer.py:27:22: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\rough_scorer.py:46:21: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\span_predictor.py:5:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\span_predictor.py:5:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\coref\span_predictor.py:99:32: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\span_predictor.py:100:47: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\coref\span_predictor.py:114:27: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\span_predictor.py:114:32: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\span_predictor.py:114:47: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\span_predictor.py:114:52: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\utils.py:3:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\coref\utils.py:3:1: UP035 `typing.Set` is deprecated, use `set` instead
+stanza\models\coref\utils.py:14:21: UP006 Use `set` instead of `Set` for type annotation
+stanza\models\coref\utils.py:30:12: UP006 Use `list` instead of `List` for type annotation
+stanza\models\coref\word_encoder.py:4:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\coref\word_encoder.py:35:22: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\depparse\scorer.py:62:17: UP031 Use format specifiers instead of percent format
+stanza\models\depparse\trainer.py:190:28: UP031 Use format specifiers instead of percent format
+stanza\models\langid\model.py:20:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\langid\model.py:116:37: UP031 Use format specifiers instead of percent format
+stanza\models\lemma_classifier\base_model.py:19:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\lemma_classifier\base_model.py:60:66: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\base_model.py:60:71: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\base_model.py:60:94: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\base_model.py:60:99: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\base_model.py:118:30: UP031 Use format specifiers instead of percent format
+stanza\models\lemma_classifier\evaluate_models.py:13:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\lemma_classifier\evaluate_models.py:13:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\models\lemma_classifier\evaluate_models.py:53:44: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\evaluate_models.py:53:75: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\evaluate_models.py:110:80: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\evaluate_models.py:110:85: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\evaluate_models.py:110:108: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\evaluate_models.py:110:113: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\evaluate_models.py:129:106: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:8:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\lemma_classifier\lstm_model.py:45:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\lemma_classifier\lstm_model.py:125:39: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:125:44: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:130:36: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:130:58: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:130:63: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:130:86: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\lstm_model.py:130:91: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\prepare_dataset.py:8:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\lemma_classifier\prepare_dataset.py:25:55: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\prepare_dataset.py:37:49: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\prepare_dataset.py:51:28: UP031 Use format specifiers instead of percent format
+stanza\models\lemma_classifier\transformer_model.py:6:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\lemma_classifier\transformer_model.py:30:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\models\lemma_classifier\transformer_model.py:62:39: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\transformer_model.py:62:44: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\transformer_model.py:65:38: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\transformer_model.py:65:60: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\transformer_model.py:65:65: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\transformer_model.py:65:88: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\transformer_model.py:65:93: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemma_classifier\utils.py:6:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\models\lemma_classifier\utils.py:123:95: UP006 Use `list` instead of `List` for type annotation
+stanza\models\lemmatizer.py:174:72: UP031 Use format specifiers instead of percent format
+stanza\models\mwt_expander.py:105:18: UP031 Use format specifiers instead of percent format
+stanza\models\mwt_expander.py:190:72: UP031 Use format specifiers instead of percent format
+stanza\models\mwt_expander.py:210:29: UP031 Use format specifiers instead of percent format
+stanza\models\mwt_expander.py:282:18: UP031 Use format specifiers instead of percent format
+stanza\models\ner\data.py:63:30: UP031 Use format specifiers instead of percent format
+stanza\models\ner\model.py:146:30: UP031 Use format specifiers instead of percent format
+stanza\models\ner\utils.py:156:34: UP031 Use format specifiers instead of percent format
+stanza\models\ner\utils.py:160:34: UP031 Use format specifiers instead of percent format
+stanza\models\ner\utils.py:167:30: UP031 Use format specifiers instead of percent format
+stanza\models\ner\utils.py:184:26: UP031 Use format specifiers instead of percent format
+stanza\models\ner\utils.py:187:26: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:195:45: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:252:26: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:260:26: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:312:68: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:405:26: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:419:32: UP031 Use format specifiers instead of percent format
+stanza\models\ner_tagger.py:459:24: UP031 Use format specifiers instead of percent format
+stanza\models\parser.py:72:71: UP031 Use format specifiers instead of percent format
+stanza\models\parser.py:270:21: UP031 Use format specifiers instead of percent format
+stanza\models\parser.py:275:33: UP031 Use format specifiers instead of percent format
+stanza\models\parser.py:319:68: UP031 Use format specifiers instead of percent format
+stanza\models\parser.py:337:37: UP031 Use format specifiers instead of percent format
+stanza\models\pos\build_xpos_vocab_factory.py:67:17: UP031 Use format specifiers instead of percent format
+stanza\models\pos\build_xpos_vocab_factory.py:121:27: UP031 Use format specifiers instead of percent format
+stanza\models\pos\build_xpos_vocab_factory.py:122:24: UP031 Use format specifiers instead of percent format
+stanza\models\pos\build_xpos_vocab_factory.py:122:85: UP031 Use format specifiers instead of percent format
+stanza\models\pos\vocab.py:40:9: UP028 Replace `yield` over `for` loop with `yield from`
+stanza\models\pos\vocab.py:44:55: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:51:71: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:185:25: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:189:37: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:195:44: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:197:25: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:205:28: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:216:25: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:218:25: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:220:25: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:234:44: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:260:21: UP031 Use format specifiers instead of percent format
+stanza\models\tagger.py:293:68: UP031 Use format specifiers instead of percent format
+stanza\models\tokenization\data.py:312:34: UP031 Use format specifiers instead of percent format
+stanza\models\tokenization\data.py:315:34: UP031 Use format specifiers instead of percent format
+stanza\models\tokenization\tokenize_files.py:54:15: UP031 Use format specifiers instead of percent format
+stanza\models\tokenization\utils.py:398:36: UP031 Use format specifiers instead of percent format
+stanza\models\tokenization\utils.py:441:34: UP031 Use format specifiers instead of percent format
+stanza\models\tokenization\utils.py:527:50: UP031 Use format specifiers instead of percent format
+stanza\models\tokenizer.py:189:68: UP031 Use format specifiers instead of percent format
+stanza\pipeline\core.py:160:30: UP031 Use format specifiers instead of percent format
+stanza\pipeline\core.py:324:49: UP031 Use format specifiers instead of percent format
+stanza\pipeline\core.py:474:23: UP031 Use format specifiers instead of percent format
+stanza\pipeline\core.py:475:16: UP031 Use format specifiers instead of percent format
+stanza\pipeline\ner_processor.py:74:50: UP031 Use format specifiers instead of percent format
+stanza\pipeline\ner_processor.py:76:51: UP031 Use format specifiers instead of percent format
+stanza\pipeline\ner_processor.py:98:16: UP031 Use format specifiers instead of percent format
+stanza\pipeline\pos_processor.py:36:16: UP031 Use format specifiers instead of percent format
+stanza\pipeline\tokenize_processor.py:49:30: UP031 Use format specifiers instead of percent format
+stanza\pipeline\tokenize_processor.py:78:30: UP031 Use format specifiers instead of percent format
+stanza\resources\common.py:112:34: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:32:58: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:33:59: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:139:24: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:191:8: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:430:34: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:445:23: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:452:34: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:454:30: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:459:34: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:461:30: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:496:15: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:511:15: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:521:23: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:572:23: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:635:42: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:654:35: UP031 Use format specifiers instead of percent format
+stanza\resources\prepare_resources.py:715:11: UP031 Use format specifiers instead of percent format
+stanza\resources\print_charlm_depparse.py:16:15: UP031 Use format specifiers instead of percent format
+stanza\server\client.py:140:62: UP031 Use format specifiers instead of percent format
+stanza\server\client.py:363:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\dependency_converter.py:36:26: UP031 Use format specifiers instead of percent format
+stanza\server\dependency_converter.py:43:30: UP031 Use format specifiers instead of percent format
+stanza\server\dependency_converter.py:45:30: UP031 Use format specifiers instead of percent format
+stanza\server\dependency_converter.py:51:34: UP031 Use format specifiers instead of percent format
+stanza\server\dependency_converter.py:73:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\java_protobuf_requests.py:258:21: UP031 Use format specifiers instead of percent format
+stanza\server\java_protobuf_requests.py:294:34: UP031 Use format specifiers instead of percent format
+stanza\server\morphology.py:55:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\parser_eval.py:71:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\semgrex.py:95:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\semgrex.py:137:30: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:141:37: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:147:35: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:149:38: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:151:42: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:156:38: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:156:76: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:158:38: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:158:77: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:163:42: UP031 Use format specifiers instead of percent format
+stanza\server\semgrex.py:171:34: UP031 Use format specifiers instead of percent format
+stanza\server\ssurgeon.py:44:63: UP031 Use format specifiers instead of percent format
+stanza\server\ssurgeon.py:221:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\ssurgeon.py:303:27: UP031 Use format specifiers instead of percent format
+stanza\server\tsurgeon.py:73:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\server\ud_enhancer.py:61:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\tests\classifiers\test_classifier.py:213:104: UP031 Use format specifiers instead of percent format
+stanza\tests\classifiers\test_classifier.py:237:103: UP031 Use format specifiers instead of percent format
+stanza\tests\common\test_char_model.py:121:37: UP031 Use format specifiers instead of percent format
+stanza\tests\common\test_doc.py:122:36: UP031 Use format specifiers instead of percent format
+stanza\tests\common\test_doc.py:130:36: UP031 Use format specifiers instead of percent format
+stanza\tests\common\test_doc.py:132:16: UP031 Use format specifiers instead of percent format
+stanza\tests\constituency\test_trainer.py:204:36: UP031 Use format specifiers instead of percent format
+stanza\tests\constituency\test_trainer.py:602:26: UP031 Use format specifiers instead of percent format
+stanza\tests\lemma_classifier\test_data_preparation.py:194:37: UP031 Use format specifiers instead of percent format
+stanza\tests\ner\test_combine_ner_datasets.py:22:31: UP031 Use format specifiers instead of percent format
+stanza\tests\ner\test_combine_ner_datasets.py:26:31: UP031 Use format specifiers instead of percent format
+stanza\tests\ner\test_combine_ner_datasets.py:33:32: UP031 Use format specifiers instead of percent format
+stanza\tests\ner\test_ner_training.py:264:1: SyntaxError: Unexpected indentation
+stanza\tests\ner\test_ner_training.py:265:1: SyntaxError: Expected a statement
+stanza\tests\pipeline\pipeline_device_tests.py:25:48: UP031 Use format specifiers instead of percent format
+stanza\tests\pipeline\pipeline_device_tests.py:41:47: UP031 Use format specifiers instead of percent format
+stanza\tests\pos\test_tagger.py:151:42: UP031 Use format specifiers instead of percent format
+stanza\tests\pos\test_tagger.py:272:37: UP031 Use format specifiers instead of percent format
+stanza\tests\pos\test_tagger.py:273:39: UP031 Use format specifiers instead of percent format
+stanza\tests\pos\test_xpos_vocab_factory.py:34:23: UP031 Use format specifiers instead of percent format
+stanza\tests\resources\test_default_packages.py:10:110: UP031 Use format specifiers instead of percent format
+stanza\tests\resources\test_default_packages.py:17:64: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\conll17_to_text.py:44:15: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\conll17_to_text.py:47:11: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\dump_oscar.py:55:24: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\dump_oscar.py:59:30: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\dump_oscar.py:84:30: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\dump_oscar.py:90:22: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\dump_oscar.py:93:22: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\dump_oscar.py:96:11: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\make_lm_data.py:115:38: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\make_lm_data.py:139:32: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\oscar_to_text.py:21:11: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\oscar_to_text.py:39:11: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\oscar_to_text.py:70:19: UP031 Use format specifiers instead of percent format
+stanza\utils\charlm\oscar_to_text.py:72:23: UP031 Use format specifiers instead of percent format
+stanza\utils\conll.py:48:37: UP031 Use format specifiers instead of percent format
+stanza\utils\conll.py:50:37: UP031 Use format specifiers instead of percent format
+stanza\utils\conll.py:72:38: UP031 Use format specifiers instead of percent format
+stanza\utils\conll.py:80:42: UP031 Use format specifiers instead of percent format
+stanza\utils\constituency\grep_dev_logs.py:11:25: UP031 Use format specifiers instead of percent format
+stanza\utils\constituency\grep_dev_logs.py:23:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\common.py:51:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\common.py:90:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\common.py:286:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\build_silver_dataset.py:111:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_alt.py:28:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_alt.py:49:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_alt.py:73:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_alt.py:78:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_alt.py:96:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_arboretum.py:150:14: UP008 Use `super()` instead of `super(__class__, self)`
+stanza\utils\datasets\constituency\convert_arboretum.py:212:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_arboretum.py:215:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_cintil.py:55:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_cintil.py:58:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_cintil.py:67:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_cintil.py:68:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_cintil.py:70:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_cintil.py:72:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:35:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:52:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:129:9: UP028 Replace `yield` over `for` loop with `yield from`
+stanza\utils\datasets\constituency\convert_ctb.py:140:9: UP028 Replace `yield` over `for` loop with `yield from`
+stanza\utils\datasets\constituency\convert_ctb.py:175:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:178:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:183:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:185:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:193:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:208:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_ctb.py:211:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:113:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:308:35: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:418:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:499:43: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:505:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:508:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:509:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:509:67: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:512:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:513:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:513:71: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:524:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:541:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:542:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:550:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:551:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:622:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:657:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_it_vit.py:666:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_spmrl.py:22:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_spmrl.py:27:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_starlang.py:74:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_starlang.py:87:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_starlang.py:88:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\convert_starlang.py:89:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\extract_all_silver_dataset.py:37:20: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:334:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:352:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:376:48: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:412:44: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:414:46: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:464:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:465:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:483:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:494:74: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:510:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:522:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:532:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:533:27: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:535:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:540:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\prepare_con_dataset.py:590:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\reduce_dataset.py:34:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\reduce_dataset.py:35:25: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\selftrain_it.py:110:17: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\silver_variance.py:79:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_holdout.py:17:43: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_holdout.py:20:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_holdout.py:34:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_holdout.py:38:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_holdout.py:44:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_holdout.py:45:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_weighted_ensemble.py:30:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_weighted_ensemble.py:31:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_weighted_ensemble.py:50:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_weighted_ensemble.py:53:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_weighted_ensemble.py:64:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\split_weighted_ensemble.py:66:51: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\tokenize_wiki.py:84:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\treebank_to_labeled_brackets.py:48:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\utils.py:13:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\utils.py:14:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\utils.py:15:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\utils.py:16:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\utils.py:20:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\vtb_convert.py:193:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\vtb_convert.py:231:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\vtb_convert.py:236:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\vtb_split.py:40:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\vtb_split.py:41:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\constituency\vtb_split.py:42:41: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hebrew_iahlt.py:48:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hebrew_iahlt.py:132:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hebrew_iahlt.py:150:76: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hebrew_iahlt.py:153:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hebrew_mixed.py:34:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hindi.py:148:60: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hindi.py:151:61: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hindi.py:162:60: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_hindi.py:165:69: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_ontonotes.py:233:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_ontonotes.py:245:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_ontonotes.py:250:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_ontonotes.py:260:59: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_tamil.py:78:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_tamil.py:92:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:248:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:251:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:267:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:273:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:290:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:301:67: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:302:65: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref.py:313:76: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:174:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:176:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:192:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:198:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:214:59: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:223:67: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\coref\convert_udcoref_1.2.py:224:65: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:40:46: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:55:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:60:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:62:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:64:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:68:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\depparse\check_results.py:71:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\build_en_combined.py:25:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\build_en_combined.py:46:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\build_en_combined.py:66:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\build_en_combined.py:88:50: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\build_en_combined.py:93:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\build_en_combined.py:95:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\check_for_duplicates.py:49:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\conll_to_iob.py:46:31: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\conll_to_iob.py:49:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_amt.py:58:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_amt.py:77:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_amt.py:141:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_amt.py:213:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_amt.py:216:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ar_aqmar.py:81:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ar_aqmar.py:96:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsf_to_beios.py:7:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\utils\datasets\ner\convert_bsf_to_beios.py:176:77: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\utils\datasets\ner\convert_bsnlp.py:29:25: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:34:25: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:40:25: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:46:25: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:52:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:105:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:110:18: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:140:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:146:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:155:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:159:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:168:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:207:36: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:211:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:227:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:231:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:238:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:245:36: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:258:17: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:265:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:282:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:284:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:297:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:299:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:305:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_bsnlp.py:309:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_fire_2013.py:23:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_fire_2013.py:25:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_fire_2013.py:27:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_fire_2013.py:73:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_fire_2013.py:76:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_he_iahlt.py:66:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_he_iahlt.py:77:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_he_iahlt.py:94:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_hy_armtdp.py:142:104: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:46:46: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:50:46: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:63:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:74:43: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:84:78: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:86:45: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:86:68: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:101:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ijc.py:115:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_kk_kazNERD.py:22:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_lst20.py:28:54: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_mr_l3cube.py:32:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_mr_l3cube.py:53:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_my_ucsy.py:86:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_my_ucsy.py:94:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_my_ucsy.py:97:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_my_ucsy.py:99:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:51:27: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:55:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:66:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:70:61: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:71:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:72:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:73:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:136:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:140:35: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:144:39: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:148:36: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:221:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nkjp.py:224:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nner22.py:23:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nner22.py:24:59: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nner22.py:26:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nner22.py:70:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nytk.py:15:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nytk.py:22:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nytk.py:24:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nytk.py:27:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_nytk.py:29:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_ontonotes.py:45:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_rgai.py:22:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_rgai.py:27:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_sindhi_siner.py:44:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\convert_sindhi_siner.py:57:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\count_entities.py:23:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\json_to_bio.py:20:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\json_to_bio.py:33:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\json_to_bio.py:39:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\misc_to_date.py:55:43: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\misc_to_date.py:77:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\ontonotes_multitag.py:24:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\ontonotes_multitag.py:48:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\ontonotes_multitag.py:75:50: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\ontonotes_multitag.py:79:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\ontonotes_multitag.py:81:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:535:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:537:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:538:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:559:36: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:562:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:564:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:582:20: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:598:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:611:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:613:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:615:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:616:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:618:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:630:91: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:632:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:633:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:653:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:660:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:664:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:678:18: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:680:44: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:684:66: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:687:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:688:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:689:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:694:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:709:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:711:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:714:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:717:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:724:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:736:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:738:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:740:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:744:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:752:54: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:753:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:756:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:829:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:831:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:836:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:838:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:851:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:870:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:871:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:881:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:882:54: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:886:54: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:889:54: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:911:47: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:936:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:960:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:961:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:962:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:982:60: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:983:60: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:984:60: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:992:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1013:47: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1014:18: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1019:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1022:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1056:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1072:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1109:49: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1119:41: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1143:49: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1150:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1167:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1203:41: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1242:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1252:46: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1280:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1299:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1338:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1341:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1345:49: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1346:62: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1356:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1410:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1413:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1415:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1464:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1465:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1535:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\prepare_ner_dataset.py:1566:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\simplify_en_worldwide.py:88:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\simplify_en_worldwide.py:109:42: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\simplify_en_worldwide.py:115:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\simplify_ontonotes_to_worldwide.py:87:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\simplify_ontonotes_to_worldwide.py:113:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\split_wikiner.py:90:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:33:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:37:45: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:43:27: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:60:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:64:75: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:65:73: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_conll_to_iob.py:66:74: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\suc_to_iob.py:170:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:43:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:44:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:67:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:69:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:73:41: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:74:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:75:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:102:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:104:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:118:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:139:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:143:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:182:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:192:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:226:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:248:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:276:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:285:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:286:104: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:292:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:293:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:301:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:343:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\ner\utils.py:346:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:31:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:33:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:38:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:42:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:44:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:49:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:51:32: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:55:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:65:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:68:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:75:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pos\convert_trees_to_pos.py:76:41: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_depparse_treebank.py:62:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_depparse_treebank.py:84:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_depparse_treebank.py:90:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:23:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:53:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:61:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:65:52: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:67:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:134:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_classifier.py:141:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_lemma_treebank.py:57:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_mwt_treebank.py:35:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_mwt_treebank.py:42:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_mwt_treebank.py:67:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_mwt_treebank.py:72:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_pos_treebank.py:23:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_data.py:53:65: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_data.py:138:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:49:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:104:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:129:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:190:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:192:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:196:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:287:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:372:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:387:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:396:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:461:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:526:31: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:560:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:566:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:568:35: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:579:39: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:626:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:667:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:831:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:836:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:873:29: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:889:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:894:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:910:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:926:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:931:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:936:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:941:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:962:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:990:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1038:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1045:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1090:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1095:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1157:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1167:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1184:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1191:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1217:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1223:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1226:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1228:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1299:54: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1299:93: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1301:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1336:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1484:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1492:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\prepare_tokenizer_treebank.py:1495:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\pretrain\word_in_pretrain.py:25:73: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\random_split_conllu.py:61:56: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\random_split_conllu.py:62:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:41:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:46:69: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:48:71: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:53:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:58:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:84:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:91:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:93:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\add_constituency.py:96:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_poetry_classification.py:24:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_poetry_classification.py:25:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_poetry_classification.py:46:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_poetry_classification.py:56:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_poetry_classification.py:57:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_poetry_classification.py:59:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_sentence_classification.py:25:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_sentence_classification.py:46:21: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_sentence_classification.py:55:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_sentence_classification.py:58:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\convert_italian_sentence_classification.py:70:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_MELD.py:61:47: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_MELD.py:72:62: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_airline.py:64:48: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_arguana_xml.py:69:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_corona.py:54:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_corona.py:55:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_corona.py:63:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_corona.py:64:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_corona.py:65:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:44:22: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:58:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:64:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:76:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:82:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:109:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:125:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:181:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:184:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:226:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:227:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:228:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:232:47: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_es_tass2020.py:236:51: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_ren_chinese.py:81:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_ren_chinese.py:82:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_ren_chinese.py:83:53: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sb10k.py:60:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sb10k.py:61:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sb10k.py:62:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sb10k.py:66:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sb10k.py:67:57: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sb10k.py:69:61: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_scare.py:74:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_scare.py:76:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_scare.py:89:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_scare.py:94:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_slsd.py:57:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_slsd.py:62:48: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_sst.py:33:15: UP022 Prefer `capture_output` over sending `stdout` and `stderr` to `PIPE`
+stanza\utils\datasets\sentiment\process_sst.py:58:44: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_usage_german.py:59:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_usage_german.py:61:58: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_utils.py:47:51: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_utils.py:99:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_utils.py:101:19: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\sentiment\process_vsfc_vietnamese.py:42:51: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:82:26: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:98:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:139:27: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:142:34: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:144:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:185:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:193:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:203:55: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:204:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:211:36: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:216:36: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_ml_cochin.py:219:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:51:61: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:77:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:98:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:115:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:125:30: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:139:16: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:143:20: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:145:20: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_my_alt.py:171:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:80:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:81:23: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:99:38: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:109:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:134:11: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:162:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_text_files.py:164:37: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_th_lst20.py:120:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_th_lst20.py:122:15: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:49:24: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:53:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:59:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:68:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:69:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:72:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:74:28: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:139:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\convert_vi_vlsp.py:141:33: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\process_thai_tokenization.py:21:40: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\process_thai_tokenization.py:24:46: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\process_thai_tokenization.py:25:47: UP031 Use format specifiers instead of percent format
+stanza\utils\datasets\tokenization\process_thai_tokenization.py:48:40: UP031 Use format specifiers instead of percent format
+stanza\utils\languages\kazakh_transliteration.py:312:20: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\flair_ner_tag_dataset.py:43:11: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\flair_ner_tag_dataset.py:68:11: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\flair_ner_tag_dataset.py:79:15: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\spacy_ner_tag_dataset.py:75:53: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\spacy_ner_tag_dataset.py:84:11: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\spacy_ner_tag_dataset.py:111:11: UP031 Use format specifiers instead of percent format
+stanza\utils\ner\spacy_ner_tag_dataset.py:120:15: UP031 Use format specifiers instead of percent format
+stanza\utils\pretrain\compare_pretrains.py:16:7: UP031 Use format specifiers instead of percent format
+stanza\utils\pretrain\compare_pretrains.py:36:36: UP031 Use format specifiers instead of percent format
+stanza\utils\pretrain\compare_pretrains.py:43:11: UP031 Use format specifiers instead of percent format
+stanza\utils\pretrain\compare_pretrains.py:44:11: UP031 Use format specifiers instead of percent format
+stanza\utils\pretrain\compare_pretrains.py:46:11: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:156:22: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:168:42: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:175:29: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:195:33: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:198:33: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:211:34: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:212:36: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:327:45: UP031 Use format specifiers instead of percent format
+stanza\utils\training\common.py:402:26: UP031 Use format specifiers instead of percent format
+stanza\utils\training\compose_ete_results.py:87:24: UP031 Use format specifiers instead of percent format
+stanza\utils\training\compose_ete_results.py:87:52: UP031 Use format specifiers instead of percent format
+stanza\utils\training\compose_ete_results.py:93:17: UP031 Use format specifiers instead of percent format
+stanza\utils\training\compose_ete_results.py:97:10: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_charlm.py:46:21: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_charlm.py:79:12: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_depparse.py:64:26: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_depparse.py:69:26: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma.py:54:22: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma.py:86:22: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma.py:169:44: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma_classifier.py:39:34: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma_classifier.py:48:67: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma_classifier.py:51:66: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma_classifier.py:66:66: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_lemma_classifier.py:75:66: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_mwt.py:66:21: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_mwt.py:70:21: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_mwt.py:75:21: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_pos.py:64:30: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_pos.py:72:30: UP031 Use format specifiers instead of percent format
+stanza\utils\training\run_sentiment.py:81:37: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:86:15: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:137:23: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:145:23: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:147:23: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:162:27: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:182:19: UP031 Use format specifiers instead of percent format
+stanza\utils\training\separate_ner_pretrain.py:183:19: UP031 Use format specifiers instead of percent format
+stanza\utils\visualization\semgrex_app.py:16:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\utils\visualization\semgrex_app.py:16:1: UP035 `typing.Tuple` is deprecated, use `tuple` instead
+stanza\utils\visualization\semgrex_app.py:20:37: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\utils\visualization\semgrex_app.py:39:25: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_app.py:58:35: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\utils\visualization\semgrex_app.py:95:20: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\utils\visualization\semgrex_app.py:95:36: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_app.py:95:47: UP006 Use `tuple` instead of `Tuple` for type annotation
+stanza\utils\visualization\semgrex_app.py:109:19: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_visualizer.py:15:1: UP035 `typing.List` is deprecated, use `list` instead
+stanza\utils\visualization\semgrex_visualizer.py:20:82: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_visualizer.py:236:46: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_visualizer.py:246:22: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_visualizer.py:252:6: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_visualizer.py:305:22: UP006 Use `list` instead of `List` for type annotation
+stanza\utils\visualization\semgrex_visualizer.py:575:14: UP006 Use `list` instead of `List` for type annotation
+Found 1093 errors.
+No fixes available (764 hidden fixes can be enabled with the `--unsafe-fixes` option).

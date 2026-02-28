@@ -3,11 +3,10 @@ from collections import defaultdict
 import logging
 import os
 import re
-import sys
 from zipfile import ZipFile
 
 from stanza.models.common.constant import treebank_to_short_name
-from stanza.models.pos.xpos_vocab_utils import DEFAULT_KEY, choose_simplest_factory, XPOSType
+from stanza.models.pos.xpos_vocab_utils import DEFAULT_KEY, choose_simplest_factory
 from stanza.models.common.doc import *
 from stanza.utils.conll import CoNLL
 from stanza.utils import default_paths
@@ -18,13 +17,13 @@ DATA_DIR = default_paths.get_default_paths()['POS_DATA_DIR']
 logger = logging.getLogger('stanza')
 
 def get_xpos_factory(shorthand, fn):
-    logger.info('Resolving vocab option for {}...'.format(shorthand))
+    logger.info(f'Resolving vocab option for {shorthand}...')
     doc = None
-    train_file = os.path.join(DATA_DIR, '{}.train.in.conllu'.format(shorthand))
+    train_file = os.path.join(DATA_DIR, f'{shorthand}.train.in.conllu')
     if os.path.exists(train_file):
         doc = CoNLL.conll2doc(input_file=train_file)
     else:
-        zip_file = os.path.join(DATA_DIR, '{}.train.in.zip'.format(shorthand))
+        zip_file = os.path.join(DATA_DIR, f'{shorthand}.train.in.zip')
         if os.path.exists(zip_file):
             with ZipFile(zip_file) as zin:
                 for train_file in zin.namelist():
@@ -32,12 +31,12 @@ def get_xpos_factory(shorthand, fn):
                     if any(word.xpos for sentence in doc.sentences for word in sentence.words):
                         break
                 else:
-                    raise ValueError('Found training data in {}, but none of the files contained had xpos'.format(zip_file))
+                    raise ValueError(f'Found training data in {zip_file}, but none of the files contained had xpos')
 
     if doc is None:
-        raise FileNotFoundError('Training data for {} not found.  To generate the XPOS vocabulary '
+        raise FileNotFoundError(f'Training data for {fn} not found.  To generate the XPOS vocabulary '
                                 'for this treebank properly, please run the following command first:\n'
-                                '  python3 stanza/utils/datasets/prepare_pos_treebank.py {}'.format(fn, fn))
+                                f'  python3 stanza/utils/datasets/prepare_pos_treebank.py {fn}')
         # without the training file, there's not much we can do
         key = DEFAULT_KEY
         return key

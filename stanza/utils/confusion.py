@@ -99,9 +99,9 @@ def format_confusion(confusion, labels=None, hide_zeroes=False, hide_blank=False
             break
 
     if all_ints:
-        format_cell = lambda confusion_cell: "%{0}d".format(columnwidth) % confusion_cell
+        format_cell = lambda confusion_cell: f"%{columnwidth}d" % confusion_cell
     else:
-        format_cell = lambda confusion_cell: "%{0}.1f".format(columnwidth) % confusion_cell
+        format_cell = lambda confusion_cell: f"%{columnwidth}.1f" % confusion_cell
 
     # make sure the columnwidth can handle long numbers
     for i, label1 in enumerate(gold_labels):
@@ -124,12 +124,12 @@ def format_confusion(confusion, labels=None, hide_zeroes=False, hide_blank=False
         fst_empty_cell = " " * (len(empty_cell) - len(fst_empty_cell)) + fst_empty_cell
     header = "    " + fst_empty_cell + " "
     for label in pred_labels:
-        header = header + "%{0}s ".format(columnwidth) % str(label)
+        header = header + f"%{columnwidth}s " % str(label)
     text = [header.rstrip()]
 
     # Print rows
     for i, label1 in enumerate(gold_labels):
-        row = "    %{0}s ".format(columnwidth) % str(label1)
+        row = f"    %{columnwidth}s " % str(label1)
         for j, label2 in enumerate(pred_labels):
             confusion_cell = confusion.get(label1, {}).get(label2, 0)
             cell = format_cell(confusion_cell)

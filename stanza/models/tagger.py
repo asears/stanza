@@ -15,7 +15,6 @@ import zipfile
 
 import numpy as np
 import torch
-from torch import nn, optim
 
 from stanza.models.pos.data import Dataset, ShuffledDataset
 from stanza.models.pos.trainer import Trainer
@@ -25,7 +24,6 @@ from stanza.models.common import pretrain
 from stanza.models.common.doc import *
 from stanza.models.common.foundation_cache import FoundationCache
 from stanza.models.common.peft_config import add_peft_args, resolve_peft_args
-from stanza.models import _training_logging
 from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
@@ -192,7 +190,7 @@ def load_training_data(args, pretrain):
                         train_str = fin.read()
                         train_str = train_str.decode("utf-8")
                         train_file_data, _, _ = CoNLL.conll2dict(input_str=train_str)
-                        logger.info("Train File {} from {}, Data Size: {}".format(zipped_train_file, train_file, len(train_file_data)))
+                        logger.info(f"Train File {zipped_train_file} from {train_file}, Data Size: {len(train_file_data)}")
                         train_docs.append(Document(train_file_data))
                         train_files.append("%s %s" % (train_file, zipped_train_file))
         else:
@@ -200,7 +198,7 @@ def load_training_data(args, pretrain):
             # train_data is now a list of sentences, where each sentence is a
             # list of words, in which each word is a dict of conll attributes
             train_file_data, _, _ = CoNLL.conll2dict(input_file=train_file)
-            logger.info("Train File {}, Data Size: {}".format(train_file, len(train_file_data)))
+            logger.info(f"Train File {train_file}, Data Size: {len(train_file_data)}")
             train_docs.append(Document(train_file_data))
             train_files.append(train_file)
     if sum(len(x.sentences) for x in train_docs) == 0:
@@ -232,7 +230,7 @@ def load_training_data(args, pretrain):
             for sentence_idx, sentence in enumerate(upos_data):
                 for word_idx, upos in enumerate(sentence):
                     if upos == '_' or upos is None:
-                        conll = "{:C}".format(td.doc.sentences[sentence_idx])
+                        conll = f"{td.doc.sentences[sentence_idx]:C}"
                         raise RuntimeError("Found a blank tag in the UPOS at sentence %d word %d of %s.\n%s" % ((sentence_idx+1), (word_idx+1), train_files[td_idx], conll))
 
     # here we make sure the model will learn to output _ for empty columns
@@ -350,13 +348,13 @@ def train(args):
                 dev_preds = utils.unsort(dev_preds, indices)
                 dev_data.doc.set([UPOS, XPOS, FEATS], [y for x in dev_preds for y in x])
 
-                system_pred_file = "{:C}\n\n".format(dev_data.doc)
+                system_pred_file = f"{dev_data.doc:C}\n\n"
                 system_pred_file = io.StringIO(system_pred_file)
 
                 _, _, dev_score = scorer.score(system_pred_file, args['eval_file'], eval_type=eval_type)
 
                 train_loss = train_loss / args['eval_interval'] # avg loss per batch
-                logger.info("step {}: train_loss = {:.6f}, dev_score = {:.4f}".format(global_step, train_loss, dev_score))
+                logger.info(f"step {global_step}: train_loss = {train_loss:.6f}, dev_score = {dev_score:.4f}")
 
                 if args['wandb']:
                     wandb.log({'train_loss': train_loss, 'dev_score': dev_score})
@@ -399,7 +397,7 @@ def train(args):
 
         if do_break: break
 
-    logger.info("Training ended with {} steps.".format(global_step))
+    logger.info(f"Training ended with {global_step} steps.")
 
     if args['wandb']:
         wandb.finish()
@@ -423,7 +421,7 @@ def evaluate(args):
                  'charlm_backward_file': args.get('charlm_backward_file', None)}
 
     # load model
-    logger.info("Loading model from: {}".format(model_file))
+    logger.info(f"Loading model from: {model_file}")
     trainer = Trainer(pretrain=pretrain, model_file=model_file, device=args['device'], args=load_args)
     result_doc = evaluate_trainer(args, trainer, pretrain)
     return trainer, result_doc
@@ -462,7 +460,7 @@ def evaluate_trainer(args, trainer, pretrain):
         CoNLL.write_doc2conll(dev_data.doc, system_pred_file)
 
     if args['gold_labels']:
-        system_pred_file = "{:C}\n\n".format(dev_data.doc)
+        system_pred_file = f"{dev_data.doc:C}\n\n"
         system_pred_file = io.StringIO(system_pred_file)
 
         _, _, score = scorer.score(system_pred_file, args['eval_file'], eval_type=eval_type)

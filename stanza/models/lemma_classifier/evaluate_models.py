@@ -10,20 +10,19 @@ import logging
 import argparse
 import os
 
-from typing import Any, List, Tuple, Mapping
+from typing import Any, List, Tuple
+from collections.abc import Mapping
 from collections import defaultdict
-from numpy import random
 
 import torch
 import torch.nn as nn
 
-import stanza
 
 from stanza.models.common.utils import default_device
 from stanza.models.lemma_classifier import utils
 from stanza.models.lemma_classifier.base_model import LemmaClassifier
-from stanza.models.lemma_classifier.lstm_model import LemmaClassifierLSTM
-from stanza.models.lemma_classifier.transformer_model import LemmaClassifierWithTransformer
+# Lazy import to avoid requiring transformers for non-transformer models
+# from stanza.models.lemma_classifier.transformer_model import LemmaClassifierWithTransformer
 from stanza.utils.confusion import format_confusion
 from stanza.utils.get_tqdm import get_tqdm
 

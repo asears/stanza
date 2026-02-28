@@ -554,7 +554,7 @@ def treebank_to_short_name(treebank):
 
     lcode = lang_to_langcode(lang)
 
-    short = "{}_{}".format(lcode, corpus.lower())
+    short = f"{lcode}_{corpus.lower()}"
     return short
 
 def treebank_to_langid(treebank):

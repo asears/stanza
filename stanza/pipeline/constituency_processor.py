@@ -4,7 +4,6 @@ Processor that attaches a constituency tree to a sentence
 
 from stanza.models.constituency.trainer import Trainer
 
-from stanza.models.common import doc
 from stanza.models.common.utils import sort_with_indices, unsort
 from stanza.utils.get_tqdm import get_tqdm
 from stanza.pipeline._constants import *

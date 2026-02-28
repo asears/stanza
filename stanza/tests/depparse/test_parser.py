@@ -5,9 +5,9 @@ Uses a couple sentences of UD_English-EWT as training/dev data
 """
 
 import os
-import pytest
 import zipfile
 
+import pytest
 import torch
 
 from stanza.models import parser
@@ -15,7 +15,7 @@ from stanza.models.common import pretrain
 from stanza.models.depparse.trainer import Trainer
 from stanza.tests import TEST_WORKING_DIR
 
-pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
 
 TRAIN_DATA = """
 # sent_id = weblog-juancole.com_juancole_20051126063000_ENG_20051126_063000-0003
@@ -72,7 +72,6 @@ DEV_DATA = """
 """.lstrip()
 
 
-
 class TestParser:
     @pytest.fixture(scope="class")
     def wordvec_pretrain_file(self):
@@ -90,9 +89,8 @@ class TestParser:
         save_file = str(tmp_path / save_name)
 
         if zip_train_data:
-            with zipfile.ZipFile(train_file, "w") as zout:
-                with zout.open('train.conllu', 'w') as fout:
-                    fout.write(train_text.encode())
+            with zipfile.ZipFile(train_file, "w") as zout, zout.open('train.conllu', 'w') as fout:
+                fout.write(train_text.encode())
         else:
             with open(train_file, "w", encoding="utf-8") as fout:
                 fout.write(train_text)
@@ -150,27 +148,30 @@ class TestParser:
         """
         self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, zip_train_data=True)
 
+    @pytest.mark.transformers
     def test_with_bert_nlayers(self, tmp_path, wordvec_pretrain_file):
         self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert', '--bert_hidden_layers', '2'])
 
+    @pytest.mark.transformers
     def test_with_bert_finetuning(self, tmp_path, wordvec_pretrain_file):
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert', '--bert_finetune', '--bert_hidden_layers', '2'])
-        assert 'bert_optimizer' in trainer.optimizer.keys()
-        assert 'bert_scheduler' in trainer.scheduler.keys()
+        assert 'bert_optimizer' in trainer.optimizer
+        assert 'bert_scheduler' in trainer.scheduler
 
+    @pytest.mark.transformers
     def test_with_bert_finetuning_resaved(self, tmp_path, wordvec_pretrain_file):
         """
         Check that if we save, then load, then save a model with a finetuned bert, that bert isn't lost
         """
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert', '--bert_finetune', '--bert_hidden_layers', '2'])
-        assert 'bert_optimizer' in trainer.optimizer.keys()
-        assert 'bert_scheduler' in trainer.scheduler.keys()
+        assert 'bert_optimizer' in trainer.optimizer
+        assert 'bert_scheduler' in trainer.scheduler
 
         save_name = trainer.args['save_name']
         filename = tmp_path / save_name
         assert os.path.exists(filename)
         checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
-        assert any(x.startswith("bert_model") for x in checkpoint['model'].keys())
+        assert any(x.startswith("bert_model") for x in checkpoint['model'])
 
         # Test loading the saved model, saving it, and still having bert in it
         # even if we have set bert_finetune to False for this incarnation
@@ -182,12 +183,13 @@ class TestParser:
 
         # This is the part that would fail if the force_bert_saved option did not exist
         checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
-        assert any(x.startswith("bert_model") for x in checkpoint['model'].keys())
+        assert any(x.startswith("bert_model") for x in checkpoint['model'])
 
+    @pytest.mark.transformers
     def test_with_peft(self, tmp_path, wordvec_pretrain_file):
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert', '--bert_finetune', '--bert_hidden_layers', '2', '--use_peft'])
-        assert 'bert_optimizer' in trainer.optimizer.keys()
-        assert 'bert_scheduler' in trainer.scheduler.keys()
+        assert 'bert_optimizer' in trainer.optimizer
+        assert 'bert_scheduler' in trainer.scheduler
 
     def test_single_optimizer_checkpoint(self, tmp_path, wordvec_pretrain_file):
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--optim', 'adam'])
@@ -232,4 +234,3 @@ class TestParser:
         assert len(checkpoint.optimizer) == 1
         for opt in trainer.optimizer.values():
             assert isinstance(opt, torch.optim.SGD)
-

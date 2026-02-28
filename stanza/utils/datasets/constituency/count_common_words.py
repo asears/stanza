@@ -2,7 +2,6 @@ import sys
 
 from collections import Counter
 
-from stanza.models.constituency import parse_tree
 from stanza.models.constituency import tree_reader
 
 word_counter = Counter()

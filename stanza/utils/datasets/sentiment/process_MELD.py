@@ -49,7 +49,7 @@ def get_phrases(in_filename):
         elif sentiment == 'positive':
             sentiment = '2'
         else:
-            raise ValueError("Unknown sentiment: {}".format(sentiment))
+            raise ValueError(f"Unknown sentiment: {sentiment}")
         utterance = line[1].replace("Â", "")
         phrases.append(SentimentDatum(sentiment, utterance))
     return phrases
@@ -62,7 +62,7 @@ def get_tokenized_phrases(split, in_directory):
     phrases = get_phrases(in_filename)
 
     phrases = process_utils.get_ptb_tokenized_phrases(phrases)
-    print("Found {} phrases in MELD {}".format(len(phrases), split))
+    print(f"Found {len(phrases)} phrases in MELD {split}")
     return phrases
 
 def main(in_directory, out_directory, short_name):

@@ -4,13 +4,13 @@ Test conllu manipulating routines in stanza/utils/dataset/common.py
 
 import pytest
 
-
 from stanza.utils.datasets.common import maybe_add_fake_dependencies
+
 # from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
-DEPS_EXAMPLE="""
+DEPS_EXAMPLE = """
 # text = Sh'reyan's antennae are hella thicc
 1	Sh'reyan	Sh'reyan	PROPN	NNP	Number=Sing	3	nmod:poss	3:nmod:poss	SpaceAfter=No
 2	's	's	PART	POS	_	1	case	1:case	_
@@ -21,7 +21,7 @@ DEPS_EXAMPLE="""
 """.strip().split("\n")
 
 
-ONLY_ROOT_EXAMPLE="""
+ONLY_ROOT_EXAMPLE = """
 # text = Sh'reyan's antennae are hella thicc
 1	Sh'reyan	Sh'reyan	PROPN	NNP	Number=Sing	_	_	_	SpaceAfter=No
 2	's	's	PART	POS	_	_	_	_	_
@@ -31,7 +31,7 @@ ONLY_ROOT_EXAMPLE="""
 6	thicc	thicc	ADJ	JJ	Degree=Pos	0	root	0:root	_
 """.strip().split("\n")
 
-ONLY_ROOT_EXPECTED="""
+ONLY_ROOT_EXPECTED = """
 # text = Sh'reyan's antennae are hella thicc
 1	Sh'reyan	Sh'reyan	PROPN	NNP	Number=Sing	6	dep	_	SpaceAfter=No
 2	's	's	PART	POS	_	1	dep	_	_
@@ -41,7 +41,7 @@ ONLY_ROOT_EXPECTED="""
 6	thicc	thicc	ADJ	JJ	Degree=Pos	0	root	0:root	_
 """.strip().split("\n")
 
-NO_DEPS_EXAMPLE="""
+NO_DEPS_EXAMPLE = """
 # text = Sh'reyan's antennae are hella thicc
 1	Sh'reyan	Sh'reyan	PROPN	NNP	Number=Sing	_	_	_	SpaceAfter=No
 2	's	's	PART	POS	_	_	_	_	_
@@ -51,7 +51,7 @@ NO_DEPS_EXAMPLE="""
 6	thicc	thicc	ADJ	JJ	Degree=Pos	_	_	_	_
 """.strip().split("\n")
 
-NO_DEPS_EXPECTED="""
+NO_DEPS_EXPECTED = """
 # text = Sh'reyan's antennae are hella thicc
 1	Sh'reyan	Sh'reyan	PROPN	NNP	Number=Sing	0	root	_	SpaceAfter=No
 2	's	's	PART	POS	_	1	dep	_	_
@@ -65,6 +65,7 @@ NO_DEPS_EXPECTED="""
 def test_fake_deps_no_change():
     result = maybe_add_fake_dependencies(DEPS_EXAMPLE)
     assert result == DEPS_EXAMPLE
+
 
 def test_fake_deps_all_tokens():
     result = maybe_add_fake_dependencies(NO_DEPS_EXAMPLE)

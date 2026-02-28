@@ -7,9 +7,8 @@ import tempfile
 
 import pytest
 
-from stanza.utils.datasets.ner import split_wikiner
-
 from stanza.tests import *
+from stanza.utils.datasets.ner import split_wikiner
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
@@ -134,6 +133,7 @@ def test_read_sentences():
         text = "\n\n".join(text)
         assert FBK_SAMPLE.strip() == text
 
+
 def test_write_sentences():
     with tempfile.TemporaryDirectory() as tempdir:
         raw_filename = os.path.join(tempdir, "raw.tsv")
@@ -146,6 +146,7 @@ def test_write_sentences():
 
         sent2 = split_wikiner.read_sentences(raw_filename, "utf-8")
         assert sent2 == sentences
+
 
 def run_split_wikiner(expected_train=14, expected_dev=3, expected_test=3, **kwargs):
     """
@@ -188,15 +189,18 @@ def run_split_wikiner(expected_train=14, expected_dev=3, expected_test=3, **kwar
                 split_sents = train_sent + dev_sent + test_sent
             assert orig_sents == split_sents
 
+
 def test_no_shuffle_split():
     run_split_wikiner(prefix="it_fbk", shuffle=False, test_section=True)
+
 
 def test_shuffle_split():
     run_split_wikiner(prefix="it_fbk", shuffle=True, test_section=True)
 
+
 def test_resize():
     run_split_wikiner(expected_train=12, expected_dev=2, expected_test=6, train_fraction=0.6, dev_fraction=0.1, prefix="it_fbk", shuffle=True, test_section=True)
 
+
 def test_no_test_split():
     run_split_wikiner(expected_train=17, train_fraction=0.85, prefix="it_fbk", shuffle=False, test_section=False)
-

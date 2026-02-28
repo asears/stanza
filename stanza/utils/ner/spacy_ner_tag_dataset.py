@@ -84,7 +84,7 @@ def test_file(eval_file, tagger, simplify):
     print("RESULTS ON: %s" % eval_file)
     _, _, f_micro, _ = score_by_entity(pred_tags, gold_tags, ignore_tags=ignore_tags)
     _, _, _, confusion = score_by_token(pred_tags, gold_tags, ignore_tags=ignore_tags)
-    print("NER token confusion matrix:\n{}".format(format_confusion(confusion, hide_blank=True, transpose=True)))
+    print(f"NER token confusion matrix:\n{format_confusion(confusion, hide_blank=True, transpose=True)}")
     return f_micro
 
 def main():

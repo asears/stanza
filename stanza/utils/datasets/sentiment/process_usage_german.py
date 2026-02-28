@@ -38,7 +38,7 @@ def main(in_directory, out_directory, short_name):
                 begin = int(begin)
                 end = int(end)
                 if len(snippet) != end - begin:
-                    raise ValueError("Error found in {} line {}.  Expected {} got {}".format(csv_filename, index, (end-begin), len(snippet)))
+                    raise ValueError(f"Error found in {csv_filename} line {index}.  Expected {end-begin} got {len(snippet)}")
                 if sentiment.lower() == 'unknown':
                     continue
                 elif sentiment.lower() == 'positive':
@@ -48,7 +48,7 @@ def main(in_directory, out_directory, short_name):
                 elif sentiment.lower() == 'negative':
                     sentiment = 0
                 else:
-                    raise ValueError("Tell John he screwed up and this is why he can't have Mox Opal: {}".format(sentiment))
+                    raise ValueError(f"Tell John he screwed up and this is why he can't have Mox Opal: {sentiment}")
                 doc = nlp(snippet)
                 text = [token.text for sentence in doc.sentences for token in sentence.tokens]
                 num_tokens = sum(len(sentence.tokens) for sentence in doc.sentences)

@@ -4,7 +4,6 @@ Baseline model for the existing lemmatizer which always predicts "be" and never 
 The BaselineModel class can be updated to any arbitrary token and predicton lemma, not just "be" on the "s" token.
 """
 
-import stanza
 import os
 from stanza.models.lemma_classifier.evaluate_models import evaluate_sequences
 from stanza.models.lemma_classifier.prepare_dataset import load_doc_from_conll_file

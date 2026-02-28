@@ -51,7 +51,7 @@ class SentimentProcessor(UDProcessor):
                                save_dir = None)
         filename = config['model_path']
         if filename is None:
-            raise FileNotFoundError("No model specified for the sentiment processor.  Perhaps it is not supported for the language.  {}".format(config))
+            raise FileNotFoundError(f"No model specified for the sentiment processor.  Perhaps it is not supported for the language.  {config}")
         # set up model
         trainer = Trainer.load(filename=filename,
                                args=args,

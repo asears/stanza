@@ -16,18 +16,12 @@ and suffixes are used to stop early during the window-dictionary checking proces
 """
 
 import argparse
-from copy import copy
 import logging
-import random
-import numpy as np
 import os
-import torch
-import json
 from stanza.models.common import utils
 from stanza.models.tokenization.trainer import Trainer
 from stanza.models.tokenization.data import DataLoader, TokenizationDataset
 from stanza.models.tokenization.utils import load_mwt_dict, eval_model, output_predictions, load_lexicon, create_dictionary
-from stanza.models import _training_logging
 
 logger = logging.getLogger('stanza')
 
@@ -203,7 +197,7 @@ def train(args):
 
         loss = trainer.update(batch)
         if step % args['report_steps'] == 0:
-            logger.info("Step {:6d}/{:6d} Loss: {:.3f}".format(step, steps, loss))
+            logger.info(f"Step {step:6d}/{steps:6d} Loss: {loss:.3f}")
             if args['wandb']:
                 wandb.log({'train_loss': loss}, step=step)
 
@@ -214,7 +208,7 @@ def train(args):
             dev_score = eval_model(args, trainer, dev_batches, vocab, mwt_dict)
             if args['wandb']:
                 wandb.log({'dev_score': dev_score}, step=step)
-            reports = ['Dev score: {:6.3f}'.format(dev_score * 100)]
+            reports = [f'Dev score: {dev_score * 100:6.3f}']
             if step >= args['anneal_after'] and dev_score < prev_dev_score:
                 reports += ['lr: {:.6f} -> {:.6f}'.format(lr, lr * args['anneal'])]
                 lr *= args['anneal']
@@ -228,7 +222,7 @@ def train(args):
                 best_dev_step = step
                 trainer.save(args['save_name'])
             elif best_dev_step > 0 and step - best_dev_step > args['max_steps_before_stop']:
-                reports += ['Stopping training after {} steps with no improvement'.format(step - best_dev_step)]
+                reports += [f'Stopping training after {step - best_dev_step} steps with no improvement']
                 logger.info('\t'.join(reports))
                 break
 
@@ -238,7 +232,7 @@ def train(args):
         wandb.finish()
 
     if best_dev_step > -1:
-        logger.info('Best dev score={} at step {}'.format(best_dev_score, best_dev_step))
+        logger.info(f'Best dev score={best_dev_score} at step {best_dev_step}')
     else:
         logger.info('Dev set never evaluated.  Saving final model')
         trainer.save(args['save_name'])
@@ -264,7 +258,7 @@ def evaluate(args):
 
     oov_count, N, _, doc = output_predictions(args['conll_file'], trainer, batches, vocab, mwt_dict, args['max_seqlen'])
 
-    logger.info("OOV rate: {:6.3f}% ({:6d}/{:6d})".format(oov_count / N * 100, oov_count, N))
+    logger.info(f"OOV rate: {oov_count / N * 100:6.3f}% ({oov_count:6d}/{N:6d})")
 
     return trainer, doc
 

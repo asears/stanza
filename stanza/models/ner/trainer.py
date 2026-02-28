@@ -2,16 +2,14 @@
 A trainer class to handle training and testing of models.
 """
 
-import sys
 import logging
 import torch
-from torch import nn
 
 from stanza.models.common.foundation_cache import NoTransformerFoundationCache, load_bert, load_bert_with_peft
 from stanza.models.common.peft_config import build_peft_wrapper, load_peft_wrapper
 from stanza.models.common.trainer import Trainer as BaseTrainer
 from stanza.models.common.vocab import VOCAB_PREFIX, VOCAB_PREFIX_SIZE
-from stanza.models.common import utils, loss
+from stanza.models.common import utils
 from stanza.models.ner.model import NERTagger
 from stanza.models.ner.vocab import MultiVocab
 from stanza.models.common.crf import viterbi_decode
@@ -191,7 +189,7 @@ class Trainer(BaseTrainer):
             params["bert_lora"] = get_peft_model_state_dict(self.model.bert_model, adapter_name=self.model.peft_name)
         try:
             torch.save(params, filename, _use_new_zipfile_serialization=False)
-            logger.info("Model saved to {}".format(filename))
+            logger.info(f"Model saved to {filename}")
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -201,7 +199,7 @@ class Trainer(BaseTrainer):
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         except BaseException:
-            logger.error("Cannot load model from {}".format(filename))
+            logger.error(f"Cannot load model from {filename}")
             raise
         self.args = checkpoint['config']
         if args: self.args.update(args)

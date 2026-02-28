@@ -2,13 +2,10 @@
 A trainer class to handle training and testing of models.
 """
 
-import sys
-import numpy as np
 from collections import Counter
 import logging
 import torch
 from torch import nn
-import torch.nn.init as init
 
 import stanza.models.common.seq2seq_constant as constant
 from stanza.models.common.trainer import Trainer as BaseTrainer
@@ -192,7 +189,7 @@ class Trainer(BaseTrainer):
                 }
         try:
             torch.save(params, filename, _use_new_zipfile_serialization=False)
-            logger.info("Model saved to {}".format(filename))
+            logger.info(f"Model saved to {filename}")
         except BaseException:
             logger.warning("Saving failed... continuing anyway.")
 
@@ -200,7 +197,7 @@ class Trainer(BaseTrainer):
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         except BaseException:
-            logger.error("Cannot load model from {}".format(filename))
+            logger.error(f"Cannot load model from {filename}")
             raise
         self.args = checkpoint['config']
         self.expansion_dict = checkpoint['dict']

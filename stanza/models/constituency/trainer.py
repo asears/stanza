@@ -12,7 +12,6 @@ import copy
 import logging
 import os
 
-import torch
 
 from stanza.models.common.foundation_cache import load_bert, load_bert_with_peft, load_charlm, load_pretrain, NoTransformerFoundationCache
 from stanza.models.common.peft_config import build_peft_wrapper, load_peft_wrapper, pop_peft_args
@@ -195,7 +194,7 @@ class Trainer(BaseTrainer):
                               unary_limit=params['unary_limit'],
                               args=saved_args)
         else:
-            raise ValueError("Unknown model type {}".format(model_type))
+            raise ValueError(f"Unknown model type {model_type}")
         model.load_state_dict(params['model'], strict=False)
         # model will stay on CPU if device==None
         # can be moved elsewhere later, of course

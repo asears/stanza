@@ -1,7 +1,7 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, PackedSequence
+from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence
 
 from stanza.models.common.char_model import CharacterLanguageModelWordAdapter
 from stanza.models.common.foundation_cache import load_charlm

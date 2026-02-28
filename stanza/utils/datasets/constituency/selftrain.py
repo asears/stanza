@@ -8,7 +8,6 @@ import random
 import re
 
 import stanza
-from stanza.models.common import utils
 from stanza.models.common.bert_embedding import TextTooLongError
 from stanza.utils.get_tqdm import get_tqdm
 
@@ -137,10 +136,10 @@ def split_docs(docs, ssplit_pipe, max_len=140, max_word_len=50, chunk_size=2000)
     return new_docs
 
 # from https://stackoverflow.com/questions/2718196/find-all-chinese-text-in-a-string-using-python-and-regex
-ZH_RE = re.compile(u'[⺀-⺙⺛-⻳⼀-⿕々〇〡-〩〸-〺〻㐀-䶵一-鿃豈-鶴侮-頻並-龎]', re.UNICODE)
+ZH_RE = re.compile('[⺀-⺙⺛-⻳⼀-⿕々〇〡-〩〸-〺〻㐀-䶵一-鿃豈-鶴侮-頻並-龎]', re.UNICODE)
 # https://stackoverflow.com/questions/6787716/regular-expression-for-japanese-characters
-JA_RE = re.compile(u'[一-龠ぁ-ゔァ-ヴー々〆〤ヶ]', re.UNICODE)
-DEV_RE = re.compile(u'[\u0900-\u097f]', re.UNICODE)
+JA_RE = re.compile('[一-龠ぁ-ゔァ-ヴー々〆〤ヶ]', re.UNICODE)
+DEV_RE = re.compile('[\u0900-\u097f]', re.UNICODE)
 
 def tokenize_docs(docs, pipe, min_len, max_len):
     """

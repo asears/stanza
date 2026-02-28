@@ -8,6 +8,7 @@ import warnings
 
 import torch
 
+
 def check_on_gpu(pipeline):
     """
     Check that the processors are all on the GPU and that basic execution works
@@ -27,6 +28,7 @@ def check_on_gpu(pipeline):
     # just check that there are no cpu/cuda tensor conflicts
     # when running on the GPU
     pipeline("This is a small test")
+
 
 def check_on_cpu(pipeline):
     """

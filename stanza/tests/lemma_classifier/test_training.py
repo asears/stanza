@@ -1,23 +1,24 @@
-import glob
-import os
 
 import pytest
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
-from stanza.models.lemma_classifier import train_lstm_model
-from stanza.models.lemma_classifier import train_transformer_model
-from stanza.models.lemma_classifier.base_model import LemmaClassifier
-from stanza.models.lemma_classifier.evaluate_models import evaluate_model
-
+# Defer imports that might transitively import transformers
+# Import them inside test functions when needed
 from stanza.tests import TEST_WORKING_DIR
 from stanza.tests.lemma_classifier.test_data_preparation import convert_english_dataset
+
 
 @pytest.fixture(scope="module")
 def pretrain_file():
     return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
 
+
 def test_train_lstm(tmp_path, pretrain_file):
+    from stanza.models.lemma_classifier import train_lstm_model
+    from stanza.models.lemma_classifier.base_model import LemmaClassifier
+    from stanza.models.lemma_classifier.evaluate_models import evaluate_model
+
     converted_files = convert_english_dataset(tmp_path)
 
     save_name = str(tmp_path / 'lemma.pt')
@@ -34,7 +35,14 @@ def test_train_lstm(tmp_path, pretrain_file):
     # test that loading the model works
     model = LemmaClassifier.load(save_name, None)
 
+
+@pytest.mark.transformers
 def test_train_transformer(tmp_path, pretrain_file):
+    pytest.importorskip("transformers")
+    from stanza.models.lemma_classifier import train_transformer_model
+    from stanza.models.lemma_classifier.base_model import LemmaClassifier
+    from stanza.models.lemma_classifier.evaluate_models import evaluate_model
+
     converted_files = convert_english_dataset(tmp_path)
 
     save_name = str(tmp_path / 'lemma.pt')

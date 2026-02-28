@@ -65,7 +65,7 @@ def write_section(output_dir, dataset_name, section, documents):
                         # Note the faked dependency structure: the conll reading code
                         # needs it even if it isn't being used in any way
                         fake_dep = 'root' if word_idx == 0 else 'dep'
-                        fout.write('{}\t{}\t_\t_\t_\t_\t{}\t{}\t{}:{}\t{}\n'.format(word_idx+1, word[0], word_idx, fake_dep, word_idx, fake_dep, space))
+                        fout.write(f'{word_idx+1}\t{word[0]}\t_\t_\t_\t_\t{word_idx}\t{fake_dep}\t{word_idx}:{fake_dep}\t{space}\n')
                     fout.write('\n')
 
 def write_dataset(documents, output_dir, dataset_name):
@@ -111,7 +111,7 @@ def reprocess_lines(processed_lines):
             raise NameError("Sentences cannot be reprocessed without first installing pythainlp") from e
         # Check that the total text back is the same as the text in
         if sum(len(x) for x in chunks) != len(text):
-            raise ValueError("Got unexpected text length: \n{}\nvs\n{}".format(text, chunks))
+            raise ValueError(f"Got unexpected text length: \n{text}\nvs\n{chunks}")
 
         chunk_lengths = [len(x) for x in chunks]
 
@@ -167,7 +167,7 @@ def convert_processed_lines(processed_lines):
             if not word:
                 if len(sentence) == 0:
                     print(word)
-                    raise ValueError("Unexpected space at start of sentence in document {}".format(filename))
+                    raise ValueError(f"Unexpected space at start of sentence in document {filename}")
                 sentence[-1] = (sentence[-1][0], True)
             else:
                 sentence.append((word, False))

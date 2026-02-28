@@ -26,7 +26,7 @@ def main():
         pt = Pretrain(pt_filename)
 
     for word in args.words:
-        print("{}: {}".format(word, word in pt.vocab))
+        print(f"{word}: {word in pt.vocab}")
 
 if __name__ == "__main__":
     main()

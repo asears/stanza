@@ -3,10 +3,10 @@ Basic testing of lemmatization
 """
 
 import pytest
-import stanza
 
+import stanza
+from stanza.models.common.doc import LEMMA, TEXT, UPOS
 from stanza.tests import *
-from stanza.models.common.doc import TEXT, UPOS, LEMMA
 
 pytestmark = pytest.mark.pipeline
 
@@ -34,30 +34,33 @@ California California
 
 
 def test_identity_lemmatizer():
-    nlp = stanza.Pipeline(**{'processors': 'tokenize,lemma', 'dir': TEST_MODELS_DIR, 'lang': 'en', 'lemma_use_identity': True}, download_method=None)
+    nlp = stanza.Pipeline(processors='tokenize,lemma', dir=TEST_MODELS_DIR, lang='en', lemma_use_identity=True, download_method=None)
     doc = nlp(EN_DOC)
     word_lemma_pairs = []
     for w in doc.iter_words():
         word_lemma_pairs += [f"{w.text} {w.lemma}"]
-    assert EN_DOC_IDENTITY_GOLD == "\n".join(word_lemma_pairs)
+    assert "\n".join(word_lemma_pairs) == EN_DOC_IDENTITY_GOLD
+
 
 def test_full_lemmatizer():
-    nlp = stanza.Pipeline(**{'processors': 'tokenize,pos,lemma', 'dir': TEST_MODELS_DIR, 'lang': 'en'}, download_method=None)
+    nlp = stanza.Pipeline(processors='tokenize,pos,lemma', dir=TEST_MODELS_DIR, lang='en', download_method=None)
     doc = nlp(EN_DOC)
     word_lemma_pairs = []
     for w in doc.iter_words():
         word_lemma_pairs += [f"{w.text} {w.lemma}"]
-    assert EN_DOC_LEMMATIZER_MODEL_GOLD == "\n".join(word_lemma_pairs)
+    assert "\n".join(word_lemma_pairs) == EN_DOC_LEMMATIZER_MODEL_GOLD
+
 
 def find_unknown_word(lemmatizer, base):
     for i in range(10):
         base = base + "z"
-        if base not in lemmatizer.word_dict and all(x[0] != base for x in lemmatizer.composite_dict.keys()):
+        if base not in lemmatizer.word_dict and all(x[0] != base for x in lemmatizer.composite_dict):
             return base
     raise RuntimeError("wtf?")
 
+
 def test_store_results():
-    nlp = stanza.Pipeline(**{'processors': 'tokenize,pos,lemma', 'dir': TEST_MODELS_DIR, 'lang': 'en'}, lemma_store_results=True, download_method=None)
+    nlp = stanza.Pipeline(processors='tokenize,pos,lemma', dir=TEST_MODELS_DIR, lang='en', lemma_store_results=True, download_method=None)
     lemmatizer = nlp.processors["lemma"]._trainer
 
     az = find_unknown_word(lemmatizer, "a")
@@ -72,9 +75,9 @@ def test_store_results():
     assert stuff[6][0] == bz
     assert stuff[11][0] == cz
 
-    assert lemmatizer.composite_dict[(az, stuff[3][1])] == stuff[3][2]
-    assert lemmatizer.composite_dict[(bz, stuff[6][1])] == stuff[6][2]
-    assert lemmatizer.composite_dict[(cz, stuff[11][1])] == stuff[11][2]
+    assert lemmatizer.composite_dict[az, stuff[3][1]] == stuff[3][2]
+    assert lemmatizer.composite_dict[bz, stuff[6][1]] == stuff[6][2]
+    assert lemmatizer.composite_dict[cz, stuff[11][1]] == stuff[11][2]
 
     doc2 = nlp("I found an " + az + " in my " + bz + ".  It was a " + cz)
     stuff2 = doc2.get([TEXT, UPOS, LEMMA])
@@ -93,9 +96,9 @@ def test_store_results():
     assert stuff[8][0] == ez
     assert stuff[11][0] == fz
 
-    assert lemmatizer.composite_dict[(dz, stuff[3][1])] == stuff[3][2]
-    assert lemmatizer.composite_dict[(ez, stuff[8][1])] == stuff[8][2]
-    assert lemmatizer.composite_dict[(fz, stuff[11][1])] == stuff[11][2]
+    assert lemmatizer.composite_dict[dz, stuff[3][1]] == stuff[3][2]
+    assert lemmatizer.composite_dict[ez, stuff[8][1]] == stuff[8][2]
+    assert lemmatizer.composite_dict[fz, stuff[11][1]] == stuff[11][2]
 
     doc2 = nlp("It was a " + dz + ".  I found an " + ez + " in my " + fz)
     stuff2 = doc2.get([TEXT, UPOS, LEMMA])
@@ -103,6 +106,7 @@ def test_store_results():
     assert stuff == stuff2
 
     assert az not in lemmatizer.word_dict
+
 
 def test_caseless_lemmatizer():
     """
@@ -119,6 +123,7 @@ def test_caseless_lemmatizer():
     doc = nlp("Here is an Excerpt")
     assert doc.sentences[0].words[-1].lemma == 'Excerpt'
 
+
 def test_latin_caseless_lemmatizer():
     """
     Test the Latin caseless lemmatizer
@@ -133,6 +138,7 @@ def test_latin_caseless_lemmatizer():
     assert len(doc.sentences[0].words) == 3
     for word, expected in zip(doc.sentences[0].words, expected_lemmas):
         assert word.lemma == expected
+
 
 def test_contextual_lemmatizer():
     nlp = stanza.Pipeline('en', processors='tokenize,pos,lemma', model_dir=TEST_MODELS_DIR, package={"lemma": "default_accurate"}, download_method="reuse_resources")

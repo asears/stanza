@@ -59,7 +59,7 @@ def postprocess_args(args):
     elif args['retag_method'] == 'upos':
         args['retag_xpos'] = False
     else:
-        raise ValueError("Unknown retag method {}".format(xpos))
+        raise ValueError(f"Unknown retag method {xpos}")
 
 def build_retag_pipeline(args):
     """

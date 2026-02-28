@@ -1,10 +1,6 @@
 import math
 import logging
-import numpy as np
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, pack_sequence, PackedSequence
 
 logger = logging.getLogger('stanza')
 
@@ -303,7 +299,7 @@ def extract_llama_embeddings(model_name, tokenizer, model, data, device, keep_en
         list_offsets.append(converted_offsets)
 
     if any(any(x is None for x in converted_offsets) for converted_offsets in list_offsets):
-        raise ValueError("OOPS, hit None when preparing to use transformer at idx {}\ndata[idx]: {}\nlist_offsets[idx]: {}\ntokenizer output: {}".format(idx, data[idx], list_offsets[idx], tokenized))
+        raise ValueError(f"OOPS, hit None when preparing to use transformer at idx {idx}\ndata[idx]: {data[idx]}\nlist_offsets[idx]: {list_offsets[idx]}\ntokenizer output: {tokenized}")
 
     features = []
     for i in range(int(math.ceil(len(data)/128))):
@@ -353,7 +349,7 @@ def extract_xlnet_embeddings(model_name, tokenizer, model, data, device, keep_en
             list_offsets[idx][offset+1] = pos + 1
         list_offsets[idx][-1] = list_offsets[idx][-2] + 1
         if any(x is None for x in list_offsets[idx]):
-            raise ValueError("OOPS, hit None when preparing to use Bert\ndata[idx]: {}\noffsets: {}\nlist_offsets[idx]: {}".format(data[idx], offsets, list_offsets[idx], tokenized))
+            raise ValueError(f"OOPS, hit None when preparing to use Bert\ndata[idx]: {data[idx]}\noffsets: {offsets}\nlist_offsets[idx]: {list_offsets[idx]}")
 
         if len(offsets) > tokenizer.model_max_length - 2:
             logger.error("Invalid size, max size: %d, got %d %s", tokenizer.model_max_length, len(offsets), data[idx])
@@ -497,7 +493,7 @@ def extract_base_embeddings(model_name, tokenizer, model, data, device, keep_end
             list_offsets.append(converted_offsets)
 
     if any(any(x is None for x in converted_offsets) for converted_offsets in list_offsets):
-        raise ValueError("OOPS, hit None when preparing to use transformer at idx {}\ndata[idx]: {}\nlist_offsets[idx]: {}\ntokenizer output: {}".format(idx, data[idx], list_offsets[idx], tokenized))
+        raise ValueError(f"OOPS, hit None when preparing to use transformer at idx {idx}\ndata[idx]: {data[idx]}\nlist_offsets[idx]: {list_offsets[idx]}\ntokenizer output: {tokenized}")
 
 
     features = []

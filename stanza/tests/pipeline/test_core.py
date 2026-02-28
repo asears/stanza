@@ -1,15 +1,15 @@
-import pytest
 import shutil
 import tempfile
 
+import pytest
+
 import stanza
-
-from stanza.tests import *
-
 from stanza.pipeline import core
 from stanza.resources.common import get_md5, load_resources_json
+from stanza.tests import *
 
 pytestmark = pytest.mark.pipeline
+
 
 def test_pretagged():
     """
@@ -22,6 +22,7 @@ def test_pretagged():
     nlp = stanza.Pipeline(lang='en', dir=TEST_MODELS_DIR, processors="tokenize,lemma,depparse", pretagged=True)
     # test that the module specific flag overrides the general flag
     nlp = stanza.Pipeline(lang='en', dir=TEST_MODELS_DIR, processors="tokenize,lemma,depparse", depparse_pretagged=True, pretagged=False)
+
 
 def test_download_missing_ner_model():
     """
@@ -67,6 +68,7 @@ def test_download_resources_overwrites():
         new_mod_time = os.path.getmtime(resources_path)
         assert mod_time != new_mod_time
 
+
 def test_reuse_resources_overwrites():
     """
     Test that the REUSE_RESOURCES method does *not* overwrite an existing resources.json
@@ -107,6 +109,7 @@ def test_download_not_repeated():
 
         pipe = stanza.Pipeline("en", model_dir=test_dir, processors="tokenize", package={"tokenize": "combined"})
         assert os.path.getmtime(tokenize_path) == mod_time
+
 
 def test_download_none():
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as test_dir:
@@ -158,6 +161,7 @@ def check_download_method_updates(download_method):
         pipe = stanza.Pipeline("en", model_dir=test_dir, processors="tokenize", package={"tokenize": "combined"}, download_method=download_method)
         assert os.path.getmtime(tokenize_path) != mod_time
 
+
 def test_download_fixed():
     """
     Test that a model is fixed if the existing model doesn't match the md5sum
@@ -165,12 +169,14 @@ def test_download_fixed():
     for download_method in (core.DownloadMethod.REUSE_RESOURCES, core.DownloadMethod.DOWNLOAD_RESOURCES):
         check_download_method_updates(download_method)
 
+
 def test_download_strings():
     """
     Same as the test of the download_method, but tests that the pipeline works for string download_method
     """
     for download_method in ("reuse_resources", "download_resources"):
         check_download_method_updates(download_method)
+
 
 def test_limited_pipeline():
     """
@@ -181,7 +187,7 @@ def test_limited_pipeline():
     assert all(word.upos is not None for sentence in doc.sentences for word in sentence.words)
     assert all(token.ner is not None for sentence in doc.sentences for token in sentence.tokens)
 
-    doc = pipe("John Bauer works at Stanford", processors=["tokenize","pos"])
+    doc = pipe("John Bauer works at Stanford", processors=["tokenize", "pos"])
     assert all(word.upos is not None for sentence in doc.sentences for word in sentence.words)
     assert not any(token.ner is not None for sentence in doc.sentences for token in sentence.tokens)
 
@@ -197,6 +203,7 @@ def test_limited_pipeline():
         # this should fail
         doc = pipe("John Bauer works at Stanford", processors="tokenize,depparse")
 
+
 @pytest.fixture(scope="module")
 def unknown_language_name():
     resources = load_resources_json(model_dir=TEST_MODELS_DIR)
@@ -206,12 +213,14 @@ def unknown_language_name():
     assert name != "en"
     return name
 
+
 def test_empty_unknown_language(unknown_language_name):
     """
     Check that there is an error for trying to load an unknown language
     """
     with pytest.raises(ValueError):
         pipe = stanza.Pipeline(unknown_language_name, model_dir=TEST_MODELS_DIR, download_method=None)
+
 
 def test_unknown_language_tokenizer(unknown_language_name):
     """
@@ -221,7 +230,7 @@ def test_unknown_language_tokenizer(unknown_language_name):
     # even if we one day add MWT to English, the tokenizer by itself should still work
     tokenize_processor = base_pipe.processors["tokenize"]
 
-    pipe=stanza.Pipeline(unknown_language_name,
+    pipe = stanza.Pipeline(unknown_language_name,
                          processors="tokenize",
                          allow_unknown_language=True,
                          tokenize_model_path=tokenize_processor.config['model_path'],
@@ -240,7 +249,7 @@ def test_unknown_language_mwt(unknown_language_name):
     tokenize_processor = base_pipe.processors["tokenize"]
     mwt_processor = base_pipe.processors["mwt"]
 
-    pipe=stanza.Pipeline(unknown_language_name,
+    pipe = stanza.Pipeline(unknown_language_name,
                          model_dir=TEST_MODELS_DIR,
                          processors="tokenize,mwt",
                          allow_unknown_language=True,

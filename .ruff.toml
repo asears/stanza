@@ -27,10 +27,40 @@ select = ["ALL"]
 
 # # Ignored Rules
 ignore = [
+    "I001",  # isort rules need config or reformat of files
+    "D100", # Missing docstring in public
+    "E302",  # 2 blank lines
+    "D",  # docstring warnings
+    "PLR0402",  # use aliases for pytorch?
+    "PLR6301",  # static method declares
+     "PLC",
+     "TRY",
+     "DOC201",
+     "COM812",
+     "CPY",
+     "D200",
+     "D400",
+     "D415",
+     "ANN",
      "D203",
      "D212",
      "Q000", # Single quotes found
-     "E501" #,   # Line too long
+     "E501", #,   # Line too long
+     "TD",
+     "G",
+     "UP",
+     "E305",
+     "PLR",
+     "EM101",
+     "E731",
+     "FURB",
+     "E251",
+     "E226",
+     "C",
+     "EM",
+     "ERA",
+     "FIX",
+     "E261",
 #     "E203",   # Whitespace before ':'
 #     # "W503",   # Line break before binary operator
 #     "B008",   # Do not perform function calls in argument defaults
@@ -51,10 +81,17 @@ exclude = [
     ".mypy_cache",
 ]
 
-# Per-File Ignores
-# [per-file-ignores]
-# "__init__.py" = ["F401"]               # Allow unused imports in __init__.py
-# "tests/**" = ["F401", "F841"]          # Allow unused imports and variables in tests
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]               # Allow unused imports in __init__.py
+"stanza/models/**" = ["G", "T201", "C901", "N806", "FIX", "TD", "SLF", "S101", "CPY", "ANN", "Q000", "E", "D","FURB", "FBT", "ERA", "SIM", "PIE", "RET", "DOC", "PLR", "PLW", "UP", "TRY", "PLC"]
+"stanza/pipeline/**" = ["G", "T201", "C901", "N806", "FIX", "TD", "SLF", "S101", "CPY", "ANN", "Q000", "E", "D","FURB", "FBT", "ERA", "SIM", "PIE", "RET", "DOC", "PLR", "PLW", "UP", "TRY", "PLC"]
+"stanza/protobuf/**" = ["G", "T201", "C901", "N806", "FIX", "TD", "SLF", "S101", "CPY", "ANN", "Q000", "E", "D","FURB", "FBT", "ERA", "SIM", "PIE", "RET", "DOC", "PLR", "PLW", "UP", "TRY", "PLC"]
+"stanza/resources/**" = ["G", "T201", "C901", "N806", "FIX", "TD", "SLF", "S101", "CPY", "ANN", "Q000", "E", "D","FURB", "FBT", "ERA", "SIM", "PIE", "RET", "DOC", "PLR", "PLW", "UP", "TRY", "PLC"]
+"stanza/server/**" = ["G", "T201", "C901", "N806", "FIX", "TD", "SLF", "S101", "CPY", "ANN", "Q000", "E", "D","FURB", "FBT", "ERA", "SIM", "PIE", "RET", "DOC", "PLR", "PLW", "UP", "TRY", "PLC"]
+"stanza/utils/**" = ["G", "T201", "C901", "N806", "FIX", "TD", "SLF", "S101", "CPY", "ANN", "Q000", "E", "D","FURB", "FBT", "ERA", "SIM", "PIE", "RET", "DOC", "PLR", "PLW", "UP", "TRY", "PLC"]
+
+"stanza/tests/**" = ["CPY", "ANN", "F401", "F841", "S101","Q","SLF","S101", "D", "E501"]  # Allow unused imports, variables, and asserts in tests
+"demo/**" = ["F401", "F841"]           # Allow unused imports and variables in demo scripts
 
 # isort Configuration (Import Sorting)
 # [lint.isort]

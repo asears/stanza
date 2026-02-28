@@ -1,7 +1,5 @@
 import random
-import numpy as np
-import os
-from collections import Counter, namedtuple
+from collections import namedtuple
 import logging
 
 import torch
@@ -9,10 +7,9 @@ from torch.nn.utils.rnn import pad_sequence
 from torch.utils.data import DataLoader as DL
 
 import stanza.models.common.seq2seq_constant as constant
-from stanza.models.common.data import map_to_ids, get_long_tensor, get_float_tensor, sort_all
+from stanza.models.common.data import sort_all
 from stanza.models.common.vocab import DeltaVocab
 from stanza.models.mwt.vocab import Vocab
-from stanza.models.common.doc import Document
 
 logger = logging.getLogger('stanza')
 

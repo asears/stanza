@@ -2,20 +2,20 @@
 Test a couple basic functions - load & save an existing model
 """
 
-import pytest
-
 import glob
 import os
 import tempfile
 
+import pytest
 import torch
 
 from stanza.models import lemmatizer
 from stanza.models.lemma import trainer
 from stanza.tests import *
-from stanza.utils.training.common import choose_lemma_charlm, build_charlm_args
+from stanza.utils.training.common import build_charlm_args, choose_lemma_charlm
 
-pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
+
 
 @pytest.fixture(scope="module")
 def english_model():
@@ -28,10 +28,12 @@ def english_model():
             return trainer.Trainer(model_file=model_file)
     raise FileNotFoundError("Should have downloaded the nocharlm English lemmatizer during setup.  Please rerun the setup script.")
 
+
 def test_load_model(english_model):
     """
     Does nothing, just tests that loading works
     """
+
 
 def test_save_load_model(english_model):
     """
@@ -41,6 +43,7 @@ def test_save_load_model(english_model):
         save_file = os.path.join(tempdir, "resaved", "lemma.pt")
         english_model.save(save_file)
         reloaded = trainer.Trainer(model_file=save_file)
+
 
 TRAIN_DATA = """
 # sent_id = weblog-juancole.com_juancole_20051126063000_ENG_20051126_063000-0003
@@ -95,13 +98,13 @@ DEV_DATA = """
 
 """.lstrip()
 
+
 class TestLemmatizer:
     @pytest.fixture(scope="class")
     def charlm_args(self):
         charlm = choose_lemma_charlm("en", "test", "default")
         charlm_args = build_charlm_args("en", charlm, model_dir=TEST_MODELS_DIR)
         return charlm_args
-
 
     def run_training(self, tmp_path, train_text, dev_text, extra_args=None):
         """
@@ -152,4 +155,4 @@ class TestLemmatizer:
         args = saved_model.args
         save_name = os.path.join(args['save_dir'], args['save_name'])
         checkpoint = torch.load(save_name, lambda storage, loc: storage, weights_only=True)
-        assert not any(x.startswith("contextual_embedding") for x in checkpoint['model'].keys())
+        assert not any(x.startswith("contextual_embedding") for x in checkpoint['model'])

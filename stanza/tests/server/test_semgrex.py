@@ -3,13 +3,12 @@ Test the semgrex interface
 """
 
 import pytest
-import stanza
-import stanza.server.semgrex as semgrex
+
 from stanza.models.common.doc import Document
 from stanza.protobuf import SemgrexRequest
-from stanza.utils.conll import CoNLL
-
+from stanza.server import semgrex
 from stanza.tests import *
+from stanza.utils.conll import CoNLL
 
 pytestmark = [pytest.mark.travis, pytest.mark.client]
 
@@ -23,7 +22,7 @@ TEST_ONE_SENTENCE = [[
         "feats": "Mood=Imp|VerbForm=Fin",
         "head": 0,
         "deprel": "root",
-        "misc": "start_char=0|end_char=5"
+        "misc": "start_char=0|end_char=5",
     },
     {
         "id": 2,
@@ -34,7 +33,7 @@ TEST_ONE_SENTENCE = [[
         "feats": "Number=Sing",
         "head": 3,
         "deprel": "compound",
-        "misc": "start_char=6|end_char=9"
+        "misc": "start_char=6|end_char=9",
     },
     {
         "id": 3,
@@ -46,7 +45,7 @@ TEST_ONE_SENTENCE = [[
         "head": 1,
         "deprel": "obj",
         "misc": "start_char=10|end_char=14",
-        "ner": "GEM"
+        "ner": "GEM",
     },
     {
         "id": 4,
@@ -56,7 +55,7 @@ TEST_ONE_SENTENCE = [[
         "xpos": ".",
         "head": 1,
         "deprel": "punct",
-        "misc": "start_char=14|end_char=15"
+        "misc": "start_char=14|end_char=15",
     }]]
 
 TEST_TWO_SENTENCES = [[
@@ -69,7 +68,7 @@ TEST_TWO_SENTENCES = [[
       "feats": "Mood=Imp|VerbForm=Fin",
       "head": 0,
       "deprel": "root",
-      "misc": "start_char=0|end_char=5"
+      "misc": "start_char=0|end_char=5",
     },
     {
       "id": 2,
@@ -80,7 +79,7 @@ TEST_TWO_SENTENCES = [[
       "feats": "Number=Sing",
       "head": 3,
       "deprel": "compound",
-      "misc": "start_char=6|end_char=9"
+      "misc": "start_char=6|end_char=9",
     },
     {
       "id": 3,
@@ -91,7 +90,7 @@ TEST_TWO_SENTENCES = [[
       "feats": "Number=Sing",
       "head": 1,
       "deprel": "obj",
-      "misc": "start_char=10|end_char=14"
+      "misc": "start_char=10|end_char=14",
     },
     {
       "id": 4,
@@ -101,7 +100,7 @@ TEST_TWO_SENTENCES = [[
       "xpos": ".",
       "head": 1,
       "deprel": "punct",
-      "misc": "start_char=14|end_char=15"
+      "misc": "start_char=14|end_char=15",
     }],
     [{
       "id": 1,
@@ -112,7 +111,7 @@ TEST_TWO_SENTENCES = [[
       "feats": "Mood=Imp|VerbForm=Fin",
       "head": 0,
       "deprel": "root",
-      "misc": "start_char=16|end_char=21"
+      "misc": "start_char=16|end_char=21",
     },
     {
       "id": 2,
@@ -123,7 +122,7 @@ TEST_TWO_SENTENCES = [[
       "feats": "Number=Sing",
       "head": 3,
       "deprel": "compound",
-      "misc": "start_char=22|end_char=25"
+      "misc": "start_char=22|end_char=25",
     },
     {
       "id": 3,
@@ -134,7 +133,7 @@ TEST_TWO_SENTENCES = [[
       "feats": "Number=Sing",
       "head": 1,
       "deprel": "obj",
-      "misc": "start_char=26|end_char=30"
+      "misc": "start_char=26|end_char=30",
     },
     {
       "id": 4,
@@ -144,7 +143,7 @@ TEST_TWO_SENTENCES = [[
       "xpos": ".",
       "head": 1,
       "deprel": "punct",
-      "misc": "start_char=30|end_char=31"
+      "misc": "start_char=30|end_char=31",
     }]]
 
 ONE_SENTENCE_DOC = Document(TEST_ONE_SENTENCE, "Unban Mox Opal!")
@@ -171,6 +170,7 @@ def check_response(response, response_len=1, semgrex_len=1, source_index=1, targ
             assert match.reln[0].name == 'zzz'
             assert match.reln[0].reln == reln
 
+
 def test_multi():
     with semgrex.Semgrex() as sem:
         response = sem.process(ONE_SENTENCE_DOC, "{}=source >obj=zzz {}=target")
@@ -180,25 +180,31 @@ def test_multi():
         response = sem.process(TWO_SENTENCE_DOC, "{}=source >obj=zzz {}=target")
         check_response(response, response_len=2)
 
+
 def test_single_sentence():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{}=source >obj=zzz {}=target")
     check_response(response)
+
 
 def test_two_semgrex():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{}=source >obj=zzz {}=target", "{}=source >obj=zzz {}=target")
     check_response(response, semgrex_len=2)
 
+
 def test_two_sentences():
     response = semgrex.process_doc(TWO_SENTENCE_DOC, "{}=source >obj=zzz {}=target")
     check_response(response, response_len=2)
+
 
 def test_word_attribute():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{word:Mox}=source <=zzz {word:Opal}=target")
     check_response(response, response_len=1, source_index=2, reln='compound')
 
+
 def test_lemma_attribute():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{lemma:Mox}=source <=zzz {lemma:Opal}=target")
     check_response(response, response_len=1, source_index=2, reln='compound')
+
 
 def test_xpos_attribute():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{tag:NNP}=source <=zzz {word:Opal}=target")
@@ -206,13 +212,16 @@ def test_xpos_attribute():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{pos:NNP}=source <=zzz {word:Opal}=target")
     check_response(response, response_len=1, source_index=2, reln='compound')
 
+
 def test_upos_attribute():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{cpos:PROPN}=source <=zzz {word:Opal}=target")
     check_response(response, response_len=1, source_index=2, reln='compound')
 
+
 def test_ner_attribute():
     response = semgrex.process_doc(ONE_SENTENCE_DOC, "{cpos:PROPN}=source <=zzz {ner:GEM}=target")
     check_response(response, response_len=1, source_index=2, reln='compound')
+
 
 def test_hand_built_request():
     """
@@ -230,7 +239,7 @@ def test_hand_built_request():
 
         node = query.graph.node.add()
         node.sentenceIndex = 1
-        node.index = idx+1
+        node.index = idx + 1
 
     edge = query.graph.edge.add()
     edge.source = 1
@@ -244,6 +253,7 @@ def test_hand_built_request():
 
     response = semgrex.send_semgrex_request(request)
     check_response(response)
+
 
 BLANK_DEPENDENCY_SENTENCE = """
 # sent_id = weblog-juancole.com_juancole_20051126063000_ENG_20051126_063000-0007
@@ -285,6 +295,7 @@ def test_blank_dependency():
     assert response.result[0].result[0].match[0].edge[0].target == 2
     assert response.result[0].result[0].match[0].edge[0].reln == "_"
 
+
 EXPECTED_ONE_SENTENCE_MATCH = """
 # text = Unban Mox Opal!
 # sent_id = 0
@@ -297,14 +308,16 @@ EXPECTED_ONE_SENTENCE_MATCH = """
 4	!	!	PUNCT	.	_	1	punct	_	SpaceAfter=No|start_char=14|end_char=15
 """.strip()
 
+
 def test_ner_annotated():
     semgrex_pattern = "{cpos:PROPN}=source <=zzz {ner:GEM}=target"
     # not using the existing ONE_SENTENCE_DOC as the Document may be mutated
     doc = Document(TEST_ONE_SENTENCE, "Unban Mox Opal!")
     response = semgrex.process_doc(doc, semgrex_pattern)
     doc = semgrex.annotate_doc(doc, response, semgrex_pattern, True, False)
-    formatted = "{:C}".format(doc).strip()
+    formatted = f"{doc:C}".strip()
     assert formatted == EXPECTED_ONE_SENTENCE_MATCH
+
 
 EXPECTED_ONE_SENTENCE_NO_MATCH = """
 # text = Unban Mox Opal!
@@ -316,13 +329,14 @@ EXPECTED_ONE_SENTENCE_NO_MATCH = """
 4	!	!	PUNCT	.	_	1	punct	_	SpaceAfter=No|start_char=14|end_char=15
 """.strip()
 
+
 def test_not_annotated():
     semgrex_pattern = "{cpos:ZZZZ}"
     # not using the existing ONE_SENTENCE_DOC as the Document may be mutated
     doc = Document(TEST_ONE_SENTENCE, "Unban Mox Opal!")
     response = semgrex.process_doc(doc, semgrex_pattern)
     doc = semgrex.annotate_doc(doc, response, semgrex_pattern, False, False)
-    formatted = "{:C}".format(doc).strip()
+    formatted = f"{doc:C}".strip()
     assert formatted == EXPECTED_ONE_SENTENCE_NO_MATCH
 
 
@@ -335,8 +349,9 @@ def test_empty_not_annotated():
     doc = Document(TEST_ONE_SENTENCE, "Unban Mox Opal!")
     response = semgrex.process_doc(doc, semgrex_pattern)
     doc = semgrex.annotate_doc(doc, response, semgrex_pattern, True, False)
-    formatted = "{:C}".format(doc).strip()
+    formatted = f"{doc:C}".strip()
     assert formatted == ""
+
 
 def test_only_not_annotated():
     semgrex_pattern = "{cpos:ZZZZ}"
@@ -344,6 +359,5 @@ def test_only_not_annotated():
     doc = Document(TEST_ONE_SENTENCE, "Unban Mox Opal!")
     response = semgrex.process_doc(doc, semgrex_pattern)
     doc = semgrex.annotate_doc(doc, response, semgrex_pattern, False, True)
-    formatted = "{:C}".format(doc).strip()
+    formatted = f"{doc:C}".strip()
     assert formatted == EXPECTED_ONE_SENTENCE_NO_MATCH
-

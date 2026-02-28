@@ -1,10 +1,10 @@
 import pytest
-
 import torch
 
 from stanza.models.constituency.transformer_tree_stack import TransformerTreeStack
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 def test_initial_state():
     """
@@ -17,6 +17,7 @@ def test_initial_state():
     assert initial.value.key_stack.shape == torch.Size([1, 5])
     assert initial.value.value_stack.shape == torch.Size([1, 5])
 
+
 def test_output():
     """
     Test that you can get an expected output shape from the TTS
@@ -26,6 +27,7 @@ def test_output():
     out = ts.output(initial)
     assert out.shape == torch.Size([5])
     assert torch.allclose(initial.value.output, out)
+
 
 def test_push_state_single():
     """
@@ -43,6 +45,7 @@ def test_push_state_single():
     assert stacks[0].value.value == "B"
     assert stacks[0].pop().value.value == "A"
     assert stacks[0].pop().pop().value.value is None
+
 
 def test_push_state_same_length():
     """
@@ -66,6 +69,7 @@ def test_push_state_same_length():
         assert s.pop().pop().value.value == "A"
         assert s.pop().pop().pop().value.value is None
 
+
 def test_push_state_different_length():
     """
     Test what happens if stacks of different lengths are passed in
@@ -85,6 +89,7 @@ def test_push_state_different_length():
 
     assert stacks[0].value.key_stack.shape == torch.Size([3, 5])
     assert stacks[1].value.key_stack.shape == torch.Size([2, 5])
+
 
 def test_mask():
     """
@@ -118,6 +123,7 @@ def test_mask():
     output = ts.attention(key, query, value, mask)
     assert torch.allclose(output, random_v)
 
+
 def test_position():
     """
     Test that nothing goes horribly wrong when position encodings are used
@@ -136,11 +142,12 @@ def test_position():
     stacks = [one_step, initial]
     stacks = ts.push_states(stacks, ["B", "C"], rand_input)
 
+
 def test_length_limit():
     """
     Test that the length limit drops nodes as the length limit is exceeded
     """
-    ts = TransformerTreeStack(4, 5, 0.0, length_limit = 2)
+    ts = TransformerTreeStack(4, 5, 0.0, length_limit=2)
     initial = ts.initial_state()
     assert len(initial) == 1
     assert initial.value.output.shape == torch.Size([5])
@@ -168,11 +175,12 @@ def test_length_limit():
     assert stacks[0].value.key_stack.shape[0] == 3
     assert stacks[0].value.value_stack.shape[0] == 3
 
+
 def test_two_heads():
     """
     Test that the length limit drops nodes as the length limit is exceeded
     """
-    ts = TransformerTreeStack(4, 6, 0.0, num_heads = 2)
+    ts = TransformerTreeStack(4, 6, 0.0, num_heads=2)
     initial = ts.initial_state()
     assert len(initial) == 1
     assert initial.value.output.shape == torch.Size([6])
@@ -192,4 +200,3 @@ def test_two_heads():
 
     assert stacks[0].value.key_stack.shape == torch.Size([3, 6])
     assert stacks[1].value.key_stack.shape == torch.Size([2, 6])
-

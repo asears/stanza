@@ -215,7 +215,7 @@ class Tree(StanzaObject):
             space_replacement = spec[0]
         elif spec:
             space_replacement = spec[0]
-            warnings.warn("Use of a custom replacement without a format specifier is deprecated.  Please use {}O instead".format(space_replacement), stacklevel=2)
+            warnings.warn(f"Use of a custom replacement without a format specifier is deprecated.  Please use {space_replacement}O instead", stacklevel=2)
 
         LRB = "LBKT" if print_format == TreePrintMethod.VLSP else "-LRB-"
         RRB = "RBKT" if print_format == TreePrintMethod.VLSP else "-RRB-"
@@ -229,7 +229,7 @@ class Tree(StanzaObject):
             stack = deque()
             if print_format == TreePrintMethod.VLSP:
                 if use_tree_id:
-                    buf.write("<s id={}>\n".format(self.tree_id))
+                    buf.write(f"<s id={self.tree_id}>\n")
                 else:
                     buf.write("<s>\n")
                 if len(self.children) == 0:
@@ -287,7 +287,7 @@ class Tree(StanzaObject):
             return buf.read()
 
     def __repr__(self):
-        return "{}".format(self)
+        return f"{self}"
 
     def __eq__(self, other):
         if self is other:
@@ -538,7 +538,7 @@ class Tree(StanzaObject):
                     raise ValueError("Not enough tags in sentence for given tree")
                 next_node.label = label
             elif next_node.is_leaf():
-                raise ValueError("Got a badly structured tree: {}".format(self))
+                raise ValueError(f"Got a badly structured tree: {self}")
             else:
                 queue.extend(reversed(next_node.children))
 

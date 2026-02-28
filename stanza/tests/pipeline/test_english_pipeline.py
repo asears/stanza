@@ -3,12 +3,12 @@ Basic testing of the English pipeline
 """
 
 import pytest
-import stanza
-from stanza.utils.conll import CoNLL
-from stanza.models.common.doc import Document
 
+import stanza
+from stanza.models.common.doc import Document
 from stanza.tests import *
-from stanza.tests.pipeline.pipeline_device_tests import check_on_gpu, check_on_cpu
+from stanza.tests.pipeline.pipeline_device_tests import check_on_cpu, check_on_gpu
+from stanza.utils.conll import CoNLL
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
@@ -184,6 +184,7 @@ EXPECTED_PRETOKENIZED_CONLLU = """
 6	.	.	PUNCT	.	_	2	punct	_	SpaceAfter=No|start_char=34|end_char=35|ner=O
 """.strip()
 
+
 class TestEnglishPipeline:
     @pytest.fixture(scope="class")
     def pipeline(self):
@@ -205,9 +206,8 @@ class TestEnglishPipeline:
     def test_text(self, processed_doc):
         assert processed_doc.text == EN_DOC
 
-
     def test_conllu(self, processed_doc):
-        assert "{:C}".format(processed_doc) == EN_DOC_CONLLU_GOLD
+        assert f"{processed_doc:C}" == EN_DOC_CONLLU_GOLD
 
     def test_process_conllu(self, pipeline):
         """
@@ -217,16 +217,14 @@ class TestEnglishPipeline:
         process_conllu skips the tokenize and mwt processors
         """
         doc = pipeline.process_conllu(EN_DOC_CONLLU_GOLD)
-        result = "{:C}".format(doc)
+        result = f"{doc:C}"
         assert result == EN_DOC_CONLLU_GOLD
 
     def test_tokens(self, processed_doc):
         assert "\n\n".join([sent.tokens_string() for sent in processed_doc.sentences]) == EN_DOC_TOKENS_GOLD
 
-
     def test_words(self, processed_doc):
         assert "\n\n".join([sent.words_string() for sent in processed_doc.sentences]) == EN_DOC_WORDS_GOLD
-
 
     def test_dependency_parse(self, processed_doc):
         assert "\n\n".join([sent.dependencies_string() for sent in processed_doc.sentences]) == \
@@ -241,12 +239,12 @@ class TestEnglishPipeline:
         """ Double check that the bulk_process method in Pipeline converts documents as expected """
         # it should process strings
         processed = pipeline.bulk_process(EN_DOCS)
-        assert "\n\n".join(["{:C}".format(doc) for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
+        assert "\n\n".join([f"{doc:C}" for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
 
         # it should pass Documents through successfully
         docs = [Document([], text=t) for t in EN_DOCS]
         processed = pipeline.bulk_process(docs)
-        assert "\n\n".join(["{:C}".format(doc) for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
+        assert "\n\n".join([f"{doc:C}" for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
 
     def test_empty_bulk_process(self, pipeline):
         """ Previously we had a bug where an empty document list would cause a crash """
@@ -255,27 +253,27 @@ class TestEnglishPipeline:
 
     def test_pretokenized(self, pretokenized_pipeline, tokenizer_pipeline):
         doc = pretokenized_pipeline(PRETOKENIZED_PIECES)
-        conllu = "{:C}".format(doc).strip()
+        conllu = f"{doc:C}".strip()
         assert conllu == EXPECTED_PRETOKENIZED_CONLLU
 
         doc = tokenizer_pipeline(PRETOKENIZED_TEXT)
-        conllu = "{:C}".format(doc).strip()
+        conllu = f"{doc:C}".strip()
         assert conllu == EXPECTED_TOKENIZED_ONLY_CONLLU
 
         # putting a doc with tokens into the pipeline should also work
         reparsed = pretokenized_pipeline(doc)
-        conllu = "{:C}".format(reparsed).strip()
+        conllu = f"{reparsed:C}".strip()
         assert conllu == EXPECTED_PRETOKENIZED_CONLLU
 
     def test_bulk_pretokenized(self, pretokenized_pipeline, tokenizer_pipeline):
         doc = tokenizer_pipeline(PRETOKENIZED_TEXT)
-        conllu = "{:C}".format(doc).strip()
+        conllu = f"{doc:C}".strip()
         assert conllu == EXPECTED_TOKENIZED_ONLY_CONLLU
 
         docs = pretokenized_pipeline([doc, doc])
         assert len(docs) == 2
         for doc in docs:
-            conllu = "{:C}".format(doc).strip()
+            conllu = f"{doc:C}".strip()
             assert conllu == EXPECTED_PRETOKENIZED_CONLLU
 
     def test_conll2doc_pretokenized(self, pretokenized_pipeline):
@@ -289,7 +287,7 @@ class TestEnglishPipeline:
         docs = pretokenized_pipeline([doc, doc])
         assert len(docs) == 2
         for doc in docs:
-            conllu = "{:C}".format(doc).strip()
+            conllu = f"{doc:C}".strip()
             assert conllu == EXPECTED_PRETOKENIZED_CONLLU
 
     def test_stream(self, pipeline):
@@ -297,15 +295,15 @@ class TestEnglishPipeline:
         # Test all of the documents in one batch
         # (the default batch size is significantly more than |EN_DOCS|)
         processed = [doc for doc in pipeline.stream(EN_DOCS)]
-        assert "\n\n".join(["{:C}".format(doc) for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
+        assert "\n\n".join([f"{doc:C}" for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
 
         # It should also work on an iterator rather than an iterable
         processed = [doc for doc in pipeline.stream(iter(EN_DOCS))]
-        assert "\n\n".join(["{:C}".format(doc) for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
+        assert "\n\n".join([f"{doc:C}" for doc in processed]) == EN_DOC_CONLLU_GOLD_MULTIDOC
 
         # Stream one at a time
         processed = [doc for doc in pipeline.stream(EN_DOCS, batch_size=1)]
-        processed = ["{:C}".format(doc) for doc in processed]
+        processed = [f"{doc:C}" for doc in processed]
         assert "\n\n".join(processed) == EN_DOC_CONLLU_GOLD_MULTIDOC
 
     @pytest.fixture(scope="class")
@@ -315,11 +313,10 @@ class TestEnglishPipeline:
         return pipeline(docs)
 
     def test_conllu_multidoc(self, processed_multidoc):
-        assert "\n\n".join(["{:C}".format(doc) for doc in processed_multidoc]) == EN_DOC_CONLLU_GOLD_MULTIDOC
+        assert "\n\n".join([f"{doc:C}" for doc in processed_multidoc]) == EN_DOC_CONLLU_GOLD_MULTIDOC
 
     def test_tokens_multidoc(self, processed_multidoc):
         assert "\n\n".join([sent.tokens_string() for processed_doc in processed_multidoc for sent in processed_doc.sentences]) == EN_DOC_TOKENS_GOLD
-
 
     def test_words_multidoc(self, processed_multidoc):
         assert "\n\n".join([sent.words_string() for processed_doc in processed_multidoc for sent in processed_doc.sentences]) == EN_DOC_WORDS_GOLD
@@ -332,7 +329,6 @@ class TestEnglishPipeline:
     def test_dependency_parse_multidoc(self, processed_multidoc):
         assert "\n\n".join([sent.dependencies_string() for processed_doc in processed_multidoc for sent in processed_doc.sentences]) == \
                EN_DOC_DEPENDENCY_PARSES_GOLD
-
 
     @pytest.fixture(scope="class")
     def processed_multidoc_variant(self):

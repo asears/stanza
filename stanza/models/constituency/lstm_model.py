@@ -30,27 +30,23 @@ from collections import namedtuple
 import copy
 from enum import Enum
 import logging
-import math
 import random
 
 import torch
 import torch.nn as nn
-from torch.nn.utils.rnn import pack_padded_sequence
 
 from stanza.models.common.bert_embedding import extract_bert_embeddings
 from stanza.models.common.maxout_linear import MaxoutLinear
 from stanza.models.common.relative_attn import RelativeAttention
-from stanza.models.common.utils import attach_bert_model, build_nonlinearity, unsort
+from stanza.models.common.utils import attach_bert_model, build_nonlinearity
 from stanza.models.common.vocab import PAD_ID, UNK_ID
 from stanza.models.constituency.base_model import BaseModel
 from stanza.models.constituency.label_attention import LabelAttentionModule
 from stanza.models.constituency.lstm_tree_stack import LSTMTreeStack
-from stanza.models.constituency.parse_transitions import TransitionScheme
 from stanza.models.constituency.parse_tree import Tree
 from stanza.models.constituency.partitioned_transformer import PartitionedTransformerModule
 from stanza.models.constituency.positional_encoding import ConcatSinusoidalEncoding
 from stanza.models.constituency.transformer_tree_stack import TransformerTreeStack
-from stanza.models.constituency.tree_stack import TreeStack
 from stanza.models.constituency.utils import initialize_linear
 
 logger = logging.getLogger('stanza')
@@ -590,7 +586,7 @@ class LSTMModel(BaseModel, nn.Module):
                                                              embedding_dim = self.num_tree_lstm_layers * self.hidden_size)
             self.constituent_reduce_lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.num_tree_lstm_layers, dropout=self.lstm_layer_dropout)
         else:
-            raise ValueError("Unhandled ConstituencyComposition: {}".format(self.constituency_composition))
+            raise ValueError(f"Unhandled ConstituencyComposition: {self.constituency_composition}")
 
         self.nonlinearity = build_nonlinearity(self.args['nonlinearity'])
 
@@ -618,7 +614,7 @@ class LSTMModel(BaseModel, nn.Module):
         exactly the same as the previous model.
         """
         if self.constituency_composition != other.constituency_composition and self.constituency_composition != ConstituencyComposition.UNTIED_MAX:
-            raise ValueError("Models are incompatible: self.constituency_composition == {}, other.constituency_composition == {}".format(self.constituency_composition, other.constituency_composition))
+            raise ValueError(f"Models are incompatible: self.constituency_composition == {self.constituency_composition}, other.constituency_composition == {other.constituency_composition}")
         for name, other_parameter in other.named_parameters():
             # this allows other.constituency_composition == UNTIED_MAX to fall through
             if name.startswith('reduce_linear.') and self.constituency_composition == ConstituencyComposition.UNTIED_MAX:
@@ -627,7 +623,7 @@ class LSTMModel(BaseModel, nn.Module):
                 elif name == 'reduce_linear.bias':
                     my_parameter = self.reduce_linear_bias
                 else:
-                    raise ValueError("Unexpected other parameter name {}".format(name))
+                    raise ValueError(f"Unexpected other parameter name {name}")
                 for idx in range(len(self.constituent_opens)):
                     my_parameter[idx].data.copy_(other_parameter.data)
             elif name.startswith('word_lstm.weight_ih_l0'):
@@ -726,7 +722,7 @@ class LSTMModel(BaseModel, nn.Module):
         lines = ["NORMS FOR MODEL PARAMETERS"]
         for name, param in self.named_parameters():
             if param.requires_grad:
-                lines.append("{} {}".format(name, param.shape))
+                lines.append(f"{name} {param.shape}")
         logger.info("\n".join(lines))
 
     def initial_word_queues(self, tagged_word_lists):
@@ -1051,7 +1047,7 @@ class LSTMModel(BaseModel, nn.Module):
 
             _, (lstm_hx, lstm_cx) = self.constituent_reduce_lstm(label_hx, (packed_hx, packed_cx))
         else:
-            raise ValueError("Unhandled ConstituencyComposition: {}".format(self.constituency_composition))
+            raise ValueError(f"Unhandled ConstituencyComposition: {self.constituency_composition}")
 
         constituents = []
         for idx, (label, children) in enumerate(zip(labels, children_lists)):

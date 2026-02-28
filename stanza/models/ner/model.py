@@ -4,16 +4,14 @@ import logging
 import numpy as np
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, pack_sequence, pad_sequence, PackedSequence
+from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, pad_sequence, PackedSequence
 
-from stanza.models.common.data import map_to_ids, get_long_tensor
+from stanza.models.common.data import get_long_tensor
 from stanza.models.common.exceptions import ForwardCharlmNotFoundError, BackwardCharlmNotFoundError
 from stanza.models.common.packed_lstm import PackedLSTM
 from stanza.models.common.dropout import WordDropout, LockedDropout
 from stanza.models.common.char_model import CharacterModel, CharacterLanguageModel
 from stanza.models.common.crf import CRFLoss
-from stanza.models.common.foundation_cache import load_bert
 from stanza.models.common.utils import attach_bert_model
 from stanza.models.common.vocab import PAD_ID, UNK_ID, EMPTY_ID
 from stanza.models.common.bert_embedding import extract_bert_embeddings
@@ -134,7 +132,7 @@ class NERTagger(nn.Module):
         vocab_size = len(self.vocab['word'])
         dim = self.args['word_emb_dim']
         assert emb_matrix.size() == (vocab_size, dim), \
-            "Input embedding matrix must match size: {} x {}, found {}".format(vocab_size, dim, emb_matrix.size())
+            f"Input embedding matrix must match size: {vocab_size} x {dim}, found {emb_matrix.size()}"
         self.word_emb.weight.data.copy_(emb_matrix)
 
     def add_unsaved_module(self, name, module):

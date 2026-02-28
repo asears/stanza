@@ -3,7 +3,6 @@ Utility functions.
 """
 
 import argparse
-from collections import Counter
 from contextlib import contextmanager
 import gzip
 import json
@@ -49,15 +48,15 @@ def get_wordvec_file(wordvec_dir, shorthand, wordvec_type=None):
     if wordvec_type is not None:
         lang_dir = os.path.join(wordvec_dir, wordvec_type, lang)
         if not os.path.exists(lang_dir):
-            raise FileNotFoundError("Word vector type {} was specified, but directory {} does not exist".format(wordvec_type, lang_dir))
+            raise FileNotFoundError(f"Word vector type {wordvec_type} was specified, but directory {lang_dir} does not exist")
     elif os.path.exists(word2vec_dir): # first try word2vec
         lang_dir = word2vec_dir
     elif os.path.exists(fasttext_dir): # otherwise try fasttext
         lang_dir = fasttext_dir
     else:
-        raise FileNotFoundError("Cannot locate word vector directory for language: {}  Looked in {} and {}".format(lang, word2vec_dir, fasttext_dir))
+        raise FileNotFoundError(f"Cannot locate word vector directory for language: {lang}  Looked in {word2vec_dir} and {fasttext_dir}")
     # look for wordvec filename in {lang_dir}
-    filename = os.path.join(lang_dir, '{}.vectors'.format(lcode))
+    filename = os.path.join(lang_dir, f'{lcode}.vectors')
     if os.path.exists(filename + ".xz"):
         filename = filename + ".xz"
     elif os.path.exists(filename + ".txt"):
@@ -182,7 +181,7 @@ def harmonic_mean(a, weights=None):
     if any([x == 0 for x in a]):
         return 0
     else:
-        assert weights is None or len(weights) == len(a), 'Weights has length {} which is different from that of the array ({}).'.format(len(weights), len(a))
+        assert weights is None or len(weights) == len(a), f'Weights has length {len(weights)} which is different from that of the array ({len(a)}).'
         if weights is None:
             return len(a) / sum([1/x for x in a])
         else:
@@ -244,7 +243,7 @@ def dispatch_optimizer(name, parameters, opt_logger, lr=None, betas=None, eps=No
         opt_logger.debug("Building RMSprop with lr=%f%s", lr, extra_logging)
         return torch.optim.RMSprop(parameters, lr=lr, **extra_args)
     else:
-        raise ValueError("Unsupported optimizer: {}".format(name))
+        raise ValueError(f"Unsupported optimizer: {name}")
 
 
 def get_optimizer(name, model, lr, betas=(0.9, 0.999), eps=1e-8, momentum=0, weight_decay=None, bert_learning_rate=0.0, bert_weight_decay=None, charlm_learning_rate=0.0, is_peft=False, bert_finetune_layers=None, opt_logger=None):
@@ -358,7 +357,7 @@ def keep_partial_grad(grad, topk):
 def ensure_dir(d, verbose=True):
     if not os.path.exists(d):
         if verbose:
-            logger.info("Directory {} does not exist; creating...".format(d))
+            logger.info(f"Directory {d} does not exist; creating...")
         # exist_ok: guard against race conditions
         os.makedirs(d, exist_ok=True)
 
@@ -366,20 +365,20 @@ def save_config(config, path, verbose=True):
     with open(path, 'w') as outfile:
         json.dump(config, outfile, indent=2)
     if verbose:
-        print("Config saved to file {}".format(path))
+        print(f"Config saved to file {path}")
     return config
 
 def load_config(path, verbose=True):
     with open(path) as f:
         config = json.load(f)
     if verbose:
-        print("Config loaded from file {}".format(path))
+        print(f"Config loaded from file {path}")
     return config
 
 def print_config(config):
     info = "Running with the following configs:\n"
     for k,v in config.items():
-        info += "\t{} : {}\n".format(k, str(v))
+        info += f"\t{k} : {str(v)}\n"
     logger.info("\n" + info + "\n")
 
 def normalize_text(text):
@@ -543,7 +542,7 @@ def warn_missing_tags(known_tags, test_tags, test_set_name):
     """
     missing_tags = find_missing_tags(known_tags, test_tags)
     if len(missing_tags) > 0:
-        logger.warning("Found tags in {} missing from the expected tag set: {}".format(test_set_name, missing_tags))
+        logger.warning(f"Found tags in {test_set_name} missing from the expected tag set: {missing_tags}")
         return True
     return False
 

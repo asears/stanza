@@ -8,7 +8,6 @@ Also includes an option to write the new trees as bracket_labels
 import argparse
 import logging
 
-from stanza import Pipeline
 from stanza.models.constituency import retagging
 from stanza.models.constituency import tree_reader
 from stanza.models.constituency.utils import retag_trees

@@ -18,7 +18,6 @@ Note that if the pretrain already exists, nothing will be changed.  It will not 
 
 import argparse
 import os
-import sys
 
 from stanza.models.common import pretrain
 
@@ -36,7 +35,7 @@ def main():
         pt = pretrain.Pretrain(args.output_pt, max_vocab=args.max_vocab, csv_filename=args.input_vec)
     else:
         pt = pretrain.Pretrain(args.output_pt, args.input_vec, max_vocab=args.max_vocab)
-    print("Pretrain is of size {}".format(len(pt.vocab)))
+    print(f"Pretrain is of size {len(pt.vocab)}")
 
 if __name__ == '__main__':
     main()

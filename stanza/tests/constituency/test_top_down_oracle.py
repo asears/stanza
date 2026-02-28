@@ -1,11 +1,10 @@
 import pytest
 
 from stanza.models.constituency.base_model import SimpleModel
-from stanza.models.constituency.parse_transitions import Shift, OpenConstituent, CloseConstituent, TransitionScheme
+from stanza.models.constituency.parse_transitions import CloseConstituent, OpenConstituent, Shift, TransitionScheme
 from stanza.models.constituency.top_down_oracle import *
 from stanza.models.constituency.transition_sequence import build_sequence
 from stanza.models.constituency.tree_reader import read_trees
-
 from stanza.tests.constituency.test_transition_sequence import reconstruct_tree
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
@@ -23,17 +22,20 @@ OPEN_SHIFT_PROBLEM_TREE = """
 
 ROOT_LABELS = ["ROOT"]
 
+
 def get_single_repair(gold_sequence, wrong_transition, repair_fn, idx, *args, **kwargs):
     return repair_fn(gold_sequence[idx], wrong_transition, gold_sequence, idx, ROOT_LABELS, None, None, *args, **kwargs)
+
 
 def build_state(model, tree, num_transitions):
     transitions = build_sequence(tree, transition_scheme=TransitionScheme.TOP_DOWN)
     states = model.initial_state_from_gold_trees([tree], [transitions])
     for idx, t in enumerate(transitions[:num_transitions]):
-        assert t.is_legal(states[0], model), "Transition {} not legal at step {} in sequence {}".format(t, idx, sequence)
+        assert t.is_legal(states[0], model), f"Transition {t} not legal at step {idx} in sequence {sequence}"
         states = model.bulk_apply(states, [t])
     state = states[0]
     return state
+
 
 def test_fix_open_shift():
     trees = read_trees(OPEN_SHIFT_EXAMPLE_TREE)
@@ -52,6 +54,7 @@ def test_fix_open_shift():
 
     new_transitions = get_single_repair(transitions, Shift(), fix_one_open_shift, 8)
     assert new_transitions == EXPECTED_FIX_LATE
+
 
 def test_fix_open_shift_observed_error():
     """
@@ -96,6 +99,7 @@ def test_fix_open_shift_observed_error():
     expected_transitions = [OpenConstituent('ROOT'), OpenConstituent('S'), Shift(), Shift(), Shift(), Shift(), Shift(), Shift(), OpenConstituent('PP'), Shift(), OpenConstituent('NP'), Shift(), CloseConstituent(), CloseConstituent(), Shift(), OpenConstituent('CONJP'), Shift(), Shift(), Shift(), CloseConstituent(), OpenConstituent('NP'), Shift(), Shift(), CloseConstituent(), Shift(), OpenConstituent('VP'), Shift(), OpenConstituent('NP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), OpenConstituent('PP'), Shift(), OpenConstituent('NP'), OpenConstituent('NP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), OpenConstituent('SBAR'), Shift(), OpenConstituent('S'), OpenConstituent('NP'), OpenConstituent('NP'), Shift(), Shift(), CloseConstituent(), OpenConstituent('PP'), Shift(), OpenConstituent('NP'), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent(), OpenConstituent('VP'), Shift(), OpenConstituent('VP'), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent(), CloseConstituent(), CloseConstituent(), Shift(), CloseConstituent(), CloseConstituent()]
 
     assert new_transitions == expected_transitions
+
 
 def test_open_open_ambiguous_unary_fix():
     trees = read_trees(OPEN_SHIFT_EXAMPLE_TREE)
@@ -150,6 +154,7 @@ CLOSE_SHIFT_AMBIGUOUS_TREE = """
    (NN foo)))
 """
 
+
 def test_fix_close_shift_ambiguous_immediate():
     """
     Test the result when a close/shift error occurs and we want to close the new, incorrect constituent immediately
@@ -165,6 +170,7 @@ def test_fix_close_shift_ambiguous_immediate():
     assert transitions == expected_original
     assert new_sequence == expected_update
 
+
 def test_fix_close_shift_ambiguous_later():
     # test that the one with two shifts, which is ambiguous, gets rejected
     trees = read_trees(CLOSE_SHIFT_AMBIGUOUS_TREE)
@@ -177,6 +183,7 @@ def test_fix_close_shift_ambiguous_later():
     expected_update = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), Shift(), CloseConstituent(), CloseConstituent()]
     assert transitions == expected_original
     assert new_sequence == expected_update
+
 
 def test_oracle_with_optional_level():
     tree = read_trees(CLOSE_SHIFT_AMBIGUOUS_TREE)[0]
@@ -217,7 +224,7 @@ def test_fix_close_shift():
     new_sequence = get_single_repair(transitions, transitions[8], fix_close_shift, 7)
 
     expected_original = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), CloseConstituent(), Shift(), CloseConstituent(), CloseConstituent()]
-    expected_update   = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
+    expected_update = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
     assert transitions == expected_original
     assert new_sequence == expected_update
 
@@ -229,6 +236,7 @@ def test_fix_close_shift():
     transitions = build_sequence(tree, transition_scheme=TransitionScheme.TOP_DOWN)
     new_sequence = get_single_repair(transitions, transitions[8], fix_close_shift, 7)
     assert new_sequence is None
+
 
 def test_fix_close_shift_deeper_tree():
     """
@@ -244,9 +252,10 @@ def test_fix_close_shift_deeper_tree():
         new_sequence = get_single_repair(transitions, transitions[10], fix_close_shift, 8, count_opens=count_opens)
 
         expected_original = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('VP'), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), Shift(), CloseConstituent(), CloseConstituent()]
-        expected_update   = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('VP'), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
+        expected_update = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('VP'), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
         assert transitions == expected_original
         assert new_sequence == expected_update
+
 
 def test_fix_close_shift_open_tree():
     """
@@ -264,9 +273,10 @@ def test_fix_close_shift_open_tree():
     new_sequence = get_single_repair(transitions, transitions[9], fix_close_shift_with_opens, 7)
 
     expected_original = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), CloseConstituent(), OpenConstituent('NP'), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
-    expected_update   = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
+    expected_update = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), Shift(), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
     assert transitions == expected_original
     assert new_sequence == expected_update
+
 
 CLOSE_OPEN_EXAMPLE_TREE = """
 ( (VP (VBZ eat)
@@ -287,6 +297,7 @@ CLOSE_OPEN_TWO_LABELS_TREE = """
    (PP (IN in) (DT a) (NN restaurant))))
 """
 
+
 def test_fix_close_open():
     trees = read_trees(CLOSE_OPEN_EXAMPLE_TREE)
     assert len(trees) == 1
@@ -300,10 +311,11 @@ def test_fix_close_open():
     new_transitions = get_single_repair(transitions, transitions[6], fix_close_open_correct_open, 5)
 
     expected_original = [OpenConstituent('ROOT'), OpenConstituent('VP'), Shift(), OpenConstituent('NP'), Shift(), CloseConstituent(), OpenConstituent('PP'), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
-    expected_update   = [OpenConstituent('ROOT'), OpenConstituent('VP'), Shift(), OpenConstituent('NP'), Shift(), OpenConstituent('PP'), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
+    expected_update = [OpenConstituent('ROOT'), OpenConstituent('VP'), Shift(), OpenConstituent('NP'), Shift(), OpenConstituent('PP'), Shift(), Shift(), Shift(), CloseConstituent(), CloseConstituent(), CloseConstituent(), CloseConstituent()]
 
     assert transitions == expected_original
     assert new_transitions == expected_update
+
 
 def test_fix_close_open_invalid():
     for TREE in (CLOSE_OPEN_DIFFERENT_LABEL_TREE, CLOSE_OPEN_TWO_LABELS_TREE):
@@ -318,6 +330,7 @@ def test_fix_close_open_invalid():
 
         new_transitions = get_single_repair(transitions, OpenConstituent("PP"), fix_close_open_correct_open, 5)
         assert new_transitions is None
+
 
 def test_fix_close_open_ambiguous_immediate():
     """
@@ -345,6 +358,7 @@ def test_fix_close_open_ambiguous_immediate():
     """
     expected = read_trees(expected)[0]
     assert reconstructed == expected
+
 
 def test_fix_close_open_ambiguous_later():
     """
@@ -384,6 +398,7 @@ SHIFT_CLOSE_EXAMPLES = [
      "((S (NP (` `) (NP (DT The) (NN Misanthrope)) (` `) (PP (IN at) (NP (NNP Goodman)) (NNP Theatre)))))", 13),
 ]
 
+
 def test_shift_close():
     for idx, (orig_tree, expected_tree, shift_position) in enumerate(SHIFT_CLOSE_EXAMPLES):
         trees = read_trees(orig_tree)
@@ -402,13 +417,14 @@ def test_shift_close():
             print(transitions)
             print(new_transitions)
 
-            print("{:P}".format(reconstructed))
+            print(f"{reconstructed:P}")
         else:
             expected_tree = read_trees(expected_tree)
             assert len(expected_tree) == 1
             expected_tree = expected_tree[0]
 
             assert reconstructed == expected_tree
+
 
 def test_shift_open_ambiguous_unary():
     """
@@ -425,6 +441,7 @@ def test_shift_open_ambiguous_unary():
     new_sequence = get_single_repair(transitions, OpenConstituent("ZZ"), fix_shift_open_ambiguous_unary, 4)
     expected_updated = [OpenConstituent('ROOT'), OpenConstituent('NP'), Shift(), OpenConstituent('ADJP'), OpenConstituent('ZZ'), Shift(), CloseConstituent(), Shift(), Shift(), CloseConstituent(), Shift(), Shift(), CloseConstituent(), CloseConstituent()]
     assert new_sequence == expected_updated
+
 
 def test_shift_open_ambiguous_later():
     """

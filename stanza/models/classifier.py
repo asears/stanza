@@ -2,8 +2,6 @@ import argparse
 import ast
 import logging
 import os
-import random
-import re
 from enum import Enum
 
 import torch
@@ -11,7 +9,6 @@ import torch.nn as nn
 
 from stanza.models.common import loss
 from stanza.models.common import utils
-from stanza.models.pos.vocab import CharVocab
 
 import stanza.models.classifiers.data as data
 from stanza.models.classifiers.trainer import Trainer
@@ -420,12 +417,12 @@ def score_dataset(model, dataset, label_map=None,
 def score_dev_set(model, dev_set, dev_eval_scoring):
     predictions = dataset_predictions(model, dev_set)
     confusion_matrix = confusion_dataset(predictions, dev_set, model.labels)
-    logger.info("Dev set confusion matrix:\n{}".format(format_confusion(confusion_matrix, model.labels)))
+    logger.info(f"Dev set confusion matrix:\n{format_confusion(confusion_matrix, model.labels)}")
     correct, total = confusion_to_accuracy(confusion_matrix)
     macro_f1 = confusion_to_macro_f1(confusion_matrix)
     logger.info("Dev set: %d correct of %d examples.  Accuracy: %f" %
                 (correct, len(dev_set), correct / len(dev_set)))
-    logger.info("Macro f1: {}".format(macro_f1))
+    logger.info(f"Macro f1: {macro_f1}")
 
     accuracy = correct / total
     if dev_eval_scoring is DevScoring.ACCURACY:
@@ -433,7 +430,7 @@ def score_dev_set(model, dev_set, dev_eval_scoring):
     elif dev_eval_scoring is DevScoring.WEIGHTED_F1:
         return macro_f1, accuracy, macro_f1
     else:
-        raise ValueError("Unknown scoring method {}".format(dev_eval_scoring))
+        raise ValueError(f"Unknown scoring method {dev_eval_scoring}")
 
 def intermediate_name(filename, epoch, dev_scoring, score):
     """
@@ -484,7 +481,7 @@ def train_model(trainer, model_file, checkpoint_file, args, train_set, dev_set, 
         process_outputs = lambda x: torch.softmax(x, dim=1)
         loss_function = FocalLoss(gamma=args.loss_focal_gamma)
     else:
-        raise ValueError("Unknown loss function {}".format(args.loss))
+        raise ValueError(f"Unknown loss function {args.loss}")
     loss_function.to(device)
 
     train_set_by_len = data.sort_dataset_by_len(train_set)
@@ -645,9 +642,9 @@ def main(args=None):
         confusion_matrix = confusion_dataset(predictions, test_set, trainer.model.labels)
         if args.output_predictions:
             logger.info("List of predictions: %s", predictions)
-        logger.info("Confusion matrix:\n{}".format(format_confusion(confusion_matrix, trainer.model.labels)))
+        logger.info(f"Confusion matrix:\n{format_confusion(confusion_matrix, trainer.model.labels)}")
         correct, total = confusion_to_accuracy(confusion_matrix)
-        logger.info("Macro f1: {}".format(confusion_to_macro_f1(confusion_matrix)))
+        logger.info(f"Macro f1: {confusion_to_macro_f1(confusion_matrix)}")
     else:
         correct = score_dataset(trainer.model, test_set,
                                 remap_labels=args.test_remap_labels,

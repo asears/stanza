@@ -3,7 +3,6 @@ Processor for performing tokenization
 """
 
 import copy
-import io
 import logging
 
 import torch
@@ -13,14 +12,9 @@ from stanza.models.tokenization.trainer import Trainer
 from stanza.models.tokenization.utils import output_predictions
 from stanza.pipeline._constants import *
 from stanza.pipeline.processor import UDProcessor, register_processor
-from stanza.pipeline.registry import PROCESSOR_VARIANTS
 from stanza.models.common import doc
 
 # these imports trigger the "register_variant" decorations
-from stanza.pipeline.external.jieba import JiebaTokenizer
-from stanza.pipeline.external.spacy import SpacyTokenizer
-from stanza.pipeline.external.sudachipy import SudachiPyTokenizer
-from stanza.pipeline.external.pythainlp import PyThaiNLPTokenizer
 
 logger = logging.getLogger('stanza')
 

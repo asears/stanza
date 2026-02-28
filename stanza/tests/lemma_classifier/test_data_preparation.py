@@ -2,8 +2,8 @@ import os
 
 import pytest
 
-import stanza.models.lemma_classifier.utils as utils
-import stanza.utils.datasets.prepare_lemma_classifier as prepare_lemma_classifier
+from stanza.models.lemma_classifier import utils
+from stanza.utils.datasets import prepare_lemma_classifier
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
@@ -183,6 +183,7 @@ EWT_TEST_SENTENCES = """
 6	soldiers	soldier	NOUN	NNS	Number=Plur	0	root	0:root	_
 """
 
+
 def write_test_dataset(tmp_path, texts, datasets):
     ud_path = tmp_path / "ud"
     input_path = ud_path / "UD_English-EWT"
@@ -200,10 +201,12 @@ def write_test_dataset(tmp_path, texts, datasets):
 
     return paths
 
+
 def write_english_test_dataset(tmp_path):
     texts = (EWT_TRAIN_SENTENCES, EWT_DEV_SENTENCES, EWT_TEST_SENTENCES)
     datasets = prepare_lemma_classifier.SECTIONS
     return write_test_dataset(tmp_path, texts, datasets)
+
 
 def convert_english_dataset(tmp_path):
     paths = write_english_test_dataset(tmp_path)
@@ -211,6 +214,7 @@ def convert_english_dataset(tmp_path):
     assert len(converted_files) == 3
 
     return converted_files
+
 
 def test_convert_one_sentence(tmp_path):
     texts = [EWT_ONE_SENTENCE]
@@ -230,6 +234,7 @@ def test_convert_one_sentence(tmp_path):
         assert text_batches == [['Here', "'s", 'a', 'Miami', 'Herald', 'interview']]
         upos = [id_to_upos[x] for x in upos_batches[0]]
         assert upos == ['ADV', 'AUX', 'DET', 'PROPN', 'PROPN', 'NOUN']
+
 
 def test_convert_dataset(tmp_path):
     converted_files = convert_english_dataset(tmp_path)
@@ -253,4 +258,3 @@ def test_convert_dataset(tmp_path):
     assert len(dataset) == 1
     for text_batches, _, _, _ in dataset:
         assert len(text_batches) == 2
-

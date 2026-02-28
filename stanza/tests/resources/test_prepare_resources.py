@@ -1,11 +1,10 @@
 import pytest
 
-import stanza
-import stanza.resources.prepare_resources as prepare_resources
-
+from stanza.resources import prepare_resources
 from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_split_model_name():
     # Basic test
@@ -26,5 +25,3 @@ def test_split_model_name():
     assert lang == 'en'
     assert package == 'pubmed'
     assert processor == 'forward_charlm'
-    
-    

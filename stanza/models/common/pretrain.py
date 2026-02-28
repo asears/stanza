@@ -5,7 +5,6 @@ import csv
 import os
 import re
 
-import lzma
 import logging
 import numpy as np
 import torch
@@ -65,11 +64,11 @@ class Pretrain:
                 except UnpicklingError:
                     data = torch.load(self.filename, lambda storage, loc: storage, weights_only=False)
                     warnings.warn("The saved pretrain has an old format using numpy.ndarray instead of torch to store weights.  This version of Stanza can support reading both the new and the old formats.  Future versions will only allow loading with weights_only=True.  Please resave the pretrained embedding using this version ASAP.")
-                logger.debug("Loaded pretrain from {}".format(self.filename))
+                logger.debug(f"Loaded pretrain from {self.filename}")
                 if not isinstance(data, dict):
-                    raise RuntimeError("File {} exists but is not a stanza pretrain file.  It is not a dict, whereas a Stanza pretrain should have a dict with 'emb' and 'vocab'".format(self.filename))
+                    raise RuntimeError(f"File {self.filename} exists but is not a stanza pretrain file.  It is not a dict, whereas a Stanza pretrain should have a dict with 'emb' and 'vocab'")
                 if 'emb' not in data or 'vocab' not in data:
-                    raise RuntimeError("File {} exists but is not a stanza pretrain file.  A Stanza pretrain file should have 'emb' and 'vocab' fields in its state dict".format(self.filename))
+                    raise RuntimeError(f"File {self.filename} exists but is not a stanza pretrain file.  A Stanza pretrain file should have 'emb' and 'vocab' fields in its state dict")
                 self._vocab = PretrainedWordVocab.load_state_dict(data['vocab'])
                 self._emb = data['emb']
                 if isinstance(self._emb, np.ndarray):
@@ -80,11 +79,11 @@ class Pretrain:
             except BaseException as e:
                 if not self._vec_filename and not self._csv_filename:
                     raise
-                logger.warning("Pretrained file exists but cannot be loaded from {}, due to the following exception:\n\t{}".format(self.filename, e))
+                logger.warning(f"Pretrained file exists but cannot be loaded from {self.filename}, due to the following exception:\n\t{e}")
                 vocab, emb = self.read_pretrain()
         else:
             if not self._vec_filename and not self._csv_filename:
-                raise FileNotFoundError("Pretrained file {} does not exist, and no text/xz file was provided".format(self.filename))
+                raise FileNotFoundError(f"Pretrained file {self.filename} does not exist, and no text/xz file was provided")
             if self.filename is not None:
                 logger.info("Pretrained filename %s specified, but file does not exist.  Attempting to load from text file" % self.filename)
             vocab, emb = self.read_pretrain()
@@ -105,11 +104,11 @@ class Pretrain:
         data = {'vocab': self.vocab.state_dict(), 'emb': self.emb}
         try:
             torch.save(data, filename, _use_new_zipfile_serialization=False)
-            logger.info("Saved pretrained vocab and vectors to {}".format(filename))
+            logger.info(f"Saved pretrained vocab and vectors to {filename}")
         except (KeyboardInterrupt, SystemExit):
             raise
         except BaseException as e:
-            logger.warning("Saving pretrained data failed due to the following exception... continuing anyway.\n\t{}".format(e))
+            logger.warning(f"Saving pretrained data failed due to the following exception... continuing anyway.\n\t{e}")
 
 
     def write_text(self, filename, header=False):
@@ -249,14 +248,14 @@ def find_pretrain_file(wordvec_pretrain_file, save_dir, shorthand, lang):
     if wordvec_pretrain_file:
         return wordvec_pretrain_file
 
-    default_pretrain_file = os.path.join(save_dir, '{}.pretrain.pt'.format(shorthand))
+    default_pretrain_file = os.path.join(save_dir, f'{shorthand}.pretrain.pt')
     if os.path.exists(default_pretrain_file):
         logger.debug("Found existing .pt file in %s" % default_pretrain_file)
         return default_pretrain_file
     else:
         logger.debug("Cannot find pretrained vectors in %s" % default_pretrain_file)
 
-    pretrain_file = os.path.join(save_dir, '{}_pretrain.pt'.format(shorthand))
+    pretrain_file = os.path.join(save_dir, f'{shorthand}_pretrain.pt')
     if os.path.exists(pretrain_file):
         logger.debug("Found existing .pt file in %s" % pretrain_file)
         return pretrain_file

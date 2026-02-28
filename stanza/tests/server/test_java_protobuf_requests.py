@@ -1,23 +1,24 @@
-import tempfile
 
 import pytest
 
 from stanza.models.common.utils import misc_to_space_after, space_after_to_misc
 from stanza.models.constituency import tree_reader
+from stanza.protobuf import DependencyGraph
 from stanza.server import java_protobuf_requests
 from stanza.tests import *
 from stanza.utils.conll import CoNLL
-from stanza.protobuf import DependencyGraph
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def check_tree(proto_tree, py_tree, py_score):
     tree, tree_score = java_protobuf_requests.from_tree(proto_tree)
     assert tree_score == py_score
     assert tree == py_tree
 
+
 def test_build_tree():
-    text="((S (VP (VB Unban)) (NP (NNP Mox) (NNP Opal))))\n( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "((S (VP (VB Unban)) (NP (NNP Mox) (NNP Opal))))\n( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
     trees = tree_reader.read_trees(text)
     assert len(trees) == 2
 
@@ -49,7 +50,7 @@ def test_convert_networkx_graph():
     assert len(graph.rootNode) == 1
     assert graph.rootNode[0] == 0
     nodes = sorted([(x.index, x.emptyIndex) for x in graph.node])
-    expected_nodes = [(1,0), (2,0), (3,0), (4,0), (5,0), (5,1), (6,0), (7,0)]
+    expected_nodes = [(1, 0), (2, 0), (3, 0), (4, 0), (5, 0), (5, 1), (6, 0), (7, 0)]
     assert nodes == expected_nodes
 
     edges = [(x.target, x.dep) for x in graph.edge if x.source == 5 and x.sourceEmpty == 1]
@@ -57,7 +58,8 @@ def test_convert_networkx_graph():
     expected_edges = [(1, 'cc'), (3, 'obl'), (5, 'advmod'), (6, 'obl'), (7, 'punct')]
     assert edges == expected_edges
 
-ENGLISH_NBSP_SAMPLE="""
+
+ENGLISH_NBSP_SAMPLE = """
 # sent_id = newsgroup-groups.google.com_n3td3v_e874a1e5eb995654_ENG_20060120_052200-0011
 # text = Please note that neither the e-mail address nor name of the sender have been verified.
 1	Please	please	INTJ	UH	_	2	discourse	_	_
@@ -78,6 +80,7 @@ ENGLISH_NBSP_SAMPLE="""
 16	.	.	PUNCT	.	_	2	punct	_	_
 """.strip()
 
+
 def test_nbsp_doc():
     """
     Test that the space conversion methods will convert to and from NBSP
@@ -89,5 +92,5 @@ def test_nbsp_doc():
     assert misc_to_space_after("SpacesAfter=\\u00A0") == ' '
     assert space_after_to_misc(' ') == "SpacesAfter=\\u00A0"
 
-    conllu = "{:C}".format(doc)
+    conllu = f"{doc:C}"
     assert conllu == ENGLISH_NBSP_SAMPLE

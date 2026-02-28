@@ -11,7 +11,7 @@ from random import Random
 # fix random seed for reproducability
 R = Random(42)
 
-with open("./corefud_concat_v1_0_langid.train.json", 'r') as df:
+with open("./corefud_concat_v1_0_langid.train.json") as df:
     raw = json.load(df)
 
 # calculate type of each class; then, we will select the one

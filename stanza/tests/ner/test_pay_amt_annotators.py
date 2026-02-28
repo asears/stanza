@@ -12,6 +12,7 @@ from stanza.utils.ner import paying_annotators
 
 DATA_SOURCE = os.path.join(TEST_WORKING_DIR, "in", "aws_annotations.zip")
 
+
 @pytest.fixture(scope="module")
 def completed_amt_job_metadata(tmp_path_factory):
     assert os.path.exists(DATA_SOURCE)
@@ -21,13 +22,14 @@ def completed_amt_job_metadata(tmp_path_factory):
         zin.extractall(unzip_path)
     return input_path
 
+
 def test_amt_annotator_track(completed_amt_job_metadata):
     workers = {
         "7efc17ac-3397-4472-afe5-89184ad145d0": "Worker1",
         "afce8c28-969c-4e73-a20f-622ef122f585": "Worker2",
         "91f6236e-63c6-4a84-8fd6-1efbab6dedab": "Worker3",
         "6f202e93-e6b6-4e1d-8f07-0484b9a9093a": "Worker4",
-        "2b674d33-f656-44b0-8f90-d70a1ab71ec2": "Worker5"
+        "2b674d33-f656-44b0-8f90-d70a1ab71ec2": "Worker5",
     }  # map AMT annotator subs to relevant identifier
 
     tracked_work = paying_annotators.track_tasks(completed_amt_job_metadata, workers)

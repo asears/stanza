@@ -85,7 +85,7 @@ def convert_pos_dataset(file_path):
     This function is to process the pos dataset
     """
     
-    file = open(file_path, "r")
+    file = open(file_path)
     document = file.readlines()
     sentences = []
     sent = []

@@ -6,7 +6,7 @@ import warnings
 import pytest
 import torch
 
-pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.train]
 
 from stanza.models import ner_tagger
 from stanza.models.ner.trainer import Trainer
@@ -227,13 +227,15 @@ def test_train_model_cpu(pretrain_file, tmp_path):
 
 def model_file_has_bert(filename):
     checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
-    return any(x.startswith("bert_model.") for x in checkpoint['model'].keys())
+return any(x.startswith("bert_model.") for x in checkpoint['model'])
 
+@pytest.mark.transformers
 def test_with_bert(pretrain_file, tmp_path):
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert')
     model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
     assert not model_file_has_bert(model_file)
 
+@pytest.mark.transformers
 def test_with_bert_finetune(pretrain_file, tmp_path):
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert', '--bert_finetune')
     model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
@@ -249,13 +251,14 @@ def test_with_bert_finetune(pretrain_file, tmp_path):
     reloaded_trainer.save(bar_save_filename)
     assert model_file_has_bert(bar_save_filename)
 
+@pytest.mark.transformers
 def test_with_peft_finetune(pretrain_file, tmp_path):
     # TODO: check that the peft tensors are moving when training?
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert', '--use_peft')
     model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
     checkpoint = torch.load(model_file, lambda storage, loc: storage, weights_only=True)
     assert 'bert_lora' in checkpoint
-    assert not any(x.startswith("bert_model.") for x in checkpoint['model'].keys())
+assert not any(x.startswith("bert_model.") for x in checkpoint['model'])
 
     # test loading
     reloaded_trainer = Trainer(args=trainer.args, model_file=model_file)

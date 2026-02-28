@@ -6,48 +6,48 @@ This document summarizes the new development infrastructure and tooling added to
 
 ### 1. Dependabot Configuration (`.github/dependabot.yml`)
 Automated dependency management with:
-- **Weekly Dependency Updates** for pip packages
-- **Weekly Update Checks** for GitHub Actions
-- **UV Ecosystem Support** for future-ready Python packaging
-- **Automatic PR Creation** with detailed changelogs
-- **Security Vulnerability Scanning** via GitHub
+- Weekly Dependency Updates for pip packages
+- Weekly Update Checks for GitHub Actions
+- UV Ecosystem Support for future-ready Python packaging
+- Automatic PR Creation with detailed changelogs
+- Security Vulnerability Scanning via GitHub
 
 ### 2. Modern Packaging with `pyproject.toml`
 Replaced legacy configuration with standardized Python packaging:
-- **PEP 517/518 Compliant** build system
-- **Tool Configurations** for ruff, black, mypy, pytest, coverage
-- **Multiple Dependency Groups** for different use cases
-- **Development Dependencies** clearly separated
-- **Version Specifications** centralized
+- PEP 517/518 Compliant build system
+- Tool Configurations for ruff, black, mypy, pytest, coverage
+- Multiple Dependency Groups for different use cases
+- Development Dependencies clearly separated
+- Version Specifications centralized
 
 ### 3. UV Package Manager Integration
 Fast, modern Python package management:
-- **5-10x Faster** than traditional pip
-- **Parallel Dependency Resolution** for reliability
-- **Consistent Environments** across developers
-- **Full pip Compatibility** (drop-in replacement)
+- 5-10x Faster than traditional pip
+- Parallel Dependency Resolution for reliability
+- Consistent Environments across developers
+- Full pip Compatibility (drop-in replacement)
 
-### 4. Comprehensive CI/CD Pipeline (`.github/workflows/uv-build-checks.yaml`)
+### 4. CI/CD Pipeline (`.github/workflows/uv-build-checks.yaml`)
 Modern GitHub Actions workflow with:
 
 #### Build and Test Matrix
-- **3 Operating Systems:** Ubuntu, Windows, macOS
-- **5 Python Versions:** 3.9, 3.10, 3.11, 3.12, 3.13
-- **Total Combinations:** 15 test configurations
+- 3 Operating Systems: Ubuntu, Windows, macOS
+- 5 Python Versions: 3.9, 3.10, 3.11, 3.12, 3.13
+- Total Combinations: 15 test configurations
 
 #### Quality Checks
-1. **Ruff Format Check** - Consistent code style
-2. **Ruff Linting** - Error and warning detection
-3. **MyPy Type Checking** - Type safety validation
-4. **Pytest Unit Tests** - Full test suite execution
+1. Ruff Format Check - Consistent code style
+2. Ruff Linting - Error and warning detection
+3. MyPy Type Checking - Type safety validation
+4. Pytest Unit Tests - Full test suite execution
 
 #### Additional Checks
-- **Code Quality Reports** - Detailed linting results
-- **Type Coverage Analysis** - MyPy coverage reports
-- **Dependency Tree** - Installed package analysis
-- **Code Coverage** - Upload to Codecov
+- Code Quality Reports - Detailed linting results
+- Type Coverage Analysis - MyPy coverage reports
+- Dependency Tree - Installed package analysis
+- Code Coverage - Upload to Codecov
 
-### 5. Comprehensive Documentation
+### 5. Documentation
 
 #### UV_GUIDE.md
 Complete guide to using UV package manager:
@@ -108,11 +108,11 @@ git push origin feature/my-feature
 ## File Inventory
 
 ### New Files Created
-1. **`.github/dependabot.yml`** - Automated dependency updates
-2. **`pyproject.toml`** - Modern package configuration
-3. **`.github/workflows/uv-build-checks.yaml`** - CI/CD pipeline
-4. **`DEPENDENCIES.md`** - Dependency documentation
-5. **`UV_GUIDE.md`** - UV package manager guide
+1. `.github/dependabot.yml` - Automated dependency updates
+2. `pyproject.toml` - Modern package configuration
+3. `.github/workflows/uv-build-checks.yaml` - CI/CD pipeline
+4. `DEPENDENCIES.md` - Dependency documentation
+5. `UV_GUIDE.md` - UV package manager guide
 
 ### Updated Files
 None explicitly modified (backward compatible)
@@ -123,7 +123,7 @@ None explicitly modified (backward compatible)
 
 #### Ruff (Linting)
 - Line length: 100 characters
-- Comprehensive checks: E, W, F, I, C, B, SIM
+- Checks: E, W, F, I, C, B, SIM
 - Python 3.9+ support
 
 #### MyPy (Type Checking)
@@ -151,16 +151,16 @@ None explicitly modified (backward compatible)
 
 | Ecosystem | Frequency | Purpose |
 |-----------|-----------|---------|
-| **pip** | Weekly | Python package updates |
-| **github-actions** | Weekly | Action version updates |
-| **uv** | Weekly | UV tooling updates |
+| pip | Weekly | Python package updates |
+| github-actions | Weekly | Action version updates |
+| uv | Weekly | UV tooling updates |
 
 ### Update Policies
 
-- **30+ Python packages** tracked
-- **Pre-release versions ignored** (stable only)
-- **Automatic PR creation** with changelog
-- **Security alerts enabled**
+- 30+ Python packages tracked
+- Pre-release versions ignored (stable only)
+- Automatic PR creation with changelog
+- Security alerts enabled
 
 ## Testing Infrastructure
 
@@ -186,12 +186,12 @@ None explicitly modified (backward compatible)
 
 | Tool | Purpose | Version |
 |------|---------|---------|
-| **uv** | Package manager | Latest |
-| **ruff** | Linter/Formatter | >=0.1.0 |
-| **mypy** | Type checker | >=1.0.0 |
-| **pytest** | Test runner | >=7.0 |
-| **black** | Code formatter | >=22.0.0 |
-| **setuptools** | Build system | >=61.0 |
+| uv | Package manager | Latest |
+| ruff | Linter/Formatter | >=0.1.0 |
+| mypy | Type checker | >=1.0.0 |
+| pytest | Test runner | >=7.0 |
+| black | Code formatter | >=22.0.0 |
+| setuptools | Build system | >=61.0 |
 
 ## Migration Notes
 
@@ -202,12 +202,12 @@ None explicitly modified (backward compatible)
 - All tests pass with both systems
 
 ### Benefits
-1. **Faster Installations** - UV is 5-10x faster
-2. **Modern Packaging** - PEP 517/518 compliant
-3. **Better Organization** - Tool configs in one place
-4. **Improved CI/CD** - Matrix testing, quality checks
-5. **Automated Updates** - Dependabot handles versions
-6. **Better Documentation** - Clear dependency list
+1. Faster Installations - UV is 5-10x faster
+2. Modern Packaging - PEP 517/518 compliant
+3. Better Organization - Tool configs in one place
+4. Improved CI/CD - Matrix testing, quality checks
+5. Automated Updates - Dependabot handles versions
+6. Better Documentation - Clear dependency list
 
 ## Security Improvements
 
@@ -226,31 +226,31 @@ None explicitly modified (backward compatible)
 ## Performance Metrics
 
 ### Typical Build Times (CI/CD)
-- **UV Installation:** 2-5 minutes (vs 5-15 with pip)
-- **Ruff Check:** <1 minute
-- **MyPy Check:** 2-5 minutes
-- **Test Suite:** 10-30 minutes (depends on GPU)
+- UV Installation: 2-5 minutes (vs 5-15 with pip)
+- Ruff Check: <1 minute
+- MyPy Check: 2-5 minutes
+- Test Suite: 10-30 minutes (depends on GPU)
 
 ### Speedup Summary
-- **Installation:** 3-5x faster with UV
-- **Dependency Resolution:** 5-10x faster
-- **Overall Build:** 20-30% faster CI/CD
+- Installation: 3-5x faster with UV
+- Dependency Resolution: 5-10x faster
+- Overall Build: 20-30% faster CI/CD
 
 ## Troubleshooting & FAQ
 
-**Q: Should I use UV or pip?**
+Q: Should I use UV or pip?
 A: UV is recommended! It's fully compatible with pip and much faster. You can use them interchangeably.
 
-**Q: Do I need to change my code?**
+Q: Do I need to change my code?
 A: No! Everything is backward compatible. Only development tools changed.
 
-**Q: How do I upgrade old environment?**
+Q: How do I upgrade old environment?
 A: Install uv, then `uv pip install --upgrade stanza[all]`
 
-**Q: Can I use Python <3.9?**
+Q: Can I use Python <3.9?
 A: No, Stanza requires Python 3.9+. Upgrade your Python version.
 
-**Q: Where is Dependabot configuration?**
+Q: Where is Dependabot configuration?
 A: `.github/dependabot.yml` - automatically creates PRs for updates.
 
 ## Next Steps
@@ -284,7 +284,7 @@ A: `.github/dependabot.yml` - automatically creates PRs for updates.
 
 ---
 
-**Created:** February 28, 2026  
-**Repository:** stanfordnlp/stanza  
-**Python Support:** 3.9, 3.10, 3.11, 3.12, 3.13  
-**Status:** ✅ Production Ready
+Created: February 28, 2026  
+Repository: stanfordnlp/stanza  
+Python Support: 3.9, 3.10, 3.11, 3.12, 3.13  
+Status: ✅ Production Ready

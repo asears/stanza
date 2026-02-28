@@ -3,14 +3,16 @@ Test various resource downloading functions from resources/common.py
 """
 
 import os
-import pytest
 import tempfile
+
+import pytest
 
 import stanza
 from stanza.resources import common
 from stanza.tests import TEST_MODELS_DIR, TEST_WORKING_DIR
 
 pytestmark = [pytest.mark.travis, pytest.mark.client]
+
 
 def test_assert_file_exists():
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as test_dir:
@@ -41,6 +43,7 @@ def test_download_tokenize_mwt():
         assert isinstance(pipeline, stanza.Pipeline)
         # mwt should be added to the list
         assert len(pipeline.loaded_processors) == 2
+
 
 def test_download_non_default():
     """
@@ -104,6 +107,7 @@ def test_process_pipeline_parameters():
         lang, model_dir, package, processors = common.process_pipeline_parameters("en", test_dir, "ewt", "tokenize,pos")
         assert processors == {"tokenize": "ewt", "pos": "ewt"}
         assert package == None
+
 
 def test_language_resources():
     resources = common.load_resources_json(TEST_MODELS_DIR)

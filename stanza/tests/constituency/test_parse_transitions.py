@@ -1,8 +1,8 @@
 import pytest
 
 from stanza.models.constituency import parse_transitions
-from stanza.models.constituency.base_model import SimpleModel, UNARY_LIMIT
-from stanza.models.constituency.parse_transitions import TransitionScheme, Shift, CloseConstituent, OpenConstituent
+from stanza.models.constituency.base_model import UNARY_LIMIT, SimpleModel
+from stanza.models.constituency.parse_transitions import CloseConstituent, OpenConstituent, Shift, TransitionScheme
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
@@ -18,6 +18,7 @@ def build_initial_state(model, num_states=1):
     assert all(state.num_transitions == 0 for state in states)
     return states
 
+
 def test_initial_state(model=None):
     if model is None:
         model = SimpleModel()
@@ -32,6 +33,7 @@ def test_initial_state(model=None):
     assert len(state.constituents) == 1
     assert len(state.transitions) == 1
     assert state.word_position == 0
+
 
 def test_shift(model=None):
     if model is None:
@@ -79,6 +81,7 @@ def test_shift(model=None):
     constituents = constituents.pop()
     assert model.get_top_constituent(constituents).children[0].label == 'Unban'
 
+
 def test_initial_unary(model=None):
     # it doesn't make sense to start with a CompoundUnary
     if model is None:
@@ -86,7 +89,7 @@ def test_initial_unary(model=None):
 
     state = build_initial_state(model)[0]
     unary = parse_transitions.CompoundUnary('ROOT', 'VP')
-    assert unary.label == ('ROOT', 'VP',)
+    assert unary.label == ('ROOT', 'VP')
     assert not unary.is_legal(state, model)
     unary = parse_transitions.CompoundUnary('VP')
     assert unary.label == ('VP',)
@@ -116,6 +119,7 @@ def test_unary(model=None):
     tree = tree.children[0]
     assert tree.label == 'VB'
     assert tree.is_preterminal()
+
 
 def test_unary_requires_root(model=None):
     if model is None:
@@ -151,6 +155,7 @@ def test_unary_requires_root(model=None):
 
     assert state.finished(model)
 
+
 def test_open(model=None):
     if model is None:
         model = SimpleModel()
@@ -180,6 +185,7 @@ def test_open(model=None):
     state = shift.apply(state, model)
     assert not open_transition.is_legal(state, model)
 
+
 def test_compound_open(model=None):
     if model is None:
         model = SimpleModel()
@@ -205,6 +211,7 @@ def test_compound_open(model=None):
     assert tree.children[0].children[0].label == 'Unban'
     assert tree.children[1].children[0].label == 'Mox'
     assert tree.children[2].children[0].label == 'Opal'
+
 
 def test_in_order_open(model=None):
     if model is None:
@@ -253,6 +260,7 @@ def test_in_order_open(model=None):
     assert open_root.is_legal(state, model)
     state = open_root.apply(state, model)
 
+
 def test_too_many_unaries_close():
     """
     This tests rejecting Close at the start of a sequence after too many unary transitions
@@ -278,6 +286,7 @@ def test_too_many_unaries_close():
     assert open_np.is_legal(state, model)
     state = open_np.apply(state, model)
     assert not close_trans.is_legal(state, model)
+
 
 def test_too_many_unaries_open():
     """
@@ -309,6 +318,7 @@ def test_too_many_unaries_open():
         state = close_trans.apply(state, model)
 
     assert not open_np.is_legal(state, model)
+
 
 def test_close(model=None):
     if model is None:
@@ -364,6 +374,7 @@ def test_close(model=None):
 
     assert state.all_transitions(model) == [open_transition_vp, shift, open_transition_np, shift, shift, close_transition, close_transition]
 
+
 def test_in_order_compound_finalize(model=None):
     """
     Test the Finalize transition is only legal at the end of a sequence
@@ -405,6 +416,7 @@ def test_in_order_compound_finalize(model=None):
     tree = model.get_top_constituent(state.constituents)
     assert tree.label == 'ROOT'
 
+
 def test_hashes():
     transitions = set()
 
@@ -415,8 +427,7 @@ def test_hashes():
     shift = parse_transitions.Shift()
     assert shift in transitions
 
-    for i in range(5):
-        transitions.add(shift)
+    transitions.update(shift for i in range(5))
     assert len(transitions) == 1
 
     unary = parse_transitions.CompoundUnary("asdf")
@@ -466,6 +477,7 @@ def test_sort():
     transitions = set(expected)
     transitions = sorted(transitions)
     assert transitions == expected
+
 
 def test_check_transitions():
     """

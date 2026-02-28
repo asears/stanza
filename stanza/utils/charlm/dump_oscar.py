@@ -59,7 +59,7 @@ def main():
             raise ValueError("Language %s not available in HuggingFace Oscar" % language) from e
 
         if len(split_names) > 1:
-            raise ValueError("Unexpected split_names: {}".format(split_names))
+            raise ValueError(f"Unexpected split_names: {split_names}")
 
         dataset = load_dataset("oscar", dataset_name)
         dataset = dataset[split_names[0]]
@@ -69,7 +69,7 @@ def main():
         dataset = load_dataset("oscar-corpus/OSCAR-2301", language)
         split_names = list(dataset.keys())
         if len(split_names) > 1:
-            raise ValueError("Unexpected split_names: {}".format(split_names))
+            raise ValueError(f"Unexpected split_names: {split_names}")
         # it's not clear if some languages don't support size_in_bytes,
         # or if there was an update to datasets which now allows that
         #
@@ -94,7 +94,7 @@ def main():
         fopen = lambda file_idx: open(os.path.join(args.output, format_str % file_idx), "w")
 
     print("Writing dataset to %s" % args.output)
-    print("Dataset length: {}".format(size_in_bytes))
+    print(f"Dataset length: {size_in_bytes}")
     os.makedirs(args.output, exist_ok=True)
 
     file_idx = 0

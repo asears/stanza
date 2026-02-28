@@ -1,10 +1,11 @@
 import pytest
+
 from stanza.models.constituency import tree_reader
 from stanza.models.constituency.tree_reader import MixedTreeError, UnclosedTreeError, UnlabeledTreeError
-
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 def test_simple():
     """
@@ -20,6 +21,7 @@ def test_simple():
     assert trees[1].label == 'NNP'
     assert trees[1].children[0].label == 'Opal'
 
+
 def test_newlines():
     """
     The same test should work if there are newlines
@@ -27,6 +29,7 @@ def test_newlines():
     text = "(VB Unban)\n\n(NNP Opal)"
     trees = tree_reader.read_trees(text)
     assert len(trees) == 2
+
 
 def test_parens():
     """
@@ -38,17 +41,18 @@ def test_parens():
 
     assert trees[0].label == '-LRB-'
     assert trees[0].children[0].label == '('
-    assert "{}".format(trees[0]) == '(-LRB- -LRB-)'
+    assert f"{trees[0]}" == '(-LRB- -LRB-)'
 
     assert trees[1].label == '-RRB-'
     assert trees[1].children[0].label == ')'
-    assert "{}".format(trees[1]) == '(-RRB- -RRB-)'
+    assert f"{trees[1]}" == '(-RRB- -RRB-)'
+
 
 def test_complicated():
     """
     A more complicated tree that should successfully read
     """
-    text="( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
     trees = tree_reader.read_trees(text)
     assert len(trees) == 1
     tree = trees[0]
@@ -61,13 +65,14 @@ def test_complicated():
     assert [x.label for x in tree.children[0].children] == ['WHNP', 'SQ', '.']
     # etc etc
 
+
 def test_one_word():
     """
     Check that one node trees are correctly read
 
     probably not super relevant for the parsing use case
     """
-    text="(FOO) (BAR)"
+    text = "(FOO) (BAR)"
     trees = tree_reader.read_trees(text)
     assert len(trees) == 2
 
@@ -76,6 +81,7 @@ def test_one_word():
 
     assert trees[1].is_leaf()
     assert trees[1].label == 'BAR'
+
 
 def test_missing_close_parens():
     """
@@ -87,6 +93,7 @@ def test_missing_close_parens():
         raise AssertionError("Expected an exception")
     except UnclosedTreeError as e:
         assert e.line_num == 1
+
 
 def test_mixed_tree():
     """
@@ -102,6 +109,7 @@ def test_mixed_tree():
     trees = tree_reader.read_trees(text, broken_ok=True)
     assert len(trees) == 3
 
+
 def test_unlabeled_tree():
     """
     Test the unlabeled error condition
@@ -115,5 +123,3 @@ def test_unlabeled_tree():
 
     trees = tree_reader.read_trees(text, broken_ok=True)
     assert len(trees) == 1
-
-    

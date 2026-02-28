@@ -43,7 +43,7 @@ def get_phrases(in_directory):
         elif sentiment == 'positive':
             sentiment = '2'
         else:
-            raise ValueError("Unknown sentiment: {}".format(sentiment))
+            raise ValueError(f"Unknown sentiment: {sentiment}")
         # some of the tweets have \n in them
         utterance = line[10].replace("\n", " ")
         phrases.append(SentimentDatum(sentiment, utterance))
@@ -54,7 +54,7 @@ def get_tokenized_phrases(in_directory):
     phrases = get_phrases(in_directory)
     phrases = process_utils.get_ptb_tokenized_phrases(phrases)
     phrases = [SentimentDatum(x.sentiment, process_utils.clean_tokenized_tweet(x.text)) for x in phrases]
-    print("Found {} phrases in the airline corpus".format(len(phrases)))
+    print(f"Found {len(phrases)} phrases in the airline corpus")
     return phrases
 
 def main(in_directory, out_directory, short_name):

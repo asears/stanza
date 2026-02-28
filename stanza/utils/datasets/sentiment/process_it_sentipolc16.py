@@ -65,8 +65,8 @@ def main(in_dir, out_dir, short_name, *args):
             ('1', '1'): "1", # mixed -> negative
         }
 
-    print("Using {} scheme to handle the 4 values.  Mapping: {}".format(args.mode, mapping))
-    print("Saving to {} using the short name {}".format(out_dir, short_name))
+    print(f"Using {args.mode} scheme to handle the 4 values.  Mapping: {mapping}")
+    print(f"Saving to {out_dir} using the short name {short_name}")
 
     test_filename = os.path.join(in_dir, "test_set_sentipolc16_gold2000.csv")
     test_snippets = process_utils.read_snippets(test_filename, (2,3), 8, "it", mapping, delimiter=",", skip_first_line=False, quotechar='"', nlp=nlp)

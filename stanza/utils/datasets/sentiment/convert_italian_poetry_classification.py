@@ -32,7 +32,7 @@ def main():
             if not line:
                 continue
 
-            line = line.replace(u'\ufeff', '')
+            line = line.replace('\ufeff', '')
             pieces = line.split(maxsplit=1)
             # first column is the label
             # remainder of the text is the raw text

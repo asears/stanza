@@ -90,7 +90,7 @@ def run_dataset(mode, paths, treebank, short_name, command_args, extra_args):
                       '--wordvec_type', 'word2vec',   # TODO: chinese is fasttext
                       '--extra_wordvec_method', 'SUM']
         train_args = train_args + default_args + extra_args
-        logger.info("Running train step with args: {}".format(train_args))
+        logger.info(f"Running train step with args: {train_args}")
         classifier.main(train_args)
 
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -99,7 +99,7 @@ def run_dataset(mode, paths, treebank, short_name, command_args, extra_args):
                     '--shorthand', short_name,
                     '--wordvec_type', 'word2vec']   # TODO: chinese is fasttext
         dev_args = dev_args + default_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info(f"Running dev step with args: {dev_args}")
         classifier.main(dev_args)
 
     if mode == Mode.SCORE_TEST or mode == Mode.TRAIN:
@@ -108,7 +108,7 @@ def run_dataset(mode, paths, treebank, short_name, command_args, extra_args):
                      '--shorthand', short_name,
                      '--wordvec_type', 'word2vec']   # TODO: chinese is fasttext
         test_args = test_args + default_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info(f"Running test step with args: {test_args}")
         classifier.main(test_args)
 
 

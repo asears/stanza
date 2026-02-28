@@ -22,7 +22,6 @@ There are a few special case handlings of treebanks in this file:
 """
 
 import argparse
-import glob
 import io
 import os
 import random
@@ -533,7 +532,7 @@ def augment_quotes(sents, ratio=0.15):
     # we go through this to make it simpler to execute on Windows
     # rather than nagging the user to set utf-8
     out = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", write_through=True)
-    print("Augmented {} quotes: {}".format(sum(counts.values()), counts), file=out)
+    print(f"Augmented {sum(counts.values())} quotes: {counts}", file=out)
     out.detach()
     return new_sents
 
@@ -953,7 +952,7 @@ def build_extra_combined_italian_dataset(paths, model_type, dataset):
 
     extra_italian = os.path.join(handparsed_dir, "italian-mwt", "italian.mwt")
     if not os.path.exists(extra_italian):
-        raise FileNotFoundError("Cannot find the extra dataset 'italian.mwt' which includes various multi-words retokenized, expected {}".format(extra_italian))
+        raise FileNotFoundError(f"Cannot find the extra dataset 'italian.mwt' which includes various multi-words retokenized, expected {extra_italian}")
 
     extra_sents = read_sentences_from_conllu(extra_italian)
     for sentence in extra_sents:
@@ -1041,7 +1040,7 @@ def build_combined_japanese_dataset(paths, model_type, dataset):
     if dataset == 'train':
         extra_japanese = os.path.join(handparsed_dir, "japanese-handparsed", "spaces-ready-checked.conllu")
         if not os.path.exists(extra_japanese):
-            raise FileNotFoundError("Cannot find the extra dataset which includes various verb patterns, expected {}".format(extra_japanese))
+            raise FileNotFoundError(f"Cannot find the extra dataset which includes various verb patterns, expected {extra_japanese}")
         extra_sents = read_sentences_from_conllu(extra_japanese)
         print("Read %d sentences from %s" % (len(extra_sents), extra_japanese))
 
@@ -1163,7 +1162,7 @@ def build_combined_spanish_dataset(paths, model_type, dataset):
         if model_type in (common.ModelType.TOKENIZER, common.ModelType.MWT, common.ModelType.LEMMA):
             extra_spanish = os.path.join(handparsed_dir, "spanish-mwt", "adjectives.conllu")
             if not os.path.exists(extra_spanish):
-                raise FileNotFoundError("Cannot find the extra dataset 'adjectives.conllu' which includes various multi-words retokenized, expected {}".format(extra_spanish))
+                raise FileNotFoundError(f"Cannot find the extra dataset 'adjectives.conllu' which includes various multi-words retokenized, expected {extra_spanish}")
             extra_sents = read_sentences_from_conllu(extra_spanish)
             print("Read %d sentences from %s" % (len(extra_sents), extra_spanish))
             sents.extend(extra_sents)
@@ -1187,7 +1186,7 @@ def build_combined_french_dataset(paths, model_type, dataset):
 
         extra_french = os.path.join(handparsed_dir, "french-handparsed", "handparsed_deps.conllu")
         if not os.path.exists(extra_french):
-            raise FileNotFoundError("Cannot find the extra dataset 'handparsed_deps.conllu' which includes various dependency fixes, expected {}".format(extra_italian))
+            raise FileNotFoundError(f"Cannot find the extra dataset 'handparsed_deps.conllu' which includes various dependency fixes, expected {extra_italian}")
         extra_sents = read_sentences_from_conllu(extra_french)
         print("Read %d sentences from %s" % (len(extra_sents), extra_french))
         sents.extend(extra_sents)

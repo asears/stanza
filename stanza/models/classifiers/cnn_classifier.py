@@ -1,9 +1,6 @@
 import dataclasses
 import logging
-import math
-import os
 import random
-import re
 
 import numpy as np
 import torch
@@ -16,7 +13,6 @@ from stanza.models.classifiers.config import CNNConfig
 from stanza.models.classifiers.data import SentimentDatum
 from stanza.models.classifiers.utils import ExtraVectors, ModelType, build_output_layers
 from stanza.models.common.bert_embedding import extract_bert_embeddings
-from stanza.models.common.data import get_long_tensor, sort_all
 from stanza.models.common.utils import attach_bert_model
 from stanza.models.common.vocab import PAD_ID, UNK_ID
 
@@ -125,12 +121,12 @@ class CNNClassifier(BaseClassifier):
 
         self.add_unsaved_module('forward_charlm', charmodel_forward)
         if charmodel_forward is not None:
-            tlogger.debug("Got forward char model of dimension {}".format(charmodel_forward.hidden_dim()))
+            tlogger.debug(f"Got forward char model of dimension {charmodel_forward.hidden_dim()}")
             if not charmodel_forward.is_forward_lm:
                 raise ValueError("Got a backward charlm as a forward charlm!")
         self.add_unsaved_module('backward_charlm', charmodel_backward)
         if charmodel_backward is not None:
-            tlogger.debug("Got backward char model of dimension {}".format(charmodel_backward.hidden_dim()))
+            tlogger.debug(f"Got backward char model of dimension {charmodel_backward.hidden_dim()}")
             if charmodel_backward.is_forward_lm:
                 raise ValueError("Got a forward charlm as a backward charlm!")
 
@@ -147,12 +143,12 @@ class CNNClassifier(BaseClassifier):
 
         if self.config.extra_wordvec_method is not ExtraVectors.NONE:
             if not extra_vocab:
-                raise ValueError("Should have had extra_vocab set for extra_wordvec_method {}".format(self.config.extra_wordvec_method))
+                raise ValueError(f"Should have had extra_vocab set for extra_wordvec_method {self.config.extra_wordvec_method}")
             if not args.extra_wordvec_dim:
                 self.config.extra_wordvec_dim = self.embedding_dim
             if self.config.extra_wordvec_method is ExtraVectors.SUM:
                 if self.config.extra_wordvec_dim != self.embedding_dim:
-                    raise ValueError("extra_wordvec_dim must equal embedding_dim for {}".format(self.config.extra_wordvec_method))
+                    raise ValueError(f"extra_wordvec_dim must equal embedding_dim for {self.config.extra_wordvec_method}")
 
             self.extra_vocab = list(extra_vocab)
             self.extra_vocab_map = { word: i for i, word in enumerate(self.extra_vocab) }
@@ -163,7 +159,7 @@ class CNNClassifier(BaseClassifier):
                                                 embedding_dim = self.config.extra_wordvec_dim,
                                                 max_norm = self.config.extra_wordvec_max_norm,
                                                 padding_idx = 0)
-            tlogger.debug("Extra embedding size: {}".format(self.extra_embedding.weight.shape))
+            tlogger.debug(f"Extra embedding size: {self.extra_embedding.weight.shape}")
         else:
             self.extra_vocab = None
             self.extra_vocab_map = None
@@ -179,7 +175,7 @@ class CNNClassifier(BaseClassifier):
         elif self.config.extra_wordvec_method is ExtraVectors.CONCAT:
             total_embedding_dim = self.embedding_dim + self.config.extra_wordvec_dim
         else:
-            raise ValueError("unable to handle {}".format(self.config.extra_wordvec_method))
+            raise ValueError(f"unable to handle {self.config.extra_wordvec_method}")
 
         if charmodel_forward is not None:
             if args.charlm_projection:
@@ -449,7 +445,7 @@ class CNNClassifier(BaseClassifier):
             elif self.config.extra_wordvec_method is ExtraVectors.SUM:
                 all_inputs = [input_vectors + extra_input_vectors]
             else:
-                raise ValueError("unable to handle {}".format(self.config.extra_wordvec_method))
+                raise ValueError(f"unable to handle {self.config.extra_wordvec_method}")
         else:
             all_inputs = [input_vectors]
 

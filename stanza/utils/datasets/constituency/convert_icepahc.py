@@ -4,7 +4,7 @@ Currently this doesn't function
 The goal is simply to demonstrate how to use tsurgeon
 """
 
-from stanza.models.constituency.tree_reader import read_trees, read_treebank
+from stanza.models.constituency.tree_reader import read_trees
 from stanza.server import tsurgeon
 
 TREEBANK = """
@@ -78,6 +78,6 @@ with tsurgeon.Tsurgeon(classpath="$CLASSPATH") as tsurgeon_processor:
 
     for tree in treebank:
         updated_tree = tsurgeon_processor.process(tree, (form_tregex, form_tsurgeon))[0]
-        print("{:P}".format(updated_tree))
+        print(f"{updated_tree:P}")
         updated_tree = tsurgeon_processor.process(updated_tree, (noun_det_tregex, noun_det_relabel, noun_det_prune))[0]
-        print("{:P}".format(updated_tree))
+        print(f"{updated_tree:P}")

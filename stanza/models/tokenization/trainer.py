@@ -1,8 +1,6 @@
-import sys
 import logging
 import torch
 import torch.nn as nn
-import torch.optim as optim
 
 from stanza.models.common import utils
 from stanza.models.common.trainer import Trainer as BaseTrainer
@@ -87,7 +85,7 @@ class Trainer(BaseTrainer):
         }
         try:
             torch.save(params, filename, _use_new_zipfile_serialization=False)
-            logger.info("Model saved to {}".format(filename))
+            logger.info(f"Model saved to {filename}")
         except BaseException:
             logger.warning("Saving failed... continuing anyway.")
 
@@ -95,7 +93,7 @@ class Trainer(BaseTrainer):
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         except BaseException:
-            logger.error("Cannot load model from {}".format(filename))
+            logger.error(f"Cannot load model from {filename}")
             raise
         self.args = checkpoint['config']
         if args is not None and args.get('charlm_forward_file', None) is not None:

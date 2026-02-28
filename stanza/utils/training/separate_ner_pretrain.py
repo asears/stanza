@@ -26,7 +26,6 @@ from stanza import Pipeline
 from stanza.models.common.constant import lang_to_langcode
 from stanza.models.common.pretrain import Pretrain, PretrainedWordVocab
 from stanza.models.common.vocab import PAD_ID, VOCAB_PREFIX
-from stanza.models.ner.trainer import Trainer
 
 logger = logging.getLogger('stanza')
 logger.setLevel(logging.ERROR)
@@ -46,10 +45,10 @@ def main():
         ner_model_dir = args.input_path
         ners = os.listdir(ner_model_dir)
         if len(ners) == 0:
-            raise FileNotFoundError("No ner models found in {}".format(args.input_path))
+            raise FileNotFoundError(f"No ner models found in {args.input_path}")
     else:
         if not os.path.isfile(args.input_path):
-            raise FileNotFoundError("No ner model found at path {}".format(args.input_path))
+            raise FileNotFoundError(f"No ner model found at path {args.input_path}")
         ner_model_dir, ners = os.path.split(args.input_path)
         ners = [ners]
 
@@ -80,7 +79,7 @@ def main():
 
         expected_ending = "_nertagger.pt"
         if not ner_model.endswith(expected_ending):
-            raise ValueError("Unexpected name: {}".format(ner_model))
+            raise ValueError(f"Unexpected name: {ner_model}")
         short_name = ner_model[:-len(expected_ending)]
         lang, package = short_name.split("_", maxsplit=1)
         print("===============================================")
@@ -91,7 +90,7 @@ def main():
         # including downloading other pieces if needed
         pipe = Pipeline(lang, processors="tokenize,ner", tokenize_pretokenized=True, package={"ner": package}, ner_model_path=ner_path)
         ner_processor = pipe.processors['ner']
-        print("Loaded NER processor: {}".format(ner_processor))
+        print(f"Loaded NER processor: {ner_processor}")
         trainer = ner_processor.trainers[0]
         vocab = trainer.model.vocab
         word_vocab = vocab['word']
@@ -106,10 +105,10 @@ def main():
         ner_pretrains = sorted(set(lang_to_pretrain[lang] + lang_to_pretrain[lcode]))
         for pt_model in ner_pretrains:
             pt_path = os.path.join(pt_model_dir, pt_model)
-            print("Attempting pretrain: {}".format(pt_path))
+            print(f"Attempting pretrain: {pt_path}")
             pt = Pretrain(filename=pt_path)
-            print("  pretrain shape:               {}".format(pt.emb.shape))
-            print("  embedding in ner model shape: {}".format(trainer.model.word_emb.weight.shape))
+            print(f"  pretrain shape:               {pt.emb.shape}")
+            print(f"  embedding in ner model shape: {trainer.model.word_emb.weight.shape}")
             if pt.emb.shape[1] != trainer.model.word_emb.weight.shape[1]:
                 print("  DIMENSION DOES NOT MATCH.  SKIPPING")
                 continue
@@ -126,7 +125,7 @@ def main():
                     print("  NUM VECTORS DO NOT MATCH.  WORDS DO NOT MATCH.  SKIPPING")
                     continue
                 if pt.emb.shape[0] < trainer.model.word_emb.weight.shape[0]:
-                    print("  WARNING: if any vectors beyond {} were fine tuned, that fine tuning will be lost".format(N))
+                    print(f"  WARNING: if any vectors beyond {N} were fine tuned, that fine tuning will be lost")
             device = next(trainer.model.parameters()).device
             delta = trainer.model.word_emb.weight[:N, :] - pt.emb.to(device)[:N, :]
             delta = delta.detach()
@@ -162,7 +161,7 @@ def main():
                             rearranged_count += 1
                     print("  %d vectors were close when ignoring id ordering" % rearranged_count)
         else:
-            print("COULD NOT FIND A MATCHING PT: {}".format(ner_processor))
+            print(f"COULD NOT FIND A MATCHING PT: {ner_processor}")
             missing_pretrains.append(ner_model)
             continue
 

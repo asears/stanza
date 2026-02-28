@@ -1,5 +1,4 @@
 """Iterate test."""
-import argparse
 import glob
 import logging
 
@@ -61,4 +60,4 @@ for load_name in model_files:
     confusion = classifier.confusion_dataset(model, test_set, device=device)
     correct, total = confusion_to_accuracy(confusion)
     logger.info("  Results: %d correct of %d examples.  Accuracy: %f" % (correct, total, correct / total))
-    logger.info("Confusion matrix:\n{}".format(format_confusion(confusion, model.labels)))
+    logger.info(f"Confusion matrix:\n{format_confusion(confusion, model.labels)}")

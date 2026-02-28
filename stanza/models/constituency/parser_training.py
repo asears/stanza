@@ -11,7 +11,7 @@ from torch import nn
 #from stanza.models.common import pretrain
 
 from stanza.models.common import utils
-from stanza.models.common.foundation_cache import FoundationCache, NoTransformerFoundationCache
+from stanza.models.common.foundation_cache import FoundationCache
 from stanza.models.common.large_margin_loss import LargeMarginInSoftmaxLoss
 from stanza.models.common.utils import sort_with_indices, unsort
 from stanza.models.constituency import error_analysis_in_order
@@ -731,9 +731,9 @@ def run_dev_set(model, retagged_trees, original_trees, args, evaluator=None, ana
         pred_file = os.path.join(args['predict_dir'], args['predict_file'] + ".pred.mrg")
         orig_file = os.path.join(args['predict_dir'], args['predict_file'] + ".orig.mrg")
         if os.path.exists(pred_file):
-            tlogger.warning("Cowardly refusing to overwrite {}".format(pred_file))
+            tlogger.warning(f"Cowardly refusing to overwrite {pred_file}")
         elif os.path.exists(orig_file):
-            tlogger.warning("Cowardly refusing to overwrite {}".format(orig_file))
+            tlogger.warning(f"Cowardly refusing to overwrite {orig_file}")
         else:
             with open(pred_file, 'w') as fout:
                 for tree in full_results:

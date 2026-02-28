@@ -1,17 +1,18 @@
 import pytest
+
 import stanza
+from stanza.server import ud_enhancer
 from stanza.tests import *
 
-from stanza.models.common.doc import Document
-import stanza.server.ud_enhancer as ud_enhancer
-
 pytestmark = [pytest.mark.pipeline]
+
 
 def check_edges(graph, source, target, num, isExtra=None):
     edges = [edge for edge in graph.edge if edge.source == source and edge.target == target]
     assert len(edges) == num
     if num == 1:
         assert edges[0].isExtra == isExtra
+
 
 def test_one_sentence():
     nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, processors="tokenize,pos,lemma,depparse")

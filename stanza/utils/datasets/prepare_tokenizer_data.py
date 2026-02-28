@@ -39,7 +39,7 @@ def find_next_word(index, text, word, output):
         if para_break:
             # multiple newlines found, paragraph break
             if len(word_sofar) > 0:
-                assert re.match(r'^\s+$', word_sofar), 'Found non-empty string at the end of a paragraph that doesn\'t match any token: |{}|'.format(word_sofar)
+                assert re.match(r'^\s+$', word_sofar), f'Found non-empty string at the end of a paragraph that doesn\'t match any token: |{word_sofar}|'
                 word_sofar = ''
 
             output.write('\n\n')
@@ -65,7 +65,7 @@ def main(args):
 
     args = parser.parse_args(args=args)
 
-    with open(args.plaintext_file, 'r', encoding='utf-8') as f:
+    with open(args.plaintext_file, encoding='utf-8') as f:
         text = ''.join(f.readlines())
     textlen = len(text)
 
@@ -79,7 +79,7 @@ def main(args):
     index = 0 # character offset in rawtext
 
     mwt_expansions = []
-    with open(args.conllu_file, 'r', encoding='utf-8') as f:
+    with open(args.conllu_file, encoding='utf-8') as f:
         buf = ''
         mwtbegin = 0
         mwtend = -1
@@ -127,7 +127,7 @@ def main(args):
                 # sentence break found
                 if len(buf):
                     assert int(buf[-1]) >= 1
-                    output.write(buf[:-1] + '{}'.format(int(buf[-1]) + 1))
+                    output.write(buf[:-1] + f'{int(buf[-1]) + 1}')
                     buf = ''
 
                 last_comments = ''
@@ -144,7 +144,7 @@ def main(args):
         with open(args.mwt_output, 'w') as f:
             json.dump(list(mwts.items()), f, indent=2)
 
-        status_line = status_line + '{} unique MWTs found in data.  MWTs written to {}'.format(len(mwts), args.mwt_output)
+        status_line = status_line + f'{len(mwts)} unique MWTs found in data.  MWTs written to {args.mwt_output}'
         print(status_line)
 
 if __name__ == '__main__':

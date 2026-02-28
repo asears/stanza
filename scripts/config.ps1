@@ -10,7 +10,7 @@ NER datasets, constituency parsing data, and processed training/evaluation files
 .NOTES
 File Name      : config.ps1
 Author         : Stanza Development Team
-Prerequisite   : PowerShell 3.0 or higher
+Prerequisite   : PowerShell 7.5 or higher
 Version        : 1.0
 
 Before running training/testing scripts, you should:

@@ -1,23 +1,23 @@
 import pytest
-from stanza.tests import *
 
-from stanza.models.common.doc import Document
-import stanza.server.tokensregex as tokensregex
+from stanza.server import tokensregex
+from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.client]
 
-from stanza.tests.server.test_semgrex import ONE_SENTENCE_DOC, TWO_SENTENCE_DOC
+from stanza.tests.server.test_semgrex import ONE_SENTENCE_DOC
+
 
 def test_single_sentence():
-    #expected:
-    #match {
+    # expected:
+    # match {
     #  sentence: 0
     #  match {
     #    text: "Opal"
     #    begin: 2
     #    end: 3
     #  }
-    #}
+    # }
 
     response = tokensregex.process_doc(ONE_SENTENCE_DOC, "Opal")
     assert len(response.match) == 1
@@ -29,15 +29,15 @@ def test_single_sentence():
 
 
 def test_ner_sentence():
-    #expected:
-    #match {
+    # expected:
+    # match {
     #  sentence: 0
     #  match {
     #    text: "Opal"
     #    begin: 2
     #    end: 3
     #  }
-    #}
+    # }
 
     response = tokensregex.process_doc(ONE_SENTENCE_DOC, "[ner: GEM]")
     assert len(response.match) == 1

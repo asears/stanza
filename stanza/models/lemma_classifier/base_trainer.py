@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 import logging
 import os
-from typing import List, Tuple, Any, Mapping
+from collections.abc import Mapping
 
 import torch
 import torch.nn as nn

@@ -1,0 +1,30 @@
+demo\semgrex visualization.ipynb:cell 1:18:5: ANN201 Missing return type annotation for public function `get_sentences_html`
+demo\semgrex visualization.ipynb:cell 1:18:24: ANN001 Missing type annotation for function argument `doc`
+demo\semgrex visualization.ipynb:cell 1:18:29: ANN001 Missing type annotation for function argument `language`
+demo\semgrex visualization.ipynb:cell 1:65:5: ANN201 Missing return type annotation for public function `find_nth`
+demo\semgrex visualization.ipynb:cell 1:65:14: ANN001 Missing type annotation for function argument `haystack`
+demo\semgrex visualization.ipynb:cell 1:65:24: ANN001 Missing type annotation for function argument `needle`
+demo\semgrex visualization.ipynb:cell 1:65:32: ANN001 Missing type annotation for function argument `n`
+demo\semgrex visualization.ipynb:cell 1:76:5: ANN201 Missing return type annotation for public function `round_base`
+demo\semgrex visualization.ipynb:cell 1:76:16: ANN001 Missing type annotation for function argument `num`
+demo\semgrex visualization.ipynb:cell 1:76:21: ANN001 Missing type annotation for function argument `base`
+demo\semgrex visualization.ipynb:cell 1:83:5: ANN201 Missing return type annotation for public function `process_sentence_html`
+demo\semgrex visualization.ipynb:cell 1:83:27: ANN001 Missing type annotation for function argument `orig_html`
+demo\semgrex visualization.ipynb:cell 1:83:38: ANN001 Missing type annotation for function argument `semgrex_sentence`
+demo\semgrex visualization.ipynb:cell 1:162:5: ANN201 Missing return type annotation for public function `render_html_strings`
+demo\semgrex visualization.ipynb:cell 1:162:25: ANN001 Missing type annotation for function argument `edited_html_strings`
+demo\semgrex visualization.ipynb:cell 1:170:5: ANN201 Missing return type annotation for public function `visualize_search_doc`
+demo\semgrex visualization.ipynb:cell 1:170:26: ANN001 Missing type annotation for function argument `doc`
+demo\semgrex visualization.ipynb:cell 1:170:31: ANN001 Missing type annotation for function argument `semgrex_queries`
+demo\semgrex visualization.ipynb:cell 1:170:48: ANN001 Missing type annotation for function argument `lang_code`
+demo\semgrex visualization.ipynb:cell 1:170:59: ANN001 Missing type annotation for function argument `start_match`
+demo\semgrex visualization.ipynb:cell 1:170:74: ANN001 Missing type annotation for function argument `end_match`
+demo\semgrex visualization.ipynb:cell 1:212:5: ANN201 Missing return type annotation for public function `visualize_search_str`
+demo\semgrex visualization.ipynb:cell 1:212:26: ANN001 Missing type annotation for function argument `text`
+demo\semgrex visualization.ipynb:cell 1:212:32: ANN001 Missing type annotation for function argument `semgrex_queries`
+demo\semgrex visualization.ipynb:cell 1:212:49: ANN001 Missing type annotation for function argument `lang_code`
+demo\semgrex visualization.ipynb:cell 1:227:5: ANN201 Missing return type annotation for public function `adjust_dep_arrows`
+demo\semgrex visualization.ipynb:cell 1:227:23: ANN001 Missing type annotation for function argument `raw_html`
+demo\semgrex visualization.ipynb:cell 1:258:5: ANN201 Missing return type annotation for public function `edit_dep_arrow`
+demo\semgrex visualization.ipynb:cell 1:258:20: ANN001 Missing type annotation for function argument `arrow_html`
+demo\semgrex visualization.ipynb:cell 1:317:5: ANN201 Missing return type annotation for public function `main`

@@ -25,7 +25,7 @@ def read_data(path: str) -> list:
     Each dictionary contains information
     about a paragraph (text, labels, etc.)
     """
-    with open(path, 'r') as file:
+    with open(path) as file:
         paragraphs = [json.loads(line) for line in file]
     return paragraphs
 

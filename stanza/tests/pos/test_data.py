@@ -2,15 +2,13 @@
 A few tests of specific operations from the Dataset
 """
 
-import os
-import pytest
 
-from stanza.models.common.doc import *
 from stanza.models import tagger
+from stanza.models.common.doc import *
 from stanza.models.pos.data import Dataset, ShuffledDataset
+from stanza.tests.pos.test_tagger import TRAIN_DATA, TRAIN_DATA_NO_FEATS, TRAIN_DATA_NO_UPOS, TRAIN_DATA_NO_XPOS
 from stanza.utils.conll import CoNLL
 
-from stanza.tests.pos.test_tagger import TRAIN_DATA, TRAIN_DATA_NO_XPOS, TRAIN_DATA_NO_UPOS, TRAIN_DATA_NO_FEATS
 
 def test_basic_reading():
     """
@@ -26,6 +24,7 @@ def test_basic_reading():
     assert data.has_xpos
     assert data.has_feats
 
+
 def test_no_xpos():
     """
     Test that a dataset with no xpos is detected by the Dataset
@@ -39,6 +38,7 @@ def test_no_xpos():
     assert data.has_upos
     assert not data.has_xpos
     assert data.has_feats
+
 
 def test_no_upos():
     """
@@ -54,6 +54,7 @@ def test_no_upos():
     assert data.has_xpos
     assert data.has_feats
 
+
 def test_no_feats():
     """
     Test that a dataset with no feats is detected by the Dataset
@@ -67,6 +68,7 @@ def test_no_feats():
     assert data.has_upos
     assert data.has_xpos
     assert not data.has_feats
+
 
 def test_no_augment():
     """
@@ -83,6 +85,7 @@ def test_no_augment():
             for text in batch.text:
                 assert text[-1] in (".", "!")
 
+
 def test_augment():
     """
     Test that with 100% punct removing augmentation, the doc never has punct at the end
@@ -97,6 +100,7 @@ def test_augment():
         for batch in data:
             for text in batch.text:
                 assert text[-1] not in (".", "!")
+
 
 def test_sometimes_augment():
     """
@@ -141,16 +145,17 @@ YES_XPOS_TEMPLATE = """
 2	{indexp}	{indexp}	NUM	CD	NumForm=Digit|NumType=Card	1	dep	_	start_char=9|end_char=10|ner=S-CARDINAL
 """.strip()
 
+
 def test_shuffle(tmp_path):
     args = tagger.parse_args(args=["--batch_size", "10", "--shorthand", "en_test", "--augment_nopunct", "0.0"])
 
     # 100 looked nice but was actually a 1/1000000 chance of the test failing
     # so let's crank it up to 1000 and make it 1/10^58
-    no_xpos = [NO_XPOS_TEMPLATE.format(index=idx, indexp=idx+1) for idx in range(1000)]
+    no_xpos = [NO_XPOS_TEMPLATE.format(index=idx, indexp=idx + 1) for idx in range(1000)]
     no_doc = CoNLL.conll2doc(input_str="\n\n".join(no_xpos))
     no_data = Dataset(no_doc, args, None)
 
-    yes_xpos = [YES_XPOS_TEMPLATE.format(index=idx, indexp=idx+101) for idx in range(1000)]
+    yes_xpos = [YES_XPOS_TEMPLATE.format(index=idx, indexp=idx + 101) for idx in range(1000)]
     yes_doc = CoNLL.conll2doc(input_str="\n\n".join(yes_xpos))
     yes_data = Dataset(yes_doc, args, None)
 
@@ -259,6 +264,7 @@ EWT_SAMPLE = """
 4	flying	fly	VERB	VBG	VerbForm=Ger	3	xcomp	3:xcomp	SpaceAfter=No
 5	.	.	PUNCT	.	_	3	punct	3:punct	_
 """.lstrip()
+
 
 def test_length_limited_dataloader():
     sample = CoNLL.conll2doc(input_str=EWT_SAMPLE)

@@ -1,4 +1,5 @@
 import json
+
 import pytest
 
 from stanza.models import ner_tagger
@@ -51,6 +52,7 @@ ONE_SENTENCE = """
  ]
 ]
 """
+
 
 @pytest.fixture(scope="module")
 def pretrain_file():

@@ -3,17 +3,13 @@ A few tests of the utils module for the sentiment datasets
 """
 
 import os
-import pytest
 
 import stanza
-
 from stanza.models.classifiers import data
 from stanza.models.classifiers.data import SentimentDatum
 from stanza.models.classifiers.utils import WVType
-from stanza.utils.datasets.sentiment import process_utils
-
 from stanza.tests import TEST_MODELS_DIR
-from stanza.tests.classifiers.test_data import train_file, dev_file, test_file
+from stanza.utils.datasets.sentiment import process_utils
 
 
 def test_write_list(tmp_path, train_file):
@@ -27,6 +23,7 @@ def test_write_list(tmp_path, train_file):
 
     train_copy = data.read_dataset(dataset_file, WVType.OTHER, 1)
     assert train_copy == train_set
+
 
 def test_write_dataset(tmp_path, train_file, dev_file, test_file):
     """
@@ -42,6 +39,7 @@ def test_write_dataset(tmp_path, train_file, dev_file, test_file):
     for filename, expected in zip(expected_files, dataset):
         written = data.read_dataset(tmp_path / filename, WVType.OTHER, 1)
         assert written == expected
+
 
 def test_read_snippets(tmp_path):
     """
@@ -61,6 +59,7 @@ def test_read_snippets(tmp_path):
     assert snippets == [SentimentDatum(sentiment=0, text=['This', 'is', 'a', 'test']),
                         SentimentDatum(sentiment=1, text=['This', 'is', 'a', 'second', 'sentence'])]
 
+
 def test_read_snippets_two_columns(tmp_path):
     """
     Test what happens when multiple columns are combined for the sentiment value
@@ -75,9 +74,8 @@ def test_read_snippets_two_columns(tmp_path):
 
     mapping = {("happy", "foo"): 0, ("sad", "bar"): 1, ("sad", "foo"): 2}
 
-    snippets = process_utils.read_snippets(filename, (2,3), 1, "en", mapping, nlp=nlp)
+    snippets = process_utils.read_snippets(filename, (2, 3), 1, "en", mapping, nlp=nlp)
     assert len(snippets) == 3
     assert snippets == [SentimentDatum(sentiment=0, text=['This', 'is', 'a', 'test']),
                         SentimentDatum(sentiment=1, text=['This', 'is', 'a', 'second', 'sentence']),
                         SentimentDatum(sentiment=2, text=['This', 'is', 'a', 'third', 'sentence'])]
-

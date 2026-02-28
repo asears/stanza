@@ -2,7 +2,6 @@
 Test some simple conversions of NER bio files
 """
 
-import pytest
 
 import json
 
@@ -32,6 +31,7 @@ the	O
 Cerritos	B-LOCATION
 """.strip()
 
+
 def check_json_file(doc, raw_text, expected_sentences, expected_tokens):
     raw_sentences = raw_text.strip().split("\n\n")
     assert len(raw_sentences) == expected_sentences
@@ -49,6 +49,7 @@ def check_json_file(doc, raw_text, expected_sentences, expected_tokens):
             assert token.text == word
             assert token.ner == tag
 
+
 def write_and_convert(tmp_path, raw_text):
     bio_file = tmp_path / "test.bio"
     with open(bio_file, "w", encoding="utf-8") as fout:
@@ -62,15 +63,19 @@ def write_and_convert(tmp_path, raw_text):
 
     return doc
 
+
 def run_test(tmp_path, raw_text, expected_sentences, expected_tokens):
     doc = write_and_convert(tmp_path, raw_text)
     check_json_file(doc, raw_text, expected_sentences, expected_tokens)
 
+
 def test_simple(tmp_path):
     run_test(tmp_path, BIO_1, 1, 5)
 
+
 def test_ner_at_end(tmp_path):
     run_test(tmp_path, BIO_2, 1, 12)
+
 
 def test_two_sentences(tmp_path):
     raw_text = BIO_1 + "\n\n" + BIO_2

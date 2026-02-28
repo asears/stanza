@@ -16,7 +16,7 @@ from stanza.utils.datasets.constituency import convert_arboretum
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
 
-PROJ_EXAMPLE="""
+PROJ_EXAMPLE = """
 <s id="s2" ref="AACBPIGY" source="id=AACBPIGY" forest="1/1" text="A B C D E F G H.">
 	<graph root="s2_500">
 		<terminals>
@@ -60,7 +60,7 @@ PROJ_EXAMPLE="""
 </s>
 """
 
-NOT_FIX_NONPROJ_EXAMPLE="""
+NOT_FIX_NONPROJ_EXAMPLE = """
 <s id="s322" ref="EDGBITSZ" source="id=EDGBITSZ" forest="1/2" text="A B C D E, F G H I J.">
         <graph root="s322_500">
                 <terminals>
@@ -111,7 +111,7 @@ NOT_FIX_NONPROJ_EXAMPLE="""
 """
 
 
-NONPROJ_EXAMPLE="""
+NONPROJ_EXAMPLE = """
 <s id="s9" ref="AATCNKQZ" source="id=AATCNKQZ" forest="1/1" text="A B C D E F G H I.">
         <graph root="s9_500">
                 <terminals>
@@ -159,6 +159,7 @@ NONPROJ_EXAMPLE="""
         </graph>
 </s>
 """
+
 
 def test_projective_example():
     """
@@ -232,4 +233,3 @@ def test_fix_proj_example():
     assert str(tree) == expected_orig
     with tsurgeon.Tsurgeon() as tsurgeon_processor:
         assert str(convert_arboretum.check_words(tree, tsurgeon_processor)) == expected_proj
-

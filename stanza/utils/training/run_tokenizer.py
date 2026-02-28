@@ -21,7 +21,6 @@ To keep the results instead, use --save_output
 import io
 import logging
 import math
-import os
 
 from stanza.models import tokenizer
 from stanza.models.common.doc import Document
@@ -106,7 +105,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
         if uses_dictionary(short_language):
             train_args = train_args + ["--use_dictionary"]
         train_args = train_args + charlm_args + extra_args
-        logger.info("Running train step with args: {}".format(train_args))
+        logger.info(f"Running train step with args: {train_args}")
         tokenizer.main(train_args)
     
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -115,17 +114,17 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
         if command_args.save_output:
             dev_args.extend(["--conll_file", dev_pred])
         dev_args = dev_args + charlm_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info(f"Running dev step with args: {dev_args}")
         _, dev_doc = tokenizer.main(dev_args)
 
         # TODO: log these results?  The original script logged them to
         # echo $results $args >> ${TOKENIZE_DATA_DIR}/${short}.results
 
         if not command_args.save_output:
-            dev_pred = "{:C}\n\n".format(Document(dev_doc))
+            dev_pred = f"{Document(dev_doc):C}\n\n"
             dev_pred = io.StringIO(dev_pred)
         results = common.run_eval_script_tokens(dev_gold, dev_pred)
-        logger.info("Finished running dev set on\n{}\n{}".format(treebank, results))
+        logger.info(f"Finished running dev set on\n{treebank}\n{results}")
 
     if mode == Mode.SCORE_TEST or mode == Mode.TRAIN:
         test_args = ["--mode", "predict", test_type, test_file, "--lang", short_language,
@@ -133,14 +132,14 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
         if command_args.save_output:
             test_args.extend(["--conll_file", test_pred])
         test_args = test_args + charlm_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info(f"Running test step with args: {test_args}")
         _, test_doc = tokenizer.main(test_args)
 
         if not command_args.save_output:
-            test_pred = "{:C}\n\n".format(Document(test_doc))
+            test_pred = f"{Document(test_doc):C}\n\n"
             test_pred = io.StringIO(test_pred)
         results = common.run_eval_script_tokens(test_gold, test_pred)
-        logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
+        logger.info(f"Finished running test set on\n{treebank}\n{results}")
 
     if mode == Mode.SCORE_TRAIN:
         test_args = ["--mode", "predict", test_type, train_file, "--lang", short_language,
@@ -148,14 +147,14 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
         if command_args.save_output:
             test_args.extend(["--conll_file", train_pred])
         test_args = test_args + charlm_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info(f"Running test step with args: {test_args}")
         _, train_doc = tokenizer.main(test_args)
 
         if not command_args.save_output:
-            train_pred = "{:C}\n\n".format(Document(train_doc))
+            train_pred = f"{Document(train_doc):C}\n\n"
             train_pred = io.StringIO(train_pred)
         results = common.run_eval_script_tokens(train_gold, train_pred)
-        logger.info("Finished running train set as a test on\n{}\n{}".format(treebank, results))
+        logger.info(f"Finished running train set as a test on\n{treebank}\n{results}")
 
 
 

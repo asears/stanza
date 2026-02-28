@@ -1,10 +1,10 @@
 """Functions related to BERT or similar models"""
 
 import logging
-from typing import List, Tuple
+from typing import List
 
 import numpy as np                                 # type: ignore
-from transformers import AutoModel, AutoTokenizer  # type: ignore
+from transformers import AutoTokenizer  # type: ignore
 
 from stanza.models.coref.config import Config
 from stanza.models.coref.const import Doc

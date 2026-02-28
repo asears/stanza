@@ -4,11 +4,11 @@ Currently tests a few configurations of files for creating a charlm vocab
 Also has a skeleton test of loading & saving a charlm
 """
 
-from collections import Counter
 import glob
 import lzma
 import os
 import tempfile
+from collections import Counter
 
 import pytest
 
@@ -26,6 +26,7 @@ I hate watching Peppa Pig
 fake_text_2 = """
 This is plastic cheese
 """
+
 
 class TestCharModel:
     def test_single_file_vocab(self):
@@ -115,7 +116,7 @@ class TestCharModel:
             checkpoint_save_name = 'en_text.checkpoint.pt'
             args = ['--train_file', train_file,
                     '--eval_file', eval_file,
-                    '--eval_steps', '0', # eval once per opoch
+                    '--eval_steps', '0',  # eval once per opoch
                     '--epochs', '2',
                     '--cutoff', '1',
                     '--batch_size', '%d' % len(fake_text_1),

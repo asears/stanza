@@ -86,15 +86,15 @@ def main():
                           processors='tokenize,pos,constituency')
 
     doc = nlp('I like blue antennae.')
-    print("{:C}".format(doc))
+    print(f"{doc:C}")
     process_doc(doc, classpath="$CLASSPATH")
-    print("{:C}".format(doc))
+    print(f"{doc:C}")
 
     doc = nlp('And I cannot lie.')
-    print("{:C}".format(doc))
+    print(f"{doc:C}")
     with DependencyConverter(classpath="$CLASSPATH") as converter:
         converter.process(doc)
-        print("{:C}".format(doc))
+        print(f"{doc:C}")
 
 
 if __name__ == '__main__':

@@ -1,7 +1,8 @@
 """ Describes ClusterChecker, a class used to retrieve LEA scores.
 See aclweb.org/anthology/P16-1060.pdf. """
 
-from typing import Hashable, List, Tuple
+from typing import List, Tuple
+from collections.abc import Hashable
 
 from stanza.models.coref.const import EPSILON
 import numpy as np

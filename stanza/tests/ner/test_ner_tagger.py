@@ -3,13 +3,14 @@ Basic testing of the NER tagger.
 """
 
 import os
-import pytest
-import stanza
 
-from stanza.tests import *
+import pytest
+
+import stanza
 from stanza.models import ner_tagger
+from stanza.tests import *
 from stanza.utils.confusion import confusion_to_macro_f1
-import stanza.utils.datasets.ner.prepare_ner_file as prepare_ner_file
+from stanza.utils.datasets.ner import prepare_ner_file
 from stanza.utils.training.run_ner import build_pretrain_args
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
@@ -57,9 +58,10 @@ University E-ORG E-ORG
 
 
 def test_ner():
-    nlp = stanza.Pipeline(**{'processors': 'tokenize,ner', 'dir': TEST_MODELS_DIR, 'lang': 'en', 'logging_level': 'error'})
+    nlp = stanza.Pipeline(processors='tokenize,ner', dir=TEST_MODELS_DIR, lang='en', logging_level='error')
     doc = nlp(EN_DOC)
-    assert EN_DOC_GOLD == '\n'.join([ent.pretty_print() for ent in doc.ents])
+    assert '\n'.join([ent.pretty_print() for ent in doc.ents]) == EN_DOC_GOLD
+
 
 def test_evaluate(tmp_path):
     """
@@ -67,7 +69,7 @@ def test_evaluate(tmp_path):
     """
     package = "ontonotes-ww-multi_charlm"
     model_path = os.path.join(TEST_MODELS_DIR, "en", "ner", package + ".pt")
-    assert os.path.exists(model_path), "The {} model should be downloaded as part of setup.py".format(package)
+    assert os.path.exists(model_path), f"The {package} model should be downloaded as part of setup.py"
 
     os.makedirs(tmp_path, exist_ok=True)
 

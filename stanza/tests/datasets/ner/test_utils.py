@@ -2,10 +2,10 @@
 Test the utils file of the NER dataset processing
 """
 
-import pytest
 
-from stanza.utils.datasets.ner.utils import list_doc_entities
 from stanza.tests.datasets.ner.test_prepare_ner_file import BIO_1, BIO_2, write_and_convert
+from stanza.utils.datasets.ner.utils import list_doc_entities
+
 
 def test_list_doc_entities(tmp_path):
     """
@@ -19,7 +19,7 @@ def test_list_doc_entities(tmp_path):
     doc = write_and_convert(tmp_path, BIO_2)
     entities = list_doc_entities(doc)
     expected = [(('Jennifer',), 'PERSON'), (('Beckett',), 'PERSON'), (('Cerritos',), 'LOCATION')]
-    assert expected == entities    
+    assert expected == entities
 
     doc = write_and_convert(tmp_path, "\n\n".join([BIO_1, BIO_2]))
     entities = list_doc_entities(doc)
@@ -30,5 +30,3 @@ def test_list_doc_entities(tmp_path):
     entities = list_doc_entities(doc)
     expected = [(('Jennifer', "Sh'reyan"), 'PERSON'), (('Jennifer', "Sh'reyan"), 'PERSON'), (('Jennifer',), 'PERSON'), (('Beckett',), 'PERSON'), (('Cerritos',), 'LOCATION')]
     assert expected == entities
-
-

@@ -1,8 +1,6 @@
 from copy import copy
 from collections import Counter, OrderedDict
 from collections.abc import Iterable
-import os
-import pickle
 
 PAD = '<PAD>'
 PAD_ID = 0
@@ -180,7 +178,7 @@ class CompositeVocab(BaseVocab):
         for v, k in zip(id, self._id2unit.keys()):
             if v == EMPTY_ID: continue
             if self.keyed:
-                items.append("{}={}".format(k, self._id2unit[k][v]))
+                items.append(f"{k}={self._id2unit[k][v]}")
             else:
                 items.append(self._id2unit[k][v])
         if self.sep is not None:

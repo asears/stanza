@@ -3,18 +3,16 @@ Test the semgrex interface
 """
 
 import pytest
-import stanza
-from stanza.models.constituency import tree_reader
-from stanza.server.tsurgeon import process_trees, Tsurgeon
 
+from stanza.models.constituency import tree_reader
+from stanza.server.tsurgeon import Tsurgeon, process_trees
 from stanza.tests import *
 
 pytestmark = [pytest.mark.travis, pytest.mark.client]
 
 
-
 def test_simple():
-    text="( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+    text = "( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
     trees = tree_reader.read_trees(text)
 
     tregex = "WP=wp"
@@ -23,12 +21,13 @@ def test_simple():
     assert len(result) == 1
     assert str(result[0]) == "(ROOT (SBARQ (WHNP (WWWPPP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
 
+
 def test_context():
     """
     Processing the same thing twice should work twice...
     """
     with Tsurgeon() as processor:
-        text="( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
+        text = "( (SBARQ (WHNP (WP Who)) (SQ (VP (VBZ sits) (PP (IN in) (NP (DT this) (NN seat))))) (. ?)))"
         trees = tree_reader.read_trees(text)
 
         tregex = "WP=wp"
@@ -58,7 +57,6 @@ def test_arboretum():
         result = processor.process(trees, (tregex, tsurgeon))
         assert len(result) == 1
         assert str(result[0]) == expected
-
 
         text = "(s (par (fcl (n s1_1) (vp (v-fin s1_2) (v-pcp2 s1_4)) (adv s1_3) (np (pron-poss s1_5) (n s1_6) (pp (prp s1_7) (n s1_8)))) (pu s1_9) (conj-c s1_10) (fcl (adv s1_11) (v-fin s1_12) (np (prop s1_13) (pp (prp s1_14) (prop s1_15))) (np (art s1_16) (adjp (adv s1_17) (adj s1_18)) (n s1_19) (pp (prp s1_20) (np (pron-poss s1_21) (adj s1_22) (n s1_23) (prop s1_24))))) (pu s1_25)))"
         expected = "(s (par (fcl (n s1_1) (vp (v-fin s1_2) (adv s1_3) (v-pcp2 s1_4)) (np (pron-poss s1_5) (n s1_6) (pp (prp s1_7) (n s1_8)))) (pu s1_9) (conj-c s1_10) (fcl (adv s1_11) (v-fin s1_12) (np (prop s1_13) (pp (prp s1_14) (prop s1_15))) (np (art s1_16) (adjp (adv s1_17) (adj s1_18)) (n s1_19) (pp (prp s1_20) (np (pron-poss s1_21) (adj s1_22) (n s1_23) (prop s1_24))))) (pu s1_25)))"

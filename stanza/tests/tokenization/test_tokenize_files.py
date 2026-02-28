@@ -10,6 +10,7 @@ This is a test . This is a second sentence .
 I took my daughter ice skating
 """.lstrip()
 
+
 def test_tokenize_files(tmp_path):
     input_file = tmp_path / "input.txt"
     with open(input_file, "w") as fout:
@@ -21,4 +22,4 @@ def test_tokenize_files(tmp_path):
     with open(output_file) as fin:
         text = fin.read()
 
-    assert EXPECTED == text
+    assert text == EXPECTED

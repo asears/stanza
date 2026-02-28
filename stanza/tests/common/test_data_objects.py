@@ -16,10 +16,12 @@ EN_DOC_UPOS_XPOS = (('PRON_DT', 'AUX_VBZ', 'DET_DT', 'NOUN_NN', 'NOUN_NN', 'PUNC
 
 EN_DOC2 = "Chris Manning wrote a sentence. Then another."
 
+
 @pytest.fixture(scope="module")
 def nlp_pipeline():
     nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, lang='en')
     return nlp
+
 
 def test_readonly(nlp_pipeline):
     Document.add_property('some_property', 123)
@@ -34,11 +36,13 @@ def test_getter(nlp_pipeline):
 
     doc = nlp_pipeline(EN_DOC)
 
-    assert EN_DOC_UPOS_XPOS == tuple(tuple(word.upos_xpos for word in sentence.words) for sentence in doc.sentences)
+    assert tuple(tuple(word.upos_xpos for word in sentence.words) for sentence in doc.sentences) == EN_DOC_UPOS_XPOS
+
 
 def test_setter_getter(nlp_pipeline):
     int2str = {0: 'ok', 1: 'good', 2: 'bad'}
     str2int = {'ok': 0, 'good': 1, 'bad': 2}
+
     def setter(self, value):
         self._classname = str2int[value]
     Sentence.add_property('classname', getter=lambda self: int2str[self._classname] if self._classname is not None else None, setter=setter)
@@ -51,6 +55,7 @@ def test_setter_getter(nlp_pipeline):
     # don't try this at home
     sentence._classname = 2
     assert sentence.classname == 'bad'
+
 
 def test_backpointer(nlp_pipeline):
     doc = nlp_pipeline(EN_DOC2)

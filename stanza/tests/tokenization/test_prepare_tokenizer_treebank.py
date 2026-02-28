@@ -1,10 +1,10 @@
 import pytest
-import stanza
-from stanza.tests import *
 
+from stanza.tests import *
 from stanza.utils.datasets import prepare_tokenizer_treebank
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_has_space_after_no():
     assert prepare_tokenizer_treebank.has_space_after_no("SpaceAfter=No")
@@ -21,12 +21,14 @@ def test_add_space_after_no():
     with pytest.raises(ValueError):
         prepare_tokenizer_treebank.add_space_after_no("SpaceAfter=No")
 
+
 def test_remove_space_after_no():
     assert prepare_tokenizer_treebank.remove_space_after_no("SpaceAfter=No") == "_"
     assert prepare_tokenizer_treebank.remove_space_after_no("SpaceAfter=No|MoxOpal=Unban") == "MoxOpal=Unban"
     assert prepare_tokenizer_treebank.remove_space_after_no("MoxOpal=Unban|SpaceAfter=No") == "MoxOpal=Unban"
     with pytest.raises(ValueError):
         prepare_tokenizer_treebank.remove_space_after_no("_")
+
 
 def read_test_doc(doc):
     sentences = [x.strip().split("\n") for x in doc.split("\n\n")]
@@ -212,11 +214,13 @@ SPANISH_QM_RESULT = """
 5	quedó	quedar	VERB	vmis3s0	Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin	2	advcl	2:advcl	_
 """
 
+
 def test_augment_initial_punct():
     doc = read_test_doc(SPANISH_QM_TEST_CASE)
     doc2 = prepare_tokenizer_treebank.augment_initial_punct(doc, ratio=1.0)
     expected = doc + read_test_doc(SPANISH_QM_RESULT)
     assert doc2 == expected
+
 
 SPANISH_SHOULD_THROW = """
 # sent_id = 3LB-CAST-a1-2-s6
@@ -230,6 +234,7 @@ SPANISH_SHOULD_THROW = """
 5	?	?	PUNCT	fit	PunctSide=Fin|PunctType=Qest	4	punct	4:punct	_
 """
 
+
 def test_augment_initial_punct_error():
     """
     The augment script should protect against the single dependency assumption changing in the future
@@ -237,6 +242,7 @@ def test_augment_initial_punct_error():
     doc = read_test_doc(SPANISH_SHOULD_THROW)
     with pytest.raises(NotImplementedError):
         doc2 = prepare_tokenizer_treebank.augment_initial_punct(doc, ratio=1.0)
+
 
 # first sentence should have the space added
 # second sentence should be unchanged
@@ -299,13 +305,15 @@ ARABIC_SPACE_AFTER_RESULT = """
 11	.	.	PUNCT	G---------	_	1	punct	1:punct	Vform=.|Translit=.
 """
 
+
 def test_augment_space_final_punct():
     doc = read_test_doc(ARABIC_SPACE_AFTER_TEST_CASE)
     doc2 = prepare_tokenizer_treebank.augment_arabic_padt(doc, ratio=1.0)
     expected = doc + read_test_doc(ARABIC_SPACE_AFTER_RESULT)
     assert doc2 == expected
 
-ENGLISH_COMMA_SWAP_TEST_CASE="""
+
+ENGLISH_COMMA_SWAP_TEST_CASE = """
 # sent_id = reviews-086839-0004
 # text = Approx 4 months later, the compressor went out.
 1	Approx	approx	ADV	RB	_	3	advmod	3:advmod	_
@@ -333,7 +341,7 @@ ENGLISH_COMMA_SWAP_TEST_CASE="""
 10	.	.	PUNCT	.	_	8	punct	8:punct	_
 """
 
-ENGLISH_COMMA_SWAP_RESULT="""
+ENGLISH_COMMA_SWAP_RESULT = """
 # sent_id = reviews-086839-0004
 # text = Approx 4 months later ,the compressor went out.
 1	Approx	approx	ADV	RB	_	3	advmod	3:advmod	_
@@ -361,11 +369,13 @@ ENGLISH_COMMA_SWAP_RESULT="""
 10	.	.	PUNCT	.	_	8	punct	8:punct	_
 """
 
+
 def test_augment_space_final_punct():
     doc = read_test_doc(ENGLISH_COMMA_SWAP_TEST_CASE)
     doc2 = prepare_tokenizer_treebank.augment_move_comma(doc, ratio=1.0)
     expected = read_test_doc(ENGLISH_COMMA_SWAP_RESULT)
     assert doc2 == expected
+
 
 COMMA_SEP_TEST_CASE = """
 # text = Fuzzy people, floating people
@@ -384,6 +394,7 @@ COMMA_SEP_TEST_EXPECTED = """
 4	floating	float	VERB	VBG	VerbForm=Ger	5	amod	5:amod	_
 5	people	people	NOUN	NNS	Number=Plur	2	appos	2:appos	_
 """
+
 
 def test_augment_comma_separations():
     doc = read_test_doc(COMMA_SEP_TEST_CASE)

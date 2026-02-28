@@ -1,6 +1,5 @@
 import argparse
 import random
-import sys
 
 """
 Converts IJC data to a TSV format.

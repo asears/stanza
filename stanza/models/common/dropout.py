@@ -25,7 +25,7 @@ class WordDropout(nn.Module):
         return res
     
     def extra_repr(self):
-        return 'p={}'.format(self.dropprob)
+        return f'p={self.dropprob}'
 
 class LockedDropout(nn.Module):
     """
@@ -50,7 +50,7 @@ class LockedDropout(nn.Module):
         return mask * x
     
     def extra_repr(self):
-        return 'p={}'.format(self.dropprob)
+        return f'p={self.dropprob}'
 
 class SequenceUnitDropout(nn.Module):
     """ A unit dropout layer that's designed for input of sequence units (e.g., word sequence, char sequence, etc.).
@@ -71,5 +71,5 @@ class SequenceUnitDropout(nn.Module):
         return res
     
     def extra_repr(self):
-        return 'p={}, replacement_id={}'.format(self.dropprob, self.replacement_id)
+        return f'p={self.dropprob}, replacement_id={self.replacement_id}'
 

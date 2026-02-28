@@ -2,9 +2,7 @@
 Test a couple basic data functions, such as processing a doc for its lemmas
 """
 
-import pytest
 
-from stanza.models.common.doc import Document
 from stanza.models.lemma.data import DataLoader
 from stanza.utils.conll import CoNLL
 
@@ -83,23 +81,25 @@ BLANKS_DATA = """
 def test_load_document():
     train_doc = CoNLL.conll2doc(input_str=TRAIN_DATA)
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=False, evaluation=True)
-    assert len(data) == 33 # meticulously counted by hand
+    assert len(data) == 33  # meticulously counted by hand
     assert all(len(x) == 3 for x in data)
 
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=False, evaluation=False)
     assert len(data) == 33
     assert all(len(x) == 3 for x in data)
 
+
 def test_load_goeswith():
     raw_data = TRAIN_DATA + GOESWITH_DATA
     train_doc = CoNLL.conll2doc(input_str=raw_data)
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=False, evaluation=True)
-    assert len(data) == 36 # will be the same as in test_load_document with three additional words
+    assert len(data) == 36  # will be the same as in test_load_document with three additional words
     assert all(len(x) == 3 for x in data)
 
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=False, evaluation=False)
-    assert len(data) == 33 # will be the same as in test_load_document, but with the trailing 3 GOESWITH removed
+    assert len(data) == 33  # will be the same as in test_load_document, but with the trailing 3 GOESWITH removed
     assert all(len(x) == 3 for x in data)
+
 
 def test_correct_form():
     raw_data = TRAIN_DATA + CORRECT_FORM_DATA
@@ -111,18 +111,18 @@ def test_correct_form():
     assert not any(x[0] == 'targeting' for x in data)
 
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=False, evaluation=False)
-    assert len(data) == 38 # the same, but with an extra row so the model learns both 'targetting' and 'targeting'
+    assert len(data) == 38  # the same, but with an extra row so the model learns both 'targetting' and 'targeting'
     assert any(x[0] == 'targeting' for x in data)
     assert any(x[0] == 'targetting' for x in data)
+
 
 def test_load_blank():
     raw_data = TRAIN_DATA + BLANKS_DATA
     train_doc = CoNLL.conll2doc(input_str=raw_data)
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=False, evaluation=False)
-    assert len(data) == 37 # will be the same as in test_load_document with FOUR additional words
+    assert len(data) == 37  # will be the same as in test_load_document with FOUR additional words
     assert all(len(x) == 3 for x in data)
 
     data = DataLoader.load_doc(train_doc, caseless=False, skip_blank_lemmas=True, evaluation=False)
-    assert len(data) == 34 # will be the same as in test_load_document, but one extra word is added.  others were blank
+    assert len(data) == 34  # will be the same as in test_load_document, but one extra word is added.  others were blank
     assert all(len(x) == 3 for x in data)
-

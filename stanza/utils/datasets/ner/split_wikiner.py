@@ -7,7 +7,6 @@ Preprocess the WikiNER dataset, by
 import os
 import random
 import warnings
-from collections import Counter
 
 def read_sentences(filename, encoding):
     sents = []
@@ -29,7 +28,7 @@ def read_sentences(filename, encoding):
             array = line.split()
             if len(array) != 2:
                 skip = True
-                warnings.warn("Format error at line {}: {}".format(i+1, line))
+                warnings.warn(f"Format error at line {i+1}: {line}")
                 continue
             w, t = array
             cache.append([w, t])
@@ -39,7 +38,7 @@ def read_sentences(filename, encoding):
             else:
                 skipped += 1
             cache = []
-    print("Skipped {} examples due to formatting issues.".format(skipped))
+    print(f"Skipped {skipped} examples due to formatting issues.")
     return sents
 
 def write_sentences_to_file(sents, filename):

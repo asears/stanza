@@ -70,12 +70,12 @@ def read_alt_lines(input_files):
     all_lines = [x for x in all_lines if not "　" in x]
     new_count = len(all_lines)
     if new_count < original_count:
-        print("Eliminated %d trees for having wide spaces in it" % ((original_count - new_count)))
+        print("Eliminated %d trees for having wide spaces in it" % (original_count - new_count))
         original_count = new_count
     all_lines = [x for x in all_lines if not "\\x" in x]
     new_count = len(all_lines)
     if new_count < original_count:
-        print("Eliminated %d trees for not being correctly encoded" % ((original_count - new_count)))
+        print("Eliminated %d trees for not being correctly encoded" % (original_count - new_count))
         original_count = new_count
     return all_lines
 
@@ -97,4 +97,4 @@ def convert_alt(input_files, split_files, output_files):
         with open(output_file, "w", encoding="utf-8") as fout:
             for tree in chunk:
                 # the extra ROOT is because the ALT doesn't have this at the top of its trees
-                fout.write("(ROOT {})\n".format(tree))
+                fout.write(f"(ROOT {tree})\n")

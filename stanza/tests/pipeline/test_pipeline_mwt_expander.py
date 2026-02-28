@@ -3,8 +3,8 @@ Basic testing of multi-word-token expansion
 """
 
 import pytest
-import stanza
 
+import stanza
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
@@ -75,13 +75,14 @@ def test_mwt():
     pipeline = stanza.Pipeline(processors='tokenize,mwt', dir=TEST_MODELS_DIR, lang='fr', download_method=None)
     doc = pipeline(FR_MWT_SENTENCE)
     token_to_words = "\n".join(
-        [f'token: {token.text.ljust(9)}\t\twords: [{", ".join([word.pretty_print() for word in token.words])}]' for sent in doc.sentences for token in sent.tokens]
+        [f'token: {token.text.ljust(9)}\t\twords: [{", ".join([word.pretty_print() for word in token.words])}]' for sent in doc.sentences for token in sent.tokens],
     ).strip()
     word_to_token = "\n".join(
         [f'word: {word.text.ljust(9)}\t\ttoken parent:{"-".join([str(x) for x in word.parent.id])}-{word.parent.text}'
          for sent in doc.sentences for word in sent.words]).strip()
     assert token_to_words == FR_MWT_TOKEN_TO_WORDS_GOLD
     assert word_to_token == FR_MWT_WORD_TO_TOKEN_GOLD
+
 
 def test_unknown_character():
     """
@@ -100,6 +101,7 @@ def test_unknown_character():
     batch = mwt_processor.build_batch(doc)
     # the vocab used in this batch should have the missing characters
     assert all(x in batch.vocab._unit2id for x in text)
+
 
 def test_unknown_word():
     """

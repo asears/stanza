@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from stanza.models import mwt_expander
@@ -47,6 +48,7 @@ ENG_DEV = """
 
 """.lstrip()
 
+
 def test_train(tmp_path):
     test_train = str(os.path.join(tmp_path, "en_test.train.conllu"))
     with open(test_train, "w") as fout:
@@ -82,11 +84,11 @@ def test_train(tmp_path):
     dataloader = DataLoader(doc, 10, model.args, vocab=model.vocab, evaluation=True, expand_unk_vocab=True)
     preds = []
     for i, batch in enumerate(dataloader.to_loader()):
-        assert i == 0 # there should only be one batch
+        assert i == 0  # there should only be one batch
         preds += model.predict(batch, never_decode_unk=True, vocab=dataloader.vocab)
     assert len(preds) == 1
     # it is possible to make a version of the test where this happens almost every time
     # for example, running for 100 epochs makes the model succeed 30 times in a row
     # (never saw a failure)
     # but the one time that failure happened, it would be really annoying
-    #assert preds[0] == "Children 's"
+    # assert preds[0] == "Children 's"

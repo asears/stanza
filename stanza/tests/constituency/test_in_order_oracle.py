@@ -1,13 +1,9 @@
-import itertools
 import pytest
 
-from stanza.models.constituency import parse_transitions
 from stanza.models.constituency import tree_reader
-from stanza.models.constituency.base_model import SimpleModel
 from stanza.models.constituency.in_order_oracle import *
 from stanza.models.constituency.parse_transitions import CloseConstituent, OpenConstituent, Shift, TransitionScheme
 from stanza.models.constituency.transition_sequence import build_treebank
-
 from stanza.tests import *
 from stanza.tests.constituency.test_transition_sequence import reconstruct_tree
 
@@ -116,6 +112,7 @@ WIDE_TREEBANK = "\n".join(WIDE_TREES)
 
 ROOT_LABELS = ["ROOT"]
 
+
 def get_repairs(gold_sequence, wrong_transition, repair_fn):
     """
     Use the repair function and the wrong transition to iterate over the gold sequence
@@ -128,6 +125,7 @@ def get_repairs(gold_sequence, wrong_transition, repair_fn):
     repairs = [x for x in repairs if x[1] is not None]
     return repairs
 
+
 @pytest.fixture(scope="module")
 def unary_trees():
     trees = tree_reader.read_trees(TREEBANK)
@@ -136,10 +134,12 @@ def unary_trees():
 
     return trees
 
+
 @pytest.fixture(scope="module")
 def gold_sequences(unary_trees):
     gold_sequences = build_treebank(unary_trees, TransitionScheme.IN_ORDER)
     return gold_sequences
+
 
 @pytest.fixture(scope="module")
 def wide_trees():
@@ -148,6 +148,7 @@ def wide_trees():
     assert len(trees) == len(WIDE_TREES)
 
     return trees
+
 
 def test_wrong_open_root(gold_sequences):
     """
@@ -173,6 +174,7 @@ def test_wrong_open_root(gold_sequences):
         # to give the model another chance to close the tree
         expected = gold_sequence[:-2] + [wrong_transition, close_transition] + gold_sequence[-2:]
         assert repair[1] == expected
+
 
 def test_missed_unary(gold_sequences):
     """
@@ -225,7 +227,7 @@ def test_open_with_stuff(unary_trees, gold_sequences):
         "(ROOT (S (DT A) (NN record) (NN date) (VP (VBZ has) (RB n't) (VP (VBN been) (VP (VBN set)))) (. .)))",
         "(ROOT (S (NP (RB Not) (PDT all) (DT those)) (SBAR (WHNP (WP who)) (S (VP (VBD wrote)))) (VP (VBP oppose) (NP (DT the) (NNS changes))) (. .)))",
         None,
-        "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NNP Hong) (NNP Kong) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before)))))))))))"
+        "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NNP Hong) (NNP Kong) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before)))))))))))",
     ]
 
     for tree, gold_sequence, expected in zip(unary_trees, gold_sequences, expected_trees):
@@ -237,6 +239,7 @@ def test_open_with_stuff(unary_trees, gold_sequences):
             result = reconstruct_tree(tree, repairs[0][1])
             assert str(result) == expected
 
+
 def test_general_open(gold_sequences):
     wrong_transition = OpenConstituent("SBARQ")
 
@@ -247,7 +250,8 @@ def test_general_open(gold_sequences):
             assert len(repair[1]) == len(sequence)
             assert repair[1][repair[0]] == wrong_transition
             assert repair[1][:repair[0]] == sequence[:repair[0]]
-            assert repair[1][repair[0]+1:] == sequence[repair[0]+1:]
+            assert repair[1][repair[0] + 1:] == sequence[repair[0] + 1:]
+
 
 def test_missed_unary(unary_trees, gold_sequences):
     shift_transition = Shift()
@@ -274,32 +278,33 @@ def test_missed_unary(unary_trees, gold_sequences):
         assert len(repairs) == len(expected_close)
         for repair, (expected_idx, expected_len) in zip(repairs, expected_close):
             assert repair[0] == expected_idx
-            assert repair[1] == sequence[:expected_idx] + sequence[expected_idx+expected_len:]
+            assert repair[1] == sequence[:expected_idx] + sequence[expected_idx + expected_len:]
 
         repairs = get_repairs(sequence, shift_transition, fix_missed_unary)
         assert len(repairs) == len(expected_shift)
         for repair, (expected_idx, expected_len) in zip(repairs, expected_shift):
             assert repair[0] == expected_idx
-            assert repair[1] == sequence[:expected_idx] + sequence[expected_idx+expected_len:]
+            assert repair[1] == sequence[:expected_idx] + sequence[expected_idx + expected_len:]
+
 
 def test_open_shift(unary_trees, gold_sequences):
     shift_transition = Shift()
 
     expected_repairs = [
-        [(7,  "(ROOT (S (NP (DT A) (NN record) (NN date)) (VBZ has) (RB n't) (VP (VBN been) (VP (VBN set))) (. .)))"),
+        [(7, "(ROOT (S (NP (DT A) (NN record) (NN date)) (VBZ has) (RB n't) (VP (VBN been) (VP (VBN set))) (. .)))"),
          (10, "(ROOT (S (NP (DT A) (NN record) (NN date)) (VP (VBZ has) (RB n't) (VBN been) (VP (VBN set))) (. .)))")],
-        [(7,  "(ROOT (S (NP (NP (RB Not) (PDT all) (DT those)) (WP who) (S (VP (VBD wrote)))) (VP (VBP oppose) (NP (DT the) (NNS changes))) (. .)))"),
-         (9,  "(ROOT (S (NP (NP (RB Not) (PDT all) (DT those)) (WHNP (WP who)) (S (VP (VBD wrote)))) (VP (VBP oppose) (NP (DT the) (NNS changes))) (. .)))"),
+        [(7, "(ROOT (S (NP (NP (RB Not) (PDT all) (DT those)) (WP who) (S (VP (VBD wrote)))) (VP (VBP oppose) (NP (DT the) (NNS changes))) (. .)))"),
+         (9, "(ROOT (S (NP (NP (RB Not) (PDT all) (DT those)) (WHNP (WP who)) (S (VP (VBD wrote)))) (VP (VBP oppose) (NP (DT the) (NNS changes))) (. .)))"),
          (19, "(ROOT (S (NP (NP (RB Not) (PDT all) (DT those)) (SBAR (WHNP (WP who)) (S (VP (VBD wrote))))) (VBP oppose) (NP (DT the) (NNS changes)) (. .)))"),
          (21, "(ROOT (S (NP (NP (RB Not) (PDT all) (DT those)) (SBAR (WHNP (WP who)) (S (VP (VBD wrote))))) (VP (VBP oppose) (DT the) (NNS changes)) (. .)))")],
         [(14, "(ROOT (S (PRN (S (VP (VB See)))) (, ,) (NP (DT the) (JJ other) (NN rule)) (PP (IN of) (NP (NN thumb))) (PP (IN about) (NP (NN ballooning)))))"),
          (16, "(ROOT (S (PRN (S (VP (VB See)))) (, ,) (NP (NP (DT the) (JJ other) (NN rule)) (IN of) (NP (NN thumb)) (PP (IN about) (NP (NN ballooning))))))"),
          (22, "(ROOT (S (PRN (S (VP (VB See)))) (, ,) (NP (NP (DT the) (JJ other) (NN rule)) (PP (IN of) (NP (NN thumb))) (IN about) (NP (NN ballooning)))))")],
-        [(5,  "(ROOT (S (NP (NNS optimists)) (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
+        [(5, "(ROOT (S (NP (NNS optimists)) (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
          (10, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
          (12, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
          (14, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
-         (19, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (RB as) (S (VP (ADVP (IN before))))))))))")]
+         (19, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (RB as) (S (VP (ADVP (IN before))))))))))")],
     ]
 
     for tree, sequence, expected in zip(unary_trees, gold_sequences, expected_repairs):
@@ -315,7 +320,7 @@ def test_open_close(unary_trees, gold_sequences):
     close_transition = CloseConstituent()
 
     expected_repairs = [
-        [(7,  "(ROOT (S (S (NP (DT A) (NN record) (NN date)) (VBZ has)) (RB n't) (VP (VBN been) (VP (VBN set))) (. .)))"),
+        [(7, "(ROOT (S (S (NP (DT A) (NN record) (NN date)) (VBZ has)) (RB n't) (VP (VBN been) (VP (VBN set))) (. .)))"),
          (10, "(ROOT (S (NP (DT A) (NN record) (NN date)) (VP (VP (VBZ has) (RB n't) (VBN been)) (VP (VBN set))) (. .)))")],
         # missed the WHNP.  The surrounding SBAR cannot be created, either
         [(7, "(ROOT (S (NP (NP (NP (RB Not) (PDT all) (DT those)) (WP who)) (S (VP (VBD wrote)))) (VP (VBP oppose) (NP (DT the) (NNS changes))) (. .)))"),
@@ -332,7 +337,7 @@ def test_open_close(unary_trees, gold_sequences):
          (10, "(ROOT (S (NP (NNS optimists)) (VP (VP (VBP expect) (NP (NNP Hong) (NNP Kong))) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
          (12, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (S (NP (NNP Hong) (NNP Kong)) (TO to)) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
          (14, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (VP (TO to) (VB hum)) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))"),
-         (19, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VP (VB hum) (ADVP (RB along)) (RB as)) (S (VP (ADVP (IN before))))))))))")]
+         (19, "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong)) (VP (TO to) (VP (VP (VB hum) (ADVP (RB along)) (RB as)) (S (VP (ADVP (IN before))))))))))")],
     ]
 
     for tree, sequence, expected in zip(unary_trees, gold_sequences, expected_repairs):
@@ -343,6 +348,7 @@ def test_open_close(unary_trees, gold_sequences):
             assert repair[0] == idx
             result_tree = reconstruct_tree(tree, repair[1])
             assert str(result_tree) == expected_tree
+
 
 def test_shift_close(unary_trees, gold_sequences):
     """
@@ -382,6 +388,7 @@ def test_shift_close(unary_trees, gold_sequences):
     else:
         raise AssertionError("Did not find an expected repair location")
 
+
 def test_close_open_shift_nested(unary_trees, gold_sequences):
     shift_transition = Shift()
 
@@ -396,9 +403,10 @@ def test_close_open_shift_nested(unary_trees, gold_sequences):
         assert len(repairs) == len(expected)
         if len(expected) >= 1:
             for repair in repairs:
-                assert repair[0] in expected.keys()
+                assert repair[0] in expected
                 result_tree = reconstruct_tree(tree, repair[1])
                 assert str(result_tree) == expected[repair[0]]
+
 
 def check_repairs(trees, gold_sequences, expected_trees, transition, repair_fn):
     for tree_idx, (gold_tree, gold_sequence, expected) in enumerate(zip(trees, gold_sequences, expected_trees)):
@@ -411,19 +419,20 @@ def check_repairs(trees, gold_sequences, expected_trees, transition, repair_fn):
                 assert str(result_tree) == expected[repair[0]]
         else:
             print("---------------------")
-            print("{:P}".format(gold_tree))
+            print(f"{gold_tree:P}")
             print(gold_sequence)
-            #print(repairs)
+            # print(repairs)
             for repair in repairs:
                 print("---------------------")
                 print(gold_sequence)
                 print(repair[1])
                 result_tree = reconstruct_tree(gold_tree, repair[1])
-                print("{:P}".format(gold_tree))
-                print("{:P}".format(result_tree))
+                print(f"{gold_tree:P}")
+                print(f"{result_tree:P}")
                 print(tree_idx)
                 print(repair[0])
                 print(result_tree)
+
 
 def test_close_open_shift_unambiguous(unary_trees, gold_sequences):
     shift_transition = Shift()
@@ -435,6 +444,7 @@ def test_close_open_shift_unambiguous(unary_trees, gold_sequences):
                        9: "(ROOT (S (NP (NNS optimists)) (VP (VBP expect) (S (NP (NNP Hong) (NNP Kong) (VP (TO to) (VP (VB hum) (ADVP (RB along)) (SBAR (RB as) (S (VP (ADVP (IN before))))))))))))"}]
     check_repairs(unary_trees, gold_sequences, expected_trees, shift_transition, fix_close_open_shift_unambiguous_bracket)
 
+
 def test_close_open_shift_ambiguous_early(unary_trees, gold_sequences):
     shift_transition = Shift()
 
@@ -444,6 +454,7 @@ def test_close_open_shift_ambiguous_early(unary_trees, gold_sequences):
                        6: "(ROOT (S (PRN (S (VP (VB See))) (, ,)) (NP (NP (DT the) (JJ other) (NN rule)) (PP (IN of) (NP (NN thumb))) (PP (IN about) (NP (NN ballooning))))))"},
                       {}]
     check_repairs(unary_trees, gold_sequences, expected_trees, shift_transition, fix_close_open_shift_ambiguous_bracket_early)
+
 
 def test_close_open_shift_ambiguous_late(unary_trees, gold_sequences):
     shift_transition = Shift()
@@ -498,6 +509,7 @@ def test_close_shift_shift_early(unary_trees, wide_trees):
                       {21: "(ROOT (S (NP (DT These) (NNS studies)) (VP (VBP demonstrate) (SBAR (IN that) (S (NP (NNS mice)) (VP (VBP are) (NP (NP (DT a) (ADJP (JJ practical) (CC and) (JJ powerful) (JJ experimental)) (NN system)) (SBAR (S (VP (TO to) (VP (VB study) (NP (DT the) (NN genetics)))))))))))))"}]
 
     check_repairs(test_trees, gold_sequences, expected_trees, shift_transition, fix_close_shift_shift_ambiguous_early)
+
 
 def test_close_shift_shift_late(unary_trees, wide_trees):
     """

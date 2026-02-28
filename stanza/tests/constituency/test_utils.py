@@ -1,9 +1,7 @@
 import pytest
 
 from stanza import Pipeline
-from stanza.models.constituency import tree_reader
-from stanza.models.constituency import utils
-
+from stanza.models.constituency import tree_reader, utils
 from stanza.tests import *
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
@@ -12,7 +10,6 @@ pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 @pytest.fixture(scope="module")
 def pipeline():
     return Pipeline(dir=TEST_MODELS_DIR, lang="en", processors="tokenize, pos", tokenize_pretokenized=True)
-
 
 
 def test_xpos_retag(pipeline):
@@ -26,7 +23,6 @@ def test_xpos_retag(pipeline):
 
     new_trees = utils.retag_trees(trees, [pipeline], xpos=True)
     assert new_trees == tree_reader.read_trees(expected)
-
 
 
 def test_upos_retag(pipeline):
@@ -65,4 +61,3 @@ def test_replace_tags():
     with pytest.raises(ValueError):
         new_tags = ["A", "B", "C", "D"]
         new_tree = trees[0].replace_tags(new_tags)
-

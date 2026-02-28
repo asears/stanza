@@ -96,7 +96,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                       '--shorthand', short_name,
                       '--mode', 'train']
         train_args = train_args + default_args + extra_args
-        logger.info("Running train step with args: {}".format(train_args))
+        logger.info(f"Running train step with args: {train_args}")
         constituency_parser.main(train_args)
 
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -104,7 +104,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                     '--shorthand', short_name,
                     '--mode', 'predict']
         dev_args = dev_args + default_args + extra_args
-        logger.info("Running dev step with args: {}".format(dev_args))
+        logger.info(f"Running dev step with args: {dev_args}")
         constituency_parser.main(dev_args)
 
     if mode == Mode.SCORE_TEST or mode == Mode.TRAIN:
@@ -112,14 +112,14 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                      '--shorthand', short_name,
                      '--mode', 'predict']
         test_args = test_args + default_args + extra_args
-        logger.info("Running test step with args: {}".format(test_args))
+        logger.info(f"Running test step with args: {test_args}")
         constituency_parser.main(test_args)
 
     if mode == "parse_text":
         text_args = ['--shorthand', short_name,
                      '--mode', 'parse_text']
         text_args = text_args + default_args + extra_args
-        logger.info("Processing text with args: {}".format(text_args))
+        logger.info(f"Processing text with args: {text_args}")
         constituency_parser.main(text_args)
 
 def main():

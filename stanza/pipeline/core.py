@@ -6,10 +6,7 @@ import argparse
 import collections
 from enum import Enum
 import io
-import itertools
-import sys
 import logging
-import json
 import os
 
 from stanza.pipeline._constants import *
@@ -17,19 +14,9 @@ from stanza.models.common.constant import langcode_to_lang
 from stanza.models.common.doc import Document
 from stanza.models.common.foundation_cache import FoundationCache
 from stanza.models.common.utils import default_device
-from stanza.pipeline.processor import Processor, ProcessorRequirementsException
+from stanza.pipeline.processor import ProcessorRequirementsException
 from stanza.pipeline.registry import NAME_TO_PROCESSOR_CLASS, PIPELINE_NAMES, PROCESSOR_VARIANTS
-from stanza.pipeline.langid_processor import LangIDProcessor
-from stanza.pipeline.tokenize_processor import TokenizeProcessor
-from stanza.pipeline.mwt_processor import MWTProcessor
-from stanza.pipeline.pos_processor import POSProcessor
-from stanza.pipeline.lemma_processor import LemmaProcessor
-from stanza.pipeline.constituency_processor import ConstituencyProcessor
-from stanza.pipeline.coref_processor import CorefProcessor
-from stanza.pipeline.depparse_processor import DepparseProcessor
-from stanza.pipeline.sentiment_processor import SentimentProcessor
-from stanza.pipeline.ner_processor import NERProcessor
-from stanza.resources.common import DEFAULT_MODEL_DIR, DEFAULT_RESOURCES_URL, DEFAULT_RESOURCES_VERSION, ModelSpecification, add_dependencies, add_mwt, download_models, download_resources_json, flatten_processor_list, load_resources_json, maintain_processor_list, process_pipeline_parameters, set_logging_level, sort_processors
+from stanza.resources.common import DEFAULT_MODEL_DIR, DEFAULT_RESOURCES_URL, DEFAULT_RESOURCES_VERSION, ModelSpecification, add_dependencies, download_models, download_resources_json, flatten_processor_list, load_resources_json, maintain_processor_list, process_pipeline_parameters, set_logging_level, sort_processors
 from stanza.resources.default_packages import PACKAGES
 from stanza.utils.conll import CoNLL, CoNLLError
 from stanza.utils.helper_func import make_table
@@ -99,7 +86,7 @@ def build_default_config_option(model_specs):
     # handle case when processor variants are used
     if any(model_spec.package in PROCESSOR_VARIANTS[model_spec.processor] for model_spec in model_specs):
         if len(model_specs) > 1:
-            raise IllegalPackageError("Variant processor selected for {}, but multiple packages requested".format(model_spec.processor))
+            raise IllegalPackageError(f"Variant processor selected for {model_spec.processor}, but multiple packages requested")
         return f"{model_specs[0].processor}_with_{model_specs[0].package}", True
     # handle case when identity is specified as lemmatizer
     elif any(model_spec.processor == LEMMA and model_spec.package == 'identity' for model_spec in model_specs):
@@ -148,7 +135,7 @@ def build_default_config(resources, lang, model_dir, load_list):
             continue
 
         if len(model_specs) > 1:
-            raise IllegalPackageError("Specified multiple packages for {}, which currently only handles one package".format(processor))
+            raise IllegalPackageError(f"Specified multiple packages for {processor}, which currently only handles one package")
 
         default_config[f"{processor}_model_path"] = model_paths[0]
         if not dependencies[0]: continue
@@ -266,7 +253,7 @@ class Pipeline:
             if lang not in resources or PACKAGES not in resources[lang]:
                 raise ValueError(f'No processors to load for language {lang}.  Language {lang} is currently unsupported')
             else:
-                raise ValueError('No processors to load for language {}.  Please check if your language or package is correctly set.'.format(lang))
+                raise ValueError(f'No processors to load for language {lang}.  Please check if your language or package is correctly set.')
         load_table = make_table(['Processor', 'Package'], [(row[0], ";".join(model_spec.package for model_spec in row[1])) for row in self.load_list])
         logger.info(f'Loading these models for language: {lang} ({lang_name}):\n{load_table}')
 
@@ -287,7 +274,7 @@ class Pipeline:
             if use_gpu == True and device == 'cpu':
                 logger.warning("GPU requested, but is not available!")
         self.device = device
-        logger.info("Using device: {}".format(self.device))
+        logger.info(f"Using device: {self.device}")
 
         # set up processors
         pipeline_reqs_exceptions = []
@@ -414,7 +401,7 @@ class Pipeline:
         if processors is None:
             processors = PIPELINE_NAMES
         elif not isinstance(processors, (str, list, tuple, set)):
-            raise ValueError("Cannot process {} as a list of processors to run".format(type(processors)))
+            raise ValueError(f"Cannot process {type(processors)} as a list of processors to run")
         else:
             if isinstance(processors, str):
                 processors = {x for x in processors.split(",")}
@@ -521,7 +508,7 @@ def main():
 
     doc = pipe(doc)
 
-    print("{:C}".format(doc))
+    print(f"{doc:C}")
 
 
 if __name__ == '__main__':

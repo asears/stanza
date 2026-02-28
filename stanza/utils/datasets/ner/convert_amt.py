@@ -13,8 +13,6 @@ To turn all labels into the 4 class used in conll03:
 import argparse
 import copy
 import json
-from operator import itemgetter
-import sys
 
 from tqdm import tqdm
 

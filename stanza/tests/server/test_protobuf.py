@@ -8,12 +8,20 @@ The test corresponds to annotations for the following sentence:
 """
 import os
 from pathlib import Path
-import pytest
 
+import pytest
 from pytest import fixture
-from stanza.protobuf import Document, Sentence, Token, DependencyGraph,\
-                             CorefChain
-from stanza.protobuf import parseFromDelimitedString, writeToDelimitedString, to_text
+
+from stanza.protobuf import (
+    CorefChain,
+    DependencyGraph,
+    Document,
+    Sentence,
+    Token,
+    parseFromDelimitedString,
+    to_text,
+    writeToDelimitedString,
+)
 
 # set the marker for this module
 pytestmark = [pytest.mark.travis, pytest.mark.client]
@@ -73,7 +81,7 @@ def test_tokens(doc_pb):
     # Word
     words = "Chris wrote a simple sentence that he parsed with Stanford CoreNLP .".split()
     words_ = [t.word for t in tokens]
-    assert  words_ == words
+    assert words_ == words
 
     # Lemma
     lemmas = "Chris write a simple sentence that he parse with Stanford CoreNLP .".split()
@@ -92,7 +100,7 @@ def test_tokens(doc_pb):
 
     # character offsets
     begin = [int(i) for i in "0 6 12 14 21 30 35 38 45 50 59 66".split()]
-    end =   [int(i) for i in "5 11 13 20 29 34 37 44 49 58 66 67".split()]
+    end = [int(i) for i in "5 11 13 20 29 34 37 44 49 58 66 67".split()]
     begin_ = [t.beginChar for t in tokens]
     end_ = [t.endChar for t in tokens]
     assert begin_ == begin

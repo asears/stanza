@@ -8,7 +8,6 @@ from stanza.utils.training import common
 from stanza.utils.training.common import Mode, add_charlm_args, build_depparse_charlm_args, choose_depparse_charlm, choose_transformer
 from stanza.utils.training.common import build_depparse_wordvec_args
 
-from stanza.resources.default_packages import default_charlms, depparse_charlms
 
 logger = logging.getLogger('stanza')
 
@@ -90,7 +89,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                       "--mode", "train"]
         train_args = train_args + build_depparse_wordvec_args(short_language, dataset, extra_args) + charlm_args + bert_args
         train_args = train_args + extra_args
-        logger.info("Running train depparse for {} with args {}".format(treebank, train_args))
+        logger.info(f"Running train depparse for {treebank} with args {train_args}")
         parser.main(train_args)
 
     if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -103,15 +102,15 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
             dev_args.extend(["--output_file", dev_pred_file])
         dev_args = dev_args + build_depparse_wordvec_args(short_language, dataset, extra_args) + charlm_args + bert_args
         dev_args = dev_args + extra_args
-        logger.info("Running dev depparse for {} with args {}".format(treebank, dev_args))
+        logger.info(f"Running dev depparse for {treebank} with args {dev_args}")
         _, dev_doc = parser.main(dev_args)
 
         if '--no_gold_labels' not in extra_args:
             if not command_args.save_output:
-                dev_pred_file = "{:C}\n\n".format(dev_doc)
+                dev_pred_file = f"{dev_doc:C}\n\n"
                 dev_pred_file = io.StringIO(dev_pred_file)
             results = common.run_eval_script_depparse(eval_file if eval_file else dev_in_file, dev_pred_file)
-            logger.info("Finished running dev set on\n{}\n{}".format(treebank, results))
+            logger.info(f"Finished running dev set on\n{treebank}\n{results}")
         if command_args.save_output:
             logger.info("Output saved to %s", dev_pred_file)
 
@@ -125,15 +124,15 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
             test_args.extend(["--output_file", test_pred_file])
         test_args = test_args + build_depparse_wordvec_args(short_language, dataset, extra_args) + charlm_args + bert_args
         test_args = test_args + extra_args
-        logger.info("Running test depparse for {} with args {}".format(treebank, test_args))
+        logger.info(f"Running test depparse for {treebank} with args {test_args}")
         _, test_doc = parser.main(test_args)
 
         if '--no_gold_labels' not in extra_args:
             if not command_args.save_output:
-                test_pred_file = "{:C}\n\n".format(test_doc)
+                test_pred_file = f"{test_doc:C}\n\n"
                 test_pred_file = io.StringIO(test_pred_file)
             results = common.run_eval_script_depparse(eval_file if eval_file else test_in_file, test_pred_file)
-            logger.info("Finished running test set on\n{}\n{}".format(treebank, results))
+            logger.info(f"Finished running test set on\n{treebank}\n{results}")
         if command_args.save_output:
             logger.info("Output saved to %s", test_pred_file)
 

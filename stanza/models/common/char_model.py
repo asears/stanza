@@ -299,7 +299,7 @@ class CharacterLanguageModelWordAdapter(nn.Module):
     def hidden_dim(self):
         return sum(charlm.hidden_dim() for charlm in self.charlms)
 
-class CharacterLanguageModelTrainer():
+class CharacterLanguageModelTrainer:
     def __init__(self, model, params, optimizer, criterion, scheduler, epoch=1, global_step=0):
         self.model = model
         self.params = params

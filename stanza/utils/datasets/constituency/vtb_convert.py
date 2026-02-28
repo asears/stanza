@@ -122,7 +122,7 @@ def convert_file(orig_file, new_file, fix_errors=True, convert_brackets=False, u
     else:
         weird_labels = WEIRD_LABELS
     errors = defaultdict(list)
-    with open(orig_file, 'r', encoding='utf-8') as reader, open(new_file, 'w', encoding='utf-8') as writer:
+    with open(orig_file, encoding='utf-8') as reader, open(new_file, 'w', encoding='utf-8') as writer:
         content = reader.readlines()
         # Tree string will only be written if the currently read
         # tree is a valid tree. It will not be written if it
@@ -146,15 +146,15 @@ def convert_file(orig_file, new_file, fix_errors=True, convert_brackets=False, u
                 # one tree in 25432.prd is not valid because
                 # it is just a bunch of blank lines
                 if tree.strip() == '(ROOT':
-                    errors["empty"].append("Empty tree in {} line {}".format(orig_file, line_idx))
+                    errors["empty"].append(f"Empty tree in {orig_file} line {line_idx}")
                     continue
                 tree += ')\n'
                 parity = count_paren_parity(tree)
                 if parity > 0:
-                    errors["unclosed"].append("Unclosed tree from {} line {}: |{}|".format(orig_file, line_idx, tree))
+                    errors["unclosed"].append(f"Unclosed tree from {orig_file} line {line_idx}: |{tree}|")
                     continue
                 if parity < 0:
-                    errors["extra_parens"].append("Extra parens at end of tree from {} line {} for having extra parens: {}".format(orig_file, line_idx, tree))
+                    errors["extra_parens"].append(f"Extra parens at end of tree from {orig_file} line {line_idx} for having extra parens: {tree}")
                     continue
                 if convert_brackets:
                     tree = tree.replace("RBKT", "-RRB-").replace("LBKT", "-LRB-")
@@ -162,13 +162,13 @@ def convert_file(orig_file, new_file, fix_errors=True, convert_brackets=False, u
                     # test that the tree can be read in properly
                     processed_trees = read_trees(tree)
                     if len(processed_trees) > 1:
-                        errors["multiple"].append("Multiple trees in one xml annotation from {} line {}".format(orig_file, line_idx))
+                        errors["multiple"].append(f"Multiple trees in one xml annotation from {orig_file} line {line_idx}")
                         continue
                     if len(processed_trees) == 0:
-                        errors["empty"].append("Empty tree in {} line {}".format(orig_file, line_idx))
+                        errors["empty"].append(f"Empty tree in {orig_file} line {line_idx}")
                         continue
                     if not processed_trees[0].all_leaves_are_preterminals():
-                        errors["untagged_leaf"].append("Tree with non-preterminal leaves in {} line {}: {}".format(orig_file, line_idx, tree))
+                        errors["untagged_leaf"].append(f"Tree with non-preterminal leaves in {orig_file} line {line_idx}: {tree}")
                         continue
                     # Unify the labels
                     if fix_errors:
@@ -180,14 +180,14 @@ def convert_file(orig_file, new_file, fix_errors=True, convert_brackets=False, u
                     for weird_label in weird_labels:
                         if tree.find(weird_label) >= 0:
                             bad_label = True
-                            errors[weird_label].append("Weird label {} from {} line {}: {}".format(weird_label, orig_file, line_idx, tree))
+                            errors[weird_label].append(f"Weird label {weird_label} from {orig_file} line {line_idx}: {tree}")
                             break
                     if bad_label:
                         continue
 
                     if write_ids:
                         if tree_id is None:
-                            errors["missing_id"].append("Missing ID from {} at line {}".format(orig_file, line_idx))
+                            errors["missing_id"].append(f"Missing ID from {orig_file} at line {line_idx}")
                             writer.write("<s>")
                         else:
                             writer.write("<s id=%d>\n" % tree_id)
@@ -198,14 +198,14 @@ def convert_file(orig_file, new_file, fix_errors=True, convert_brackets=False, u
                     tree = ""
                     tree_id = None
                 except MixedTreeError:
-                    errors["mixed"].append("Mixed leaves and constituents from {} line {}: {}".format(orig_file, line_idx, tree))
+                    errors["mixed"].append(f"Mixed leaves and constituents from {orig_file} line {line_idx}: {tree}")
                 except UnlabeledTreeError:
-                    errors["unlabeled"].append("Unlabeled nodes in tree from {} line {}: {}".format(orig_file, line_idx, tree))
+                    errors["unlabeled"].append(f"Unlabeled nodes in tree from {orig_file} line {line_idx}: {tree}")
             else:  # content line
                 if is_valid_line(line) and reading_tree:
                     tree += line
                 elif reading_tree:
-                    errors["invalid"].append("Invalid tree error in {} line {}: |{}|, rejected because of line |{}|".format(orig_file, line_idx, tree, line))
+                    errors["invalid"].append(f"Invalid tree error in {orig_file} line {line_idx}: |{tree}|, rejected because of line |{line}|")
                     reading_tree = False
 
     return errors

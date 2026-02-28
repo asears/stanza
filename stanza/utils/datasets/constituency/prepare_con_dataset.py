@@ -315,10 +315,10 @@ def process_vlsp22(paths, dataset_name, *args):
         vlsp_test_files = [os.path.join(vlsp_test_dir, x) for x in vlsp_test_files if x.endswith(".csv")]
 
     if len(vlsp_train_files) == 0:
-        raise FileNotFoundError("No train files (files starting with 'file') found in {}".format(vlsp_dir))
+        raise FileNotFoundError(f"No train files (files starting with 'file') found in {vlsp_dir}")
     if not args.test_split and len(vlsp_test_files) == 0:
-        raise FileNotFoundError("No test files found in {}".format(vlsp_dir))
-    print("Loading training files from {}".format(vlsp_dir))
+        raise FileNotFoundError(f"No test files found in {vlsp_dir}")
+    print(f"Loading training files from {vlsp_dir}")
     print("Procesing training files:\n  {}".format("\n  ".join(vlsp_train_files)))
     with tempfile.TemporaryDirectory() as train_output_path:
         vtb_convert.convert_files(vlsp_train_files, train_output_path, verbose=True, fix_errors=True, convert_brackets=args.convert_brackets, updated_tagset=updated_tagset)
@@ -367,14 +367,14 @@ def process_arboretum(paths, dataset_name, *args):
 
     arboretum_file = os.path.join(paths["CONSTITUENCY_BASE"], "danish", "arboretum", "arboretum.tiger", "arboretum.tiger")
     if not os.path.exists(arboretum_file):
-        raise FileNotFoundError("Unable to find input file for Arboretum.  Expected in {}".format(arboretum_file))
+        raise FileNotFoundError(f"Unable to find input file for Arboretum.  Expected in {arboretum_file}")
 
     treebank = convert_tiger_treebank(arboretum_file)
     datasets = utils.split_treebank(treebank, 0.8, 0.1)
     output_dir = paths["CONSTITUENCY_DATA_DIR"]
 
     output_filename = os.path.join(output_dir, "%s.mrg" % dataset_name)
-    print("Writing {} trees to {}".format(len(treebank), output_filename))
+    print(f"Writing {len(treebank)} trees to {output_filename}")
     parse_tree.Tree.write_treebank(treebank, output_filename)
 
     write_dataset(datasets, output_dir, dataset_name)

@@ -43,13 +43,10 @@ from contextlib import contextmanager
 import datetime
 import logging
 import os
-import random
-import sys
 import dataclasses
 import time
 
 
-import numpy as np  # type: ignore
 import torch        # type: ignore
 
 from stanza.models.common.utils import set_random_seed

@@ -41,7 +41,7 @@ def get_phrases(filename):
             elif child.attrib['polarity'] == 'positive':
                 rating = "2"
             else:
-                raise ValueError("Unexpected polarity found in {}".format(filename))
+                raise ValueError(f"Unexpected polarity found in {filename}")
             fragments.append(ArguanaSentimentDatum(begin=int(child.attrib['begin']),
                                                    end=int(child.attrib['end']),
                                                    rating=rating))
@@ -61,7 +61,7 @@ def get_phrases_from_directory(directory):
 def get_tokenized_phrases(in_directory):
     phrases = get_phrases_from_directory(in_directory)
     phrases = process_utils.get_ptb_tokenized_phrases(phrases)
-    print("Found {} phrases in arguana".format(len(phrases)))
+    print(f"Found {len(phrases)} phrases in arguana")
     return phrases
 
 def main(in_directory, out_directory, short_name):

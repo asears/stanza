@@ -393,7 +393,7 @@ def process_default_zips(args):
                 for package in sorted(models_needed[processor]):
                     filename = os.path.join(args.output_dir, lang, "models", processor, package + '.pt')
                     if os.path.exists(filename):
-                        print("   Model {} package {}: file {}".format(processor, package, filename))
+                        print(f"   Model {processor} package {package}: file {filename}")
                         model_files.append((filename, processor, package))
                     else:
                         raise FileNotFoundError(f"Processor {processor} package {package} needed for {lang} but cannot be found at {filename}")

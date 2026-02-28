@@ -3,13 +3,14 @@ Test the requirements functionality for processors
 """
 
 import pytest
-import stanza
 
+import stanza
 from stanza.pipeline.core import PipelineRequirementsException
 from stanza.pipeline.processor import ProcessorRequirementsException
 from stanza.tests import *
 
 pytestmark = pytest.mark.pipeline
+
 
 def check_exception_vals(req_exception, req_exception_vals):
     """
@@ -40,8 +41,8 @@ def test_missing_requirements():
                 {'processor_type': 'POSProcessor', 'processors_list': ['pos', 'depparse'], 'provided_reqs': set([]),
                  'requires': set(['tokenize'])},
                 {'processor_type': 'DepparseProcessor', 'processors_list': ['pos', 'depparse'],
-                 'provided_reqs': set([]), 'requires': set(['tokenize','pos', 'lemma'])}
-            ]
+                 'provided_reqs': set([]), 'requires': set(['tokenize', 'pos', 'lemma'])},
+            ],
         ),
         # no pos when lemma_pos set to True; for english mwt should not be included in the loaded processor list
         (
@@ -50,9 +51,9 @@ def test_missing_requirements():
             # 1 expected exception
             [
                 {'processor_type': 'LemmaProcessor', 'processors_list': ['tokenize', 'mwt', 'lemma'],
-                 'provided_reqs': set(['tokenize', 'mwt']), 'requires': set(['tokenize', 'pos'])}
-            ]
-        )
+                 'provided_reqs': set(['tokenize', 'mwt']), 'requires': set(['tokenize', 'pos'])},
+            ],
+        ),
     ]
     # try to build each bad config, catch exceptions, check against gold
     pipeline_fails = 0
@@ -63,10 +64,8 @@ def test_missing_requirements():
             pipeline_fails += 1
             assert isinstance(e, PipelineRequirementsException)
             assert len(e.processor_req_fails) == len(gold_exceptions)
-            for processor_req_e, gold_exception in zip(e.processor_req_fails,gold_exceptions):
+            for processor_req_e, gold_exception in zip(e.processor_req_fails, gold_exceptions):
                 # compare the thrown ProcessorRequirementsExceptions against gold
                 check_exception_vals(processor_req_e, gold_exception)
     # check pipeline building failed twice
     assert pipeline_fails == 2
-
-

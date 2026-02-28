@@ -72,7 +72,7 @@ so at this point we include those fixes in this script instead.
 See the first few tsurgeon operations in update_mwts_and_special_cases
 """
 
-from collections import defaultdict, deque, namedtuple
+from collections import defaultdict, namedtuple
 import itertools
 import os
 import re
@@ -83,7 +83,7 @@ from tqdm import tqdm
 from stanza.models.constituency.tree_reader import read_trees, UnclosedTreeError, ExtraCloseTreeError
 from stanza.server import tsurgeon
 from stanza.utils.conll import CoNLL
-from stanza.utils.datasets.constituency.utils import SHARDS, write_dataset
+from stanza.utils.datasets.constituency.utils import write_dataset
 import stanza.utils.default_paths as default_paths
 
 def read_constituency_sentences(fin):
@@ -96,16 +96,16 @@ def read_constituency_sentences(fin):
     for line in fin:
         line = line.strip()
         # WTF why doesn't strip() remove this
-        line = line.replace(u'\ufeff', '')
+        line = line.replace('\ufeff', '')
         if not line:
             continue
         sent_id, sent_text = line.split(maxsplit=1)
         # we have seen a couple different versions of this sentence header
         # although one file is always consistent with itself, at least
         if not sent_id.startswith("#ID=sent") and not sent_id.startswith("ID#sent"):
-            raise ValueError("Unexpected start of sentence: |{}|".format(sent_id))
+            raise ValueError(f"Unexpected start of sentence: |{sent_id}|")
         if not sent_text:
-            raise ValueError("Empty text for |{}|".format(sent_id))
+            raise ValueError(f"Empty text for |{sent_id}|")
         sentences.append((sent_id, sent_text))
     return sentences
 
@@ -276,7 +276,7 @@ def raw_tree(text):
             # maxsplit=1 because of words like 1990-EQU-100
             tag, word = piece.split("-", maxsplit=1)
             if word.find("'") >= 0 or word.find("(") >= 0 or word.find(")") >= 0:
-                raise ValueError("Unhandled weird node: {}".format(piece))
+                raise ValueError(f"Unhandled weird node: {piece}")
             if word.endswith("_"):
                 word = word[:-1] + "'"
             date_match = DATE_RE.match(word)
@@ -362,7 +362,7 @@ def match_ngrams(sentence_ngrams, ngram_map, debug=False):
     for ngram in sentence_ngrams:
         con_matches = ngram_map[ngram]
         if debug:
-            print("{} matched {}".format(ngram, len(con_matches)))
+            print(f"{ngram} matched {len(con_matches)}")
         if len(con_matches) == 0:
             unknown_ngram += 1
             continue
@@ -371,7 +371,7 @@ def match_ngrams(sentence_ngrams, ngram_map, debug=False):
         # get the one & only element from the set
         con_match = next(iter(con_matches))
         if debug:
-            print("  {}".format(con_match))
+            print(f"  {con_match}")
         if potential_match is None:
             potential_match = con_match
         elif potential_match != con_match:
@@ -403,7 +403,7 @@ def match_sentences(con_tree_map, con_vit_ngrams, dep_sentences, split_name, deb
         potential_match = match_ngrams(sentence_ngrams, con_vit_ngrams, debug_sentence is not None and DEP_ID_FUNC(sentence) == debug_sentence)
         if potential_match is None:
             if unmatched < 5:
-                print("Could not match the following sentence: {} {}".format(DEP_ID_FUNC(sentence), sentence.text))
+                print(f"Could not match the following sentence: {DEP_ID_FUNC(sentence)} {sentence.text}")
             unmatched += 1
             continue
         if potential_match not in con_tree_map:
@@ -440,11 +440,11 @@ def get_mwt(*dep_datasets):
                 if token.text.lower() in EXCEPTIONS:
                     continue
                 if len(token.words) != 2 or token.words[0].upos != 'ADP' or token.words[1].upos != 'DET':
-                    raise ValueError("Not sure how to handle this: {}".format(token))
+                    raise ValueError(f"Not sure how to handle this: {token}")
                 expansion = (token.words[0].text, token.words[1].text)
                 if token.text in mwt_map:
                     if mwt_map[token.text] != expansion:
-                        raise ValueError("Inconsistent MWT: {} -> {} or {}".format(token.text, expansion, mwt_map[token.text]))
+                        raise ValueError(f"Inconsistent MWT: {token.text} -> {expansion} or {mwt_map[token.text]}")
                     continue
                 #print("Expanding {} to {}".format(token.text, expansion))
                 mwt_map[token.text] = expansion
@@ -570,7 +570,7 @@ def update_tree(original_tree, dep_sentence, con_id, dep_id, mwt_map, tsurgeon_p
     try:
         updated_tree = updated_tree.replace_words(ud_words)
     except ValueError as e:
-        raise ValueError("Failed to process {} {}:\nORIGINAL TREE\n{}\nUPDATED TREE\n{}\nUPDATED LEAVES\n{}\nUD TEXT\n{}\nTsurgeons applied:\n{}\n".format(con_id, dep_id, original_tree, updated_tree, updated_tree.leaf_labels(), ud_words, "\n".join("{}".format(op) for op in operations))) from e
+        raise ValueError("Failed to process {} {}:\nORIGINAL TREE\n{}\nUPDATED TREE\n{}\nUPDATED LEAVES\n{}\nUD TEXT\n{}\nTsurgeons applied:\n{}\n".format(con_id, dep_id, original_tree, updated_tree, updated_tree.leaf_labels(), ud_words, "\n".join(f"{op}" for op in operations))) from e
     return updated_tree
 
 # train set:
@@ -645,12 +645,12 @@ def read_updated_trees(paths, debug_sentence=None):
             con_tree_map[tree_id] = tree
         except UnclosedTreeError as e:
             num_discarded = num_discarded + 1
-            print("Discarding {} because of reading error:\n  {}: {}\n  {}".format(sentence[0], type(e), e, sentence[1]))
+            print(f"Discarding {sentence[0]} because of reading error:\n  {type(e)}: {e}\n  {sentence[1]}")
         except ExtraCloseTreeError as e:
             num_discarded = num_discarded + 1
-            print("Discarding {} because of reading error:\n  {}: {}\n  {}".format(sentence[0], type(e), e, sentence[1]))
+            print(f"Discarding {sentence[0]} because of reading error:\n  {type(e)}: {e}\n  {sentence[1]}")
         except ValueError as e:
-            print("Discarding {} because of reading error:\n  {}: {}\n  {}".format(sentence[0], type(e), e, sentence[1]))
+            print(f"Discarding {sentence[0]} because of reading error:\n  {type(e)}: {e}\n  {sentence[1]}")
             num_discarded = num_discarded + 1
             #raise ValueError("Could not process line %d" % idx) from e
 
@@ -664,7 +664,7 @@ def read_updated_trees(paths, debug_sentence=None):
     dev_ids   = match_sentences(con_tree_map, con_vit_ngrams, ud_dev_data.sentences,   "dev",   debug_sentence)
     test_ids  = match_sentences(con_tree_map, con_vit_ngrams, ud_test_data.sentences,  "test",  debug_sentence)
     print("Remaining total trees: %d" % (len(train_ids) + len(dev_ids) + len(test_ids)))
-    print("  {} train {} dev {} test".format(len(train_ids), len(dev_ids), len(test_ids)))
+    print(f"  {len(train_ids)} train {len(dev_ids)} dev {len(test_ids)} test")
     print("Updating trees with MWT and newer tokens from UD...")
 
     # the moveprune feature requires a new corenlp release after 4.4.0

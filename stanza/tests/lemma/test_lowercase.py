@@ -1,4 +1,3 @@
-import pytest
 
 from stanza.models.lemmatizer import all_lowercase
 from stanza.utils.conll import CoNLL
@@ -51,6 +50,7 @@ ENG_CONLLU = """
 def test_all_lowercase():
     doc = CoNLL.conll2doc(input_str=LATIN_CONLLU)
     assert all_lowercase(doc)
+
 
 def test_not_all_lowercase():
     doc = CoNLL.conll2doc(input_str=ENG_CONLLU)

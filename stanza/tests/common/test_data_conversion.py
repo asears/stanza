@@ -3,14 +3,14 @@ Basic tests of the data conversion
 """
 
 import io
-import pytest
 import tempfile
 from zipfile import ZipFile
 
-import stanza
-from stanza.utils.conll import CoNLL
+import pytest
+
 from stanza.models.common.doc import Document
 from stanza.tests import *
+from stanza.utils.conll import CoNLL
 
 pytestmark = pytest.mark.pipeline
 
@@ -38,17 +38,20 @@ DICT = [[{'id': (1,), 'text': 'Nous', 'lemma': 'il', 'upos': 'PRON', 'feats': 'N
          {'id': (8,), 'text': 'sentier', 'lemma': 'sentier', 'upos': 'NOUN', 'feats': 'Gender=Masc|Number=Sing', 'head': 5, 'deprel': 'nmod', 'misc': 'start_char=29|end_char=36'},
          {'id': (9,), 'text': '.', 'lemma': '.', 'upos': 'PUNCT', 'head': 3, 'deprel': 'punct', 'misc': 'start_char=36|end_char=37'}]]
 
+
 def test_conll_to_dict():
     dicts, empty = CoNLL.convert_conll(CONLL)
     assert dicts == DICT
     assert len(dicts) == len(empty)
     assert all(len(x) == 0 for x in empty)
 
+
 def test_dict_to_conll():
     document = Document(DICT)
     # :c = no comments
-    conll = [[sentence.split("\t") for sentence in doc.split("\n")] for doc in "{:c}".format(document).split("\n\n")]
+    conll = [[sentence.split("\t") for sentence in doc.split("\n")] for doc in f"{document:c}".split("\n\n")]
     assert conll == CONLL
+
 
 def test_dict_to_doc_and_doc_to_dict():
     """
@@ -61,11 +64,12 @@ def test_dict_to_doc_and_doc_to_dict():
     document = Document(DICT)
     dicts = document.to_dict()
     document = Document(dicts)
-    conll = [[sentence.split("\t") for sentence in doc.split("\n")] for doc in "{:c}".format(document).split("\n\n")]
+    conll = [[sentence.split("\t") for sentence in doc.split("\n")] for doc in f"{document:c}".split("\n\n")]
     assert conll == CONLL
 
+
 # sample is two sentences long so that the tests check multiple sentences
-RUSSIAN_SAMPLE="""
+RUSSIAN_SAMPLE = """
 # sent_id = yandex.reviews-f-8xh5zqnmwak3t6p68y4rhwd4e0-1969-9253
 # genre = review
 # text = Как- то слишком мало цветов получают актёры после спектакля.
@@ -98,6 +102,7 @@ RUSSIAN_SAMPLE="""
 RUSSIAN_TEXT = ["Как- то слишком мало цветов получают актёры после спектакля.", "В женщине важна верность, а не красота."]
 RUSSIAN_IDS = ["yandex.reviews-f-8xh5zqnmwak3t6p68y4rhwd4e0-1969-9253", "4"]
 
+
 def check_russian_doc(doc):
     """
     Refactored the test for the Russian doc so we can use it to test various file methods
@@ -114,7 +119,7 @@ def check_russian_doc(doc):
         assert len(sentence.comments) == 3
         assert not sentence.has_enhanced_dependencies()
 
-    sentences = "{:C}".format(doc)
+    sentences = f"{doc:C}"
     sentences = sentences.split("\n\n")
     assert len(sentences) == 2
 
@@ -127,6 +132,7 @@ def check_russian_doc(doc):
     # assert that the weird deprel=list:goeswith was properly handled
     assert doc.sentences[0].words[2].head == 1
     assert doc.sentences[0].words[2].deprel == "list:goeswith"
+
 
 def test_write_russian_doc(tmp_path):
     """
@@ -155,6 +161,7 @@ def test_write_russian_doc(tmp_path):
     doc2 = CoNLL.conll2doc(filename)
     check_russian_doc(doc2)
 
+
 # random sentence from EN_Pronouns
 ENGLISH_SAMPLE = """
 # newdoc
@@ -168,6 +175,7 @@ ENGLISH_SAMPLE = """
 4	.	.	PUNCT	.	_	3	punct	_	_
 """.strip()
 
+
 def test_write_to_io():
     doc = CoNLL.conll2doc(input_str=ENGLISH_SAMPLE)
     output = io.StringIO()
@@ -175,6 +183,7 @@ def test_write_to_io():
     output_value = output.getvalue()
     assert output_value.endswith("\n\n")
     assert output_value.strip() == ENGLISH_SAMPLE
+
 
 def test_write_doc2conll_append(tmp_path):
     doc = CoNLL.conll2doc(input_str=ENGLISH_SAMPLE)
@@ -187,6 +196,7 @@ def test_write_doc2conll_append(tmp_path):
     expected = ENGLISH_SAMPLE + "\n\n" + ENGLISH_SAMPLE + "\n\n"
     assert text == expected
 
+
 def test_doc_with_comments():
     """
     Test that a doc with comments gets converted back with comments
@@ -194,13 +204,14 @@ def test_doc_with_comments():
     doc = CoNLL.conll2doc(input_str=RUSSIAN_SAMPLE)
     check_russian_doc(doc)
 
+
 def test_unusual_misc():
     """
     The above RUSSIAN_SAMPLE resulted in a blank misc field in one particular implementation of the conll code
     (the below test would fail)
     """
     doc = CoNLL.conll2doc(input_str=RUSSIAN_SAMPLE)
-    sentences = "{:C}".format(doc).split("\n\n")
+    sentences = f"{doc:C}".split("\n\n")
     assert len(sentences) == 2
     sentence = sentences[0].split("\n")
     assert len(sentence) == 14
@@ -210,6 +221,7 @@ def test_unusual_misc():
         assert len(pieces) == 1 or len(pieces) == 10
         if len(pieces) == 10:
             assert all(piece for piece in pieces)
+
 
 def test_file():
     """
@@ -222,6 +234,7 @@ def test_file():
         doc = CoNLL.conll2doc(input_file=filename)
         check_russian_doc(doc)
 
+
 def test_zip_file():
     """
     Test loading a doc from a zip file
@@ -229,12 +242,12 @@ def test_zip_file():
     with tempfile.TemporaryDirectory() as tempdir:
         zip_file = os.path.join(tempdir, "russian.zip")
         filename = "russian.conll"
-        with ZipFile(zip_file, "w") as zout:
-            with zout.open(filename, "w") as fout:
-                fout.write(RUSSIAN_SAMPLE.encode())
+        with ZipFile(zip_file, "w") as zout, zout.open(filename, "w") as fout:
+            fout.write(RUSSIAN_SAMPLE.encode())
 
         doc = CoNLL.conll2doc(input_file=filename, zip_file=zip_file)
         check_russian_doc(doc)
+
 
 SIMPLE_NER = """
 # text = Teferi's best friend is Karn
@@ -246,6 +259,7 @@ SIMPLE_NER = """
 5	is	_	_	_	_	4	_	_	start_char=21|end_char=23|ner=O
 6	Karn	_	_	_	_	5	_	_	start_char=24|end_char=28|ner=S-PERSON
 """.strip()
+
 
 def test_simple_ner_conversion():
     """
@@ -265,8 +279,9 @@ def test_simple_ner_conversion():
         # they should also not reach the word's misc field
         assert not token.words[0].misc
 
-    conll = "{:C}".format(doc)
+    conll = f"{doc:C}"
     assert conll == SIMPLE_NER
+
 
 MWT_NER = """
 # text = This makes John's headache worse
@@ -279,6 +294,7 @@ MWT_NER = """
 5	headache	_	_	_	_	4	_	_	start_char=18|end_char=26|ner=O
 6	worse	_	_	_	_	5	_	_	start_char=27|end_char=32|ner=O
 """.strip()
+
 
 def test_mwt_ner_conversion():
     """
@@ -302,8 +318,9 @@ def test_mwt_ner_conversion():
         # they should also not reach the word's misc field
         assert not token.words[0].misc
 
-    conll = "{:C}".format(doc)
+    conll = f"{doc:C}"
     assert conll == MWT_NER
+
 
 ALL_OFFSETS_CONLLU = """
 # text = This makes John's headache worse
@@ -346,14 +363,15 @@ def test_no_offsets_output():
     sentence = doc.sentences[0]
     assert len(sentence.tokens) == 5
 
-    conll = "{:C}".format(doc)
+    conll = f"{doc:C}"
     assert conll == ALL_OFFSETS_CONLLU
 
-    conll = "{:C-o}".format(doc)
+    conll = f"{doc:C-o}"
     assert conll == NO_OFFSETS_CONLLU
 
-    conll = "{:c-o}".format(doc)
+    conll = f"{doc:c-o}"
     assert conll == NO_COMMENTS_NO_OFFSETS_CONLLU
+
 
 # A random sentence from et_ewt-ud-train.conllu
 # which we use to test the deps conversion for multiple deps
@@ -373,6 +391,7 @@ ESTONIAN_DEPS = """
 10	.	.	PUNCT	Z	_	3	punct	3:punct	_
 """.strip()
 
+
 def test_deps_conversion():
     doc = CoNLL.conll2doc(input_str=ESTONIAN_DEPS)
     assert len(doc.sentences) == 1
@@ -383,8 +402,9 @@ def test_deps_conversion():
     word = doc.sentences[0].words[3]
     assert word.deps == "3:obj|9:nsubj"
 
-    conll = "{:C}".format(doc)
+    conll = f"{doc:C}"
     assert conll == ESTONIAN_DEPS
+
 
 ESTONIAN_EMPTY_DEPS = """
 # sent_id = ewtb2_000035_15
@@ -410,17 +430,20 @@ ESTONIAN_EMPTY_END_DEPS = """
 5.1	panna	panema	VERB	V	VerbForm=Inf	_	_	0:root	Empty=5.1
 """.strip()
 
+
 def test_empty_deps_conversion():
     """
     Check that we can read and then output a sentence with empty dependencies
     """
     check_empty_deps_conversion(ESTONIAN_EMPTY_DEPS, 7)
 
+
 def test_empty_deps_at_end_conversion():
     """
     The empty deps conversion should also work if the empty dep is at the end
     """
     check_empty_deps_conversion(ESTONIAN_EMPTY_END_DEPS, 5)
+
 
 def check_empty_deps_conversion(input_str, expected_words):
     doc = CoNLL.conll2doc(input_str=input_str, ignore_gapping=False)
@@ -430,7 +453,7 @@ def check_empty_deps_conversion(input_str, expected_words):
     assert len(doc.sentences[0].empty_words) == 1
 
     sentence = doc.sentences[0]
-    conll = "{:C}".format(doc)
+    conll = f"{doc:C}"
     assert conll == input_str
 
     sentence_dict = doc.sentences[0].to_dict()
@@ -460,10 +483,12 @@ ESTONIAN_DOC_ID = """
 7	...	...	PUNCT	Z	_	3	punct	5.1:punct	_
 """.strip()
 
+
 def test_read_doc_id():
     doc = CoNLL.conll2doc(input_str=ESTONIAN_DOC_ID, ignore_gapping=False)
-    assert "{:C}".format(doc) == ESTONIAN_DOC_ID
+    assert f"{doc:C}" == ESTONIAN_DOC_ID
     assert doc.sentences[0].doc_id == 'this_is_a_doc'
+
 
 SIMPLE_DEPENDENCY_INDEX_ERROR = """
 # text = Teferi's best friend is Karn
@@ -477,9 +502,11 @@ SIMPLE_DEPENDENCY_INDEX_ERROR = """
 6	Karn	_	_	_	_	8	dep	_	start_char=24|end_char=28|ner=S-PERSON
 """.strip()
 
+
 def test_read_dependency_errors():
     with pytest.raises(IndexError):
         doc = CoNLL.conll2doc(input_str=SIMPLE_DEPENDENCY_INDEX_ERROR)
+
 
 MULTIPLE_DOC_IDS = """
 # doc_id = doc_1
@@ -534,6 +561,7 @@ MULTIPLE_DOC_IDS = """
 
 """.lstrip()
 
+
 def test_read_multiple_doc_ids():
     docs = CoNLL.conll2multi_docs(input_str=MULTIPLE_DOC_IDS)
     assert len(docs) == 2
@@ -548,6 +576,7 @@ def test_read_multiple_doc_ids():
     assert len(docs[1].sentences) == 1
     assert len(docs[2].sentences) == 2
 
+
 ENGLISH_TEST_SENTENCE = """
 # text = This is a test
 # sent_id = 0
@@ -556,6 +585,7 @@ ENGLISH_TEST_SENTENCE = """
 3	a	a	DET	DT	Definite=Ind|PronType=Art	4	det	_	start_char=8|end_char=9
 4	test	test	NOUN	NN	Number=Sing	0	root	_	SpaceAfter=No|start_char=10|end_char=14
 """.lstrip()
+
 
 def test_convert_dict():
     doc = CoNLL.conll2doc(input_str=ENGLISH_TEST_SENTENCE)
@@ -568,10 +598,11 @@ def test_convert_dict():
 
     assert converted == expected
 
+
 def test_line_numbers():
     doc = CoNLL.conll2doc(input_str=ENGLISH_TEST_SENTENCE, keep_line_numbers=True)
     # currently the line numbers are not output in the conllu format
-    doc_conllu = "{:C}\n".format(doc)
+    doc_conllu = f"{doc:C}\n"
     assert doc_conllu == ENGLISH_TEST_SENTENCE
 
     # currently the line numbers are not output in the dict format
@@ -597,6 +628,7 @@ SPEAKER_EXAMPLE = """
 3	.	.	PUNCT	.	_	2	punct	2:punct	SpaceAfter=No
 4	"	"	PUNCT	''	_	2	punct	2:punct	_
 """.lstrip()
+
 
 def test_speaker():
     doc = CoNLL.conll2doc(input_str=SPEAKER_EXAMPLE)

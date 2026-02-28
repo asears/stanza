@@ -1,4 +1,3 @@
-from __future__ import division
 import torch
 
 import stanza.models.common.seq2seq_constant as constant
@@ -37,7 +36,7 @@ except TypeError:
     def trunc_division(a, b):
         return a // b
 
-class Beam(object):
+class Beam:
     def __init__(self, size, device=None):
         self.size = size
         self.done = False

@@ -3,7 +3,6 @@ Keeps BERT, charlm, word embedings in a cache to save memory
 """
 
 from collections import namedtuple
-from copy import deepcopy
 import logging
 import threading
 

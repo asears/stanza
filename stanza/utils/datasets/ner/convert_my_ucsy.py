@@ -37,7 +37,6 @@ import os
 
 from tqdm import tqdm
 import stanza
-from stanza.utils.datasets.ner.check_for_duplicates import check_for_duplicates
 
 SPLITS = ("train", "dev", "test")
 
@@ -87,7 +86,7 @@ def convert_file(input_filename, output_filename, pipe):
                     fout.write("%s\t%s\n" % (word.text, output_label))
             fout.write("\n\n")
 
-    print("Finished processing {}  Labels found: {}".format(input_filename, sorted(all_labels)))
+    print(f"Finished processing {input_filename}  Labels found: {sorted(all_labels)}")
 
 def convert_my_ucsy(base_input_path, base_output_path):
     os.makedirs(base_output_path, exist_ok=True)

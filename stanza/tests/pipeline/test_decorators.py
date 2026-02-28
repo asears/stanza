@@ -5,9 +5,13 @@ import pytest
 
 import stanza
 from stanza.models.common.doc import Document
-from stanza.pipeline.core import PipelineRequirementsException
-from stanza.pipeline.processor import Processor, ProcessorVariant, register_processor, register_processor_variant, ProcessorRegisterException
-from stanza.utils.conll import CoNLL
+from stanza.pipeline.processor import (
+    Processor,
+    ProcessorRegisterException,
+    ProcessorVariant,
+    register_processor,
+    register_processor_variant,
+)
 from stanza.tests import *
 
 pytestmark = pytest.mark.pipeline
@@ -48,6 +52,7 @@ EN_DOC_COOL_LEMMAS = '''<Token id=1;words=[<Word id=1;text=This;lemma=cool;upos=
 <Token id=3;words=[<Word id=3;text=another;lemma=cool;upos=DET;xpos=DT;feats=PronType=Ind>]>
 <Token id=4;words=[<Word id=4;text=!;lemma=cool;upos=PUNCT;xpos=.>]>'''
 
+
 @register_processor("lowercase")
 class LowercaseProcessor(Processor):
     ''' Processor that lowercases all text '''
@@ -71,16 +76,19 @@ class LowercaseProcessor(Processor):
 
         return doc
 
+
 def test_register_processor():
     nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, lang='en', processors='tokenize,lowercase', download_method=None)
     doc = nlp(EN_DOC)
-    assert EN_DOC_LOWERCASE_TOKENS == '\n\n'.join(sent.tokens_string() for sent in doc.sentences)
+    assert '\n\n'.join(sent.tokens_string() for sent in doc.sentences) == EN_DOC_LOWERCASE_TOKENS
+
 
 def test_register_nonprocessor():
     with pytest.raises(ProcessorRegisterException):
         @register_processor("nonprocessor")
         class NonProcessor:
             pass
+
 
 @register_processor_variant("tokenize", "lol")
 class LOLTokenizer(ProcessorVariant):
@@ -90,13 +98,15 @@ class LOLTokenizer(ProcessorVariant):
         pass
 
     def process(self, text):
-        sentence = [{'id': (i+1, ), 'text': 'LOL'} for i, tok in enumerate(text.split())]
+        sentence = [{'id': (i + 1, ), 'text': 'LOL'} for i, tok in enumerate(text.split())]
         return Document([sentence], text)
+
 
 def test_register_processor_variant():
     nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, lang='en', processors={"tokenize": "lol"}, package=None, download_method=None)
     doc = nlp(EN_DOC)
-    assert EN_DOC_LOL_TOKENS == '\n\n'.join(sent.tokens_string() for sent in doc.sentences)
+    assert '\n\n'.join(sent.tokens_string() for sent in doc.sentences) == EN_DOC_LOL_TOKENS
+
 
 @register_processor_variant("lemma", "cool")
 class CoolLemmatizer(ProcessorVariant):
@@ -114,11 +124,13 @@ class CoolLemmatizer(ProcessorVariant):
 
         return document
 
+
 def test_register_processor_variant_with_override():
     nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, lang='en', processors={"tokenize": "combined", "pos": "combined", "lemma": "cool"}, package=None, download_method=None)
     doc = nlp(EN_DOC)
     result = '\n\n'.join(sent.tokens_string() for sent in doc.sentences)
-    assert EN_DOC_COOL_LEMMAS == result
+    assert result == EN_DOC_COOL_LEMMAS
+
 
 def test_register_nonprocessor_variant():
     with pytest.raises(ProcessorRegisterException):

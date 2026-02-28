@@ -1,7 +1,6 @@
 from collections import namedtuple
 from enum import Enum
 import logging
-import os
 
 from stanza.models.common.vocab import VOCAB_PREFIX
 from stanza.models.pos.vocab import XPOSVocab, WordVocab

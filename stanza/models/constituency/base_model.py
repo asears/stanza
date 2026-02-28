@@ -190,7 +190,7 @@ class BaseModel(ABC):
         if is_legal:
             for trans, state in zip(transitions, states):
                 if not trans.is_legal(state, self):
-                    raise RuntimeError("Transition {}:{} was not legal in a transition sequence:\nOriginal tree: {}\nTransitions: {}".format(state.num_transitions, trans, state.gold_tree, state.gold_sequence))
+                    raise RuntimeError(f"Transition {state.num_transitions}:{trans} was not legal in a transition sequence:\nOriginal tree: {state.gold_tree}\nTransitions: {state.gold_sequence}")
         return None, transitions, None
 
     def initial_state_from_preterminals(self, preterminal_lists, gold_trees, gold_sequences):
@@ -419,7 +419,7 @@ class BaseModel(ABC):
         state_batch = list(state_batch)
         for idx, (state, transition) in enumerate(zip(state_batch, transitions)):
             if not transition:
-                error = "Got stuck and couldn't find a legal transition on the following gold tree:\n{}\n\nFinal state:\n{}".format(state.gold_tree, state.to_string(self))
+                error = f"Got stuck and couldn't find a legal transition on the following gold tree:\n{state.gold_tree}\n\nFinal state:\n{state.to_string(self)}"
                 if fail:
                     raise ValueError(error)
                 else:
@@ -433,9 +433,9 @@ class BaseModel(ABC):
                 # treebanks having deep unary structures, especially early
                 # on when the model is fumbling around
                 if state.gold_tree:
-                    error = "Went infinite on the following gold tree:\n{}\n\nFinal state:\n{}".format(state.gold_tree, state.to_string(self))
+                    error = f"Went infinite on the following gold tree:\n{state.gold_tree}\n\nFinal state:\n{state.to_string(self)}"
                 else:
-                    error = "Went infinite!:\nFinal state:\n{}".format(state.to_string(self))
+                    error = f"Went infinite!:\nFinal state:\n{state.to_string(self)}"
                 if fail:
                     raise ValueError(error)
                 else:

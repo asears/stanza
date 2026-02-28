@@ -1,10 +1,10 @@
 import pytest
-import stanza
 
+from stanza.models.common.data import augment_punct, get_augment_ratio
 from stanza.tests import *
-from stanza.models.common.data import get_augment_ratio, augment_punct
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
+
 
 def test_augment_ratio():
     data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -22,7 +22,8 @@ def test_augment_ratio():
     # there are already 2 that don't need augmenting
     # and 7 that are eligible to be augmented
     # so 2/7 will need to be augmented
-    assert get_augment_ratio(data, should_augment, can_augment, desired_ratio=0.4) == pytest.approx(2/7)
+    assert get_augment_ratio(data, should_augment, can_augment, desired_ratio=0.4) == pytest.approx(2 / 7)
+
 
 def test_augment_punct():
     data = [["Simple", "test", "."]]

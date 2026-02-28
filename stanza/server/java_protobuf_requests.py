@@ -3,7 +3,7 @@ import subprocess
 
 from stanza.models.common.utils import misc_to_space_after
 from stanza.models.constituency.parse_tree import Tree
-from stanza.protobuf import DependencyGraph, FlattenedParseTree
+from stanza.protobuf import FlattenedParseTree
 from stanza.server.client import resolve_classpath
 
 def send_request(request, response_type, java_main, classpath=None):
@@ -78,7 +78,7 @@ def from_tree(proto_tree):
 
         if node.openNode:
             if len(stack) > 0 and isinstance(stack[-1], FlattenedParseTree.Node) and stack[-1].openNode:
-                raise ValueError("Got a proto with no label on a node: {}".format(proto_tree))
+                raise ValueError(f"Got a proto with no label on a node: {proto_tree}")
             stack.append(node)
             continue
         if not node.closeNode:
@@ -89,7 +89,7 @@ def from_tree(proto_tree):
 
         # must be a close operation...
         if len(stack) <= 1:
-            raise ValueError("Got a proto with too many close operations: {}".format(proto_tree))
+            raise ValueError(f"Got a proto with too many close operations: {proto_tree}")
         # on a close operation, pop until we hit the open
         # then turn everything in that span into a new node
         children = []
@@ -98,7 +98,7 @@ def from_tree(proto_tree):
             children.append(nextNode)
             nextNode = stack.pop()
         if len(children) == 0:
-            raise ValueError("Got a proto with an open immediately followed by a close: {}".format(proto_tree))
+            raise ValueError(f"Got a proto with an open immediately followed by a close: {proto_tree}")
         children.reverse()
         label = children[0]
         children = children[1:]
@@ -106,10 +106,10 @@ def from_tree(proto_tree):
         stack.append(subtree)
 
     if len(stack) > 1:
-        raise ValueError("Got a proto which does not close all of the nodes: {}".format(proto_tree))
+        raise ValueError(f"Got a proto which does not close all of the nodes: {proto_tree}")
     tree = stack.pop()
     if not isinstance(tree, Tree):
-        raise ValueError("Got a proto which was just one Open operation: {}".format(proto_tree))
+        raise ValueError(f"Got a proto which was just one Open operation: {proto_tree}")
     return tree, score
 
 def add_token(token_list, word, token):
@@ -314,7 +314,7 @@ def substitute_space_misc(misc, space_misc):
         return None
     return "|".join(new_pieces)
 
-class JavaProtobufContext(object):
+class JavaProtobufContext:
     """
     A generic context for sending requests to a java program using protobufs in a subprocess
     """

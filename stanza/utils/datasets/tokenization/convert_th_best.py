@@ -30,7 +30,7 @@ try:
 except ImportError:
     pass
 
-from stanza.utils.datasets.tokenization.process_thai_tokenization import reprocess_lines, write_dataset, convert_processed_lines, write_dataset_best, write_dataset
+from stanza.utils.datasets.tokenization.process_thai_tokenization import reprocess_lines, convert_processed_lines, write_dataset_best
 
 def clean_line(line):
     line = line.replace("html>", "html|>")
@@ -99,7 +99,7 @@ def read_data(input_dir):
     files = []
     for subdir in subdirs:
         if not os.path.exists(subdir):
-            raise FileNotFoundError("Expected a directory that did not exist: {}".format(subdir))
+            raise FileNotFoundError(f"Expected a directory that did not exist: {subdir}")
         files.extend(glob.glob(os.path.join(subdir, '*.txt')))
 
     test_documents = []
@@ -113,7 +113,7 @@ def read_data(input_dir):
                 words = [clean_word(x) for x in words]
                 for word in words:
                     if len(word) > 1 and word[0] == '<':
-                        raise ValueError("Unexpected word '{}' in document {}".format(word, filename))
+                        raise ValueError(f"Unexpected word '{word}' in document {filename}")
                 words = [x for x in words if x]
                 processed_lines.append(words)
 
@@ -135,7 +135,7 @@ def read_data(input_dir):
                 words = [clean_word(x) for x in words]
                 for word in words:
                     if len(word) > 1 and word[0] == '<':
-                        raise ValueError("Unexpected word '{}' in document {}".format(word, filename))
+                        raise ValueError(f"Unexpected word '{word}' in document {filename}")
                 words = [x for x in words if x]
                 processed_lines.append(words)
 

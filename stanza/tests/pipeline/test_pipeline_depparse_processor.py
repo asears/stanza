@@ -3,12 +3,13 @@ Basic testing of part of speech tagging
 """
 
 import pytest
+
 import stanza
 from stanza.models.common.vocab import VOCAB_PREFIX
-
 from stanza.tests import TEST_MODELS_DIR
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 class TestClassifier:
     @pytest.fixture(scope="class")
@@ -16,7 +17,7 @@ class TestClassifier:
         """
         Get a depparse_processor for English
         """
-        nlp = stanza.Pipeline(**{'processors': 'tokenize,pos,lemma,depparse', 'dir': TEST_MODELS_DIR, 'lang': 'en'})
+        nlp = stanza.Pipeline(processors='tokenize,pos,lemma,depparse', dir=TEST_MODELS_DIR, lang='en')
         assert 'depparse' in nlp.processors
         return nlp.processors['depparse']
 

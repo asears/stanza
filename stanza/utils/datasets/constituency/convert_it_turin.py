@@ -163,7 +163,7 @@ def split_mwe(tree, pipeline):
             doc = pipeline(word)
             assert len(doc.sentences) == 1
             if len(doc.sentences[0].words) != 3:
-                raise RuntimeError("Word {} not tokenized into 3 parts... thought all 3 part words were handled!".format(word))
+                raise RuntimeError(f"Word {word} not tokenized into 3 parts... thought all 3 part words were handled!")
             words[idx] = doc.sentences[0].words[0].text
             words[idx+1] = doc.sentences[0].words[1].text
             words[idx+2] = doc.sentences[0].words[2].text
@@ -211,33 +211,33 @@ def load_trees(filename, pipeline):
     filtered_trees = []
     for tree in trees:
         if tree.children[0].label is None:
-            print("Skipping a broken tree (missing label) in {}: {}".format(filename, tree))
+            print(f"Skipping a broken tree (missing label) in {filename}: {tree}")
             continue
 
         try:
             words = tuple(tree.leaf_labels())
         except ValueError:
-            print("Skipping a broken tree (missing preterminal) in {}: {}".format(filename, tree))
+            print(f"Skipping a broken tree (missing preterminal) in {filename}: {tree}")
             continue
 
         if any('www.facebook' in pt.label for pt in tree.preterminals()):
-            print("Skipping a tree with a weird preterminal label in {}: {}".format(filename, tree))
+            print(f"Skipping a tree with a weird preterminal label in {filename}: {tree}")
             continue
 
         tree = tree.prune_none().simplify_labels(CONSTITUENT_SPLIT)
 
         if len(tree.children) > 1:
-            print("Found a tree with a non-unary root!  {}: {}".format(filename, tree))
+            print(f"Found a tree with a non-unary root!  {filename}: {tree}")
             continue
         if tree.children[0].is_preterminal():
-            print("Found a tree with a single preterminal node!  {}: {}".format(filename, tree))
+            print(f"Found a tree with a single preterminal node!  {filename}: {tree}")
             continue
 
         # The expectation is that the retagging will handle this anyway
         for pt in tree.preterminals():
             if not pt.label:
                 pt.label = "UNK"
-                print("Found a tree with a blank preterminal label.  Setting it to UNK.  {}: {}".format(filename, tree))
+                print(f"Found a tree with a blank preterminal label.  Setting it to UNK.  {filename}: {tree}")
 
         tree = tree.remap_constituent_labels(REMAP_NODES)
         tree = tree.remap_words(REMAP_WORDS)
@@ -253,7 +253,7 @@ def load_trees(filename, pipeline):
         else:
             weird_label = None
         if weird_label is not None:
-            print("Skipping a tree with a weird label {} in {}: {}".format(weird_label, filename, tree))
+            print(f"Skipping a tree with a weird label {weird_label} in {filename}: {tree}")
             continue
 
         filtered_trees.append(tree)
@@ -261,7 +261,7 @@ def load_trees(filename, pipeline):
     return filtered_trees
 
 def save_trees(out_file, trees):
-    print("Saving {} trees to {}".format(len(trees), out_file))
+    print(f"Saving {len(trees)} trees to {out_file}")
     with open(out_file, "w", encoding="utf-8") as fout:
         for tree in trees:
             fout.write(str(tree))
@@ -300,7 +300,7 @@ def convert_it_turin(input_path, output_path):
         for tree in trees:
             words = tuple(tree.leaf_labels())
             if words in known_text:
-                print("Skipping a duplicate in {}: {}".format(filename, tree))
+                print(f"Skipping a duplicate in {filename}: {tree}")
                 continue
 
             known_text.add(words)
@@ -309,14 +309,14 @@ def convert_it_turin(input_path, output_path):
 
         filtered_trees.append((filename, file_trees))
 
-    print("{} contains {} usable trees".format(evalita_test, len(test_trees)))
-    print("  Unique constituents in {}: {}".format(evalita_test, parse_tree.Tree.get_unique_constituent_labels(test_trees)))
+    print(f"{evalita_test} contains {len(test_trees)} usable trees")
+    print(f"  Unique constituents in {evalita_test}: {parse_tree.Tree.get_unique_constituent_labels(test_trees)}")
 
     train_trees = []
     dev_trees = []
     for filename, file_trees in filtered_trees:
-        print("{} contains {} usable trees".format(filename, len(file_trees)))
-        print("  Unique constituents in {}: {}".format(filename, parse_tree.Tree.get_unique_constituent_labels(file_trees)))
+        print(f"{filename} contains {len(file_trees)} usable trees")
+        print(f"  Unique constituents in {filename}: {parse_tree.Tree.get_unique_constituent_labels(file_trees)}")
         for tree in file_trees:
             if len(train_trees) <= len(dev_trees) * 9:
                 train_trees.append(tree)

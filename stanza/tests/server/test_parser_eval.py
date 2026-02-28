@@ -3,15 +3,14 @@ Test the parser eval interface
 """
 
 import pytest
-import stanza
+
 from stanza.models.constituency import tree_reader
-from stanza.protobuf import EvaluateParserRequest, EvaluateParserResponse
-from stanza.server.parser_eval import build_request, collate, EvaluateParser, ParseResult
+from stanza.server.parser_eval import EvaluateParser, ParseResult, build_request, collate
+from stanza.tests import *
 from stanza.tests.server.test_java_protobuf_requests import check_tree
 
-from stanza.tests import *
-
 pytestmark = [pytest.mark.travis, pytest.mark.client]
+
 
 def build_one_tree_treebank(fake_scores=True):
     text = "((S (VP (VB Unban)) (NP (NNP Mox) (NNP Opal))))"
@@ -22,9 +21,9 @@ def build_one_tree_treebank(fake_scores=True):
         prediction = (gold, 1.0)
         treebank = [ParseResult(gold, [prediction], None, None)]
         return treebank
-    else:
-        prediction = gold
-        return collate([gold], [prediction])
+    prediction = gold
+    return collate([gold], [prediction])
+
 
 def check_build(fake_scores=True):
     treebank = build_one_tree_treebank(fake_scores)
@@ -42,8 +41,10 @@ def check_build(fake_scores=True):
 def test_build_tuple_request():
     check_build(True)
 
+
 def test_build_notuple_request():
     check_build(False)
+
 
 def test_score_one_tree_tuples():
     treebank = build_one_tree_treebank(True)
@@ -51,6 +52,7 @@ def test_score_one_tree_tuples():
     with EvaluateParser() as ep:
         response = ep.process(treebank)
         assert response.f1 == pytest.approx(1.0)
+
 
 def test_score_one_tree_notuples():
     treebank = build_one_tree_treebank(False)

@@ -2,11 +2,12 @@
 Tests for starting a server in Python code
 """
 
-import pytest
-import stanza.server as corenlp
-from stanza.server.client import AnnotationException
 import time
 
+import pytest
+
+import stanza.server as corenlp
+from stanza.server.client import AnnotationException
 from stanza.tests import *
 
 pytestmark = pytest.mark.client
@@ -156,6 +157,7 @@ def annotate_and_time(client, text, properties={}):
     end = time.time()
     return {'annotation': ann, 'start_time': start, 'end_time': end}
 
+
 def test_preload():
     """ Test that the default annotators load fully immediately upon server start """
     with corenlp.CoreNLPClient(server_id='test_server_start_preload') as client:
@@ -210,5 +212,3 @@ def test_username_password():
             pass
         except Exception as e:
             assert False
-
-

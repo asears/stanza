@@ -15,7 +15,6 @@ import shlex
 import socket
 import subprocess
 import time
-import sys
 import uuid
 
 from datetime import datetime
@@ -98,7 +97,7 @@ def clean_props_file(props_file):
             os.remove(props_file)
 
 
-class RobustService(object):
+class RobustService:
     """ Service that resuscitates itself if it is not available. """
     CHECK_ALIVE_TIMEOUT = 120
 
@@ -132,7 +131,7 @@ class RobustService(object):
                 with contextlib.closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
                     try:
                         sock.bind((self.host, self.port))
-                    except socket.error as e:
+                    except OSError as e:
                         if self.ignore_binding_error:
                             logger.info(f"Connecting to existing CoreNLP server at {self.host}:{self.port}")
                             self.server = None

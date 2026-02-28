@@ -1,6 +1,6 @@
 # Stanza Terms, Acronyms, and Entities Reference
 
-This document contains a comprehensive list of unique terms, acronyms, people, organizations, and entities found in the Stanza project codebase and documentation.
+List of unique terms, acronyms, people, organizations, and entities found in the Stanza project codebase and documentation.
 
 ## Table of Contents
 - [Acronyms and Technical Terms](#acronyms-and-technical-terms)

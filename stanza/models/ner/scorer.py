@@ -1,8 +1,6 @@
 """
 An NER scorer that calculates F1 score given gold and predicted tags.
 """
-import sys
-import os
 import logging
 from collections import Counter, defaultdict
 
@@ -81,8 +79,7 @@ def score_by_entity(pred_tag_sequences, gold_tag_sequences, verbose=True, ignore
         f_micro = 2.0 * prec_micro * rec_micro / (prec_micro + rec_micro)
     
     if verbose:
-        logger.info("Score by entity:\nPrec.\tRec.\tF1\n{:.2f}\t{:.2f}\t{:.2f}".format(
-            prec_micro*100, rec_micro*100, f_micro*100))
+        logger.info(f"Score by entity:\nPrec.\tRec.\tF1\n{prec_micro*100:.2f}\t{rec_micro*100:.2f}\t{f_micro*100:.2f}")
     return prec_micro, rec_micro, f_micro, entity_f1
 
 
@@ -154,8 +151,7 @@ def score_by_token(pred_tag_sequences, gold_tag_sequences, verbose=True, ignore_
         f_micro = 2.0 * prec_micro * rec_micro / (prec_micro + rec_micro)
     
     if verbose:
-        logger.info("Score by token:\nPrec.\tRec.\tF1\n{:.2f}\t{:.2f}\t{:.2f}".format(
-            prec_micro*100, rec_micro*100, f_micro*100))
+        logger.info(f"Score by token:\nPrec.\tRec.\tF1\n{prec_micro*100:.2f}\t{rec_micro*100:.2f}\t{f_micro*100:.2f}")
     return prec_micro, rec_micro, f_micro, confusion
 
 def test():

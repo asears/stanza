@@ -3,16 +3,13 @@ import tempfile
 
 import pytest
 
-import stanza
 from stanza.tests import *
-
-from stanza.utils.datasets.common import convert_conllu_to_txt
 from stanza.utils.datasets.tokenization.convert_th_lst20 import read_document
 from stanza.utils.datasets.tokenization.process_thai_tokenization import write_section
 
 pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
-SMALL_LST_SAMPLE="""
+SMALL_LST_SAMPLE = """
 สุรยุทธ์	NN	B_PER	B_CLS
 ยัน	VV	O	I_CLS
 ปฏิเสธ	VV	O	I_CLS
@@ -49,7 +46,7 @@ _	PU	O	O
 ว่า	CC	O	E_CLS
 """.strip()
 
-EXPECTED_CONLLU="""
+EXPECTED_CONLLU = """
 1	สุรยุทธ์	_	_	_	_	0	root	0:root	SpaceAfter=No|NewPar=Yes
 2	ยัน	_	_	_	_	1	dep	1:dep	SpaceAfter=No
 3	ปฏิเสธ	_	_	_	_	2	dep	2:dep	SpaceAfter=No
@@ -107,8 +104,8 @@ EXPECTED_CONLLU="""
 #     พื้นที่    7
 #      พบ    2
 #      ว่า    3
-EXPECTED_TXT    =   "สุรยุทธ์ยันปฏิเสธลงนาม MOU กับอียูไม่กระทบสัมพันธ์1 กันยายน 2550 12:21 น.ผู้สื่อข่าวรายงานเพิ่มเติมว่า จากการลงพื้นที่พบว่า\n\n"
-EXPECTED_LABELS =   "000000010010000010000100010001000100100001000000021000000010000100000100200000000001000001000000001001000100101000000101002\n\n"
+EXPECTED_TXT = "สุรยุทธ์ยันปฏิเสธลงนาม MOU กับอียูไม่กระทบสัมพันธ์1 กันยายน 2550 12:21 น.ผู้สื่อข่าวรายงานเพิ่มเติมว่า จากการลงพื้นที่พบว่า\n\n"
+EXPECTED_LABELS = "000000010010000010000100010001000100100001000000021000000010000100000100200000000001000001000000001001000100101000000101002\n\n"
 # counting spaces    1234567812312345612345_123_123123412312345123456781_1234567_1234_12345_12123456789AB123456123456789123_12312312123456712123
 
 # note that the word splits go on the final letter of the word in the
@@ -116,6 +113,7 @@ EXPECTED_LABELS =   "00000001001000001000010001000100010010000100000002100000001
 # for example, from EWT:
 # Al-Zaman : American forces killed Shaikh Abdullah
 # 0110000101000000001000000100000010000001000000001
+
 
 def check_results(documents, expected_conllu, expected_txt, expected_labels):
     with tempfile.TemporaryDirectory() as output_dir:
@@ -144,7 +142,8 @@ def test_small():
     documents = read_document(lines, spaces_after=False, split_clauses=False)
     check_results(documents, EXPECTED_CONLLU, EXPECTED_TXT, EXPECTED_LABELS)
 
-EXPECTED_SPACE_CONLLU="""
+
+EXPECTED_SPACE_CONLLU = """
 1	สุรยุทธ์	_	_	_	_	0	root	0:root	SpaceAfter=No|NewPar=Yes
 2	ยัน	_	_	_	_	1	dep	1:dep	SpaceAfter=No
 3	ปฏิเสธ	_	_	_	_	2	dep	2:dep	SpaceAfter=No
@@ -174,8 +173,9 @@ EXPECTED_SPACE_CONLLU="""
 10	ว่า	_	_	_	_	9	dep	9:dep	_
 """.strip()
 
-EXPECTED_SPACE_TXT    =   "สุรยุทธ์ยันปฏิเสธลงนาม MOU กับอียูไม่กระทบสัมพันธ์ 1 กันยายน 2550 12:21 น. ผู้สื่อข่าวรายงานเพิ่มเติมว่า จากการลงพื้นที่พบว่า\n\n"
-EXPECTED_SPACE_LABELS =   "00000001001000001000010001000100010010000100000002010000000100001000001002000000000001000001000000001001000100101000000101002\n\n"
+EXPECTED_SPACE_TXT = "สุรยุทธ์ยันปฏิเสธลงนาม MOU กับอียูไม่กระทบสัมพันธ์ 1 กันยายน 2550 12:21 น. ผู้สื่อข่าวรายงานเพิ่มเติมว่า จากการลงพื้นที่พบว่า\n\n"
+EXPECTED_SPACE_LABELS = "00000001001000001000010001000100010010000100000002010000000100001000001002000000000001000001000000001001000100101000000101002\n\n"
+
 
 def test_space_after():
     """
@@ -186,7 +186,7 @@ def test_space_after():
     check_results(documents, EXPECTED_SPACE_CONLLU, EXPECTED_SPACE_TXT, EXPECTED_SPACE_LABELS)
 
 
-EXPECTED_CLAUSE_CONLLU="""
+EXPECTED_CLAUSE_CONLLU = """
 1	สุรยุทธ์	_	_	_	_	0	root	0:root	SpaceAfter=No|NewPar=Yes
 2	ยัน	_	_	_	_	1	dep	1:dep	SpaceAfter=No
 3	ปฏิเสธ	_	_	_	_	2	dep	2:dep	SpaceAfter=No
@@ -217,8 +217,8 @@ EXPECTED_CLAUSE_CONLLU="""
 6	ว่า	_	_	_	_	5	dep	5:dep	_
 """.strip()
 
-EXPECTED_CLAUSE_TXT    =   "สุรยุทธ์ยันปฏิเสธลงนาม MOU กับอียูไม่กระทบสัมพันธ์ 1 กันยายน 2550 12:21 น. ผู้สื่อข่าวรายงานเพิ่มเติมว่า จากการลงพื้นที่พบว่า\n\n"
-EXPECTED_CLAUSE_LABELS =   "00000001001000001000010001000100010010000100000002010000000100001000001002000000000001000001000000001002000100101000000101002\n\n"
+EXPECTED_CLAUSE_TXT = "สุรยุทธ์ยันปฏิเสธลงนาม MOU กับอียูไม่กระทบสัมพันธ์ 1 กันยายน 2550 12:21 น. ผู้สื่อข่าวรายงานเพิ่มเติมว่า จากการลงพื้นที่พบว่า\n\n"
+EXPECTED_CLAUSE_LABELS = "00000001001000001000010001000100010010000100000002010000000100001000001002000000000001000001000000001002000100101000000101002\n\n"
 
 
 def test_split_clause():
@@ -228,6 +228,7 @@ def test_split_clause():
     lines = SMALL_LST_SAMPLE.strip().split("\n")
     documents = read_document(lines, spaces_after=True, split_clauses=True)
     check_results(documents, EXPECTED_CLAUSE_CONLLU, EXPECTED_CLAUSE_TXT, EXPECTED_CLAUSE_LABELS)
+
 
 if __name__ == "__main__":
     lines = SMALL_LST_SAMPLE.strip().split("\n")

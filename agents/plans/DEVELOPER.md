@@ -6,21 +6,21 @@ Welcome to the Stanza modern development infrastructure! This document serves as
 
 ### For New Developers
 Start here to get your development environment set up:
-1. **[UV_GUIDE.md](UV_GUIDE.md)** - Install and use the UV package manager
-2. **[SETUP_IMPROVEMENTS.md](SETUP_IMPROVEMENTS.md)** - See what's new
-3. **[DEPENDENCIES.md](DEPENDENCIES.md)** - Understand project dependencies
+1. [UV_GUIDE.md](UV_GUIDE.md) - Install and use the UV package manager
+2. [SETUP_IMPROVEMENTS.md](SETUP_IMPROVEMENTS.md) - See what's new
+3. [DEPENDENCIES.md](DEPENDENCIES.md) - Understand project dependencies
 
 ### For Experienced Developers
 Jump directly to what you need:
-- Quick setup? → See **Quick Start** below
-- Want to contribute? → See **Contributing** section
-- Need specific tool docs? → See **Tool Documentation** table
+- Quick setup? → See Quick Start below
+- Want to contribute? → See Contributing section
+- Need specific tool docs? → See Tool Documentation table
 
 ### For Project Maintainers
 Essential reference materials:
-- **[DEPENDENCIES.md](DEPENDENCIES.md)** - What's installed and why
-- **[.github/dependabot.yml](.github/dependabot.yml)** - Automated updates
-- **[IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)** - What changed
+- [DEPENDENCIES.md](DEPENDENCIES.md) - What's installed and why
+- [.github/dependabot.yml](.github/dependabot.yml) - Automated updates
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - What changed
 
 ---
 
@@ -72,58 +72,58 @@ git push origin feature/my-feature
 
 | File | Size | Purpose |
 |------|------|---------|
-| **UV_GUIDE.md** | 7.7 KB | Complete UV package manager guide |
-| **DEPENDENCIES.md** | 10.7 KB | Project dependencies and file types |
-| **SETUP_IMPROVEMENTS.md** | 8.7 KB | Overview of all improvements |
-| **IMPLEMENTATION_SUMMARY.md** | 12+ KB | Implementation details and statistics |
-| **pyproject.toml** | 6.1 KB | Python package configuration |
+| UV_GUIDE.md | 7.7 KB | Complete UV package manager guide |
+| DEPENDENCIES.md | 10.7 KB | Project dependencies and file types |
+| SETUP_IMPROVEMENTS.md | 8.7 KB | Overview of all improvements |
+| IMPLEMENTATION_SUMMARY.md | 12+ KB | Implementation details and statistics |
+| pyproject.toml | 6.1 KB | Python package configuration |
 
 ### Configuration Files
 
 | File | Location | Purpose |
 |------|----------|---------|
-| **dependabot.yml** | `.github/` | Automated dependency updates |
-| **uv-build-checks.yaml** | `.github/workflows/` | CI/CD pipeline |
-| **stanza-tests.yaml** | `.github/workflows/` | Original test workflow |
+| dependabot.yml | `.github/` | Automated dependency updates |
+| uv-build-checks.yaml | `.github/workflows/` | CI/CD pipeline |
+| stanza-tests.yaml | `.github/workflows/` | Original test workflow |
 
 ---
 
 ## 🎯 Feature Overview
 
 ### 1. Modern Python Packaging ✨
-- **File:** `pyproject.toml`
-- **Benefits:** Standardized, tool-configured, maintainable
-- **Status:** ✅ Production ready
+- File: `pyproject.toml`
+- Benefits: Standardized, tool-configured, maintainable
+- Status: ✅ Production ready
 
 ### 2. Faster Package Management ⚡
-- **Tool:** UV (5-10x faster than pip)
-- **Guide:** See `UV_GUIDE.md`
-- **Backward Compatible:** ✅ Yes
+- Tool: UV (5-10x faster than pip)
+- Guide: See `UV_GUIDE.md`
+- Backward Compatible: ✅ Yes
 
 ### 3. Automated Dependency Updates 🔄
-- **Tool:** GitHub Dependabot
-- **Config:** `.github/dependabot.yml`
-- **Frequency:** Weekly
-- **Security:** ✅ Enabled
+- Tool: GitHub Dependabot
+- Config: `.github/dependabot.yml`
+- Frequency: Weekly
+- Security: ✅ Enabled
 
-### 4. Comprehensive CI/CD 🧪
-- **Workflow:** `.github/workflows/uv-build-checks.yaml`
-- **Test Matrix:** 15 configurations (3 OS × 5 Python versions)
-- **Checks:** Ruff, MyPy, Pytest, Coverage
-- **Status:** ✅ Production ready
+### 4. CI/CD 🧪
+- Workflow: `.github/workflows/uv-build-checks.yaml`
+- Test Matrix: 15 configurations (3 OS × 5 Python versions)
+- Checks: Ruff, MyPy, Pytest, Coverage
+- Status: ✅ Production ready
 
 ### 5. Code Quality Tools 🛠️
-- **Ruff:** Fast linting and formatting
-- **MyPy:** Type safety validation
-- **Pytest:** Comprehensive testing
-- **Coverage:** Code coverage analysis
+- Ruff: Fast linting and formatting
+- MyPy: Type safety validation
+- Pytest: Tests
+- Coverage: Code coverage analysis
 
 ---
 
 ## 📖 Using the Tools
 
 ### UV Package Manager
-**[→ Full Guide: UV_GUIDE.md](UV_GUIDE.md)**
+[→ Full Guide: UV_GUIDE.md](UV_GUIDE.md)
 
 ```bash
 # Basic commands
@@ -135,7 +135,7 @@ uv run mypy stanza                   # Type check
 ```
 
 ### Understanding Dependencies
-**[→ Full Reference: DEPENDENCIES.md](DEPENDENCIES.md)**
+[→ Full Reference: DEPENDENCIES.md](DEPENDENCIES.md)
 
 - 10 core dependencies
 - 8 optional feature groups
@@ -143,7 +143,7 @@ uv run mypy stanza                   # Type check
 - 55+ packages tracked
 
 ### Dependency Updates
-**[→ Configuration: .github/dependabot.yml](.github/dependabot.yml)**
+[→ Configuration: .github/dependabot.yml](.github/dependabot.yml)
 
 - Automated weekly checks
 - Automatic PR creation
@@ -290,25 +290,25 @@ Security Scans:        Automated (Dependabot)
 
 ## ❓ FAQ
 
-**Q: Should I use UV or pip?**
+Q: Should I use UV or pip?
 A: Both work! UV is recommended - it's faster (5-10x) and fully compatible.
 
-**Q: Do I need to change my code?**
+Q: Do I need to change my code?
 A: No! Everything is backward compatible. Only development tools improved.
 
-**Q: How do I update dependencies?**
+Q: How do I update dependencies?
 A: Dependabot creates automatic PRs weekly. Just review and merge.
 
-**Q: How often are dependencies updated?**
+Q: How often are dependencies updated?
 A: Weekly on Mondays at 3:00 AM UTC. Pre-releases are filtered.
 
-**Q: Can I still use setup.py?**
+Q: Can I still use setup.py?
 A: Yes! Both `setup.py` and `pyproject.toml` work together.
 
-**Q: What about security?**
+Q: What about security?
 A: Dependabot scans all dependencies and creates PRs for vulnerabilities.
 
-**Q: Where do I report issues?**
+Q: Where do I report issues?
 A: [GitHub Issues](https://github.com/stanfordnlp/stanza/issues)
 
 ---
@@ -316,16 +316,16 @@ A: [GitHub Issues](https://github.com/stanfordnlp/stanza/issues)
 ## 🤝 Getting Help
 
 ### For Installation Issues
-→ See **[UV_GUIDE.md - Troubleshooting](UV_GUIDE.md#troubleshooting)**
+→ See [UV_GUIDE.md - Troubleshooting](UV_GUIDE.md#troubleshooting)
 
 ### For Dependency Questions
-→ See **[DEPENDENCIES.md](DEPENDENCIES.md)**
+→ See [DEPENDENCIES.md](DEPENDENCIES.md)
 
 ### For Setup Issues
-→ See **[SETUP_IMPROVEMENTS.md - FAQ](SETUP_IMPROVEMENTS.md#troubleshooting--faq)**
+→ See [SETUP_IMPROVEMENTS.md - FAQ](SETUP_IMPROVEMENTS.md#troubleshooting--faq)
 
 ### For Code Quality
-→ See **[UV_GUIDE.md - Code Quality Tools](UV_GUIDE.md#code-quality-tools)**
+→ See [UV_GUIDE.md - Code Quality Tools](UV_GUIDE.md#code-quality-tools)
 
 ---
 
@@ -447,7 +447,7 @@ You now have everything you need to:
 - ✅ Keep dependencies up-to-date with Dependabot
 - ✅ Contribute to Stanza with confidence
 
-**Start here:** [UV_GUIDE.md](UV_GUIDE.md)
+Start here: [UV_GUIDE.md](UV_GUIDE.md)
 
 ---
 
@@ -463,7 +463,7 @@ You now have everything you need to:
 
 ---
 
-**Last Updated:** February 28, 2026  
-**Version:** 1.0  
-**Status:** ✅ Production Ready  
-**Maintained by:** Stanford NLP Group
+Last Updated: February 28, 2026  
+Version: 1.0  
+Status: ✅ Production Ready  
+Maintained by: Stanford NLP Group

@@ -4,7 +4,6 @@ A classifier that uses a constituency parser for the base embeddings
 
 import dataclasses
 import logging
-from types import SimpleNamespace
 
 import torch
 import torch.nn as nn
@@ -14,8 +13,6 @@ from stanza.models.classifiers.base_classifier import BaseClassifier
 from stanza.models.classifiers.config import ConstituencyConfig
 from stanza.models.classifiers.data import SentimentDatum
 from stanza.models.classifiers.utils import ModelType, build_output_layers
-
-from stanza.models.common.utils import split_into_batches, sort_with_indices, unsort
 
 logger = logging.getLogger('stanza')
 tlogger = logging.getLogger('stanza.classifiers.trainer')

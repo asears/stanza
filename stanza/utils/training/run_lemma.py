@@ -97,7 +97,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                           "--shorthand", short_name]
             if command_args.save_output:
                 train_args.extend(["--output_file", dev_pred_file])
-            logger.info("Running identity lemmatizer for {} with args {}".format(treebank, train_args))
+            logger.info(f"Running identity lemmatizer for {treebank} with args {train_args}")
             identity_lemmatizer.main(train_args)
         elif mode == Mode.SCORE_TEST:
             train_args = ["--train_file", train_file,
@@ -106,7 +106,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                           "--shorthand", short_name]
             if command_args.save_output:
                 train_args.extend(["--output_file", test_pred_file])
-            logger.info("Running identity lemmatizer for {} with args {}".format(treebank, train_args))
+            logger.info(f"Running identity lemmatizer for {treebank} with args {train_args}")
             identity_lemmatizer.main(train_args)            
     else:
         if mode == Mode.TRAIN:
@@ -122,7 +122,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
                           "--num_epoch", num_epochs,
                           "--mode", "train"]
             train_args = train_args + charlm_args + extra_args
-            logger.info("Running train lemmatizer for {} with args {}".format(treebank, train_args))
+            logger.info(f"Running train lemmatizer for {treebank} with args {train_args}")
             lemmatizer.main(train_args)
 
         if mode == Mode.SCORE_DEV or mode == Mode.TRAIN:
@@ -132,7 +132,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
             if command_args.save_output:
                 train_args.extend(["--output_file", dev_pred_file])
             dev_args = dev_args + charlm_args + extra_args
-            logger.info("Running dev lemmatizer for {} with args {}".format(treebank, dev_args))
+            logger.info(f"Running dev lemmatizer for {treebank} with args {dev_args}")
             lemmatizer.main(dev_args)
 
         if mode == Mode.SCORE_TEST:
@@ -142,7 +142,7 @@ def run_treebank(mode, paths, treebank, short_name, command_args, extra_args):
             if command_args.save_output:
                 train_args.extend(["--output_file", test_pred_file])
             test_args = test_args + charlm_args + extra_args
-            logger.info("Running test lemmatizer for {} with args {}".format(treebank, test_args))
+            logger.info(f"Running test lemmatizer for {treebank} with args {test_args}")
             lemmatizer.main(test_args)
 
         use_lemma_classifier = command_args.lemma_classifier

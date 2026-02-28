@@ -3,9 +3,8 @@ import json
 import logging
 import os
 import random
-from typing import List, Tuple, Any, Mapping
+from typing import List
 
-import stanza
 import torch
 
 from stanza.models.lemma_classifier.constants import DEFAULT_BATCH_SIZE

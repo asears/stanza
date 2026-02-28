@@ -6,7 +6,6 @@ import argparse
 import json
 import logging
 import os
-import random
 import torch
 
 from datetime import datetime

@@ -9,7 +9,7 @@ TODO: there are more errors to analyze, and see below for a case where attachmen
 from enum import Enum
 
 from stanza.models.constituency.dynamic_oracle import advance_past_constituents
-from stanza.models.constituency.parse_transitions import Shift, CompoundUnary, OpenConstituent, CloseConstituent, TransitionScheme, Finalize
+from stanza.models.constituency.parse_transitions import Shift, OpenConstituent, CloseConstituent, TransitionScheme
 from stanza.models.constituency.transition_sequence import build_sequence
 
 class FirstError(Enum):

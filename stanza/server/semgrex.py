@@ -241,14 +241,14 @@ def main():
 
     for doc in docs:
         if args.print_input:
-            print("{:C}".format(doc))
+            print(f"{doc:C}")
             print()
             print("-" * 75)
             print()
         semgrex_result = process_doc(doc, *args.semgrex, enhanced=args.enhanced)
         doc = annotate_doc(doc, semgrex_result, args.semgrex, args.matches_only, args.exclude_matches)
         if len(doc.sentences) > 0:
-            print("{:C}\n".format(doc))
+            print(f"{doc:C}\n")
 
 if __name__ == '__main__':
     main()

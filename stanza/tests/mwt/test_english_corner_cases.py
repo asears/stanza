@@ -12,11 +12,12 @@ Furthermore, SHE'S and She's should be split "SHE 'S" and "She 's" respectively
 """
 
 import pytest
-import stanza
 
+import stanza
 from stanza.tests import TEST_MODELS_DIR
 
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+
 
 def test_mwt_unknown_char():
     pipeline = stanza.Pipeline(processors='tokenize,mwt', dir=TEST_MODELS_DIR, lang='en', download_method=None)
@@ -85,4 +86,3 @@ def test_english_mwt_casing():
 
     text = [x.text for x in pipeline("She's GOT NICE ANTENNAE").sentences[0].words]
     assert text == ['She', "'s", 'GOT', 'NICE', 'ANTENNAE']
-

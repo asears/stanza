@@ -1,5 +1,4 @@
 import csv
-import glob
 import json
 import os
 import tempfile
@@ -63,7 +62,7 @@ def write_splits(out_directory, snippets, splits):
 
     for i, split in enumerate(splits):
         filename = os.path.join(out_directory, split.filename)
-        print("Writing {}:{} to {}".format(divs[i], divs[i+1], filename))
+        print(f"Writing {divs[i]}:{divs[i+1]} to {filename}")
         write_list(filename, snippets[divs[i]:divs[i+1]])
 
 def clean_tokenized_tweet(line):
@@ -113,7 +112,7 @@ def process_datum(nlp, text, mapping, sentiment):
 
     converted_sentiment = mapping.get(sentiment, None)
     if converted_sentiment is None:
-        raise ValueError("Value {} not in mapping at line {} of {}".format(sentiment, idx, csv_filename))
+        raise ValueError(f"Value {sentiment} not in mapping at line {idx} of {csv_filename}")
 
     text = []
     for sentence in doc.sentences:
@@ -143,7 +142,7 @@ def read_snippets(csv_filename, sentiment_column, text_column, tokenizer_languag
             else:
                 sentiment = tuple([line[x] for x in sentiment_column])
         except IndexError as e:
-            raise IndexError("Columns {} did not exist at line {}: {}".format(sentiment_column, idx, line)) from e
+            raise IndexError(f"Columns {sentiment_column} did not exist at line {idx}: {line}") from e
         text = line[text_column]
         datum = process_datum(nlp, text, mapping, sentiment)
         snippets.append(datum)

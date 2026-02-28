@@ -4,7 +4,6 @@ Classify characters based on an LSTM with learned character representations
 
 import logging
 
-import torch
 from torch import nn
 
 import stanza.models.common.seq2seq_constant as constant

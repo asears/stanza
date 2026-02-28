@@ -9,7 +9,6 @@ from stanza.models.common.doc import Word
 from stanza.pipeline._constants import *
 from stanza.pipeline.processor import UDProcessor, register_processor
 
-import torch
 
 def extract_text(document, sent_id, start_word, end_word):
     sentence = document.sentences[sent_id]
