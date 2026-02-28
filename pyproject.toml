@@ -1,0 +1,259 @@
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
+[project]
+name = "stanza"
+version = "2.0.0"
+description = "A Python NLP Library for Many Human Languages, by the Stanford NLP Group"
+readme = "README.md"
+license = {text = "Apache License 2.0"}
+authors = [
+    {name = "Stanford Natural Language Processing Group", email = "jebolton@stanford.edu"},
+]
+keywords = [
+    "natural-language-processing",
+    "nlp",
+    "natural-language-understanding",
+    "stanford-nlp",
+    "deep-learning",
+]
+# For testing purposes, prevent uploads to PyPI.
+# Remove this line and uncomment the classifiers above before releasing.
+classifiers = ["Private :: Do Not Upload"]
+# classifiers = [
+#     "Development Status :: 4 - Beta",
+#     "Intended Audience :: Developers",
+#     "Intended Audience :: Education",
+#     "Intended Audience :: Science/Research",
+#     "Intended Audience :: Information Technology",
+#     "Topic :: Scientific/Engineering",
+#     "Topic :: Scientific/Engineering :: Artificial Intelligence",
+#     "Topic :: Scientific/Engineering :: Information Analysis",
+#     "Topic :: Text Processing",
+#     "Topic :: Text Processing :: Linguistic",
+#     "Topic :: Software Development",
+#     "Topic :: Software Development :: Libraries",
+#     "Programming Language :: Python :: 3",
+#     "Programming Language :: Python :: 3.9",
+#     "Programming Language :: Python :: 3.10",
+#     "Programming Language :: Python :: 3.11",
+#     "Programming Language :: Python :: 3.12",
+#     "Programming Language :: Python :: 3.13",
+#     "License :: OSI Approved :: Apache Software License",
+# ]
+requires-python = ">=3.10"
+dependencies = [
+    "emoji",
+    "numpy",
+    "platformdirs",
+    "protobuf>=3.15.0",
+    "requests",
+    "networkx",
+    "torch>=1.13.0",
+    "tqdm",
+    "udtools>=0.2.4",
+    "tomli>=1.1.0;python_version<'3.11'",
+]
+
+[project.optional-dependencies]
+dev = [
+    "check-manifest",
+]
+test = [
+    "coverage",
+    "pytest",
+    "pytest-cov",
+    "pytest-timeout",
+    "pytest-mock",
+]
+transformers = [
+    "transformers>=3.0.0",
+    "peft>=0.6.1",
+]
+datasets = [
+    "datasets",
+]
+tokenizers = [
+    "jieba",
+    "pythainlp",
+    "python-crfsuite",
+    "spacy",
+    "sudachidict_core",
+    "sudachipy",
+]
+visualization = [
+    "spacy",
+    "streamlit",
+    "ipython",
+]
+morphseg = [
+    "morphseg>=0.2.0",
+]
+lint = [
+    "ruff>=0.1.0",
+    # "black>=22.0.0",
+]
+type = [
+    "mypy>=1.0.0",
+    "types-requests",
+    "types-tqdm",
+    "ty",
+]
+all = [
+    "stanza[dev,test,transformers,datasets,tokenizers,visualization,morphseg,lint,type]",
+]
+
+[project.urls]
+Homepage = "https://stanfordnlp.github.io/stanza/"
+Repository = "https://github.com/stanfordnlp/stanza"
+Documentation = "https://stanfordnlp.github.io/stanza/"
+"Bug Tracker" = "https://github.com/stanfordnlp/stanza/issues"
+"Source Code" = "https://github.com/stanfordnlp/stanza"
+
+# TODO(AS): Convert to uv
+# [tool.setuptools]
+# packages = ["stanza"]
+
+# [tool.setuptools.package-data]
+# stanza = [
+#     "pipeline/demo/*ttf",
+#     "pipeline/demo/*css",
+#     "pipeline/demo/*html",
+#     "pipeline/demo/*js",
+#     "pipeline/demo/*gif",
+# ]
+
+# Dependency Groups (PEP 735 - replacement for optional-dependencies)
+[dependency-groups]
+dev = [
+    "check-manifest",
+]
+test = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-timeout>=2.1",
+    "pytest-mock",
+    "coverage",
+]
+transformers = [
+    "transformers>=3.0.0",
+    "peft>=0.6.1",
+]
+datasets = [
+    "datasets",
+]
+tokenizers = [
+    "jieba",
+    "pythainlp",
+    "python-crfsuite",
+    "spacy",
+    "sudachidict_core",
+    "sudachipy",
+]
+visualization = [
+    "spacy",
+    "streamlit",
+    "ipython",
+]
+morphseg = [
+    "morphseg>=0.2.0",
+]
+lint = [
+    "ruff>=0.1.0",
+]
+type = [
+    "mypy>=1.0.0",
+    "types-requests",
+    "types-tqdm",
+    "ty",
+]
+
+# Ruff Configuration (see .ruff.toml for main config)
+
+# Black Configuration
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311', 'py312', 'py313']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | __pycache__
+)/
+'''
+
+# MyPy Configuration
+[tool.mypy]
+python_version = "3.9"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+check_untyped_defs = false
+disallow_untyped_calls = false
+disallow_untyped_defs = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = "stanza.*"
+ignore_missing_imports = true
+
+# Pytest Configuration
+[tool.pytest.ini_options]
+testpaths = ["stanza/tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--tb=short",
+    "-v",
+    "--timeout=300",
+]
+markers = [
+    "travis: mark test to run on Travis CI",
+    "slow: mark test as slow",
+    "gpu: mark test as requiring GPU",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning",
+]
+
+# Coverage Configuration
+[tool.coverage.run]
+source = ["stanza"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/setup.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "^\\s*pass\\s*$",
+]
+precision = 2
+show_missing = true
+
+[tool.coverage.html]
+directory = "htmlcov"

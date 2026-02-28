@@ -1,0 +1,136 @@
+name: Stanza Build
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and Test (Python ${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
+      - name: Display uv version
+        run: uv --version
+
+      - name: Install dependencies
+        run: |
+          # uv pip install --system -e ".[dev,test,transformers,tokenizers]"
+          uv pip install -e ".[dev,test,transformers,tokenizers]"
+
+      - name: Ruff format check
+        run: |
+          uv run ruff check . --diff
+        continue-on-error: false
+
+      - name: Ruff linting
+        run: |
+          # uv run ruff check . --select=E,W,F
+          uv run ruff check . --select=ALL --preview
+        continue-on-error: false
+
+      - name: Type check with ty
+        run: |
+          uv run ty check stanza
+        continue-on-error: true
+
+      - name: Run pytest tests
+        run: |
+          uv run pytest stanza/tests -v --tb=short --timeout=300
+        continue-on-error: false
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          enable-cache: true
+          python-version: '3.11'
+
+      - name: Install linting tools
+        run: |
+          uv pip install --system ruff mypy
+
+      - name: Ruff format check
+        run: |
+          uv run ruff format . --diff
+        id: ruff-check
+
+      - name: Type checking
+        run: |
+          uv run ty check stanza
+        id: ty-check
+        continue-on-error: true
+
+      - name: Generate coverage report
+        run: |
+          uv pip install --system pytest pytest-cov
+          uv run pytest stanza/tests --cov=stanza --cov-report=xml --cov-report=term
+        continue-on-error: true
+
+    #   - name: Upload coverage to Codecov
+    #     uses: codecov/codecov-action@v5
+    #     with:
+    #       file: ./coverage.xml
+    #       fail_ci_if_error: false
+    #     continue-on-error: true
+
+  security:
+    name: Security and Dependency Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          python-version: '3.11'
+
+      - name: Generate dependency graph
+        run: |
+          uv pip install --system pipdeptree
+          uv run pipdeptree > dependency-tree.txt || true
+        continue-on-error: true
+
+      - name: Upload dependency tree
+        uses: actions/upload-artifact@v7
+        with:
+          name: dependency-tree
+          path: dependency-tree.txt
+        continue-on-error: true

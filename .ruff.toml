@@ -1,0 +1,70 @@
+# Ruff Configuration for Stanza
+# Fast Python linter and formatter
+
+# General Configuration
+# line-length = 100
+line-length = 120
+target-version = "py39"
+output-format = "concise"
+
+# Toggle for experimental checks, could be matrix in upgrade build
+preview = true
+
+[lint]
+# Toggle all checks (for testing, not recommended for regular use)
+select = ["ALL"]
+
+# # Selected Rule Categories
+# select = [
+#     "E",      # pycodestyle errors
+#     "W",      # pycodestyle warnings
+#     "F",      # Pyflakes
+#     "I",      # isort
+#     "C",      # flake8-comprehensions
+#     "B",      # flake8-bugbear
+#     "SIM",    # flake8-simplify
+# ]
+
+# # Ignored Rules
+ignore = [
+     "D203",
+     "D212",
+     "Q000", # Single quotes found
+     "E501" #,   # Line too long
+#     "E203",   # Whitespace before ':'
+#     # "W503",   # Line break before binary operator
+#     "B008",   # Do not perform function calls in argument defaults
+]
+
+# Excluded Paths
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "env",
+    "build",
+    "dist",
+    ".eggs",
+    "*.egg-info",
+    "__pycache__",
+    ".pytest_cache",
+    ".mypy_cache",
+]
+
+# Per-File Ignores
+# [per-file-ignores]
+# "__init__.py" = ["F401"]               # Allow unused imports in __init__.py
+# "tests/**" = ["F401", "F841"]          # Allow unused imports and variables in tests
+
+# isort Configuration (Import Sorting)
+# [lint.isort]
+# line-length = 100
+# multi-line-mode = 3                    # Vertical Hanging Indent
+# include-trailing-comma = true
+# force-grid-wrap = 0
+# use-parentheses = true
+# ensure-newline-before-comments = true
+
+[format]
+# Use single quotes in `ruff format`.
+quote-style = "single"
