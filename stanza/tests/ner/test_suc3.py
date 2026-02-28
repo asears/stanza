@@ -3,6 +3,7 @@ Tests the conversion code for the SUC3 NER dataset
 """
 
 import os
+from pathlib import Path
 import tempfile
 from zipfile import ZipFile
 
@@ -60,16 +61,16 @@ def test_read_zip():
     Test creating a fake zip file, then converting it to an .iob file
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        zip_name = os.path.join(tempdir, "test.zip")
+        zip_name = Path(tempdir) / "test.zip"
         in_filename = "conll"
         with ZipFile(zip_name, "w") as zout, zout.open(in_filename, "w") as fout:
             fout.write(TEST_CONLL.encode())
 
-        out_filename = os.path.join(tempdir, "iob")
-        num = suc_conll_to_iob.extract_from_zip(zip_name, in_filename, out_filename)
+        out_filename = Path(tempdir) / "iob"
+        num = suc_conll_to_iob.extract_from_zip(str(zip_name), in_filename, str(out_filename))
         assert num == 2
 
-        with open(out_filename) as fin:
+        with out_filename.open() as fin:
             result = fin.read()
         assert EXPECTED_IOB.strip() == result.strip()
 
@@ -79,15 +80,15 @@ def test_read_raw():
     Test a direct text file conversion w/o the zip file
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        in_filename = os.path.join(tempdir, "test.txt")
-        with open(in_filename, "w", encoding="utf-8") as fout:
+        in_filename = Path(tempdir) / "test.txt"
+        with in_filename.open("w", encoding="utf-8") as fout:
             fout.write(TEST_CONLL)
 
-        out_filename = os.path.join(tempdir, "iob")
-        with open(in_filename, encoding="utf-8") as fin, open(out_filename, "w", encoding="utf-8") as fout:
+        out_filename = Path(tempdir) / "iob"
+        with in_filename.open(encoding="utf-8") as fin, out_filename.open("w", encoding="utf-8") as fout:
             num = suc_conll_to_iob.extract(fin, fout)
         assert num == 2
 
-        with open(out_filename) as fin:
+        with out_filename.open() as fin:
             result = fin.read()
         assert EXPECTED_IOB.strip() == result.strip()

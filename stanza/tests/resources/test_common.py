@@ -2,8 +2,8 @@
 Test various resource downloading functions from resources/common.py
 """
 
-import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -16,24 +16,24 @@ pytestmark = [pytest.mark.travis, pytest.mark.client]
 
 def test_assert_file_exists():
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as test_dir:
-        filename = os.path.join(test_dir, "test.txt")
+        filename = Path(test_dir) / "test.txt"
         with pytest.raises(FileNotFoundError):
-            common.assert_file_exists(filename)
+            common.assert_file_exists(str(filename))
 
-        with open(filename, "w", encoding="utf-8") as fout:
+        with filename.open("w", encoding="utf-8") as fout:
             fout.write("Unban mox opal!")
         # MD5 of the fake model file, not any real model files in the system
         EXPECTED_MD5 = "44dbf21b4e89cea5184615a72a825a36"
-        common.assert_file_exists(filename)
-        common.assert_file_exists(filename, md5=EXPECTED_MD5)
+        common.assert_file_exists(str(filename))
+        common.assert_file_exists(str(filename), md5=EXPECTED_MD5)
 
         with pytest.raises(ValueError):
-            common.assert_file_exists(filename, md5="12345")
+            common.assert_file_exists(str(filename), md5="12345")
 
         with pytest.raises(ValueError):
-            common.assert_file_exists(filename, md5="12345", alternate_md5="12345")
+            common.assert_file_exists(str(filename), md5="12345", alternate_md5="12345")
 
-        common.assert_file_exists(filename, md5="12345", alternate_md5=EXPECTED_MD5)
+        common.assert_file_exists(str(filename), md5="12345", alternate_md5=EXPECTED_MD5)
 
 
 def test_download_tokenize_mwt():
@@ -54,13 +54,14 @@ def test_download_non_default():
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as test_dir:
         stanza.download("en", model_dir=test_dir, processors="ner", package="ontonotes_charlm", verbose=False)
-        assert sorted(os.listdir(test_dir)) == ['en', 'resources.json']
-        en_dir = os.path.join(test_dir, 'en')
-        en_dir_listing = sorted(os.listdir(en_dir))
+        test_dir_path = Path(test_dir)
+        assert sorted(p.name for p in test_dir_path.iterdir()) == ['en', 'resources.json']
+        en_dir = test_dir_path / 'en'
+        en_dir_listing = sorted(p.name for p in en_dir.iterdir())
         assert en_dir_listing == ['backward_charlm', 'forward_charlm', 'ner', 'pretrain']
-        assert os.listdir(os.path.join(en_dir, 'ner')) == ['ontonotes_charlm.pt']
+        assert sorted(p.name for p in (en_dir / 'ner').iterdir()) == ['ontonotes_charlm.pt']
         for i in en_dir_listing:
-            assert len(os.listdir(os.path.join(en_dir, i))) == 1
+            assert len(list((en_dir / i).iterdir())) == 1
 
 
 def test_download_two_models():
@@ -78,13 +79,14 @@ def test_download_two_models():
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as test_dir:
         stanza.download("en", model_dir=test_dir, processors="ner", package={"ner": ["ontonotes_charlm", "anatem"]}, verbose=False)
-        assert sorted(os.listdir(test_dir)) == ['en', 'resources.json']
-        en_dir = os.path.join(test_dir, 'en')
-        en_dir_listing = sorted(os.listdir(en_dir))
+        test_dir_path = Path(test_dir)
+        assert sorted(p.name for p in test_dir_path.iterdir()) == ['en', 'resources.json']
+        en_dir = test_dir_path / 'en'
+        en_dir_listing = sorted(p.name for p in en_dir.iterdir())
         assert en_dir_listing == ['backward_charlm', 'forward_charlm', 'ner', 'pretrain']
-        assert sorted(os.listdir(os.path.join(en_dir, 'ner'))) == ['anatem.pt', 'ontonotes_charlm.pt']
+        assert sorted(p.name for p in (en_dir / 'ner').iterdir()) == ['anatem.pt', 'ontonotes_charlm.pt']
         for i in en_dir_listing:
-            assert len(os.listdir(os.path.join(en_dir, i))) == 2
+            assert len(list((en_dir / i).iterdir())) == 2
 
 
 def test_process_pipeline_parameters():

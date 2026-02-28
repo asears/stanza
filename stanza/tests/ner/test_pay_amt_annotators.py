@@ -2,7 +2,7 @@
 Simple test for tracking AMT annotator work
 """
 
-import os
+from pathlib import Path
 import zipfile
 
 import pytest
@@ -10,12 +10,12 @@ import pytest
 from stanza.tests import TEST_WORKING_DIR
 from stanza.utils.ner import paying_annotators
 
-DATA_SOURCE = os.path.join(TEST_WORKING_DIR, "in", "aws_annotations.zip")
+DATA_SOURCE = Path(TEST_WORKING_DIR) / "in" / "aws_annotations.zip"
 
 
 @pytest.fixture(scope="module")
 def completed_amt_job_metadata(tmp_path_factory):
-    assert os.path.exists(DATA_SOURCE)
+    assert DATA_SOURCE.exists()
     unzip_path = tmp_path_factory.mktemp("amt_test")
     input_path = unzip_path / "ner" / "aws_labeling_copy"
     with zipfile.ZipFile(DATA_SOURCE, 'r') as zin:

@@ -152,10 +152,10 @@ class TestXPOSVocabFactory:
 
             trainer = Trainer(args=args, vocab=vocab, pretrain=pt, device="cpu")
 
-            model_file = os.path.join(tmpdirname, "foo.pt")
-            trainer.save(model_file)
+            model_file = Path(tmpdirname) / "foo.pt"
+            trainer.save(str(model_file))
 
-            new_trainer = Trainer(model_file=model_file, pretrain=pt)
+            new_trainer = Trainer(model_file=str(model_file), pretrain=pt)
             assert isinstance(new_trainer.vocab['xpos'], expected_vocab)
 
     @pytest.fixture(scope="class")

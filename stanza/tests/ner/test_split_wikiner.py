@@ -3,6 +3,7 @@ Runs a few tests on the split_wikiner file
 """
 
 import os
+from pathlib import Path
 import tempfile
 
 import pytest
@@ -122,11 +123,11 @@ Proietti	PER
 
 def test_read_sentences():
     with tempfile.TemporaryDirectory() as tempdir:
-        raw_filename = os.path.join(tempdir, "raw.tsv")
-        with open(raw_filename, "w") as fout:
+        raw_filename = Path(tempdir) / "raw.tsv"
+        with raw_filename.open("w") as fout:
             fout.write(FBK_SAMPLE)
 
-        sentences = split_wikiner.read_sentences(raw_filename, "utf-8")
+        sentences = split_wikiner.read_sentences(str(raw_filename), "utf-8")
         assert len(sentences) == 20
         text = [["\t".join(word) for word in sent] for sent in sentences]
         text = ["\n".join(sent) for sent in text]
@@ -136,15 +137,15 @@ def test_read_sentences():
 
 def test_write_sentences():
     with tempfile.TemporaryDirectory() as tempdir:
-        raw_filename = os.path.join(tempdir, "raw.tsv")
-        with open(raw_filename, "w") as fout:
+        raw_filename = Path(tempdir) / "raw.tsv"
+        with raw_filename.open("w") as fout:
             fout.write(FBK_SAMPLE)
 
-        sentences = split_wikiner.read_sentences(raw_filename, "utf-8")
-        copy_filename = os.path.join(tempdir, "copy.tsv")
-        split_wikiner.write_sentences_to_file(sentences, copy_filename)
+        sentences = split_wikiner.read_sentences(str(raw_filename), "utf-8")
+        copy_filename = Path(tempdir) / "copy.tsv"
+        split_wikiner.write_sentences_to_file(sentences, str(copy_filename))
 
-        sent2 = split_wikiner.read_sentences(raw_filename, "utf-8")
+        sent2 = split_wikiner.read_sentences(str(raw_filename), "utf-8")
         assert sent2 == sentences
 
 
@@ -153,39 +154,39 @@ def run_split_wikiner(expected_train=14, expected_dev=3, expected_test=3, **kwar
     Runs a test using various parameters to check the results of the splitting process
     """
     with tempfile.TemporaryDirectory() as indir:
-        raw_filename = os.path.join(indir, "raw.tsv")
-        with open(raw_filename, "w") as fout:
+        raw_filename = Path(indir) / "raw.tsv"
+        with raw_filename.open("w") as fout:
             fout.write(FBK_SAMPLE)
 
         with tempfile.TemporaryDirectory() as outdir:
-            split_wikiner.split_wikiner(outdir, raw_filename, **kwargs)
+            split_wikiner.split_wikiner(outdir, str(raw_filename), **kwargs)
 
-            train_file = os.path.join(outdir, "it_fbk.train.bio")
-            dev_file = os.path.join(outdir, "it_fbk.dev.bio")
-            test_file = os.path.join(outdir, "it_fbk.test.bio")
+            train_file = Path(outdir) / "it_fbk.train.bio"
+            dev_file = Path(outdir) / "it_fbk.dev.bio"
+            test_file = Path(outdir) / "it_fbk.test.bio"
 
-            assert os.path.exists(train_file)
-            assert os.path.exists(dev_file)
+            assert train_file.exists()
+            assert dev_file.exists()
             if kwargs["test_section"]:
-                assert os.path.exists(test_file)
+                assert test_file.exists()
             else:
-                assert not os.path.exists(test_file)
+                assert not test_file.exists()
 
-            train_sent = split_wikiner.read_sentences(train_file, "utf-8")
-            dev_sent = split_wikiner.read_sentences(dev_file, "utf-8")
+            train_sent = split_wikiner.read_sentences(str(train_file), "utf-8")
+            dev_sent = split_wikiner.read_sentences(str(dev_file), "utf-8")
             assert len(train_sent) == expected_train
             assert len(dev_sent) == expected_dev
             if kwargs["test_section"]:
-                test_sent = split_wikiner.read_sentences(test_file, "utf-8")
+                test_sent = split_wikiner.read_sentences(str(test_file), "utf-8")
                 assert len(test_sent) == expected_test
             else:
                 test_sent = []
 
             if kwargs["shuffle"]:
-                orig_sents = sorted(split_wikiner.read_sentences(raw_filename, "utf-8"))
+                orig_sents = sorted(split_wikiner.read_sentences(str(raw_filename), "utf-8"))
                 split_sents = sorted(train_sent + dev_sent + test_sent)
             else:
-                orig_sents = split_wikiner.read_sentences(raw_filename, "utf-8")
+                orig_sents = split_wikiner.read_sentences(str(raw_filename), "utf-8")
                 split_sents = train_sent + dev_sent + test_sent
             assert orig_sents == split_sents
 

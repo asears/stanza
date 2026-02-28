@@ -52,13 +52,13 @@ def check_json_file(doc, raw_text, expected_sentences, expected_tokens):
 
 def write_and_convert(tmp_path, raw_text):
     bio_file = tmp_path / "test.bio"
-    with open(bio_file, "w", encoding="utf-8") as fout:
+    with bio_file.open("w", encoding="utf-8") as fout:
         fout.write(raw_text)
 
     json_file = tmp_path / "json.bio"
     process_dataset(bio_file, json_file)
 
-    with open(json_file) as fin:
+    with json_file.open() as fin:
         doc = Document(json.load(fin))
 
     return doc

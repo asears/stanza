@@ -5,6 +5,7 @@ Uses a couple sentences of UD_English-EWT as training/dev data
 """
 
 import os
+from pathlib import Path
 
 import pytest
 import torch
@@ -149,13 +150,13 @@ class TestTagger:
             train_text = [train_text]
         train_files = []
         for idx, train_blob in enumerate(train_text):
-            train_file = str(tmp_path / ("train_%d.conllu" % idx))
-            with open(train_file, "w", encoding="utf-8") as fout:
+            train_file = tmp_path / ("train_%d.conllu" % idx)
+            with train_file.open("w", encoding="utf-8") as fout:
                 fout.write(train_blob)
-            train_files.append(train_file)
+            train_files.append(str(train_file))
         train_file = ";".join(train_files)
 
-        with open(dev_file, "w", encoding="utf-8") as fout:
+        with Path(dev_file).open("w", encoding="utf-8") as fout:
             fout.write(dev_text)
 
         args = ["--wordvec_pretrain_file", wordvec_pretrain_file,
@@ -175,7 +176,7 @@ class TestTagger:
             args = args + extra_args
         tagger.main(args)
 
-        assert os.path.exists(save_file)
+        assert Path(save_file).exists()
         pt = pretrain.Pretrain(wordvec_pretrain_file)
         saved_model = Trainer(pretrain=pt, model_file=save_file)
         return saved_model
@@ -257,7 +258,7 @@ class TestTagger:
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, [TRAIN_DATA_NO_UPOS, TRAIN_DATA_NO_XPOS, TRAIN_DATA_NO_FEATS], DEV_DATA, extra_args=extra_args)
         save_each_name = tagger.save_each_file_name(trainer.args)
         model_files = [save_each_name % i for i in range(4)]
-        assert all(os.path.exists(x) for x in model_files)
+        assert all(Path(x).exists() for x in model_files)
         pt = pretrain.Pretrain(wordvec_pretrain_file)
         saved_trainers = [Trainer(pretrain=pt, model_file=model_file) for model_file in model_files]
 
@@ -280,7 +281,7 @@ class TestTagger:
         expected_models = sorted(set([save_each_name % i for i in range(0, trainer.args['max_steps'] + 1, trainer.args['eval_interval'])]))
         assert len(expected_models) == 6
         for model_name in expected_models:
-            assert os.path.exists(model_name)
+            assert Path(model_name).exists()
 
     @pytest.mark.transformers
     def test_with_bert(self, tmp_path, wordvec_pretrain_file):
@@ -304,7 +305,7 @@ class TestTagger:
         trainer = self.run_training(tmp_path, wordvec_pretrain_file, TRAIN_DATA, DEV_DATA, extra_args=['--bert_model', 'hf-internal-testing/tiny-bert'])
         save_name = trainer.args['save_name']
         save_file = str(tmp_path / save_name)
-        assert os.path.exists(save_file)
+        assert Path(save_file).exists()
 
         pipe = stanza.Pipeline("en", processors="tokenize,pos", models_dir=TEST_MODELS_DIR, pos_model_path=save_file, pos_pretrain_path=wordvec_pretrain_file)
         trainer = pipe.processors['pos'].trainer

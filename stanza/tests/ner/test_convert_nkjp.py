@@ -1,5 +1,5 @@
-import os
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import pytest
 
@@ -33,12 +33,12 @@ EXPECTED_ENTITIES = {
 def dataset(tmp_path_factory):
     dataset_path = tmp_path_factory.mktemp("nkjp_dataset")
     sample_path = dataset_path / "sample"
-    os.mkdir(sample_path)
+    sample_path.mkdir()
     ann_path = sample_path / NER_FILE
-    with open(ann_path, "w", encoding="utf-8") as fout:
+    with ann_path.open("w", encoding="utf-8") as fout:
         fout.write(SAMPLE_ANN)
     morph_path = sample_path / MORPH_FILE
-    with open(morph_path, "w", encoding="utf-8") as fout:
+    with morph_path.open("w", encoding="utf-8") as fout:
         fout.write(SAMPLE_MORPHO)
     return dataset_path
 

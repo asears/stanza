@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -50,22 +50,22 @@ ENG_DEV = """
 
 
 def test_train(tmp_path):
-    test_train = str(os.path.join(tmp_path, "en_test.train.conllu"))
-    with open(test_train, "w") as fout:
+    test_train = tmp_path / "en_test.train.conllu"
+    with test_train.open("w") as fout:
         fout.write(ENG_TRAIN)
 
-    test_dev = str(os.path.join(tmp_path, "en_test.dev.conllu"))
-    with open(test_dev, "w") as fout:
+    test_dev = tmp_path / "en_test.dev.conllu"
+    with test_dev.open("w") as fout:
         fout.write(ENG_DEV)
 
-    test_output = str(os.path.join(tmp_path, "en_test.dev.pred.conllu"))
+    test_output = str(tmp_path / "en_test.dev.pred.conllu")
     model_name = "en_test_mwt.pt"
 
     args = [
         "--data_dir", str(tmp_path),
-        "--train_file", test_train,
-        "--eval_file", test_dev,
-        "--gold_file", test_dev,
+        "--train_file", str(test_train),
+        "--eval_file", str(test_dev),
+        "--gold_file", str(test_dev),
         "--lang", "en",
         "--shorthand", "en_test",
         "--output_file", test_output,
@@ -76,7 +76,7 @@ def test_train(tmp_path):
 
     mwt_expander.main(args=args)
 
-    model = Trainer(model_file=os.path.join(tmp_path, model_name))
+    model = Trainer(model_file=str(tmp_path / model_name))
     assert model.model is not None
     assert isinstance(model.model, CharacterClassifier)
 

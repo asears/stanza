@@ -2,9 +2,9 @@
 Test a couple basic functions - load & save an existing model
 """
 
-import glob
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 import torch
@@ -19,13 +19,13 @@ pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
 
 @pytest.fixture(scope="module")
 def english_model():
-    models_path = os.path.join(TEST_MODELS_DIR, "en", "lemma", "*")
-    models = glob.glob(models_path)
+    models_path = Path(TEST_MODELS_DIR) / "en" / "lemma"
+    models = list(models_path.glob("*"))
     # we expect at least one English model downloaded for the tests
     assert len(models) >= 1, "No English lemma models downloaded during setup!  Please make sure to run the setup script."
     for model_file in models:
-        if "nocharlm" in model_file:
-            return trainer.Trainer(model_file=model_file)
+        if "nocharlm" in str(model_file):
+            return trainer.Trainer(model_file=str(model_file))
     raise FileNotFoundError("Should have downloaded the nocharlm English lemmatizer during setup.  Please rerun the setup script.")
 
 
@@ -40,9 +40,9 @@ def test_save_load_model(english_model):
     Load, save, and load again
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        save_file = os.path.join(tempdir, "resaved", "lemma.pt")
-        english_model.save(save_file)
-        reloaded = trainer.Trainer(model_file=save_file)
+        save_file = Path(tempdir) / "resaved" / "lemma.pt"
+        english_model.save(str(save_file))
+        reloaded = trainer.Trainer(model_file=str(save_file))
 
 
 TRAIN_DATA = """
@@ -115,16 +115,16 @@ class TestLemmatizer:
         save_name = "test_tagger.pt"
         save_file = str(tmp_path / save_name)
 
-        train_file = str(tmp_path / "train.conllu")
-        with open(train_file, "w", encoding="utf-8") as fout:
+        train_file = tmp_path / "train.conllu"
+        with train_file.open("w", encoding="utf-8") as fout:
             fout.write(train_text)
 
-        dev_file = str(tmp_path / "dev.conllu")
-        with open(dev_file, "w", encoding="utf-8") as fout:
+        dev_file = tmp_path / "dev.conllu"
+        with dev_file.open("w", encoding="utf-8") as fout:
             fout.write(dev_text)
 
-        args = ["--train_file", train_file,
-                "--eval_file", dev_file,
+        args = ["--train_file", str(train_file),
+                "--eval_file", str(dev_file),
                 "--output_file", pred_file,
                 "--num_epoch", "2",
                 "--log_step", "10",
@@ -135,7 +135,7 @@ class TestLemmatizer:
             args = args + extra_args
         lemmatizer.main(args)
 
-        assert os.path.exists(save_file)
+        assert Path(save_file).exists()
         saved_model = trainer.Trainer(model_file=save_file)
         return saved_model
 
@@ -153,6 +153,6 @@ class TestLemmatizer:
 
         # check that the charlm wasn't saved in here
         args = saved_model.args
-        save_name = os.path.join(args['save_dir'], args['save_name'])
+        save_name = str(Path(args['save_dir']) / args['save_name'])
         checkpoint = torch.load(save_name, lambda storage, loc: storage, weights_only=True)
         assert not any(x.startswith("contextual_embedding") for x in checkpoint['model'])

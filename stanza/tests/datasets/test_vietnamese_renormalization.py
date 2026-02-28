@@ -1,5 +1,3 @@
-import os
-
 import pytest
 
 from stanza.utils.datasets.vietnamese import renormalize
@@ -21,15 +19,15 @@ def test_replace_file(tmp_path):
     orig = tmp_path / "orig.txt"
     converted = tmp_path / "converted.txt"
 
-    with open(orig, "w", encoding="utf-8") as fout:
+    with orig.open("w", encoding="utf-8") as fout:
         for i in range(10):
             fout.write(text)
             fout.write("\n")
 
     renormalize.convert_file(orig, converted)
 
-    assert os.path.exists(converted)
-    with open(converted, encoding="utf-8") as fin:
+    assert converted.exists()
+    with converted.open(encoding="utf-8") as fin:
         lines = fin.readlines()
 
     assert len(lines) == 10

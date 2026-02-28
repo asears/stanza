@@ -1,5 +1,6 @@
 import shutil
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -154,7 +155,7 @@ def check_download_method_updates(download_method):
         assert en_dir_listing == ['mwt', 'tokenize']
         tokenize_path = os.path.join(en_dir, "tokenize", "combined.pt")
 
-        with open(tokenize_path, "w") as fout:
+        with Path(tokenize_path).open("w") as fout:
             fout.write("Unban mox opal!")
         mod_time = os.path.getmtime(tokenize_path)
 

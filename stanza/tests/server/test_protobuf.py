@@ -32,10 +32,9 @@ TEXT = "Chris wrote a simple sentence that he parsed with Stanford CoreNLP.\n"
 
 @fixture
 def doc_pb():
-    test_dir = os.path.dirname(os.path.abspath(__file__))
-    test_dir = Path(test_dir).parent
-    test_data = os.path.join(test_dir, 'data', 'test.dat')
-    with open(test_data, 'rb') as f:
+    test_dir = Path(__file__).resolve().parent.parent
+    test_data = test_dir / 'data' / 'test.dat'
+    with test_data.open('rb') as f:
         buf = f.read()
     doc = Document()
     parseFromDelimitedString(doc, buf)

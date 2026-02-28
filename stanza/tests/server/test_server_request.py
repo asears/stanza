@@ -3,7 +3,7 @@ Tests for setting request properties of servers
 """
 
 import json
-import os
+from pathlib import Path
 
 import pytest
 
@@ -12,7 +12,7 @@ from stanza.protobuf import Document
 from stanza.tests import compare_ignoring_whitespace
 
 # Get path to test data directory
-TEST_DATA_DIR = os.path.join(os.path.dirname(__file__), '..', 'data')
+TEST_DATA_DIR = Path(__file__).parent.parent / 'data'
 
 pytestmark = pytest.mark.client
 
@@ -154,7 +154,7 @@ punct(fait-4, .-16)
 
 # TODO: Refactor to use pathlib and fixtures instead of module-level file loading
 # See agents/plans/pathlib-migration.md for migration plan
-with open(os.path.join(TEST_DATA_DIR, 'example_french.json'), encoding="utf-8") as f:
+with (TEST_DATA_DIR / 'example_french.json').open(encoding="utf-8") as f:
     FRENCH_JSON_GOLD = json.loads(f.read())
 
 ES_DOC = 'Andrés Manuel López Obrador es el presidente de México.'

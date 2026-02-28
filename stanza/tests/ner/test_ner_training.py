@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+from pathlib import Path
 import warnings
 
 import pytest
@@ -91,10 +92,10 @@ def pretrain_file():
     return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
 
 def write_temp_file(filename, bio_data):
-    bio_filename = os.path.splitext(filename)[0] + ".bio"
-    with open(bio_filename, "w", encoding="utf-8") as fout:
+    bio_filename = Path(filename).with_suffix('.bio')
+    with bio_filename.open("w", encoding="utf-8") as fout:
         fout.write(bio_data)
-    process_dataset(bio_filename, filename)
+    process_dataset(str(bio_filename), filename)
 
 def write_temp_2tag(filename, bio_data):
     doc = []
@@ -108,7 +109,7 @@ def write_temp_2tag(filename, bio_data):
                 "multi_ner": tags.split()
             })
 
-    with open(filename, "w", encoding="utf-8") as fout:
+    with Path(filename).open("w", encoding="utf-8") as fout:
         json.dump(doc, fout)
 
 def get_args(tmp_path, pretrain_file, train_json, dev_json, *extra_args):
@@ -152,7 +153,7 @@ def test_two_tag_training_backprop(pretrain_file, tmp_path):
 
     # first, need to save the final model before restarting
     # (alternatively, could reload the final checkpoint)
-    trainer.save(os.path.join(trainer.args['save_dir'], trainer.args['save_name']))
+    trainer.save(str(Path(trainer.args['save_dir']) / trainer.args['save_name']))
     new_trainer = run_two_tag_training(pretrain_file, tmp_path, "--finetune")
 
     assert len(trainer.model.tag_clfs) == 2
@@ -171,7 +172,7 @@ def test_two_tag_training_c2_backprop(pretrain_file, tmp_path):
 
     # first, need to save the final model before restarting
     # (alternatively, could reload the final checkpoint)
-    trainer.save(os.path.join(trainer.args['save_dir'], trainer.args['save_name']))
+    trainer.save(str(Path(trainer.args['save_dir']) / trainer.args['save_name']))
     new_trainer = run_two_tag_training(pretrain_file, tmp_path, "--finetune", train_data=EN_TRAIN_2TAG_EMPTY2)
 
     assert len(trainer.model.tag_clfs) == 2
@@ -232,17 +233,17 @@ def model_file_has_bert(filename):
 @pytest.mark.transformers
 def test_with_bert(pretrain_file, tmp_path):
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert')
-    model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
+    model_file = str(Path(trainer.args['save_dir']) / trainer.args['save_name'])
     assert not model_file_has_bert(model_file)
 
 @pytest.mark.transformers
 def test_with_bert_finetune(pretrain_file, tmp_path):
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert', '--bert_finetune')
-    model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
+    model_file = str(Path(trainer.args['save_dir']) / trainer.args['save_name'])
     assert model_file_has_bert(model_file)
 
-    foo_save_filename = os.path.join(tmp_path, "foo_" + trainer.args['save_name'])
-    bar_save_filename = os.path.join(tmp_path, "bar_" + trainer.args['save_name'])
+    foo_save_filename = str(Path(tmp_path) / ("foo_" + trainer.args['save_name']))
+    bar_save_filename = str(Path(tmp_path) / ("bar_" + trainer.args['save_name']))
     trainer.save(foo_save_filename)
     assert model_file_has_bert(foo_save_filename)
 
@@ -255,7 +256,7 @@ def test_with_bert_finetune(pretrain_file, tmp_path):
 def test_with_peft_finetune(pretrain_file, tmp_path):
     # TODO: check that the peft tensors are moving when training?
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert', '--use_peft')
-    model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
+    model_file = str(Path(trainer.args['save_dir']) / trainer.args['save_name'])
     checkpoint = torch.load(model_file, lambda storage, loc: storage, weights_only=True)
     assert 'bert_lora' in checkpoint
     assert not any(x.startswith("bert_model.") for x in checkpoint['model'])

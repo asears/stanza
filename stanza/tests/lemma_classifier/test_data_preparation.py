@@ -189,11 +189,11 @@ def write_test_dataset(tmp_path, texts, datasets):
     input_path = ud_path / "UD_English-EWT"
     output_path = tmp_path / "data" / "lemma_classifier"
 
-    os.makedirs(input_path, exist_ok=True)
+    input_path.mkdir(parents=True, exist_ok=True)
 
     for text, dataset in zip(texts, datasets):
         sample_file = input_path / ("en_ewt-ud-%s.conllu" % dataset)
-        with open(sample_file, "w", encoding="utf-8") as fout:
+        with sample_file.open("w", encoding="utf-8") as fout:
             fout.write(text)
 
     paths = {"UDBASE": ud_path,
