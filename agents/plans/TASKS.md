@@ -52,3 +52,10 @@ https://www150.statcan.gc.ca/n1/pub/41-20-0002/412000022025004-eng.htm
 https://www.oise.utoronto.ca/deepeningknowledge/resources/inuktitut-language
 
 https://www.yorku.ca/research/cikl/inuit-languages/
+
+## Branches
+
+  feature/as/uplift - 1st
+  feature/as/uplift-ruff - 2nd
+* feature/as/uplift-pathlib - 3rd
+  main -> should target dev in other repo, could change to main?
