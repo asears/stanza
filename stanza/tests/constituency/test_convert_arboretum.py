@@ -6,6 +6,7 @@ Note that the text has been removed
 
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -166,8 +167,8 @@ def test_projective_example():
     Test reading a basic tree, along with some further manipulations from the conversion program
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as tempdir:
-        test_name = os.path.join(tempdir, "proj.xml")
-        with open(test_name, "w", encoding="utf-8") as fout:
+        test_name = Path(tempdir) / "proj.xml"
+        with test_name.open("w", encoding="utf-8") as fout:
             fout.write(PROJ_EXAMPLE)
         sentences = convert_arboretum.read_xml_file(test_name)
         assert len(sentences) == 1
@@ -200,8 +201,8 @@ def test_not_fix_example():
     Test that a non-projective tree which we don't have a heuristic for quietly fails
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as tempdir:
-        test_name = os.path.join(tempdir, "nofix.xml")
-        with open(test_name, "w", encoding="utf-8") as fout:
+        test_name = Path(tempdir) / "nofix.xml"
+        with test_name.open("w", encoding="utf-8") as fout:
             fout.write(NOT_FIX_NONPROJ_EXAMPLE)
         sentences = convert_arboretum.read_xml_file(test_name)
         assert len(sentences) == 1
@@ -219,8 +220,8 @@ def test_fix_proj_example():
     Note that there are several other classes of non-proj tree we could test as well...
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as tempdir:
-        test_name = os.path.join(tempdir, "fix.xml")
-        with open(test_name, "w", encoding="utf-8") as fout:
+        test_name = Path(tempdir) / "fix.xml"
+        with test_name.open("w", encoding="utf-8") as fout:
             fout.write(NONPROJ_EXAMPLE)
         sentences = convert_arboretum.read_xml_file(test_name)
         assert len(sentences) == 1

@@ -17,30 +17,31 @@ To build a new charlm for a new language from a conll17 dataset:
 
 import argparse
 import lzma
-import os
+from pathlib import Path
 
 def process_file(input_filename, output_directory, compress):
-    if not input_filename.endswith('.conllu') and not input_filename.endswith(".conllu.xz"):
+    input_filename = Path(input_filename)
+    if input_filename.suffix not in ('.conllu', '.xz') or (input_filename.suffix == '.xz' and not str(input_filename).endswith('.conllu.xz')):
         print(f"Skipping {input_filename}")
         return
 
-    if input_filename.endswith(".xz"):
+    if input_filename.suffix == '.xz':
         open_fn = lambda x: lzma.open(x, mode='rt')
-        output_filename = input_filename[:-3].replace(".conllu", ".txt")
+        output_filename = Path(str(input_filename)[:-3].replace('.conllu', '.txt'))
     else:
-        open_fn = lambda x: open(x)
-        output_filename = input_filename.replace('.conllu', '.txt')
+        open_fn = lambda x: x.open()
+        output_filename = Path(str(input_filename).replace('.conllu', '.txt'))
 
     if output_directory:
-        output_filename = os.path.join(output_directory, os.path.split(output_filename)[1])
+        output_filename = Path(output_directory) / output_filename.name
 
     if compress:
-        output_filename = output_filename + ".xz"
+        output_filename = Path(str(output_filename) + '.xz')
         output_fn = lambda x: lzma.open(x, mode='wt')
     else:
-        output_fn = lambda x: open(x, mode='w')
+        output_fn = lambda x: x.open(mode='w')
 
-    if os.path.exists(output_filename):
+    if output_filename.exists():
         print("Cowardly refusing to overwrite %s" % output_filename)
         return
 
@@ -80,13 +81,13 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    directory = args.input_directory
-    filenames = sorted(os.listdir(directory))
+    directory = Path(args.input_directory)
+    filenames = sorted(path.name for path in directory.iterdir())
     print(f"Files to process in {directory}: {filenames}")
     print(f"Processing to .xz files: {args.xz_output}")
 
     if args.output_directory:
-        os.makedirs(args.output_directory, exist_ok=True)
+        Path(args.output_directory).mkdir(parents=True, exist_ok=True)
     for filename in filenames:
-        process_file(os.path.join(directory, filename), args.output_directory, args.xz_output)
+        process_file(directory / filename, args.output_directory, args.xz_output)
 

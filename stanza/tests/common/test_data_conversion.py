@@ -3,7 +3,9 @@ Basic tests of the data conversion
 """
 
 import io
+import os
 import tempfile
+from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
@@ -143,7 +145,7 @@ def test_write_russian_doc(tmp_path):
     check_russian_doc(doc)
     CoNLL.write_doc2conll(doc, filename)
 
-    with open(filename, encoding="utf-8") as fin:
+    with filename.open(encoding="utf-8") as fin:
         text = fin.read()
 
     # the conll docs have to end with \n\n
@@ -191,7 +193,7 @@ def test_write_doc2conll_append(tmp_path):
     CoNLL.write_doc2conll(doc, filename)
     CoNLL.write_doc2conll(doc, filename, mode="a")
 
-    with open(filename) as fin:
+    with filename.open() as fin:
         text = fin.read()
     expected = ENGLISH_SAMPLE + "\n\n" + ENGLISH_SAMPLE + "\n\n"
     assert text == expected
@@ -228,10 +230,10 @@ def test_file():
     Test loading a doc from a file
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        filename = os.path.join(tempdir, "russian.conll")
-        with open(filename, "w", encoding="utf-8") as fout:
+        filename = Path(tempdir) / "russian.conll"
+        with filename.open("w", encoding="utf-8") as fout:
             fout.write(RUSSIAN_SAMPLE)
-        doc = CoNLL.conll2doc(input_file=filename)
+        doc = CoNLL.conll2doc(input_file=str(filename))
         check_russian_doc(doc)
 
 
@@ -240,7 +242,7 @@ def test_zip_file():
     Test loading a doc from a zip file
     """
     with tempfile.TemporaryDirectory() as tempdir:
-        zip_file = os.path.join(tempdir, "russian.zip")
+        zip_file = str(Path(tempdir) / "russian.zip")
         filename = "russian.conll"
         with ZipFile(zip_file, "w") as zout, zout.open(filename, "w") as fout:
             fout.write(RUSSIAN_SAMPLE.encode())

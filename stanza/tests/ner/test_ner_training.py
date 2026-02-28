@@ -227,7 +227,7 @@ def test_train_model_cpu(pretrain_file, tmp_path):
 
 def model_file_has_bert(filename):
     checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
-return any(x.startswith("bert_model.") for x in checkpoint['model'])
+    return any(x.startswith("bert_model.") for x in checkpoint['model'])
 
 @pytest.mark.transformers
 def test_with_bert(pretrain_file, tmp_path):
@@ -258,7 +258,7 @@ def test_with_peft_finetune(pretrain_file, tmp_path):
     model_file = os.path.join(trainer.args['save_dir'], trainer.args['save_name'])
     checkpoint = torch.load(model_file, lambda storage, loc: storage, weights_only=True)
     assert 'bert_lora' in checkpoint
-assert not any(x.startswith("bert_model.") for x in checkpoint['model'])
+    assert not any(x.startswith("bert_model.") for x in checkpoint['model'])
 
     # test loading
     reloaded_trainer = Trainer(args=trainer.args, model_file=model_file)

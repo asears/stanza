@@ -2,7 +2,6 @@ import glob
 import os
 from pathlib import Path
 
-import numpy as np
 import pytest
 import torch
 
@@ -10,39 +9,9 @@ import stanza
 from stanza.models import classifier
 from stanza.models.classifiers import data
 from stanza.models.classifiers.trainer import Trainer
-from stanza.models.common import pretrain, utils
+from stanza.models.common import utils
 from stanza.tests import TEST_MODELS_DIR
-from stanza.tests.classifiers.test_data import SENTENCES
-
 pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
-
-EMB_DIM = 5
-
-
-@pytest.fixture(scope="module")
-def fake_embeddings(tmp_path_factory):
-    """
-    will return a path to a fake embeddings file with the words in SENTENCES
-    """
-    # could set np random seed here
-    words = sorted(set([x.lower() for y in SENTENCES for x in y]))
-    words = words[:-1]
-    embedding_dir = tmp_path_factory.mktemp("data")
-    embedding_txt = embedding_dir / "embedding.txt"
-    embedding_pt = embedding_dir / "embedding.pt"
-    embedding = np.random.random((len(words), EMB_DIM))
-
-    with open(embedding_txt, "w", encoding="utf-8") as fout:
-        for word, emb in zip(words, embedding):
-            fout.write(word)
-            fout.write("\t")
-            fout.write("\t".join(str(x) for x in emb))
-            fout.write("\n")
-
-    pt = pretrain.Pretrain(str(embedding_pt), str(embedding_txt))
-    pt.load()
-    assert Path(embedding_pt).exists()
-    return embedding_pt
 
 
 class TestClassifier:
@@ -199,12 +168,12 @@ class TestClassifier:
 
         save_path = Path(save_filename).parent
 
-        initial_model = glob.glob(str(save_path / "*E0000*"))
+        initial_model = list(save_path.glob("*E0000*"))
         assert len(initial_model) == 1
         initial_model = initial_model[0]
         initial_model = torch.load(initial_model, lambda storage, loc: storage, weights_only=True)
 
-        second_model_file = glob.glob(str(save_path / "*E0002*"))
+        second_model_file = list(save_path.glob("*E0002*"))
         assert len(second_model_file) == 1
         second_model_file = second_model_file[0]
         second_model = torch.load(second_model_file, lambda storage, loc: storage, weights_only=True)
@@ -223,13 +192,13 @@ class TestClassifier:
 
         trainer, save_filename, checkpoint_file = self.run_training(tmp_path, fake_embeddings, train_file, dev_file, extra_args=["--bilstm_hidden_dim", "20", "--bert_model", bert_model, "--bert_finetune", "--bert_hidden_layers", "2", "--save_intermediate_models", "--max_epochs", "5"], checkpoint_file=checkpoint_file)
 
-        second_model_file_redo = glob.glob(str(save_path / "*E0002*"))
+        second_model_file_redo = list(save_path.glob("*E0002*"))
         assert len(second_model_file_redo) == 1
         assert second_model_file == second_model_file_redo[0]
         second_model = torch.load(second_model_file, lambda storage, loc: storage, weights_only=True)
         assert "asdf" in second_model
 
-        fifth_model_file = glob.glob(str(save_path / "*E0005*"))
+        fifth_model_file = list(save_path.glob("*E0005*"))
         assert len(fifth_model_file) == 1
 
         final_model = torch.load(fifth_model_file[0], lambda storage, loc: storage, weights_only=True)
@@ -285,17 +254,17 @@ class TestClassifier:
 
         save_path = Path(save_file).parent
 
-        initial_model_file = glob.glob(str(save_path / "*E0000*"))
+        initial_model_file = list(save_path.glob("*E0000*"))
         assert len(initial_model_file) == 1
         initial_model_file = initial_model_file[0]
         initial_model = torch.load(initial_model_file, lambda storage, loc: storage, weights_only=True)
 
-        second_model_file = glob.glob(str(save_path / "*E0002*"))
+        second_model_file = list(save_path.glob("*E0002*"))
         assert len(second_model_file) == 1
         second_model_file = second_model_file[0]
         second_model = torch.load(second_model_file, lambda storage, loc: storage, weights_only=True)
 
-        final_model_file = glob.glob(str(save_path / "*E0005*"))
+        final_model_file = list(save_path.glob("*E0005*"))
         assert len(final_model_file) == 1
         final_model_file = final_model_file[0]
         final_model = torch.load(final_model_file, lambda storage, loc: storage, weights_only=True)

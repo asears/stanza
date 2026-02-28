@@ -1,14 +1,16 @@
 import sys
 import json
+from pathlib import Path
 
 def avg_sent_len(toklabels):
-    if toklabels.endswith('.json'):
-        with open(toklabels) as f:
+    toklabels = Path(toklabels)
+    if toklabels.suffix == '.json':
+        with toklabels.open() as f:
             l = json.load(f)
 
         l = [''.join([str(x[1]) for x in para]) for para in l]
     else:
-        with open(toklabels) as f:
+        with toklabels.open() as f:
             l = ''.join(f.readlines())
 
         l = l.split('\n\n')

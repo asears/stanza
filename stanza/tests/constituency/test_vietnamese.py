@@ -5,6 +5,7 @@ Technically some other languages can have this, too, like that one French token
 """
 
 import os
+from pathlib import Path
 import tempfile
 
 import pytest
@@ -62,14 +63,14 @@ def test_vi_embedding():
     words = set(trees[0].leaf_labels())
 
     with tempfile.TemporaryDirectory() as tempdir:
-        emb_filename = os.path.join(tempdir, "emb.txt")
-        pt_filename = os.path.join(tempdir, "emb.pt")
-        with open(emb_filename, "w", encoding="utf-8") as fout:
+        emb_filename = Path(tempdir) / "emb.txt"
+        pt_filename = Path(tempdir) / "emb.pt"
+        with emb_filename.open("w", encoding="utf-8") as fout:
             fout.write(VI_EMBEDDING)
-        pt = pretrain.Pretrain(filename=pt_filename, vec_filename=emb_filename, save_to_file=True)
+        pt = pretrain.Pretrain(filename=str(pt_filename), vec_filename=str(emb_filename), save_to_file=True)
         pt.load()
 
-        trainer = build_trainer(pt_filename)
+        trainer = build_trainer(str(pt_filename))
         model = trainer.model
 
     assert model.num_words_known(words) == 4

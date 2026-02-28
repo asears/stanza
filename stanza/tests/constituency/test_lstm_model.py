@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 import torch
@@ -186,15 +187,15 @@ def test_forward_charlm(pretrain_file):
     Note that this doesn't test the results of the charlm itself,
     just that the model is shaped correctly
     """
-    forward_charlm_path = os.path.join(TEST_MODELS_DIR, "en", "forward_charlm", "1billion.pt")
-    backward_charlm_path = os.path.join(TEST_MODELS_DIR, "en", "backward_charlm", "1billion.pt")
-    assert os.path.exists(forward_charlm_path), "Need to download en test models (or update path to the forward charlm)"
-    assert os.path.exists(backward_charlm_path), "Need to download en test models (or update path to the backward charlm)"
+    forward_charlm_path = Path(TEST_MODELS_DIR) / "en" / "forward_charlm" / "1billion.pt"
+    backward_charlm_path = Path(TEST_MODELS_DIR) / "en" / "backward_charlm" / "1billion.pt"
+    assert forward_charlm_path.exists(), "Need to download en test models (or update path to the forward charlm)"
+    assert backward_charlm_path.exists(), "Need to download en test models (or update path to the backward charlm)"
 
-    model = build_model(pretrain_file, '--charlm_forward_file', forward_charlm_path, '--charlm_backward_file', backward_charlm_path, '--sentence_boundary_vectors', 'none')
+    model = build_model(pretrain_file, '--charlm_forward_file', str(forward_charlm_path), '--charlm_backward_file', str(backward_charlm_path), '--sentence_boundary_vectors', 'none')
     run_forward_checks(model)
 
-    model = build_model(pretrain_file, '--charlm_forward_file', forward_charlm_path, '--charlm_backward_file', backward_charlm_path, '--sentence_boundary_vectors', 'words')
+    model = build_model(pretrain_file, '--charlm_forward_file', str(forward_charlm_path), '--charlm_backward_file', str(backward_charlm_path), '--sentence_boundary_vectors', 'words')
     run_forward_checks(model)
 
 

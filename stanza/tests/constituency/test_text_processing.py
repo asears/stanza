@@ -22,8 +22,8 @@ def pipeline():
 
 
 def test_read_tokenized_file(tmp_path):
-    filename = str(tmp_path / "test_input.txt")
-    with open(filename, "w") as fout:
+    filename = Path(tmp_path) / "test_input.txt"
+    with filename.open("w") as fout:
         # test that the underscore token comes back with spaces
         fout.write("This is a_small test\nLine two\n")
     text, ids = text_processing.read_tokenized_file(filename)
@@ -52,11 +52,11 @@ def test_parse_text(tmp_path, pipeline):
     model = con_processor._model
     args = model.args
 
-    raw_file = str(tmp_path / "test_input.txt")
-    with open(raw_file, "w") as fout:
+    raw_file = tmp_path / "test_input.txt"
+    with raw_file.open("w") as fout:
         fout.write("This is a test\nThis is another test\n")
     output_file = str(tmp_path / "test_output.txt")
-    text_processing.parse_text(args, model, [pipeline], tokenized_file=raw_file, predict_file=output_file)
+    text_processing.parse_text(args, model, [pipeline], tokenized_file=str(raw_file), predict_file=output_file)
 
     trees = tree_reader.read_treebank(output_file)
     trees = [f"{x}" for x in trees]
@@ -70,19 +70,19 @@ def test_parse_dir(tmp_path, pipeline):
     model = con_processor._model
     args = model.args
 
-    raw_dir = str(tmp_path / "input")
-    os.makedirs(raw_dir)
-    raw_f1 = str(tmp_path / "input" / "f1.txt")
-    raw_f2 = str(tmp_path / "input" / "f2.txt")
+    raw_dir = tmp_path / "input"
+    raw_dir.mkdir()
+    raw_f1 = tmp_path / "input" / "f1.txt"
+    raw_f2 = tmp_path / "input" / "f2.txt"
     output_dir = str(tmp_path / "output")
 
-    with open(raw_f1, "w") as fout:
+    with raw_f1.open("w") as fout:
         fout.write("This is a test")
-    with open(raw_f2, "w") as fout:
+    with raw_f2.open("w") as fout:
         fout.write("This is another test")
 
-    text_processing.parse_dir(args, model, [pipeline], raw_dir, output_dir)
-    output_files = sorted(glob.glob(os.path.join(output_dir, "*")))
+    text_processing.parse_dir(args, model, [pipeline], str(raw_dir), output_dir)
+    output_files = sorted(Path(output_dir).glob("*"))
     expected_trees = ["(ROOT (S (NP (DT This)) (VP (VBZ is) (NP (DT a) (NN test)))))",
                       "(ROOT (S (NP (DT This)) (VP (VBZ is) (NP (DT another) (NN test)))))"]
     for output_file, expected_tree in zip(output_files, expected_trees):
@@ -98,12 +98,12 @@ def test_parse_text(tmp_path, pipeline):
 
     model_path = con_processor._config['model_path']
 
-    raw_file = str(tmp_path / "test_input.txt")
-    with open(raw_file, "w") as fout:
+    raw_file = tmp_path / "test_input.txt"
+    with raw_file.open("w") as fout:
         fout.write("This is a test\nThis is another test\n")
     output_file = str(tmp_path / "test_output.txt")
 
-    args['tokenized_file'] = raw_file
+    args['tokenized_file'] = str(raw_file)
     args['predict_file'] = output_file
 
     text_processing.load_model_parse_text(args, model_path, [pipeline])

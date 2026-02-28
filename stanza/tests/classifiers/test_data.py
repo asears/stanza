@@ -36,7 +36,7 @@ DATASET_WITH_TREES = [
 def train_file(tmp_path_factory):
     train_set = DATASET * 20
     train_filename = tmp_path_factory.mktemp("data") / "train.json"
-    with open(train_filename, "w", encoding="utf-8") as fout:
+    with train_filename.open("w", encoding="utf-8") as fout:
         json.dump(train_set, fout, ensure_ascii=False)
     return train_filename
 
@@ -45,7 +45,7 @@ def train_file(tmp_path_factory):
 def dev_file(tmp_path_factory):
     dev_set = DATASET * 2
     dev_filename = tmp_path_factory.mktemp("data") / "dev.json"
-    with open(dev_filename, "w", encoding="utf-8") as fout:
+    with dev_filename.open("w", encoding="utf-8") as fout:
         json.dump(dev_set, fout, ensure_ascii=False)
     return dev_filename
 
@@ -54,27 +54,9 @@ def dev_file(tmp_path_factory):
 def test_file(tmp_path_factory):
     test_set = DATASET
     test_filename = tmp_path_factory.mktemp("data") / "test.json"
-    with open(test_filename, "w", encoding="utf-8") as fout:
+    with test_filename.open("w", encoding="utf-8") as fout:
         json.dump(test_set, fout, ensure_ascii=False)
     return test_filename
-
-
-@pytest.fixture(scope="module")
-def train_file_with_trees(tmp_path_factory):
-    train_set = DATASET_WITH_TREES * 20
-    train_filename = tmp_path_factory.mktemp("data") / "train_trees.json"
-    with open(train_filename, "w", encoding="utf-8") as fout:
-        json.dump(train_set, fout, ensure_ascii=False)
-    return train_filename
-
-
-@pytest.fixture(scope="module")
-def dev_file_with_trees(tmp_path_factory):
-    dev_set = DATASET_WITH_TREES * 2
-    dev_filename = tmp_path_factory.mktemp("data") / "dev_trees.json"
-    with open(dev_filename, "w", encoding="utf-8") as fout:
-        json.dump(dev_set, fout, ensure_ascii=False)
-    return dev_filename
 
 
 class TestClassifierData:

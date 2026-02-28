@@ -4,6 +4,7 @@ Utilities for testing
 
 import os
 import re
+from pathlib import Path
 
 from platformdirs import user_cache_dir
 
@@ -86,25 +87,26 @@ def safe_rm(path_to_rm):
     2.) only remove things on approved list REMOVABLE_PATHS
     3.) assert no longer exists
     """
+    path_to_rm = Path(path_to_rm)
     # just return if path doesn't exist
-    if not os.path.exists(path_to_rm):
+    if not path_to_rm.exists():
         return
     # handle directory
-    if os.path.isdir(path_to_rm):
-        files_to_rm = [f'{path_to_rm}/{fname}' for fname in os.listdir(path_to_rm)]
+    if path_to_rm.is_dir():
+        files_to_rm = [path_to_rm / fname for fname in os.listdir(path_to_rm)]
         dir_to_rm = path_to_rm
     else:
         files_to_rm = [path_to_rm]
         dir_to_rm = None
     # clear out files
     for file_to_rm in files_to_rm:
-        if os.path.isfile(file_to_rm) and os.path.basename(file_to_rm) in REMOVABLE_PATHS:
-            os.remove(file_to_rm)
-            assert not os.path.exists(file_to_rm), f'Error removing: {file_to_rm}'
+        if file_to_rm.is_file() and file_to_rm.name in REMOVABLE_PATHS:
+            file_to_rm.unlink()
+            assert not file_to_rm.exists(), f'Error removing: {file_to_rm}'
     # clear out directory
-    if dir_to_rm is not None and os.path.isdir(dir_to_rm):
-        os.rmdir(dir_to_rm)
-        assert not os.path.exists(dir_to_rm), f'Error removing: {dir_to_rm}'
+    if dir_to_rm is not None and dir_to_rm.is_dir():
+        dir_to_rm.rmdir()
+        assert not dir_to_rm.exists(), f'Error removing: {dir_to_rm}'
 
 
 def compare_ignoring_whitespace(predicted, expected):

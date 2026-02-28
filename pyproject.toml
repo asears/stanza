@@ -230,8 +230,8 @@ markers = [
     "travis: mark test to run on Travis CI",
     "slow: mark test as slow",
     "gpu: mark test as requiring GPU",
+    "train: mark test as requiring model training",
     "client: all tests that are related to the CoreNLP client interface",
-    "pipeline: all tests that are related to the Stanza neural pipeline",
     "morphseg: all tests that are related to morpheme segmentation",
     "transformers: mark test as requiring transformers library",
 ]

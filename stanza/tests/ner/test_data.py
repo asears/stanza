@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -62,7 +63,7 @@ def pretrain_file():
 @pytest.fixture(scope="module")
 def one_sentence_json_path(tmpdir_factory):
     filename = tmpdir_factory.mktemp('data').join("sentence.json")
-    with open(filename, 'w') as fout:
+    with Path(str(filename)).open('w') as fout:
         fout.write(ONE_SENTENCE)
     return filename
 
@@ -74,7 +75,7 @@ def test_build_vocab(pretrain_file, one_sentence_json_path, tmp_path):
     args = ner_tagger.parse_args(["--wordvec_pretrain_file", pretrain_file])
     pt = ner_tagger.load_pretrain(args)
 
-    with open(one_sentence_json_path) as fin:
+    with Path(str(one_sentence_json_path)).open() as fin:
         train_doc = Document(json.load(fin))
 
     train_batch = DataLoader(train_doc, args['batch_size'], args, pt, vocab=None, evaluation=False, scheme=args.get('train_scheme'), max_batch_words=args['max_batch_words'])
@@ -90,12 +91,12 @@ def test_build_vocab(pretrain_file, one_sentence_json_path, tmp_path):
 
 def test_build_vocab_ignore_repeats(pretrain_file, one_sentence_json_path, tmp_path):
     """
-    Test that when loading a data file, we get back 
+    Test that when loading a datafile, we get back 
     """
     args = ner_tagger.parse_args(["--wordvec_pretrain_file", pretrain_file, "--emb_finetune_known_only"])
     pt = ner_tagger.load_pretrain(args)
 
-    with open(one_sentence_json_path) as fin:
+    with Path(str(one_sentence_json_path)).open() as fin:
         train_doc = Document(json.load(fin))
 
     train_batch = DataLoader(train_doc, args['batch_size'], args, pt, vocab=None, evaluation=False, scheme=args.get('train_scheme'), max_batch_words=args['max_batch_words'])

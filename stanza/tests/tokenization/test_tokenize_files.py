@@ -13,13 +13,13 @@ I took my daughter ice skating
 
 def test_tokenize_files(tmp_path):
     input_file = tmp_path / "input.txt"
-    with open(input_file, "w") as fout:
+    with input_file.open("w") as fout:
         fout.write("This is a test.  This is a second sentence.\n\nI took my daughter ice skating")
 
     output_file = tmp_path / "output.txt"
     tokenize_files.main([str(input_file), "--lang", "en", "--output_file", str(output_file), "--model_dir", TEST_MODELS_DIR])
 
-    with open(output_file) as fin:
+    with output_file.open() as fin:
         text = fin.read()
 
     assert text == EXPECTED

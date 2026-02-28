@@ -2,6 +2,7 @@
 Utility functions for the loading and conversion of CoNLL-format files.
 """
 import io
+from pathlib import Path
 from zipfile import ZipFile
 
 from stanza.models.common.doc import Document
@@ -137,7 +138,7 @@ class CoNLL:
                 with zin.open(input_file) as fin:
                     doc_conll, doc_comments = CoNLL.load_conll(io.TextIOWrapper(fin, encoding="utf-8"), ignore_gapping, keep_line_numbers)
         else:
-            with open(input_file, encoding='utf-8') as fin:
+            with Path(input_file).open(encoding='utf-8') as fin:
                 doc_conll, doc_comments = CoNLL.load_conll(fin, ignore_gapping, keep_line_numbers)
 
         doc_dict, doc_empty = CoNLL.convert_conll(doc_conll)
@@ -211,5 +212,5 @@ class CoNLL:
         if hasattr(filename, "write"):
             filename.write(f"{doc:C}\n\n")
         else:
-            with open(filename, mode, encoding=encoding) as outfile:
+            with Path(filename).open(mode, encoding=encoding) as outfile:
                 outfile.write(f"{doc:C}\n\n")

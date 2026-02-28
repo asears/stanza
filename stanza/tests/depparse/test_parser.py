@@ -6,6 +6,7 @@ Uses a couple sentences of UD_English-EWT as training/dev data
 
 import os
 import zipfile
+from pathlib import Path
 
 import pytest
 import torch
@@ -92,10 +93,10 @@ class TestParser:
             with zipfile.ZipFile(train_file, "w") as zout, zout.open('train.conllu', 'w') as fout:
                 fout.write(train_text.encode())
         else:
-            with open(train_file, "w", encoding="utf-8") as fout:
+            with Path(train_file).open("w", encoding="utf-8") as fout:
                 fout.write(train_text)
 
-        with open(dev_file, "w", encoding="utf-8") as fout:
+        with Path(dev_file).open("w", encoding="utf-8") as fout:
             fout.write(dev_text)
 
         args = ["--wordvec_pretrain_file", wordvec_pretrain_file,
@@ -118,7 +119,7 @@ class TestParser:
             args = args + extra_args
         trainer, _ = parser.main(args)
 
-        assert os.path.exists(save_file)
+        assert Path(save_file).exists()
         pt = pretrain.Pretrain(wordvec_pretrain_file)
         # test loading the saved model
         saved_model = Trainer(pretrain=pt, model_file=save_file)
@@ -169,7 +170,7 @@ class TestParser:
 
         save_name = trainer.args['save_name']
         filename = tmp_path / save_name
-        assert os.path.exists(filename)
+        assert filename.exists()
         checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         assert any(x.startswith("bert_model") for x in checkpoint['model'])
 
@@ -198,9 +199,9 @@ class TestParser:
         save_name = trainer.args['save_name']
         checkpoint_name = trainer.args["checkpoint_save_name"]
 
-        assert os.path.exists(os.path.join(save_dir, save_name))
+        assert (Path(save_dir) / save_name).exists()
         assert checkpoint_name is not None
-        assert os.path.exists(checkpoint_name)
+        assert Path(checkpoint_name).exists()
 
         assert len(trainer.optimizer) == 1
         for opt in trainer.optimizer.values():
@@ -220,9 +221,9 @@ class TestParser:
         save_name = trainer.args['save_name']
         checkpoint_name = trainer.args["checkpoint_save_name"]
 
-        assert os.path.exists(os.path.join(save_dir, save_name))
+        assert (Path(save_dir) / save_name).exists()
         assert checkpoint_name is not None
-        assert os.path.exists(checkpoint_name)
+        assert Path(checkpoint_name).exists()
 
         assert len(trainer.optimizer) == 1
         for opt in trainer.optimizer.values():

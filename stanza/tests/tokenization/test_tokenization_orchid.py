@@ -1,6 +1,6 @@
-import os
 import tempfile
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
 import pytest
 
@@ -85,11 +85,12 @@ EXPECTED_LABELS = """00100000100100000010000010000200000000000000000000100000000
 def check_results(documents, expected_conllu, expected_txt, expected_labels):
     with tempfile.TemporaryDirectory() as output_dir:
         write_section(output_dir, "orchid", "train", documents)
-        with open(os.path.join(output_dir, "th_orchid.train.gold.conllu")) as fin:
+        output_dir = Path(output_dir)
+        with (output_dir / "th_orchid.train.gold.conllu").open() as fin:
             conllu = fin.read().strip()
-        with open(os.path.join(output_dir, "th_orchid.train.txt")) as fin:
+        with (output_dir / "th_orchid.train.txt").open() as fin:
             txt = fin.read()
-        with open(os.path.join(output_dir, "th_orchid-ud-train.toklabels")) as fin:
+        with (output_dir / "th_orchid-ud-train.toklabels").open() as fin:
             labels = fin.read()
         assert conllu == expected_conllu
         assert txt == expected_txt

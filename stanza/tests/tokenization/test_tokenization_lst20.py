@@ -1,5 +1,5 @@
-import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -118,11 +118,12 @@ EXPECTED_LABELS = "0000000100100000100001000100010001001000010000000210000000100
 def check_results(documents, expected_conllu, expected_txt, expected_labels):
     with tempfile.TemporaryDirectory() as output_dir:
         write_section(output_dir, "lst20", "train", documents)
-        with open(os.path.join(output_dir, "th_lst20.train.gold.conllu")) as fin:
+        output_dir = Path(output_dir)
+        with (output_dir / "th_lst20.train.gold.conllu").open() as fin:
             conllu = fin.read().strip()
-        with open(os.path.join(output_dir, "th_lst20.train.txt")) as fin:
+        with (output_dir / "th_lst20.train.txt").open() as fin:
             txt = fin.read()
-        with open(os.path.join(output_dir, "th_lst20-ud-train.toklabels")) as fin:
+        with (output_dir / "th_lst20-ud-train.toklabels").open() as fin:
             labels = fin.read()
         assert conllu == expected_conllu
         assert txt == expected_txt

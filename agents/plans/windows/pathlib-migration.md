@@ -4,6 +4,23 @@
 
 Migrate all test files from using string-based path manipulation (`os.path`) to modern `pathlib.Path` objects for improved readability, cross-platform compatibility, and type safety.
 
+## Progress Log
+
+### 2026-02-28: Batch 1 completed
+
+- Converted path handling in `stanza/tests/setup.py` to `Path` usage for directory creation, joins, and globbing.
+- Converted file-read path usage in:
+    - `stanza/tests/common/test_foundation_cache.py`
+    - `stanza/tests/tokenization/test_tokenization_lst20.py`
+    - `stanza/tests/tokenization/test_tokenization_orchid.py`
+    - `stanza/tests/tokenization/test_tokenize_files.py`
+    - `stanza/tests/tokenization/test_tokenize_utils.py`
+- Converted `open()` to `Path.open()` in:
+    - `stanza/utils/avg_sent_len.py`
+    - `stanza/utils/conll.py`
+- Validation: Ruff `PTH` checks pass for all files touched in this batch.
+- Remaining work: large `PTH` backlog remains across `stanza/utils/` and multiple test modules.
+
 ## Current State
 
 The test suite currently uses a mix of:
@@ -115,7 +132,7 @@ dir_path.mkdir(parents=True, exist_ok=True)
 - [ ] Create `TEST_DATA_DIR` pattern documentation
 - [ ] Migrate `common/` module tests
 - [ ] Migrate data utility tests
-- [ ] Migrate tokenization tests
+- [x] Migrate tokenization tests
 - [ ] Migrate NER tests
 - [ ] Migrate POS tests
 - [ ] Migrate dependency parsing tests

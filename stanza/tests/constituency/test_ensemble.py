@@ -90,13 +90,13 @@ def test_ensemble_save_load(pipeline, saved_ensemble):
 def test_parse_text(tmp_path, pipeline, saved_ensemble):
     _, model_path, args, foundation_cache = saved_ensemble
 
-    raw_file = str(tmp_path / "test_input.txt")
-    with open(raw_file, "w") as fout:
+    raw_file = Path(tmp_path) / "test_input.txt"
+    with raw_file.open("w") as fout:
         fout.write("This is a test\nThis is another test\n")
     output_file = str(tmp_path / "test_output.txt")
 
     args = dict(args)
-    args['tokenized_file'] = raw_file
+    args['tokenized_file'] = str(raw_file)
     args['predict_file'] = output_file
 
     text_processing.load_model_parse_text(args, model_path, [pipeline])

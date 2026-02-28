@@ -1,6 +1,7 @@
 import lzma
 import os
 import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -25,17 +26,16 @@ def test_word2vec_xz():
     """
     with tempfile.TemporaryDirectory(dir=f'{TEST_WORKING_DIR}/out') as temp_dir:
         # make a fake directory for English word vectors
-        word2vec_dir = os.path.join(temp_dir, 'word2vec', 'English')
-        os.makedirs(word2vec_dir)
+        word2vec_dir = Path(temp_dir) / 'word2vec' / 'English'
+        word2vec_dir.mkdir(parents=True, exist_ok=True)
 
         # make a fake English word vector file
-        fake_file = os.path.join(word2vec_dir, 'en.vectors.xz')
-        fout = open(fake_file, 'w')
-        fout.close()
+        fake_file = word2vec_dir / 'en.vectors.xz'
+        fake_file.touch()
 
         # get_wordvec_file should now find this fake file
         filename = utils.get_wordvec_file(wordvec_dir=temp_dir, shorthand='en_foo')
-        assert filename == fake_file
+        assert filename == str(fake_file)
 
 
 def test_fasttext_txt():
@@ -44,17 +44,16 @@ def test_fasttext_txt():
     """
     with tempfile.TemporaryDirectory(dir=f'{TEST_WORKING_DIR}/out') as temp_dir:
         # make a fake directory for English word vectors
-        fasttext_dir = os.path.join(temp_dir, 'fasttext', 'English')
-        os.makedirs(fasttext_dir)
+        fasttext_dir = Path(temp_dir) / 'fasttext' / 'English'
+        fasttext_dir.mkdir(parents=True, exist_ok=True)
 
         # make a fake English word vector file
-        fake_file = os.path.join(fasttext_dir, 'en.vectors.txt')
-        fout = open(fake_file, 'w')
-        fout.close()
+        fake_file = fasttext_dir / 'en.vectors.txt'
+        fake_file.touch()
 
         # get_wordvec_file should now find this fake file
         filename = utils.get_wordvec_file(wordvec_dir=temp_dir, shorthand='en_foo')
-        assert filename == fake_file
+        assert filename == str(fake_file)
 
 
 def test_wordvec_type():
@@ -63,13 +62,12 @@ def test_wordvec_type():
     """
     with tempfile.TemporaryDirectory(dir=f'{TEST_WORKING_DIR}/out') as temp_dir:
         # make a fake directory for English word vectors
-        google_dir = os.path.join(temp_dir, 'google', 'English')
-        os.makedirs(google_dir)
+        google_dir = Path(temp_dir) / 'google' / 'English'
+        google_dir.mkdir(parents=True, exist_ok=True)
 
         # make a fake English word vector file
-        fake_file = os.path.join(google_dir, 'en.vectors.txt')
-        fout = open(fake_file, 'w')
-        fout.close()
+        fake_file = google_dir / 'en.vectors.txt'
+        fake_file.touch()
 
         # get_wordvec_file should now find this fake file
         filename = utils.get_wordvec_file(wordvec_dir=temp_dir, shorthand='en_foo', wordvec_type='google')
@@ -144,8 +142,8 @@ def test_open_read_text():
     TEXT = "this is a test"
     with tempfile.TemporaryDirectory() as tempdir:
         # test text file
-        filename = os.path.join(tempdir, "foo.txt")
-        with open(filename, "w") as fout:
+        filename = Path(tempdir) / "foo.txt"
+        with filename.open("w") as fout:
             fout.write(TEXT)
         with utils.open_read_text(filename) as fin:
             in_text = fin.read()
@@ -163,7 +161,7 @@ def test_open_read_text():
         assert finex.closed
 
         # test xz file
-        filename = os.path.join(tempdir, "foo.txt.xz")
+        filename = Path(tempdir) / "foo.txt.xz"
         with lzma.open(filename, "wt") as fout:
             fout.write(TEXT)
         with utils.open_read_text(filename) as finxz:

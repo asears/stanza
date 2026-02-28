@@ -12,7 +12,7 @@ Tests are currently generating artifacts in user cache and temp folders, causing
 Example error:
 ```
 ResourcesFileNotFoundError: Resources file not found at: 
-C:\Users\waves\AppData\Local\StanfordNLP\stanza_test\Cache\1.11.0/models\resources.json
+\AppData\Local\StanfordNLP\stanza_test\Cache\1.11.0/models\resources.json
 ```
 
 ## Root Causes

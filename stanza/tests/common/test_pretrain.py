@@ -1,5 +1,6 @@
 import os
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -83,7 +84,7 @@ def test_resave_pretrain():
         pt3 = torch.load(test_pt_file.name, weights_only=True)
         check_embedding(pt3['emb'])
     finally:
-        os.unlink(test_pt_file.name)
+        Path(test_pt_file.name).unlink()
 
 
 SPACE_PRETRAIN = """
@@ -112,7 +113,7 @@ def test_whitespace():
         # this one also works because of the normalize_unit in vocab.py
         assert "unban mox" in pt.vocab
     finally:
-        os.unlink(test_txt_file.name)
+        Path(test_txt_file.name).unlink()
 
 
 NO_HEADER_PRETRAIN = """
@@ -127,10 +128,10 @@ def test_no_header():
     Check loading a pretrain with no rows,cols header
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as tmpdir:
-        filename = os.path.join(tmpdir, "tiny.txt")
-        with open(filename, "w", encoding="utf-8") as fout:
+        filename = Path(tmpdir) / "tiny.txt"
+        with filename.open("w", encoding="utf-8") as fout:
             fout.write(NO_HEADER_PRETRAIN)
-        pt = pretrain.Pretrain(vec_filename=filename, save_to_file=False)
+        pt = pretrain.Pretrain(vec_filename=str(filename), save_to_file=False)
         check_embedding(pt.emb)
 
 
@@ -147,8 +148,8 @@ def test_no_header():
     Check loading a pretrain with <unk> at the end, like GloVe does
     """
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as tmpdir:
-        filename = os.path.join(tmpdir, "tiny.txt")
-        with open(filename, "w", encoding="utf-8") as fout:
+        filename = Path(tmpdir) / "tiny.txt"
+        with filename.open("w", encoding="utf-8") as fout:
             fout.write(UNK_PRETRAIN)
-        pt = pretrain.Pretrain(vec_filename=filename, save_to_file=False)
+        pt = pretrain.Pretrain(vec_filename=str(filename), save_to_file=False)
         check_embedding(pt.emb, unk=True)

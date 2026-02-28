@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -10,7 +10,7 @@ from stanza.models.common import utils
 from stanza.tests import TEST_MODELS_DIR
 from stanza.tests.constituency.test_trainer import TREEBANK, build_trainer
 
-pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
+pytestmark = [pytest.mark.pipeline, pytest.mark.travis, pytest.mark.train]
 
 
 class TestConstituencyClassifier:
@@ -54,9 +54,9 @@ class TestConstituencyClassifier:
         dev_set = data.read_dataset(args.dev_file, args.wordvec_type, args.min_train_len)
         labels = data.dataset_labels(train_set)
 
-        save_filename = os.path.join(args.save_dir, args.save_name)
-        checkpoint_file = utils.checkpoint_name(args.save_dir, save_filename, args.checkpoint_save_name)
-        classifier.train_model(trainer, save_filename, checkpoint_file, args, train_set, dev_set, labels)
+        save_filename = Path(args.save_dir) / args.save_name
+        checkpoint_file = utils.checkpoint_name(args.save_dir, str(save_filename), args.checkpoint_save_name)
+        classifier.train_model(trainer, str(save_filename), checkpoint_file, args, train_set, dev_set, labels)
         return trainer, train_set, args
 
     def test_build_model(self, tmp_path, constituency_model, fake_embeddings, train_file_with_trees, dev_file_with_trees):
@@ -71,8 +71,8 @@ class TestConstituencyClassifier:
         """
         trainer, _, args = self.build_model(tmp_path, constituency_model, fake_embeddings, train_file_with_trees, dev_file_with_trees)
 
-        save_filename = os.path.join(args.save_dir, args.save_name)
-        trainer.save(save_filename)
+        save_filename = Path(args.save_dir) / args.save_name
+        trainer.save(str(save_filename))
 
         args.load_name = args.save_name
         trainer = Trainer.load(args.load_name, args)
@@ -86,9 +86,9 @@ class TestConstituencyClassifier:
         Test that writing out a temp model, then loading it in the pipeline is a thing that works
         """
         trainer, _, args = self.run_training(tmp_path, constituency_model, fake_embeddings, train_file_with_trees, dev_file_with_trees)
-        save_filename = os.path.join(args.save_dir, args.save_name)
-        assert os.path.exists(save_filename)
-        assert os.path.exists(args.constituency_model)
+        save_filename = Path(args.save_dir) / args.save_name
+        assert save_filename.exists()
+        assert Path(args.constituency_model).exists()
 
         pipeline_args = {"lang": "en",
                          "download_method": None,
@@ -99,7 +99,7 @@ class TestConstituencyClassifier:
                          "constituency_pretrain_path": args.wordvec_pretrain_file,
                          "constituency_backward_charlm_path": None,
                          "constituency_forward_charlm_path": None,
-                         "sentiment_model_path": save_filename,
+                         "sentiment_model_path": str(save_filename),
                          "sentiment_pretrain_path": args.wordvec_pretrain_file,
                          "sentiment_backward_charlm_path": None,
                          "sentiment_forward_charlm_path": None}

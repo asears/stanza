@@ -1,5 +1,7 @@
 import logging
+import os
 import pathlib
+from pathlib import Path
 import tempfile
 from collections import defaultdict
 
@@ -128,13 +130,13 @@ class TestTrainer:
             transitions = tr.model.transitions
 
             # attempt saving
-            filename = os.path.join(tmpdirname, "parser.pt")
-            tr.save(filename)
+            filename = Path(tmpdirname) / "parser.pt"
+            tr.save(str(filename))
 
-            assert os.path.exists(filename)
+            assert filename.exists()
 
             # load it back in
-            tr2 = tr.load(filename)
+            tr2 = tr.load(str(filename))
             trans2 = tr2.model.transitions
             assert (transitions == trans2)
             assert all(isinstance(x, Transition) for x in trans2)
@@ -150,11 +152,11 @@ class TestTrainer:
             tr = build_trainer(wordvec_pretrain_file, *args)
 
             # attempt saving
-            filename = os.path.join(tmpdirname, "parser.pt")
-            tr.save(filename)
+            filename = Path(tmpdirname) / "parser.pt"
+            tr.save(str(filename))
 
             set_random_seed(1001)
-            args = ['--pattn_num_layers', '1', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--relearn_structure', '--load_name', filename]
+            args = ['--pattn_num_layers', '1', '--lattn_d_proj', '0', '--hidden_size', '20', '--delta_embedding_dim', '10', '--relearn_structure', '--load_name', str(filename)]
             tr2 = build_trainer(wordvec_pretrain_file, *args)
 
             assert torch.allclose(tr.model.delta_embedding.weight, tr2.model.delta_embedding.weight)
@@ -163,22 +165,22 @@ class TestTrainer:
             assert torch.allclose(torch.linalg.norm(tr.model.word_lstm.weight_ih_l0), torch.linalg.norm(tr2.model.word_lstm.weight_ih_l0))
 
     def write_treebanks(self, tmpdirname):
-        train_treebank_file = os.path.join(tmpdirname, "train.mrg")
-        with open(train_treebank_file, 'w', encoding='utf-8') as fout:
+        train_treebank_file = Path(tmpdirname) / "train.mrg"
+        with train_treebank_file.open('w', encoding='utf-8') as fout:
             fout.write(TREEBANK)
             fout.write(TREEBANK)
 
-        eval_treebank_file = os.path.join(tmpdirname, "eval.mrg")
-        with open(eval_treebank_file, 'w', encoding='utf-8') as fout:
+        eval_treebank_file = Path(tmpdirname) / "eval.mrg"
+        with eval_treebank_file.open('w', encoding='utf-8') as fout:
             fout.write(TREEBANK)
 
-        return train_treebank_file, eval_treebank_file
+        return str(train_treebank_file), str(eval_treebank_file)
 
     def training_args(self, wordvec_pretrain_file, tmpdirname, train_treebank_file, eval_treebank_file, *additional_args):
         # let's not make the model huge...
         args = ['--pattn_num_layers', '0', '--pattn_d_model', '128', '--lattn_d_proj', '0', '--use_lattn', '--hidden_size', '20', '--delta_embedding_dim', '10',
                 '--wordvec_pretrain_file', wordvec_pretrain_file, '--data_dir', tmpdirname,
-                '--save_dir', tmpdirname, '--save_name', 'test.pt', '--save_each_start', '0', '--save_each_name', os.path.join(tmpdirname, 'each_%02d.pt'),
+                '--save_dir', tmpdirname, '--save_name', 'test.pt', '--save_each_start', '0', '--save_each_name', str(Path(tmpdirname) / 'each_%02d.pt'),
                 '--train_file', train_treebank_file, '--eval_file', eval_treebank_file,
                 '--epoch_size', '6', '--train_batch_size', '3',
                 '--shorthand', 'en_test']
@@ -206,7 +208,7 @@ class TestTrainer:
 
         each_name = args['save_each_name']
         if not exists_ok:
-            assert not os.path.exists(args['save_name'])
+            assert not Path(args['save_name']).exists()
         retag_pipeline = Pipeline(lang="en", processors="tokenize, pos", tokenize_pretokenized=True, dir=TEST_MODELS_DIR, foundation_cache=foundation_cache, download_method=None)
         trained_model = parser_training.train(args, None, [retag_pipeline])
         # check that hooks are in the model if expected
@@ -218,7 +220,7 @@ class TestTrainer:
                     assert p._backward_hooks is None
 
         # check that the model can be loaded back
-        assert os.path.exists(args['save_name'])
+        assert Path(args['save_name']).exists()
         peft_name = trained_model.model.peft_name
         tr = trainer.Trainer.load(args['save_name'], load_optimizer=True, foundation_cache=retag_pipeline.foundation_cache, peft_name=trained_model.model.peft_name)
         assert tr.optimizer is not None
@@ -235,7 +237,7 @@ class TestTrainer:
 
         for i in range(1, num_epochs + 1):
             model_name = each_name % i
-            assert os.path.exists(model_name)
+            assert Path(model_name).exists()
             tr = trainer.Trainer.load(model_name, load_optimizer=True, foundation_cache=retag_pipeline.foundation_cache, peft_name=trained_model.model.peft_name)
             assert tr.epochs_trained == i
             assert tr.batches_trained == (4 * i if use_silver else 2 * i)
@@ -298,14 +300,14 @@ class TestTrainer:
             args, _ = self.run_train_test(wordvec_pretrain_file, tmpdirname, use_silver=False)
             save_5 = args['save_each_name'] % 5
             save_10 = args['save_each_name'] % 10
-            assert os.path.exists(save_5)
-            assert not os.path.exists(save_10)
+            assert Path(save_5).exists()
+            assert not Path(save_10).exists()
 
             save_5_stat = pathlib.Path(save_5).stat()
 
             self.run_train_test(wordvec_pretrain_file, tmpdirname, num_epochs=10, use_silver=False, exists_ok=True)
-            assert os.path.exists(save_5)
-            assert os.path.exists(save_10)
+            assert Path(save_5).exists()
+            assert Path(save_10).exists()
 
             assert pathlib.Path(save_5).stat().st_mtime == save_5_stat.st_mtime
 
@@ -317,12 +319,12 @@ class TestTrainer:
             if extra_args:
                 args += extra_args
             args, _ = self.run_train_test(wordvec_pretrain_file, tmpdirname, num_epochs=8, extra_args=args)
-            each_name = os.path.join(args['save_dir'], 'each_%02d.pt')
+            each_name = str(Path(args['save_dir']) / 'each_%02d.pt')
 
             word_input_sizes = defaultdict(list)
             for i in range(1, 9):
                 model_name = each_name % i
-                assert os.path.exists(model_name)
+                assert Path(model_name).exists()
                 tr = trainer.Trainer.load(model_name, load_optimizer=True)
                 assert tr.epochs_trained == i
                 word_input_sizes[tr.model.word_input_size].append(i)
@@ -369,7 +371,7 @@ class TestTrainer:
             # check that the optimizers which get rebuilt when loading
             # the models are adadelta for the first half of the
             # multistage, then adamw
-            each_name = os.path.join(tmpdirname, 'each_%02d.pt')
+            each_name = str(Path(tmpdirname) / 'each_%02d.pt')
             for i in range(1, 3):
                 model_name = each_name % i
                 tr = trainer.Trainer.load(model_name, load_optimizer=True)
@@ -491,15 +493,15 @@ class TestTrainer:
 
             # double check that a new bert is created instead of using the FoundationCache when the bert has been trained
             model_name = args['save_name']
-            assert os.path.exists(model_name)
+            assert Path(model_name).exists()
             no_finetune_args = self.training_args(wordvec_pretrain_file, tmpdirname, None, None, "--no_bert_finetune", "--no_stage1_bert_finetune", '--bert_model', transformer_name)
             tr = trainer.Trainer.load(model_name, args=no_finetune_args, foundation_cache=foundation_cache)
             assert tr.model.bert_model is not bert_model
             assert not self.bert_weights_allclose(bert_model, tr)
             assert self.bert_weights_allclose(trained_model.model.bert_model, tr)
 
-            new_save_name = os.path.join(tmpdirname, "test_resave_bert.pt")
-            assert not os.path.exists(new_save_name)
+            new_save_name = str(Path(tmpdirname) / "test_resave_bert.pt")
+            assert not Path(new_save_name).exists()
             tr.save(new_save_name, save_optimizer=False)
             tr2 = trainer.Trainer.load(new_save_name, args=no_finetune_args, foundation_cache=foundation_cache)
             # check that the resaved model included its finetuned bert weights
@@ -562,10 +564,10 @@ class TestTrainer:
             # double check that a new bert is created instead of using the FoundationCache when the bert has been trained
             no_finetune_args = self.training_args(wordvec_pretrain_file, tmpdirname, None, None, "--no_bert_finetune", "--no_stage1_bert_finetune", '--bert_model', bert_model_name, '--optim', 'adamw')
             num_epochs = trained_model.model.args['epochs']
-            each_name = os.path.join(tmpdirname, 'each_%02d.pt')
+            each_name = str(Path(tmpdirname) / 'each_%02d.pt')
             for i in range(1, num_epochs + 1):
                 model_name = each_name % i
-                assert os.path.exists(model_name)
+                assert Path(model_name).exists()
                 tr = trainer.Trainer.load(model_name, args=no_finetune_args, foundation_cache=foundation_cache)
                 assert tr.model.bert_model is not bert_model
                 assert not self.bert_weights_allclose(bert_model, tr)

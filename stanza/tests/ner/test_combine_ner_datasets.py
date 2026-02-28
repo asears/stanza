@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 import pytest
 
@@ -32,8 +33,8 @@ def test_combine(tmp_path):
 
     for s_num, shard in enumerate(SHARDS):
         filename = tmp_path / ("en_c.%s.json" % shard)
-        assert os.path.exists(filename)
+        assert filename.exists()
 
-        with open(filename, encoding="utf-8") as fin:
+        with filename.open(encoding="utf-8") as fin:
             doc = Document(json.load(fin))
             assert len(doc.sentences) == (s_num + 1) * 3

@@ -76,9 +76,9 @@ class Trainer:
             # TODO: can remove the try/except once the new version is out
             #checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
             try:
-                checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
+                checkpoint = torch.load(filename, lambda storage, _loc: storage, weights_only=True)
             except UnpicklingError as e:
-                checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=False)
+                checkpoint = torch.load(filename, lambda storage, _loc: storage, weights_only=False)
                 warnings.warn("The saved classifier has an old format using SimpleNamespace and/or Enum instead of a dict to store config.  This version of Stanza can support reading both the new and the old formats.  Future versions will only allow loading with weights_only=True.  Please resave the pretrained classifier using this version ASAP.")
         except BaseException:
             logger.exception(f"Cannot load model from {filename}")

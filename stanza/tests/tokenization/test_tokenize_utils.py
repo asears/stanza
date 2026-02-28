@@ -4,6 +4,8 @@ Very simple test of the sentence slicing by <PAD> tags
 TODO: could add a bunch more simple tests for the tokenization utils
 """
 
+from pathlib import Path
+
 import pytest
 
 from stanza import Pipeline
@@ -214,7 +216,7 @@ def test_lexicon_from_training_data(tmp_path):
     numbers eliminated
     """
     conllu_file = str(tmp_path / "train.conllu")
-    with open(conllu_file, "w", encoding="utf-8") as fout:
+    with Path(conllu_file).open("w", encoding="utf-8") as fout:
         fout.write(TRAIN_DATA)
 
     lexicon, num_dict_feat = utils.create_lexicon("en_test", conllu_file)

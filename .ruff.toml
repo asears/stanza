@@ -61,6 +61,9 @@ ignore = [
      "ERA",
      "FIX",
      "E261",
+     "N806",
+     "N",
+     "DTZ",
 #     "E203",   # Whitespace before ':'
 #     # "W503",   # Line break before binary operator
 #     "B008",   # Do not perform function calls in argument defaults

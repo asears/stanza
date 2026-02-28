@@ -5,10 +5,11 @@ An identity lemmatizer that mimics the behavior of a normal lemmatizer but direc
 import argparse
 import logging
 import random
+import io
 
 from stanza.models.lemma.data import DataLoader
 from stanza.models.lemma import scorer
-from stanza.models.common.doc import *
+import stanza.models.common.doc as doc
 from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
@@ -41,17 +42,17 @@ def main(args=None):
 
     if args['mode'] == 'train':
         logger.info("[No training is required; will only generate evaluation output...]")
-    
+
     document = CoNLL.conll2doc(input_file=args['eval_file'])
     batch = DataLoader(document, args['batch_size'], args, evaluation=True, conll_only=True)
     system_pred_file = args['output_file']
     gold_file = args['gold_file']
 
     # use identity mapping for prediction
-    preds = batch.doc.get([TEXT])
+    preds = batch.doc.get([doc.TEXT])
 
     # write to file and score
-    batch.doc.set([LEMMA], preds)
+    batch.doc.set([doc.LEMMA], preds)
     if system_pred_file is not None:
         CoNLL.write_doc2conll(batch.doc, system_pred_file)
     if gold_file is not None:

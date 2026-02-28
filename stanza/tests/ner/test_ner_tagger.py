@@ -3,6 +3,7 @@ Basic testing of the NER tagger.
 """
 
 import os
+from pathlib import Path
 
 import pytest
 
@@ -68,15 +69,15 @@ def test_evaluate(tmp_path):
     This simple example should have a 1.0 f1 for the ontonote model
     """
     package = "ontonotes-ww-multi_charlm"
-    model_path = os.path.join(TEST_MODELS_DIR, "en", "ner", package + ".pt")
-    assert os.path.exists(model_path), f"The {package} model should be downloaded as part of setup.py"
+    model_path = Path(TEST_MODELS_DIR) / "en" / "ner" / (package + ".pt")
+    assert model_path.exists(), f"The {package} model should be downloaded as part of setup.py"
 
-    os.makedirs(tmp_path, exist_ok=True)
+    tmp_path.mkdir(parents=True, exist_ok=True)
 
     test_bio_filename = tmp_path / "test.bio"
     test_json_filename = tmp_path / "test.json"
     test_output_filename = tmp_path / "output.bio"
-    with open(test_bio_filename, "w", encoding="utf-8") as fout:
+    with test_bio_filename.open("w", encoding="utf-8") as fout:
         fout.write(EN_BIO)
 
     prepare_ner_file.process_dataset(test_bio_filename, test_json_filename)
@@ -90,7 +91,7 @@ def test_evaluate(tmp_path):
     confusion = ner_tagger.evaluate(args)
     assert confusion_to_macro_f1(confusion) == pytest.approx(1.0)
 
-    with open(test_output_filename, encoding="utf-8") as fin:
+    with test_output_filename.open(encoding="utf-8") as fin:
         results = fin.read().strip()
 
     assert results == EN_EXPECTED_OUTPUT
