@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import Any
 
 import logging
 
@@ -20,18 +23,18 @@ logger = logging.getLogger('stanza')
 
 class BaseClassifier(ABC, nn.Module):
     @abstractmethod
-    def extract_sentences(self, doc):
+    def extract_sentences(self, doc: Any) -> list[Any]:
         """
         Extract the sentences or the relevant information in the sentences from a document
         """
 
-    def preprocess_sentences(self, sentences):
+    def preprocess_sentences(self, sentences: list[Any]) -> list[Any]:
         """
         By default, don't do anything
         """
         return sentences
 
-    def label_sentences(self, sentences, batch_size=None):
+    def label_sentences(self, sentences: list[Any], batch_size: int | None = None) -> list[int]:
         """
         Given a list of sentences, return the model's results on that text.
         """

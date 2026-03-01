@@ -21,7 +21,7 @@ import os
 
 from stanza.models.common import pretrain
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("output_pt", default=None, help="Where to write the converted PT file")
     parser.add_argument("input_vec", default=None, help="Unconverted vectors file")

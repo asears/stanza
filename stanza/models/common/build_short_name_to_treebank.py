@@ -22,7 +22,7 @@ for directory, ud_name in zip(directories, ud_names):
     except UnknownLanguageError as e:
         raise UnknownLanguageError("Could not find language short name for dataset %s, path %s" % (ud_name, directory)) from e
 
-for directory, ud_name in zip(directories, ud_names):
+for _directory, ud_name in zip(directories, ud_names):
     if ud_name.startswith("UD_Norwegian"):
         if ud_name not in treebank_special_cases:
             raise ValueError("Please figure out if dataset %s is NN or NB, then add to treebank_special_cases" % ud_name)

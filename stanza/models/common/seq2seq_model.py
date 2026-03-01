@@ -2,7 +2,10 @@
 The full encoder-decoder model, built on top of the base seq2seq modules.
 """
 
+from __future__ import annotations
+
 import logging
+from typing import Any
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -23,7 +26,7 @@ class Seq2SeqModel(nn.Module):
     A parent class which makes use of the contextual_embedding (such as a charlm)
     can make use of unsaved_modules when saving.
     """
-    def __init__(self, args, emb_matrix=None, contextual_embedding=None):
+    def __init__(self, args: dict[str, Any], emb_matrix: torch.Tensor | np.ndarray | None = None, contextual_embedding: Any | None = None) -> None:
         super().__init__()
 
         self.unsaved_modules = []
@@ -85,11 +88,11 @@ class Seq2SeqModel(nn.Module):
 
         self.init_weights()
 
-    def add_unsaved_module(self, name, module):
+    def add_unsaved_module(self, name: str, module: Any) -> None:
         self.unsaved_modules += [name]
         setattr(self, name, module)
 
-    def init_weights(self):
+    def init_weights(self) -> None:
         # initialize embeddings
         init_range = constant.EMB_INIT_RANGE
         if self.emb_matrix is not None:
@@ -113,14 +116,14 @@ class Seq2SeqModel(nn.Module):
         if self.use_pos:
             self.pos_embedding.weight.data.uniform_(-init_range, init_range)
 
-    def zero_state(self, inputs):
+    def zero_state(self, inputs: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         batch_size = inputs.size(0)
         device = self.SOS_tensor.device
         h0 = torch.zeros(self.encoder.num_layers*2, batch_size, self.enc_hidden_dim, requires_grad=False, device=device)
         c0 = torch.zeros(self.encoder.num_layers*2, batch_size, self.enc_hidden_dim, requires_grad=False, device=device)
         return h0, c0
 
-    def encode(self, enc_inputs, lens):
+    def encode(self, enc_inputs: torch.Tensor, lens: list[int]) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
         """ Encode source sequence. """
         h0, c0 = self.zero_state(enc_inputs)
 
@@ -131,7 +134,7 @@ class Seq2SeqModel(nn.Module):
         cn = torch.cat((cn[-1], cn[-2]), 1)
         return h_in, (hn, cn)
 
-    def decode(self, dec_inputs, hn, cn, ctx, ctx_mask=None, src=None, never_decode_unk=False):
+    def decode(self, dec_inputs: torch.Tensor, hn: torch.Tensor, cn: torch.Tensor, ctx: torch.Tensor, ctx_mask: torch.Tensor | None = None, src: torch.Tensor | None = None, never_decode_unk: bool = False) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]]:
         """ Decode a step, based on context encoding and source context states."""
         dec_hidden = (hn, cn)
         decoder_output = self.decoder(dec_inputs, dec_hidden, ctx, ctx_mask, return_logattn=self.copy)
@@ -210,7 +213,7 @@ class Seq2SeqModel(nn.Module):
             log_probs[:, :, UNK_ID] = float("-inf")
         return log_probs, dec_hidden
 
-    def embed(self, src, src_mask, pos, raw):
+    def embed(self, src: torch.Tensor, src_mask: torch.Tensor, pos: torch.Tensor | None, raw: Any) -> tuple[torch.Tensor, int, list[int], torch.Tensor]:
         embed_src = src.clone()
         embed_src[embed_src >= self.vocab_size] = UNK_ID
         enc_inputs = self.emb_drop(self.embedding(embed_src))
@@ -230,7 +233,7 @@ class Seq2SeqModel(nn.Module):
         src_lens = list(src_mask.data.eq(constant.PAD_ID).long().sum(1))
         return enc_inputs, batch_size, src_lens, src_mask
 
-    def forward(self, src, src_mask, tgt_in, pos=None, raw=None):
+    def forward(self, src: torch.Tensor, src_mask: torch.Tensor, tgt_in: torch.Tensor, pos: torch.Tensor | None = None, raw: Any = None) -> tuple[torch.Tensor, torch.Tensor | None]:
         # prepare for encoder/decoder
         enc_inputs, batch_size, src_lens, src_mask = self.embed(src, src_mask, pos, raw)
 
@@ -247,14 +250,14 @@ class Seq2SeqModel(nn.Module):
         log_probs, _ = self.decode(dec_inputs, hn, cn, h_in, src_mask, src=src)
         return log_probs, edit_logits
 
-    def get_log_prob(self, logits):
+    def get_log_prob(self, logits: torch.Tensor) -> torch.Tensor:
         logits_reshape = logits.view(-1, self.vocab_size)
         log_probs = F.log_softmax(logits_reshape, dim=1)
         if logits.dim() == 2:
             return log_probs
         return log_probs.view(logits.size(0), logits.size(1), logits.size(2))
 
-    def predict_greedy(self, src, src_mask, pos=None, raw=None, never_decode_unk=False):
+    def predict_greedy(self, src: torch.Tensor, src_mask: torch.Tensor, pos: torch.Tensor | None = None, raw: Any = None, never_decode_unk: bool = False) -> tuple[list[list[int]], torch.Tensor | None]:
         """ Predict with greedy decoding. """
         enc_inputs, batch_size, src_lens, src_mask = self.embed(src, src_mask, pos, raw)
 
@@ -295,7 +298,7 @@ class Seq2SeqModel(nn.Module):
                         output_seqs[i].append(token)
         return output_seqs, edit_logits
 
-    def predict(self, src, src_mask, pos=None, beam_size=5, raw=None, never_decode_unk=False):
+    def predict(self, src: torch.Tensor, src_mask: torch.Tensor, pos: torch.Tensor | None = None, beam_size: int = 5, raw: Any = None, never_decode_unk: bool = False) -> tuple[list[list[int]], torch.Tensor | None]:
         """ Predict with beam search. """
         if beam_size == 1:
             return self.predict_greedy(src, src_mask, pos, raw, never_decode_unk=never_decode_unk)

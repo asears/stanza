@@ -21,7 +21,7 @@ DataSample = namedtuple("DataSample", "word char upos xpos feats pretrain text")
 DataBatch = namedtuple("DataBatch", "words words_mask wordchars wordchars_mask upos xpos ufeats pretrained orig_idx word_orig_idx lens word_lens text idx")
 
 class Dataset:
-    def __init__(self, doc, args, pretrain, vocab=None, evaluation=False, sort_during_eval=False, bert_tokenizer=None, **kwargs):
+    def __init__(self, doc, args, pretrain, vocab=None, evaluation=False, sort_during_eval=False, bert_tokenizer=None, **_kwargs):
         self.args = args
         self.eval = evaluation
         self.shuffled = not self.eval
@@ -80,7 +80,7 @@ class Dataset:
                             'feats': featsvocab})
         return vocab
 
-    def preprocess(self, data, vocab, pretrain_vocab, args):
+    def preprocess(self, data, vocab, pretrain_vocab, _args):
         processed = []
         for sent in data:
             processed_sent = DataSample(

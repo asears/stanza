@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import torch
 import torch.nn as nn
 from torch.nn.utils.rnn import pad_packed_sequence, pack_padded_sequence, PackedSequence
 
 class PackedLSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, bias=True, batch_first=False, dropout=0, bidirectional=False, pad=False, rec_dropout=0):
+    def __init__(self, input_size: int, hidden_size: int, num_layers: int, bias: bool = True, batch_first: bool = False, dropout: float = 0, bidirectional: bool = False, pad: bool = False, rec_dropout: float = 0) -> None:
         super().__init__()
 
         self.batch_first = batch_first
@@ -14,7 +16,7 @@ class PackedLSTM(nn.Module):
         else:
             self.lstm = LSTMwRecDropout(input_size, hidden_size, num_layers, bias=bias, batch_first=batch_first, dropout=dropout, bidirectional=bidirectional, rec_dropout=rec_dropout)
 
-    def forward(self, input, lengths, hx=None):
+    def forward(self, input: torch.Tensor | PackedSequence, lengths: list[int], hx: tuple[torch.Tensor, torch.Tensor] | None = None) -> tuple[torch.Tensor | PackedSequence, tuple[torch.Tensor, torch.Tensor]]:
         if not isinstance(input, PackedSequence):
             input = pack_padded_sequence(input, lengths, batch_first=self.batch_first)
 
@@ -25,7 +27,7 @@ class PackedLSTM(nn.Module):
 
 class LSTMwRecDropout(nn.Module):
     """ An LSTM implementation that supports recurrent dropout """
-    def __init__(self, input_size, hidden_size, num_layers, bias=True, batch_first=False, dropout=0, bidirectional=False, pad=False, rec_dropout=0):
+    def __init__(self, input_size: int, hidden_size: int, num_layers: int, bias: bool = True, batch_first: bool = False, dropout: float = 0, bidirectional: bool = False, pad: bool = False, rec_dropout: float = 0) -> None:
         super().__init__()
         self.batch_first = batch_first
         self.pad = pad
@@ -44,7 +46,7 @@ class LSTMwRecDropout(nn.Module):
             for d in range(self.num_directions):
                 self.cells.append(nn.LSTMCell(in_size, hidden_size, bias=bias))
 
-    def forward(self, input, hx=None):
+    def forward(self, input: PackedSequence, hx: tuple[torch.Tensor, torch.Tensor] | None = None) -> tuple[PackedSequence, tuple[torch.Tensor, torch.Tensor]]:
         def rnn_loop(x, batch_sizes, cell, inits, reverse=False):
             # RNN loop for one layer in one direction with recurrent dropout
             # Assumes input is PackedSequence, returns PackedSequence as well

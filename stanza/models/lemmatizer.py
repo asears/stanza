@@ -6,12 +6,15 @@ and two dictionaries to produce robust lemmas from word forms.
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
+from __future__ import annotations
+
 import logging
 import os
 import time
 from datetime import datetime
 import argparse
 import numpy as np
+from typing import Any
 
 from stanza.models.lemma.data import DataLoader
 from stanza.models.lemma.trainer import Trainer
@@ -22,7 +25,7 @@ from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/lemma', help='Directory for all lemma data.')
     parser.add_argument('--train_file', type=str, default=None, help='Training input file for data loader.')
@@ -79,7 +82,7 @@ def build_argparse():
     parser.add_argument('--wandb_name', default=None, help='Name of a wandb session to start when training.  Will default to the dataset short name')
     return parser
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
     args = parser.parse_args(args=args)
 
@@ -92,7 +95,7 @@ def parse_args(args=None):
     args['lang'] = lang
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> None:
     args = parse_args(args=args)
 
     utils.set_random_seed(args['seed'])
@@ -104,14 +107,14 @@ def main(args=None):
     else:
         evaluate(args)
 
-def all_lowercase(doc):
+def all_lowercase(doc: Any) -> bool:
     for sentence in doc.sentences:
         for word in sentence.words:
             if word.text.lower() != word.text:
                 return False
     return True
 
-def build_model_filename(args):
+def build_model_filename(args: dict[str, Any]) -> str:
     embedding = "nocharlm"
     if args['charlm'] and args['charlm_forward_file']:
         embedding = "charlm"
@@ -122,7 +125,7 @@ def build_model_filename(args):
         model_file = os.path.join(args['save_dir'], model_file)
     return model_file
 
-def train(args):
+def train(args: dict[str, Any]) -> None:
     # load data
     logger.info("[Loading data with batch size {}...]".format(args['batch_size']))
     train_doc = CoNLL.conll2doc(input_file=args['train_file'])
@@ -248,7 +251,7 @@ def train(args):
         best_f, best_epoch = max(dev_score_history)*100, np.argmax(dev_score_history)+1
         logger.info(f"Best dev F1 = {best_f:.2f}, at epoch = {best_epoch}")
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> None:
     # file paths
     system_pred_file = args['output_file']
     model_file = build_model_filename(args)

@@ -4,9 +4,12 @@ Base class for the LemmaClassifier types.
 Versions include LSTM and Transformer varieties
 """
 
+from __future__ import annotations
+
 import logging
 
 from abc import ABC, abstractmethod
+from collections.abc import Mapping
 
 import os
 
@@ -16,12 +19,10 @@ import torch.nn as nn
 from stanza.models.common.foundation_cache import load_pretrain
 from stanza.models.lemma_classifier.constants import ModelType
 
-from typing import List
-
 logger = logging.getLogger('stanza.lemmaclassifier')
 
 class LemmaClassifier(ABC, nn.Module):
-    def __init__(self, label_decoder, target_words, target_upos, *args, **kwargs):
+    def __init__(self, label_decoder: Mapping[int, str], target_words: set[str], target_upos: set[str], *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
         self.label_decoder = label_decoder
@@ -30,14 +31,14 @@ class LemmaClassifier(ABC, nn.Module):
         self.target_upos = target_upos
         self.unsaved_modules = []
 
-    def add_unsaved_module(self, name, module):
+    def add_unsaved_module(self, name: str, module: nn.Module) -> None:
         self.unsaved_modules += [name]
         setattr(self, name, module)
 
-    def is_unsaved_module(self, name):
+    def is_unsaved_module(self, name: str) -> bool:
         return name.split('.')[0] in self.unsaved_modules
 
-    def save(self, save_name):
+    def save(self, save_name: str) -> dict[str, object]:
         """
         Save the model to the given path, possibly with some args
         """
@@ -49,15 +50,15 @@ class LemmaClassifier(ABC, nn.Module):
         return save_dict
 
     @abstractmethod
-    def model_type(self):
+    def model_type(self) -> ModelType:
         """
         return a ModelType
         """
 
-    def target_indices(self, words, tags):
+    def target_indices(self, words: list[str], tags: list[str]) -> list[int]:
         return [idx for idx, (word, tag) in enumerate(zip(words, tags)) if word.lower() in self.target_words and tag in self.target_upos]
 
-    def predict(self, position_indices: torch.Tensor, sentences: List[List[str]], upos_tags: List[List[str]]=[]) -> torch.Tensor:
+    def predict(self, position_indices: torch.Tensor, sentences: list[list[str]], upos_tags: list[list[str]] = []) -> list[int]:
         upos_tags = self.convert_tags(upos_tags)
         with torch.no_grad():
             logits = self.forward(position_indices, sentences, upos_tags)  # should be size (batch_size, output_size)
@@ -66,7 +67,7 @@ class LemmaClassifier(ABC, nn.Module):
         return predicted_class
 
     @staticmethod
-    def from_checkpoint(checkpoint, args=None):
+    def from_checkpoint(checkpoint: dict[str, object], args: dict[str, object] | None = None) -> "LemmaClassifier":
         model_type = ModelType[checkpoint['model_type']]
         if model_type is ModelType.LSTM:
             # TODO: if anyone can suggest a way to avoid this circular import
@@ -122,7 +123,7 @@ class LemmaClassifier(ABC, nn.Module):
         return model
 
     @staticmethod
-    def load(filename, args=None):
+    def load(filename: str, args: dict[str, object] | None = None) -> "LemmaClassifier":
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage)
         except BaseException:

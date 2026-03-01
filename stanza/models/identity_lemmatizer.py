@@ -2,10 +2,13 @@
 An identity lemmatizer that mimics the behavior of a normal lemmatizer but directly uses word as lemma.
 """
 
+from __future__ import annotations
+
 import argparse
 import logging
 import random
 import io
+from typing import Any
 
 from stanza.models.lemma.data import DataLoader
 from stanza.models.lemma import scorer
@@ -14,7 +17,7 @@ from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/lemma', help='Directory for all lemma data.')
     parser.add_argument('--train_file', type=str, default=None, help='Input file for data loader.')
@@ -31,7 +34,7 @@ def parse_args(args=None):
     args = parser.parse_args(args=args)
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> tuple[None, Any]:
     args = parse_args(args=args)
 
     random.seed(args.seed)

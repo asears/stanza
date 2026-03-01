@@ -2,6 +2,8 @@
 Pytorch implementation of basic sequence to Sequence modules.
 """
 
+from __future__ import annotations
+
 import logging
 import torch
 import torch.nn as nn
@@ -14,7 +16,7 @@ class BasicAttention(nn.Module):
     """
     A basic MLP attention layer.
     """
-    def __init__(self, dim):
+    def __init__(self, dim: int) -> None:
         super(BasicAttention, self).__init__()
         self.linear_in = nn.Linear(dim, dim, bias=False)
         self.linear_c = nn.Linear(dim, dim)
@@ -23,7 +25,7 @@ class BasicAttention(nn.Module):
         self.tanh = nn.Tanh()
         self.sm = nn.Softmax(dim=1)
 
-    def forward(self, input, context, mask=None, attn_only=False):
+    def forward(self, input: torch.Tensor, context: torch.Tensor, mask: torch.Tensor | None = None, attn_only: bool = False) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         input: batch x dim
         context: batch x sourceL x dim
@@ -57,7 +59,7 @@ class SoftDotAttention(nn.Module):
     Adapted from PyTorch OPEN NMT.
     """
 
-    def __init__(self, dim):
+    def __init__(self, dim: int) -> None:
         """Initialize layer."""
         super(SoftDotAttention, self).__init__()
         self.linear_in = nn.Linear(dim, dim, bias=False)
@@ -66,7 +68,7 @@ class SoftDotAttention(nn.Module):
         self.tanh = nn.Tanh()
         self.mask = None
 
-    def forward(self, input, context, mask=None, attn_only=False, return_logattn=False):
+    def forward(self, input: torch.Tensor, context: torch.Tensor, mask: torch.Tensor | None = None, attn_only: bool = False, return_logattn: bool = False) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """Propagate input through the network.
 
         input: batch x dim
@@ -106,7 +108,7 @@ class LinearAttention(nn.Module):
         a = W (u; v; u o v)
     """
 
-    def __init__(self, dim):
+    def __init__(self, dim: int) -> None:
         super(LinearAttention, self).__init__()
         self.linear = nn.Linear(dim*3, 1, bias=False)
         self.linear_out = nn.Linear(dim * 2, dim, bias=False)
@@ -114,7 +116,7 @@ class LinearAttention(nn.Module):
         self.tanh = nn.Tanh()
         self.mask = None
 
-    def forward(self, input, context, mask=None, attn_only=False):
+    def forward(self, input: torch.Tensor, context: torch.Tensor, mask: torch.Tensor | None = None, attn_only: bool = False) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         input: batch x dim
         context: batch x sourceL x dim
@@ -150,7 +152,7 @@ class DeepAttention(nn.Module):
         a = V.(u o v)
     """
 
-    def __init__(self, dim):
+    def __init__(self, dim: int) -> None:
         super(DeepAttention, self).__init__()
         self.linear_in = nn.Linear(dim, dim, bias=False)
         self.linear_v = nn.Linear(dim, 1, bias=False)
@@ -160,7 +162,7 @@ class DeepAttention(nn.Module):
         self.tanh = nn.Tanh()
         self.mask = None
 
-    def forward(self, input, context, mask=None, attn_only=False):
+    def forward(self, input: torch.Tensor, context: torch.Tensor, mask: torch.Tensor | None = None, attn_only: bool = False) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
         """
         input: batch x dim
         context: batch x sourceL x dim
@@ -192,7 +194,7 @@ class DeepAttention(nn.Module):
 class LSTMAttention(nn.Module):
     r"""A long short-term memory (LSTM) cell with attention."""
 
-    def __init__(self, input_size, hidden_size, batch_first=True, attn_type='soft'):
+    def __init__(self, input_size: int, hidden_size: int, batch_first: bool = True, attn_type: str = 'soft') -> None:
         """Initialize params."""
         super(LSTMAttention, self).__init__()
         self.input_size = input_size
@@ -213,7 +215,7 @@ class LSTMAttention(nn.Module):
             raise Exception(f"Unsupported LSTM attention type: {attn_type}")
         logger.debug(f"Using {attn_type} attention for LSTM.")
 
-    def forward(self, input, hidden, ctx, ctx_mask=None, return_logattn=False):
+    def forward(self, input: torch.Tensor, hidden: tuple[torch.Tensor, torch.Tensor], ctx: torch.Tensor, ctx_mask: torch.Tensor | None = None, return_logattn: bool = False) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor]] | tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor], torch.Tensor]:
         """Propagate input through the network."""
         if self.batch_first:
             input = input.transpose(0,1)

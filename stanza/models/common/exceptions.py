@@ -7,9 +7,9 @@ The idea being, the caller can catch it and report a more useful error resolutio
 import errno
 
 class ForwardCharlmNotFoundError(FileNotFoundError):
-    def __init__(self, msg, filename):
+    def __init__(self, msg: str, filename: str) -> None:
         super().__init__(errno.ENOENT, msg, filename)
 
 class BackwardCharlmNotFoundError(FileNotFoundError):
-    def __init__(self, msg, filename):
+    def __init__(self, msg: str, filename: str) -> None:
         super().__init__(errno.ENOENT, msg, filename)

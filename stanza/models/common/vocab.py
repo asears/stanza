@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from copy import copy
 from collections import Counter, OrderedDict
 from collections.abc import Iterable
+from typing import Any
 
 PAD = '<PAD>'
 PAD_ID = 0
@@ -16,7 +19,7 @@ VOCAB_PREFIX_SIZE = len(VOCAB_PREFIX)
 class BaseVocab:
     """ A base class for common vocabulary operations. Each subclass should at least 
     implement its own build_vocab() function."""
-    def __init__(self, data=None, lang="", idx=0, cutoff=0, lower=False):
+    def __init__(self, data: Any = None, lang: str = "", idx: int = 0, cutoff: int = 0, lower: bool = False) -> None:
         self.data = data
         self.lang = lang
         self.idx = idx
@@ -26,10 +29,10 @@ class BaseVocab:
             self.build_vocab()
         self.state_attrs = ['lang', 'idx', 'cutoff', 'lower', '_unit2id', '_id2unit']
 
-    def build_vocab(self):
+    def build_vocab(self) -> None:
         raise NotImplementedError("This BaseVocab does not have build_vocab implemented.  This method should create _id2unit and _unit2id")
 
-    def state_dict(self):
+    def state_dict(self) -> OrderedDict[str, Any]:
         """ Returns a dictionary containing all states that are necessary to recover
         this vocab. Useful for serialization."""
         state = OrderedDict()
@@ -39,14 +42,14 @@ class BaseVocab:
         return state
 
     @classmethod
-    def load_state_dict(cls, state_dict):
+    def load_state_dict(cls, state_dict: dict[str, Any]) -> BaseVocab:
         """ Returns a new Vocab instance constructed from a state dict. """
         new = cls()
         for attr, value in state_dict.items():
             setattr(new, attr, value)
         return new
 
-    def normalize_unit(self, unit):
+    def normalize_unit(self, unit: str | None) -> str | None:
         # be sure to look in subclasses for other normalization being done
         # especially PretrainWordVocab
         if unit is None:
@@ -55,31 +58,31 @@ class BaseVocab:
             return unit.lower()
         return unit
 
-    def unit2id(self, unit):
+    def unit2id(self, unit: str | None) -> int:
         unit = self.normalize_unit(unit)
         if unit in self._unit2id:
             return self._unit2id[unit]
         else:
             return self._unit2id[UNK]
 
-    def id2unit(self, id):
+    def id2unit(self, id: int) -> str:
         return self._id2unit[id]
 
-    def map(self, units):
+    def map(self, units: list[str]) -> list[int]:
         return [self.unit2id(x) for x in units]
 
-    def unmap(self, ids):
+    def unmap(self, ids: list[int]) -> list[str]:
         return [self.id2unit(x) for x in ids]
 
-    def __str__(self):
+    def __str__(self) -> str:
         lang_str = "(%s)" % self.lang if self.lang else ""
         name = str(type(self)) + lang_str
         return "<%s: %s>" % (name, self._id2unit)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self._id2unit)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str | int | list[int]) -> int | str:
         if isinstance(key, str):
             return self.unit2id(key)
         elif isinstance(key, int) or isinstance(key, list):
@@ -87,11 +90,11 @@ class BaseVocab:
         else:
             raise TypeError("Vocab key must be one of str, list, or int")
 
-    def __contains__(self, key):
+    def __contains__(self, key: str) -> bool:
         return self.normalize_unit(key) in self._unit2id
 
     @property
-    def size(self):
+    def size(self) -> int:
         return len(self)
 
 class DeltaVocab(BaseVocab):
@@ -102,11 +105,11 @@ class DeltaVocab(BaseVocab):
 
     Expected data format is either a list of strings, or a list of list of strings
     """
-    def __init__(self, data, orig_vocab):
+    def __init__(self, data: Any, orig_vocab: BaseVocab) -> None:
         self.orig_vocab = orig_vocab
         super().__init__(data=data, lang=orig_vocab.lang, idx=orig_vocab.idx, cutoff=orig_vocab.cutoff, lower=orig_vocab.lower)
 
-    def build_vocab(self):
+    def build_vocab(self) -> None:
         if all(isinstance(word, str) for word in self.data):
             allchars = "".join(self.data)
         else:
@@ -137,13 +140,13 @@ class CompositeVocab(BaseVocab):
     are treated as positioned values, and `<EMPTY>` is used to pad parts at the end when the
     incoming value is not long enough.'''
 
-    def __init__(self, data=None, lang="", idx=0, sep="", keyed=False):
+    def __init__(self, data: Any = None, lang: str = "", idx: int = 0, sep: str | None = "", keyed: bool = False) -> None:
         self.sep = sep
         self.keyed = keyed
         super().__init__(data, lang, idx=idx)
         self.state_attrs += ['sep', 'keyed']
 
-    def unit2parts(self, unit):
+    def unit2parts(self, unit: str) -> list[str] | dict[str, str]:
         # unpack parts of a unit
         if not self.sep:
             parts = [x for x in unit]
@@ -162,7 +165,7 @@ class CompositeVocab(BaseVocab):
             parts = []
         return parts
 
-    def unit2id(self, unit):
+    def unit2id(self, unit: str) -> list[int]:
         parts = self.unit2parts(unit)
         if self.keyed:
             # treat multi-valued properties as singletons
@@ -170,7 +173,7 @@ class CompositeVocab(BaseVocab):
         else:
             return [self._unit2id[i].get(parts[i], UNK_ID) if i < len(parts) else EMPTY_ID for i in range(len(self._unit2id))]
 
-    def id2unit(self, id):
+    def id2unit(self, id: int | Iterable[int]) -> str | list[str]:
         # special case: allow single ids for vocabs with length 1
         if len(self._id2unit) == 1 and not isinstance(id, Iterable):
             id = (id,)
@@ -189,7 +192,7 @@ class CompositeVocab(BaseVocab):
         else:
             return items
 
-    def build_vocab(self):
+    def build_vocab(self) -> None:
         allunits = [w[self.idx] for sent in self.data for w in sent]
         if self.keyed:
             self._id2unit = dict()
@@ -228,13 +231,13 @@ class CompositeVocab(BaseVocab):
         self._id2unit = OrderedDict([(k, self._id2unit[k]) for k in sorted(self._id2unit.keys())])
         self._unit2id = {k: {w:i for i, w in enumerate(self._id2unit[k])} for k in self._id2unit}
 
-    def lens(self):
+    def lens(self) -> list[int]:
         return [len(self._unit2id[k]) for k in self._unit2id]
 
-    def items(self, idx):
+    def items(self, idx: Any) -> list[str]:
         return self._id2unit[idx]
 
-    def __str__(self):
+    def __str__(self) -> str:
         pieces = ["[" + ",".join(x) + "]" for _, x in self._id2unit.items()]
         rep = "<{}:\n {}>".format(type(self), "\n ".join(pieces))
         return rep
@@ -244,7 +247,7 @@ class BaseMultiVocab:
     safe serialization of all instances via state dicts. Each subclass of this base class 
     should implement the load_state_dict() function to specify how a saved state dict 
     should be loaded back."""
-    def __init__(self, vocab_dict=None):
+    def __init__(self, vocab_dict: dict[str, BaseVocab] | None = None) -> None:
         self._vocabs = OrderedDict()
         if vocab_dict is None:
             return
@@ -253,22 +256,22 @@ class BaseMultiVocab:
         for k, v in vocab_dict.items():
             self._vocabs[k] = v
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key: str, item: BaseVocab) -> None:
         self._vocabs[key] = item
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> BaseVocab:
         return self._vocabs[key]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "<{}: [{}]>".format(type(self), ", ".join(self._vocabs.keys()))
 
-    def __contains__(self, key):
+    def __contains__(self, key: str) -> bool:
         return key in self._vocabs
 
     def keys(self):
         return self._vocabs.keys()
 
-    def state_dict(self):
+    def state_dict(self) -> OrderedDict[str, Any]:
         """ Build a state dict by iteratively calling state_dict() of all vocabs. """
         state = OrderedDict()
         for k, v in self._vocabs.items():
@@ -276,14 +279,14 @@ class BaseMultiVocab:
         return state
 
     @classmethod
-    def load_state_dict(cls, state_dict):
+    def load_state_dict(cls, state_dict: dict[str, Any]) -> BaseMultiVocab:
         """ Construct a MultiVocab by reading from a state dict."""
         raise NotImplementedError
 
 
 
 class CharVocab(BaseVocab):
-    def build_vocab(self):
+    def build_vocab(self) -> None:
         if isinstance(self.data[0][0], (list, tuple)): # general data from DataLoader
             counter = Counter([c for sent in self.data for w in sent for c in w[self.idx]])
             for k in list(counter.keys()):

@@ -1,9 +1,12 @@
 """Iterate test."""
+import argparse
 import glob
 import logging
 
 import stanza.models.classifier as classifier
 import stanza.models.classifiers.cnn_classifier as cnn_classifier
+import stanza.models.classifiers.data as data
+from stanza.models.common.pretrain import Pretrain
 from stanza.models.common import utils
 
 from stanza.utils.confusion import format_confusion, confusion_to_accuracy
@@ -23,7 +26,7 @@ Example command line:
 logger = logging.getLogger('stanza')
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Add and parse arguments."""
     parser = classifier.build_argparse()
 
@@ -44,6 +47,7 @@ test_set = data.read_dataset(args.test_file, args.wordvec_type, min_len=None)
 logger.info("Using test set: %s" % args.test_file)
 
 device = None
+pretrain = Pretrain(args.wordvec_pretrain_file, args.wordvec_raw_file, args.pretrain_max_vocab)
 for load_name in model_files:
     args.load_name = load_name
     model = classifier.load_model(args)

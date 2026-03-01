@@ -2,6 +2,13 @@
 Set a few common flags for peft uage
 """
 
+from __future__ import annotations
+
+import argparse
+import logging
+from types import SimpleNamespace
+from typing import Any
+
 
 TRANSFORMER_LORA_RANK = {}
 DEFAULT_LORA_RANK = 64
@@ -21,7 +28,7 @@ DEFAULT_LORA_TARGETS = "query,value,output.dense,intermediate.dense"
 TRANSFORMER_LORA_SAVE = {}
 DEFAULT_LORA_SAVE = ""
 
-def add_peft_args(parser):
+def add_peft_args(parser: argparse.ArgumentParser) -> None:
     """
     Add common default flags to an argparse
     """
@@ -33,7 +40,7 @@ def add_peft_args(parser):
 
     parser.add_argument('--use_peft', default=False, action='store_true', help="Finetune Bert using peft")
 
-def pop_peft_args(args):
+def pop_peft_args(args: dict[str, Any]) -> None:
     """
     Pop all of the peft-related arguments from a given dict
 
@@ -49,7 +56,7 @@ def pop_peft_args(args):
     args.pop("use_peft", None)
 
 
-def resolve_peft_args(args, logger, check_bert_finetune=True):
+def resolve_peft_args(args: SimpleNamespace, logger: logging.Logger, check_bert_finetune: bool = True) -> None:
     if not hasattr(args, 'bert_model'):
         return
 
@@ -81,7 +88,7 @@ def resolve_peft_args(args, logger, check_bert_finetune=True):
             logger.info("--use_peft set.  setting --bert_finetune as well")
             args.bert_finetune = True
 
-def build_peft_config(args, logger):
+def build_peft_config(args: dict[str, Any], logger: logging.Logger) -> Any:
     # Hide import so that the peft dependency is optional
     from peft import LoraConfig
     logger.debug("Creating lora adapter with rank %d and alpha %d", args['lora_rank'], args['lora_alpha'])
@@ -94,7 +101,7 @@ def build_peft_config(args, logger):
                              bias="none")
     return peft_config
 
-def build_peft_wrapper(bert_model, args, logger, adapter_name="default"):
+def build_peft_wrapper(bert_model: Any, args: dict[str, Any], logger: logging.Logger, adapter_name: str = "default") -> Any:
     # Hide import so that the peft dependency is optional
     from peft import get_peft_model
     peft_config = build_peft_config(args, logger)
@@ -108,7 +115,7 @@ def build_peft_wrapper(bert_model, args, logger, adapter_name="default"):
     pefted.set_adapter(adapter_name)
     return pefted
 
-def load_peft_wrapper(bert_model, lora_params, args, logger, adapter_name):
+def load_peft_wrapper(bert_model: Any, lora_params: Any, args: dict[str, Any], logger: logging.Logger, adapter_name: str) -> Any:
     peft_config = build_peft_config(args, logger)
 
     try:

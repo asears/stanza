@@ -1,14 +1,15 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import List, Union
 
 # TODO: perhaps put the enums in this file
 from stanza.models.classifiers.utils import WVType, ExtraVectors, ModelType
 
 @dataclass
 class CNNConfig:  # pylint: disable=too-many-instance-attributes, too-few-public-methods
-        filter_channels: Union[int, tuple]
-        filter_sizes: tuple
-        fc_shapes: tuple
+        filter_channels: int | tuple[int, ...]
+        filter_sizes: tuple[int | tuple[int, int], ...]
+        fc_shapes: tuple[int, ...]
         dropout: float
         num_classes: int
         wordvec_type: WVType
@@ -16,24 +17,24 @@ class CNNConfig:  # pylint: disable=too-many-instance-attributes, too-few-public
         extra_wordvec_dim: int
         extra_wordvec_max_norm: float
         char_lowercase: bool
-        charlm_projection: int
+        charlm_projection: int | None
         has_charlm_forward: bool
         has_charlm_backward: bool
 
         use_elmo: bool
-        elmo_projection: int
+        elmo_projection: int | None
 
-        bert_model: str
+        bert_model: str | None
         bert_finetune: bool
-        bert_hidden_layers: int
+        bert_hidden_layers: int | None
         force_bert_saved: bool
 
         use_peft: bool
-        lora_rank: int
-        lora_alpha: float
-        lora_dropout: float
-        lora_modules_to_save: List
-        lora_target_modules: List
+        lora_rank: int | None
+        lora_alpha: float | None
+        lora_dropout: float | None
+        lora_modules_to_save: list[str] | None
+        lora_target_modules: list[str] | None
 
         bilstm: bool
         bilstm_hidden_dim: int
@@ -42,7 +43,7 @@ class CNNConfig:  # pylint: disable=too-many-instance-attributes, too-few-public
 
 @dataclass
 class ConstituencyConfig:  # pylint: disable=too-many-instance-attributes, too-few-public-methods
-        fc_shapes: tuple
+        fc_shapes: tuple[int, ...]
         dropout: float
         num_classes: int
 

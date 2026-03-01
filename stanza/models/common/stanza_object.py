@@ -1,4 +1,10 @@
-def _readonly_setter(self, name):
+from __future__ import annotations
+
+from collections.abc import Callable
+from typing import Any
+
+
+def _readonly_setter(self: Any, name: str) -> None:
     full_classname = self.__class__.__module__
     if full_classname is None:
         full_classname = self.__class__.__qualname__
@@ -12,7 +18,7 @@ class StanzaObject:
     """
 
     @classmethod
-    def add_property(cls, name, default=None, getter=None, setter=None):
+    def add_property(cls, name: str, default: Any = None, getter: Callable[[Any], Any] | None = None, setter: Callable[[Any, Any], None] | None = None) -> None:
         """
         Add a property accessible through self.{name} with underlying variable self._{name}.
         Optionally setup a setter as well.

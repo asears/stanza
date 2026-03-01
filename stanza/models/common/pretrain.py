@@ -1,6 +1,8 @@
 """
 Supports for pretrained data.
 """
+from __future__ import annotations
+
 import csv
 import os
 import re
@@ -20,11 +22,11 @@ import warnings
 logger = logging.getLogger('stanza')
 
 class PretrainedWordVocab(BaseVocab):
-    def build_vocab(self):
+    def build_vocab(self) -> None:
         self._id2unit = VOCAB_PREFIX + self.data
         self._unit2id = {w:i for i, w in enumerate(self._id2unit)}
 
-    def normalize_unit(self, unit):
+    def normalize_unit(self, unit: str | None) -> str | None:
         unit = super().normalize_unit(unit)
         if unit:
             unit = unit.replace(" ","\xa0")
@@ -33,29 +35,29 @@ class PretrainedWordVocab(BaseVocab):
 class Pretrain:
     """ A loader and saver for pretrained embeddings. """
 
-    def __init__(self, filename=None, vec_filename=None, max_vocab=-1, save_to_file=True, csv_filename=None):
+    def __init__(self, filename: str | None = None, vec_filename: str | None = None, max_vocab: int = -1, save_to_file: bool = True, csv_filename: str | None = None) -> None:
         self.filename = filename
         self._vec_filename = vec_filename
         self._csv_filename = csv_filename
         self._max_vocab = max_vocab
         self._save_to_file = save_to_file
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.vocab)
 
     @property
-    def vocab(self):
+    def vocab(self) -> PretrainedWordVocab:
         if not hasattr(self, '_vocab'):
             self.load()
         return self._vocab
 
     @property
-    def emb(self):
+    def emb(self) -> torch.Tensor:
         if not hasattr(self, '_emb'):
             self.load()
         return self._emb
 
-    def load(self):
+    def load(self) -> None:
         if self.filename is not None and os.path.exists(self.filename):
             try:
                 # TODO: after making the next release, remove the weights_only=False version
@@ -96,7 +98,7 @@ class Pretrain:
             assert self.filename is not None, "Filename must be provided to save pretrained vector to file."
             self.save(self.filename)
 
-    def save(self, filename):
+    def save(self, filename: str) -> None:
         directory, _ = os.path.split(filename)
         if directory:
             os.makedirs(directory, exist_ok=True)
@@ -111,7 +113,7 @@ class Pretrain:
             logger.warning(f"Saving pretrained data failed due to the following exception... continuing anyway.\n\t{e}")
 
 
-    def write_text(self, filename, header=False):
+    def write_text(self, filename: str, header: bool = False) -> None:
         """
         Write the vocab & values to a text file
         """
@@ -127,7 +129,7 @@ class Pretrain:
                 fout.write("\n")
 
 
-    def read_pretrain(self):
+    def read_pretrain(self) -> tuple[PretrainedWordVocab, torch.Tensor]:
         # load from pretrained filename
         if self._vec_filename is not None:
             words, emb, failed = self.read_from_file(self._vec_filename, self._max_vocab)
@@ -149,7 +151,7 @@ class Pretrain:
         return vocab, emb
 
     @staticmethod
-    def read_from_csv(filename):
+    def read_from_csv(filename: str) -> tuple[list[str], torch.Tensor]:
         """
         Read vectors from CSV
 
@@ -174,7 +176,7 @@ class Pretrain:
         return words, emb
 
     @staticmethod
-    def read_from_file(filename, max_vocab=None):
+    def read_from_file(filename: str, max_vocab: int | None = None) -> tuple[list[str], torch.Tensor, int]:
         """
         Open a vector file using the provided function and read from it.
         """
@@ -235,7 +237,7 @@ class Pretrain:
         return words, emb, failed
 
 
-def find_pretrain_file(wordvec_pretrain_file, save_dir, shorthand, lang):
+def find_pretrain_file(wordvec_pretrain_file: str | None, save_dir: str, shorthand: str, lang: str) -> str:
     """
     When training a model, look in a few different places for a .pt file
 

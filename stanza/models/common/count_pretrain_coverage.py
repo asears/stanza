@@ -12,7 +12,7 @@ from stanza.utils.conll import CoNLL
 
 import argparse
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument('treebanks', type=str, nargs='*', help='Which treebanks to run on')
     parser.add_argument('--pretrain', type=str, default="/home/john/extern_data/wordvec/glove/armenian.pt", help='Which pretrain to use')

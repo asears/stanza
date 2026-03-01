@@ -124,7 +124,7 @@ class DataLoader:
                             'deprel': deprelvocab})
         return vocab
 
-    def preprocess(self, data, vocab, pretrain_vocab, args):
+    def preprocess(self, data, vocab, pretrain_vocab, _args):
         processed = []
         xpos_replacement = [[ROOT_ID] * len(vocab['xpos'])] if isinstance(vocab['xpos'], CompositeVocab) else [ROOT_ID]
         feats_replacement = [[ROOT_ID] * len(vocab['feats'])]

@@ -9,6 +9,8 @@ In the case of a dataset where all of the MWT exactly split into the words
 composing the MWT, a classifier over the characters is used instead of the seq2seq
 """
 
+from __future__ import annotations
+
 import io
 import os
 import time
@@ -18,6 +20,7 @@ import logging
 import math
 import numpy as np
 import copy
+from typing import Any
 
 from stanza.models.mwt.data import DataLoader, BinaryDataLoader
 from stanza.models.mwt.utils import mwts_composed_of_words
@@ -28,7 +31,7 @@ from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/mwt', help='Root dir for saving models.')
     parser.add_argument('--train_file', type=str, default=None, help='Input file for data loader.')
@@ -78,7 +81,7 @@ def build_argparse():
     parser.add_argument('--wandb_name', default=None, help='Name of a wandb session to start when training.  Will default to the dataset short name')
     return parser
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     parser = build_argparse()
     args = parser.parse_args(args=args)
 
@@ -87,7 +90,7 @@ def parse_args(args=None):
 
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> Any:
     args = parse_args(args=args)
 
     utils.set_random_seed(args.seed)
@@ -100,7 +103,7 @@ def main(args=None):
     else:
         return evaluate(args)
 
-def train(args):
+def train(args: dict[str, Any]) -> tuple[Trainer, Any]:
     # load data
     logger.debug('max_dec_len: %d' % args['max_dec_len'])
     logger.debug("Loading data with batch size {}...".format(args['batch_size']))
@@ -264,7 +267,7 @@ def train(args):
 
     return trainer, _
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> tuple[Trainer, Any]:
     # file paths
     system_pred_file = args['output_file']
     gold_file = args['gold_file']

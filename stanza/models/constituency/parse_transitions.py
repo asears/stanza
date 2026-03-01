@@ -60,7 +60,7 @@ class Transition(ABC):
     for example, an LSTM model can update hidden & output vectors when transitioning
     """
     @abstractmethod
-    def update_state(self, state, model):
+    def update_state(self, state, _model):
         """
         update the word queue position, possibly remove old pieces from the constituents state, and return the new constituent
 
@@ -167,7 +167,7 @@ class Transition(ABC):
         raise ValueError("Unexpected Transition %s" % desc)
 
 class Shift(Transition):
-    def update_state(self, state, model):
+    def update_state(self, state, _model):
         """
         This will handle all aspects of a shift transition
 

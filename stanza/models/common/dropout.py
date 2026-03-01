@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import torch
 import torch.nn as nn
 
@@ -6,11 +8,11 @@ class WordDropout(nn.Module):
     Given a batch of embedded inputs, this layer randomly set some of them to be a replacement state.
     Note that this layer assumes the last dimension of the input to be the hidden dimension of a unit.
     """
-    def __init__(self, dropprob):
+    def __init__(self, dropprob: float) -> None:
         super().__init__()
         self.dropprob = dropprob
 
-    def forward(self, x, replacement=None):
+    def forward(self, x: torch.Tensor, replacement: torch.Tensor | None = None) -> torch.Tensor:
         if not self.training or self.dropprob == 0:
             return x
 
@@ -24,7 +26,7 @@ class WordDropout(nn.Module):
 
         return res
     
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         return f'p={self.dropprob}'
 
 class LockedDropout(nn.Module):
@@ -32,12 +34,12 @@ class LockedDropout(nn.Module):
     A variant of dropout layer that consistently drops out the same parameters over time. Also known as the variational dropout. 
     This implementation was modified from the LockedDropout implementation in the flair library (https://github.com/zalandoresearch/flair).
     """
-    def __init__(self, dropprob, batch_first=True):
+    def __init__(self, dropprob: float, batch_first: bool = True) -> None:
         super().__init__()
         self.dropprob = dropprob
         self.batch_first = batch_first
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         if not self.training or self.dropprob == 0:
             return x
 
@@ -49,19 +51,19 @@ class LockedDropout(nn.Module):
         mask = m.div(1 - self.dropprob).expand_as(x)
         return mask * x
     
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         return f'p={self.dropprob}'
 
 class SequenceUnitDropout(nn.Module):
     """ A unit dropout layer that's designed for input of sequence units (e.g., word sequence, char sequence, etc.).
     Given a sequence of unit indices, this layer randomly set some of them to be a replacement id (usually set to be <UNK>).
     """
-    def __init__(self, dropprob, replacement_id):
+    def __init__(self, dropprob: float, replacement_id: int) -> None:
         super().__init__()
         self.dropprob = dropprob
         self.replacement_id = replacement_id
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         """ :param: x must be a LongTensor of unit indices. """
         if not self.training or self.dropprob == 0:
             return x
@@ -70,6 +72,6 @@ class SequenceUnitDropout(nn.Module):
         res = x.masked_fill(dropmask, self.replacement_id)
         return res
     
-    def extra_repr(self):
+    def extra_repr(self) -> str:
         return f'p={self.dropprob}, replacement_id={self.replacement_id}'
 

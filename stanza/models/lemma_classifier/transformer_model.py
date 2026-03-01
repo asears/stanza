@@ -3,7 +3,6 @@ import torch.nn as nn
 import logging
 
 from transformers import AutoTokenizer, AutoModel
-from typing import List
 from collections.abc import Mapping
 from stanza.models.common.bert_embedding import extract_bert_embeddings
 from stanza.models.lemma_classifier.base_model import LemmaClassifier
@@ -12,7 +11,7 @@ from stanza.models.lemma_classifier.constants import ModelType
 logger = logging.getLogger('stanza.lemmaclassifier')
 
 class LemmaClassifierWithTransformer(LemmaClassifier):
-    def __init__(self, model_args: dict, output_dim: int, transformer_name: str, label_decoder: Mapping, target_words: set, target_upos: set):
+    def __init__(self, model_args: dict[str, object], output_dim: int, transformer_name: str, label_decoder: Mapping[int, str], target_words: set[str], target_upos: set[str]) -> None:
         """
         Model architecture:
 
@@ -45,7 +44,7 @@ class LemmaClassifierWithTransformer(LemmaClassifier):
             nn.Linear(64, output_dim)
         )
 
-    def get_save_dict(self):
+    def get_save_dict(self) -> dict[str, object]:
         save_dict = {
             "params": self.state_dict(),
             "label_decoder": self.label_decoder,
@@ -59,10 +58,11 @@ class LemmaClassifierWithTransformer(LemmaClassifier):
             del save_dict["params"][k]
         return save_dict
 
-    def convert_tags(self, upos_tags: List[List[str]]):
+    def convert_tags(self, upos_tags: list[list[str]]) -> None:
+        del upos_tags
         return None
 
-    def forward(self, idx_positions: List[int], sentences: List[List[str]], upos_tags: List[List[int]]):
+    def forward(self, idx_positions: list[int], sentences: list[list[str]], upos_tags: list[list[int]]) -> torch.Tensor:
         """
         Computes the forward pass of the transformer baselines
 
@@ -74,6 +74,7 @@ class LemmaClassifierWithTransformer(LemmaClassifier):
         Returns:
             torch.tensor: Output logits of the neural network, where the shape is  (n, output_size) where n is the number of sentences.
         """
+        del upos_tags
         device = next(self.transformer.parameters()).device
         bert_embeddings = extract_bert_embeddings(self.transformer_name, self.tokenizer, self.transformer, sentences, device,
                                                   keep_endpoints=False, num_layers=1, detach=True)
@@ -83,5 +84,5 @@ class LemmaClassifierWithTransformer(LemmaClassifier):
         output = self.mlp(embeddings)
         return output
 
-    def model_type(self):
+    def model_type(self) -> ModelType:
         return ModelType.TRANSFORMER

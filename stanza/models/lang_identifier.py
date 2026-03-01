@@ -2,6 +2,8 @@
 Entry point for training and evaluating a Bi-LSTM language identifier
 """
 
+from __future__ import annotations
+
 import argparse
 import json
 import logging
@@ -18,7 +20,7 @@ tqdm = get_tqdm()
 
 logger = logging.getLogger('stanza')
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_mode", help="custom settings when running in batch mode", action="store_true")
     parser.add_argument("--batch_size", help="batch size for training", type=int, default=64)
@@ -41,7 +43,7 @@ def parse_args(args=None):
     return args
 
 
-def randomize_lengths_range(range_list):
+def randomize_lengths_range(range_list: str) -> list[int]:
     """
     Range of lengths for random samples
     """
@@ -50,7 +52,7 @@ def randomize_lengths_range(range_list):
     return range_boundaries
 
 
-def main(args=None):
+def main(args: list[str] | None = None) -> None:
     args = parse_args(args=args)
     torch.manual_seed(0)
     if args.mode == "train":
@@ -59,7 +61,7 @@ def main(args=None):
         eval_model(args)
 
 
-def build_indexes(args):
+def build_indexes(args: argparse.Namespace) -> tuple[dict[str, int], dict[str, int]]:
     tag_to_idx = {}
     char_to_idx = {}
     train_files = [f"{args.data_dir}/{x}" for x in os.listdir(args.data_dir) if "train" in x]
@@ -81,7 +83,7 @@ def build_indexes(args):
     return tag_to_idx, char_to_idx
 
 
-def train_model(args):
+def train_model(args: argparse.Namespace) -> None:
     # set up indexes
     tag_to_idx, char_to_idx = build_indexes(args)
     # load training data
@@ -137,7 +139,7 @@ def train_model(args):
         train_data.load_data(args.batch_size, train_files, char_to_idx, tag_to_idx, args.randomize)
 
 
-def score_log_path(file_path):
+def score_log_path(file_path: str) -> str:
     """
     Helper that will determine corresponding log file (e.g. /path/to/demo.pt to /path/to/demo.json
     """
@@ -149,7 +151,7 @@ def score_log_path(file_path):
     return score_log_path
 
 
-def eval_model(args):
+def eval_model(args: argparse.Namespace) -> None:
     # set up trainer
     trainer_config = {
         "model_path": None,
@@ -174,7 +176,18 @@ def eval_model(args):
         
 
 
-def eval_trainer(trainer, dev_data, batch_mode=False, fine_grained=True):
+def eval_trainer(
+    trainer: Trainer,
+    dev_data: DataLoader,
+    batch_mode: bool = False,
+    fine_grained: bool = True,
+) -> tuple[
+    float,
+    dict[str, dict[str, int]],
+    dict[str, float | str],
+    dict[str, float | str],
+    dict[str, float | str],
+]:
     """
     Produce dev accuracy and confusion matrix for a trainer
     """

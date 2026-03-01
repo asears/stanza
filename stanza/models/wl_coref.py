@@ -38,6 +38,8 @@ If you use Stanza's coref module in your work, please cite the following:
 }
 """
 
+from __future__ import annotations
+
 import argparse
 from contextlib import contextmanager
 import datetime
@@ -45,6 +47,7 @@ import logging
 import os
 import dataclasses
 import time
+from typing import Iterator
 
 
 import torch        # type: ignore
@@ -56,7 +59,7 @@ from stanza.models.coref.model import CorefModel
 logger = logging.getLogger('stanza')
 
 @contextmanager
-def output_running_time():
+def output_running_time() -> Iterator[None]:
     """ Prints the time elapsed in the context """
     start = int(time.time())
     try:

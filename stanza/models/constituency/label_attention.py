@@ -676,7 +676,7 @@ class LabelAttentionModule(nn.Module):
                                                              relu_dropout,
                                                              residual_dropout)
 
-    def forward(self, word_embeddings, tagged_word_lists):
+    def forward(self, word_embeddings, _tagged_word_lists):
         if self.input_projection:
             if self.d_positional > 0:
                 word_embeddings = [torch.cat((self.input_projection(sentence[:, :-self.d_positional]),

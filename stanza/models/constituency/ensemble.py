@@ -30,6 +30,7 @@ then take the trees which match from the files
 import argparse
 import copy
 import logging
+from collections import defaultdict, namedtuple
 
 import torch
 import torch.nn as nn
@@ -291,7 +292,7 @@ class Ensemble(nn.Module):
         results = [t.predictions[0].tree for t in treebank]
         return results
 
-    def parse_sentences(self, data_iterator, build_batch_fn, batch_size, transition_choice, keep_state=False, keep_constituents=False, keep_scores=False):
+    def parse_sentences(self, data_iterator, build_batch_fn, batch_size, transition_choice, _keep_state=False, keep_constituents=False, _keep_scores=False):
         """
         Repeat transitions to build a list of trees from the input batches.
 

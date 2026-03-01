@@ -2,6 +2,8 @@
 CRF loss and viterbi decoding.
 """
 
+from __future__ import annotations
+
 import math
 from numbers import Number
 import numpy as np
@@ -13,12 +15,12 @@ class CRFLoss(nn.Module):
     Calculate log-space crf loss, given unary potentials, a transition matrix
     and gold tag sequences.
     """
-    def __init__(self, num_tag, batch_average=True):
+    def __init__(self, num_tag: int, batch_average: bool = True) -> None:
         super().__init__()
         self._transitions = nn.Parameter(torch.zeros(num_tag, num_tag))
         self._batch_average = batch_average # if not batch average, average on all tokens
 
-    def forward(self, inputs, masks, tag_indices):
+    def forward(self, inputs: torch.Tensor, masks: torch.Tensor, tag_indices: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """
         inputs: batch_size x seq_len x num_tags
         masks: batch_size x seq_len
@@ -42,7 +44,7 @@ class CRFLoss(nn.Module):
             loss = loss / (total + 1e-8)
         return loss, self._transitions
 
-    def crf_unary_score(self, inputs, masks, tag_indices, input_bs, input_sl, input_nc):
+    def crf_unary_score(self, inputs: torch.Tensor, masks: torch.Tensor, tag_indices: torch.Tensor, input_bs: int, input_sl: int, input_nc: int) -> torch.Tensor:
         """
         @return:
             unary_scores: batch_size
@@ -53,7 +55,7 @@ class CRFLoss(nn.Module):
         unary_scores.masked_fill_(masks, 0)
         return unary_scores.sum(dim=1)
     
-    def crf_binary_score(self, inputs, masks, tag_indices, input_bs, input_sl, input_nc):
+    def crf_binary_score(self, _inputs: torch.Tensor, masks: torch.Tensor, tag_indices: torch.Tensor, input_bs: int, _input_sl: int, input_nc: int) -> torch.Tensor:
         """
         @return:
             binary_scores: batch_size
@@ -72,7 +74,7 @@ class CRFLoss(nn.Module):
         binary_scores.masked_fill_(score_masks, 0)
         return binary_scores.sum(dim=1)
 
-    def crf_log_norm(self, inputs, masks, tag_indices):
+    def crf_log_norm(self, inputs: torch.Tensor, masks: torch.Tensor, _tag_indices: torch.Tensor) -> torch.Tensor:
         """
         Calculate the CRF partition in log space for each instance, following:
             http://www.cs.columbia.edu/~mcollins/fb.pdf
@@ -103,7 +105,7 @@ class CRFLoss(nn.Module):
         log_norm = log_norm * torch.logical_not(all_masked)
         return log_norm
 
-def viterbi_decode(scores, transition_params):
+def viterbi_decode(scores: np.ndarray, transition_params: np.ndarray) -> tuple[list[int], np.ndarray]:
     """
     Decode a tag sequence with viterbi algorithm.
     scores: seq_len x num_tags (numpy array)
@@ -128,7 +130,7 @@ def viterbi_decode(scores, transition_params):
     viterbi_score = np.max(trellis[-1])
     return viterbi, viterbi_score
 
-def log_sum_exp(value, dim=None, keepdim=False):
+def log_sum_exp(value: torch.Tensor, dim: int | None = None, keepdim: bool = False) -> torch.Tensor:
     """Numerically stable implementation of the operation
     value.exp().sum(dim, keepdim).log()
     """

@@ -166,7 +166,8 @@ def round_up_to_multiple(number, multiple):
 
 def main():
     default_test_path = os.path.join(os.path.dirname(__file__), "test_sets", "processed_ud_en", "combined_dev.txt")   # get the GUM stuff
-    sentence_batches, indices_batches, upos_batches, _, counts, _, upos_to_id = load_dataset(default_test_path, get_counts=True)
+    dataset = Dataset(default_test_path, get_counts=True)
+    _ = (dataset.sentences, dataset.indices, dataset.upos_ids, dataset.counts, dataset.label_decoder, dataset.upos_to_id)
 
 if __name__ == "__main__":
     main()

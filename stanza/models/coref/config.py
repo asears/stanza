@@ -4,7 +4,6 @@ For description of all config values, refer to config.toml.
 """
 
 from dataclasses import dataclass
-from typing import Dict, List
 
 
 @dataclass
@@ -43,8 +42,8 @@ class Config:  # pylint: disable=too-many-instance-attributes, too-few-public-me
 
     full_pairwise: bool
 
-    lora_target_modules: List[str]
-    lora_modules_to_save: List[str]
+    lora_target_modules: list[str]
+    lora_modules_to_save: list[str]
 
     clusters_starts_are_singletons: bool
     bert_finetune: bool
@@ -59,7 +58,7 @@ class Config:  # pylint: disable=too-many-instance-attributes, too-few-public-me
     plateau_epochs: int
     bce_loss_weight: float
 
-    tokenizer_kwargs: Dict[str, dict]
+    tokenizer_kwargs: dict[str, dict]
     conll_log_dir: str
 
     save_each_checkpoint: bool

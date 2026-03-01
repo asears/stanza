@@ -162,7 +162,7 @@ class BinaryDataLoader(DataLoader):
     except the targets are arrays of 0/1 indicating if the character is the location
     of an MWT split
     """
-    def prepare_target(self, vocab, datum):
+    def prepare_target(self, _vocab, datum):
         src = datum[0] if self.evaluation else datum[1]
         binary = [0]
         has_space = False

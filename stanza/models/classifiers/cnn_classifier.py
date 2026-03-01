@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import dataclasses
 import logging
 import random
+from typing import Any
 
 import numpy as np
 import torch
@@ -49,9 +52,9 @@ logger = logging.getLogger('stanza')
 tlogger = logging.getLogger('stanza.classifiers.trainer')
 
 class CNNClassifier(BaseClassifier):
-    def __init__(self, pretrain, extra_vocab, labels,
-                 charmodel_forward, charmodel_backward, elmo_model, bert_model, bert_tokenizer, force_bert_saved, peft_name,
-                 args):
+    def __init__(self, pretrain: Any, extra_vocab: set[str] | list[str] | None, labels: list[str],
+                 charmodel_forward: Any | None, charmodel_backward: Any | None, elmo_model: Any | None, bert_model: Any | None, bert_tokenizer: Any | None, force_bert_saved: bool, peft_name: str | None,
+                 args: Any) -> None:
         """
         pretrain is a pretrained word embedding.  should have .emb and .vocab
 
@@ -276,7 +279,7 @@ class CNNClassifier(BaseClassifier):
 
         self.dropout = nn.Dropout(self.config.dropout)
 
-    def add_unsaved_module(self, name, module):
+    def add_unsaved_module(self, name: str, module: Any) -> None:
         self.unsaved_modules += [name]
         setattr(self, name, module)
 
@@ -287,10 +290,10 @@ class CNNClassifier(BaseClassifier):
             for _, parameter in module.named_parameters():
                 parameter.requires_grad = False
 
-    def is_unsaved_module(self, name):
+    def is_unsaved_module(self, name: str) -> bool:
         return name.split('.')[0] in self.unsaved_modules
 
-    def log_configuration(self):
+    def log_configuration(self) -> None:
         """
         Log some essential information about the model configuration to the training logger
         """
@@ -298,14 +301,14 @@ class CNNClassifier(BaseClassifier):
         tlogger.info("Filter channels: %s" % str(self.config.filter_channels))
         tlogger.info("Intermediate layers: %s" % str(self.config.fc_shapes))
 
-    def log_norms(self):
+    def log_norms(self) -> None:
         lines = ["NORMS FOR MODEL PARAMTERS"]
         for name, param in self.named_parameters():
             if param.requires_grad and name.split(".")[0] not in ('forward_charlm', 'backward_charlm'):
                 lines.append("%s %.6g" % (name, torch.norm(param).item()))
         logger.info("\n".join(lines))
 
-    def build_char_reps(self, inputs, max_phrase_len, charlm, projection, begin_paddings, device):
+    def build_char_reps(self, inputs: list[list[str]], max_phrase_len: int, charlm: Any, projection: nn.Linear | None, begin_paddings: list[int], device: torch.device) -> torch.Tensor:
         char_reps = charlm.build_char_representation(inputs)
         if projection is not None:
             char_reps = [projection(x) for x in char_reps]
@@ -316,7 +319,7 @@ class CNNClassifier(BaseClassifier):
             char_inputs[idx, start:end, :] = rep
         return char_inputs
 
-    def extract_bert_embeddings(self, inputs, max_phrase_len, begin_paddings, device):
+    def extract_bert_embeddings(self, inputs: list[list[str]], max_phrase_len: int, begin_paddings: list[int], device: torch.device) -> torch.Tensor:
         bert_embeddings = extract_bert_embeddings(self.config.bert_model, self.bert_tokenizer, self.bert_model, inputs, device,
                                                   keep_endpoints=False,
                                                   num_layers=self.bert_layer_mix.in_features if self.bert_layer_mix is not None else None,
@@ -334,7 +337,7 @@ class CNNClassifier(BaseClassifier):
             bert_inputs[idx, start:end, :] = rep
         return bert_inputs
 
-    def forward(self, inputs):
+    def forward(self, inputs: list[SentimentDatum | list[str]]) -> torch.Tensor:
         # assume all pieces are on the same device
         device = next(self.parameters()).device
 
@@ -509,7 +512,7 @@ class CNNClassifier(BaseClassifier):
         # https://discuss.pytorch.org/t/multi-class-cross-entropy-loss-and-softmax-in-pytorch/24920/4
         return out
 
-    def get_params(self, skip_modules=True):
+    def get_params(self, skip_modules: bool = True) -> dict[str, Any]:
         model_state = self.state_dict()
         # skip saving modules like pretrained embeddings, because they are large and will be saved in a separate file
         if skip_modules:
@@ -534,10 +537,10 @@ class CNNClassifier(BaseClassifier):
             params["bert_lora"] = get_peft_model_state_dict(self.bert_model, adapter_name=self.peft_name)
         return params
 
-    def preprocess_data(self, sentences):
+    def preprocess_data(self, sentences: list[list[str]]) -> list[list[str]]:
         sentences = [data.update_text(s, self.config.wordvec_type) for s in sentences]
         return sentences
 
-    def extract_sentences(self, doc):
+    def extract_sentences(self, doc: Any) -> list[list[str]]:
         # TODO: tokens or words better here?
         return [[token.text for token in sentence.tokens] for sentence in doc.sentences]

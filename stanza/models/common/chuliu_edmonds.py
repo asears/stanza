@@ -1,8 +1,10 @@
 # Adapted from Tim's code here: https://github.com/tdozat/Parser-v3/blob/master/scripts/chuliu_edmonds.py
 
+from __future__ import annotations
+
 import numpy as np
 
-def tarjan(tree):
+def tarjan(tree: np.ndarray) -> list[np.ndarray]:
     """Finds the cycles in a dependency graph
 
     The input should be a numpy array of integers,
@@ -35,7 +37,7 @@ def tarjan(tree):
     _index = [0]
     cycles = []
     #-------------------------------------------------------------
-    def maybe_pop_cycle(i):
+    def maybe_pop_cycle(i: int) -> None:
         if lowlinks[i] == indices[i]:
             # There's a cycle!
             cycle = np.zeros_like(indices, dtype=bool)
@@ -49,14 +51,14 @@ def tarjan(tree):
             if cycle.sum() > 1:
                 cycles.append(cycle)
 
-    def initialize_strong_connect(i):
+    def initialize_strong_connect(i: int) -> None:
         _index[0] += 1
         index = _index[-1]
         indices[i] = lowlinks[i] = index - 1
         stack.append(i)
         onstack[i] = True
 
-    def strong_connect(i):
+    def strong_connect(i: int) -> None:
         # this ridiculous atrocity is because somehow people keep
         # coming up with graphs which overflow python's call stack
         # so instead we make our own call stack and turn the recursion
@@ -122,7 +124,7 @@ def tarjan(tree):
             strong_connect(i)
     return cycles
 
-def process_cycle(tree, cycle, scores):
+def process_cycle(tree: np.ndarray, cycle: np.ndarray, scores: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
     Build a subproblem with one cycle broken
     """
@@ -161,7 +163,7 @@ def process_cycle(tree, cycle, scores):
     return subscores, cycle_locs, noncycle_locs, metanode_heads, metanode_deps
 
 
-def expand_contracted_tree(tree, contracted_tree, cycle_locs, noncycle_locs, metanode_heads, metanode_deps):
+def expand_contracted_tree(tree: np.ndarray, contracted_tree: np.ndarray, cycle_locs: np.ndarray, noncycle_locs: np.ndarray, metanode_heads: np.ndarray, metanode_deps: np.ndarray) -> np.ndarray:
     """
     Given a partially solved tree with a cycle and a solved subproblem
     for the cycle, build a larger solution without the cycle
@@ -194,7 +196,7 @@ def expand_contracted_tree(tree, contracted_tree, cycle_locs, noncycle_locs, met
     #print(4, new_tree)
     return new_tree
 
-def prepare_scores(scores):
+def prepare_scores(scores: np.ndarray) -> None:
     """
     Alter the scores matrix to avoid self loops and handle the root
     """
@@ -203,7 +205,7 @@ def prepare_scores(scores):
     scores[0] = -float('inf')
     scores[0,0] = 0
 
-def chuliu_edmonds(scores):
+def chuliu_edmonds(scores: np.ndarray) -> np.ndarray:
     subtree_stack = []
 
     prepare_scores(scores)
@@ -243,7 +245,7 @@ def chuliu_edmonds(scores):
     return tree
 
 #===============================================================
-def chuliu_edmonds_one_root(scores):
+def chuliu_edmonds_one_root(scores: np.ndarray) -> np.ndarray:
     """
     Return the results of the dependency tree search, but with exactly one link to root (0)
 

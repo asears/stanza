@@ -89,7 +89,7 @@ class Trainer(BaseTrainer):
         except BaseException:
             logger.warning("Saving failed... continuing anyway.")
 
-    def load(self, filename, args, foundation_cache):
+    def load(self, filename, args, _foundation_cache):
         try:
             checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         except BaseException:

@@ -1,11 +1,12 @@
+from __future__ import annotations
+
 import argparse
 import json
 import os
 import re
 
 import stanza
-
-from typing import List
+from typing import Any
 
 """
 The code in this file processes a CoNLL dataset by taking its sentences and filtering out all sentences that do not contain the target token.
@@ -13,7 +14,7 @@ Furthermore, it will store tuples of the Stanza document object, the position in
 """
 
 
-def load_doc_from_conll_file(path: str):
+def load_doc_from_conll_file(path: str) -> Any:
     """"
     loads in a Stanza document object from a path to a CoNLL file containing annotated sentences.
     """
@@ -22,19 +23,19 @@ def load_doc_from_conll_file(path: str):
 
 class DataProcessor:
 
-    def __init__(self, target_word: str, target_upos: List[str], allowed_lemmas: str):
+    def __init__(self, target_word: str, target_upos: list[str], allowed_lemmas: str) -> None:
         self.target_word = target_word
         self.target_word_regex = re.compile(target_word)
         self.target_upos = target_upos
         self.allowed_lemmas = re.compile(allowed_lemmas)
 
-    def keep_sentence(self, sentence):
+    def keep_sentence(self, sentence: Any) -> bool:
         for word in sentence.words:
             if self.target_word_regex.fullmatch(word.text) and word.upos in self.target_upos:
                 return True
         return False
 
-    def find_all_occurrences(self, sentence) -> List[int]:
+    def find_all_occurrences(self, sentence: Any) -> list[int]:
         """
         Finds all occurrences of self.target_word in tokens and returns the index(es) of such occurrences.
         """
@@ -45,7 +46,7 @@ class DataProcessor:
         return occurrences
 
     @staticmethod
-    def write_output_file(save_name, target_upos, sentences):
+    def write_output_file(save_name: str, target_upos: list[str], sentences: list[dict[str, Any]]) -> None:
         with open(save_name, "w+", encoding="utf-8") as output_f:
             output_f.write("{\n")
             output_f.write('  "upos": %s,\n' % json.dumps(target_upos))
@@ -60,7 +61,7 @@ class DataProcessor:
                 output_f.write(json.dumps(sentence))
             output_f.write("\n  ]\n}\n")
 
-    def process_document(self, doc, save_name: str) -> None:
+    def process_document(self, doc: Any, save_name: str) -> list[dict[str, Any]]:
         """
         Takes any sentence from `doc` that meets the condition of `keep_sentence` and writes its tokens, index of target word, and lemma to `save_name`
 
@@ -95,7 +96,7 @@ class DataProcessor:
             self.write_output_file(save_name, self.target_upos, sentences)
         return sentences
 
-def main(args=None):
+def main(args: list[str] | None = None) -> list[dict[str, Any]]:
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--conll_path", type=str, default=os.path.join(os.path.dirname(__file__), "en_gum-ud-train.conllu"), help="path to the conll file to translate")

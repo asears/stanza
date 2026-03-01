@@ -21,7 +21,7 @@ logger = logging.getLogger('stanza')
 # this gets created in two places in trainer
 # in both places, pass in the bert model & tokenizer
 class NERTagger(nn.Module):
-    def __init__(self, args, vocab, emb_matrix=None, foundation_cache=None, bert_model=None, bert_tokenizer=None, force_bert_saved=False, peft_name=None):
+    def __init__(self, args, vocab, emb_matrix=None, _foundation_cache=None, bert_model=None, bert_tokenizer=None, force_bert_saved=False, peft_name=None):
         super().__init__()
 
         self.vocab = vocab

@@ -2,12 +2,15 @@
 Basic data structures
 """
 
+from __future__ import annotations
+
 import io
 from itertools import repeat
 import re
 import json
 import pickle
 import warnings
+from typing import Any
 
 from enum import Enum
 
@@ -57,7 +60,7 @@ DEFAULT_OUTPUT_FIELDS = [ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS,
 NO_OFFSETS_OUTPUT_FIELDS = [ID, TEXT, LEMMA, UPOS, XPOS, FEATS, HEAD, DEPREL, DEPS, MISC, NER, MULTI_NER, MEXP, COREF_CHAINS, MORPHEMES]
 
 class DocJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
+    def default(self, obj: Any) -> Any:
         if isinstance(obj, CorefMention):
             return obj.__dict__
         if isinstance(obj, CorefAttachment):
@@ -68,7 +71,7 @@ class Document(StanzaObject):
     """ A document class that stores attributes of a document and carries a list of sentences.
     """
 
-    def __init__(self, sentences, text=None, comments=None, empty_sentences=None):
+    def __init__(self, sentences: list[list[dict[str, Any]]], text: str | None = None, comments: list[list[str]] | None = None, empty_sentences: list[list[dict[str, Any]]] | None = None) -> None:
         """ Construct a document given a list of sentences in the form of lists of CoNLL-U dicts.
 
         Args:
@@ -89,7 +92,7 @@ class Document(StanzaObject):
             self.build_ents()
             self.mark_whitespace()
 
-    def mark_whitespace(self):
+    def mark_whitespace(self) -> None:
         for sentence in self._sentences:
             # TODO: pairwise, once we move to minimum 3.10
             for prev_token, next_token in zip(sentence.tokens[:-1], sentence.tokens[1:]):
@@ -111,76 +114,76 @@ class Document(StanzaObject):
 
 
     @property
-    def lang(self):
+    def lang(self) -> str | None:
         """ Access the language of this document """
         return self._lang
 
     @lang.setter
-    def lang(self, value):
+    def lang(self, value: str | None) -> None:
         """ Set the language of this document """
         self._lang = value
 
     @property
-    def text(self):
+    def text(self) -> str | None:
         """ Access the raw text for this document. """
         return self._text
 
     @text.setter
-    def text(self, value):
+    def text(self, value: str | None) -> None:
         """ Set the raw text for this document. """
         self._text = value
 
     @property
-    def sentences(self):
+    def sentences(self) -> list[Any]:
         """ Access the list of sentences for this document. """
         return self._sentences
 
     @sentences.setter
-    def sentences(self, value):
+    def sentences(self, value: list[Any]) -> None:
         """ Set the list of tokens for this document. """
         self._sentences = value
 
     @property
-    def num_tokens(self):
+    def num_tokens(self) -> int:
         """ Access the number of tokens for this document. """
         return self._num_tokens
 
     @num_tokens.setter
-    def num_tokens(self, value):
+    def num_tokens(self, value: int) -> None:
         """ Set the number of tokens for this document. """
         self._num_tokens = value
 
     @property
-    def num_words(self):
+    def num_words(self) -> int:
         """ Access the number of words for this document. """
         return self._num_words
 
     @num_words.setter
-    def num_words(self, value):
+    def num_words(self, value: int) -> None:
         """ Set the number of words for this document. """
         self._num_words = value
 
     @property
-    def ents(self):
+    def ents(self) -> list[Any]:
         """ Access the list of entities in this document. """
         return self._ents
 
     @ents.setter
-    def ents(self, value):
+    def ents(self, value: list[Any]) -> None:
         """ Set the list of entities in this document. """
         self._ents = value
 
     @property
-    def entities(self):
+    def entities(self) -> list[Any]:
         """ Access the list of entities. This is just an alias of `ents`. """
         return self._ents
 
     @entities.setter
-    def entities(self, value):
+    def entities(self, value: list[Any]) -> None:
         """ Set the list of entities in this document. """
         self._ents = value
 
-    def _process_sentences(self, sentences, comments=None, empty_sentences=None):
+    def _process_sentences(self, sentences: list[list[dict[str, Any]]], comments: list[list[str]] | None = None, empty_sentences: list[list[dict[str, Any]]] | None = None) -> None:
         self.sentences = []
         if empty_sentences is None:
             empty_sentences = repeat([])

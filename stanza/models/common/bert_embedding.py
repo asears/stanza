@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import math
 import logging
 import torch
+from typing import Any
 
 logger = logging.getLogger('stanza')
 
@@ -13,13 +16,13 @@ class TextTooLongError(ValueError):
     """
     A text was too long for the underlying model (possibly BERT)
     """
-    def __init__(self, length, max_len, line_num, text):
+    def __init__(self, length: int, max_len: int, line_num: int, text: str) -> None:
         super().__init__("Found a text of length %d (possibly after tokenizing).  Maximum handled length is %d  Error occurred at line %d" % (length, max_len, line_num))
         self.line_num = line_num
         self.text = text
 
 
-def update_max_length(model_name, tokenizer):
+def update_max_length(model_name: str, tokenizer: Any) -> None:
     if model_name in ('hf-internal-testing/tiny-bert',
                       'google/muril-base-cased',
                       'google/muril-large-cased',
@@ -30,7 +33,7 @@ def update_max_length(model_name, tokenizer):
                       'NYTK/electra-small-discriminator-hungarian'):
         tokenizer.model_max_length = 512
 
-def load_tokenizer(model_name, tokenizer_kwargs=None, local_files_only=False):
+def load_tokenizer(model_name: str | None, tokenizer_kwargs: dict[str, Any] | None = None, local_files_only: bool = False) -> Any:
     if model_name:
         # note that use_fast is the default
         try:
@@ -51,7 +54,7 @@ def load_tokenizer(model_name, tokenizer_kwargs=None, local_files_only=False):
         return bert_tokenizer
     return None
 
-def load_bert(model_name, tokenizer_kwargs=None, local_files_only=False):
+def load_bert(model_name: str | None, tokenizer_kwargs: dict[str, Any] | None = None, local_files_only: bool = False) -> tuple[Any, Any]:
     if model_name:
         # such as: "vinai/phobert-base"
         try:
@@ -63,7 +66,7 @@ def load_bert(model_name, tokenizer_kwargs=None, local_files_only=False):
         return bert_model, bert_tokenizer
     return None, None
 
-def tokenize_manual(model_name, sent, tokenizer):
+def tokenize_manual(model_name: str, sent: list[str], tokenizer: Any) -> tuple[list[str], list[int]]:
     """
     Tokenize a sentence manually, using for checking long sentences and PHOBert.
     """
@@ -84,7 +87,7 @@ def tokenize_manual(model_name, sent, tokenizer):
 
     return tokenized, tokenized_sent
 
-def filter_data(model_name, data, tokenizer = None, log_level=logging.DEBUG):
+def filter_data(model_name: str, data: list[Any], tokenizer: Any = None, log_level: int = logging.DEBUG) -> list[Any]:
     """
     Filter out the (NER, POS) data that is too long for BERT model.
     """
@@ -105,7 +108,7 @@ def filter_data(model_name, data, tokenizer = None, log_level=logging.DEBUG):
     
     return filtered_data
 
-def needs_length_filter(model_name):
+def needs_length_filter(model_name: str) -> bool:
     """
     TODO: we were lazy and didn't implement any form of length fudging for models other than bert/roberta/electra
     """
@@ -115,7 +118,7 @@ def needs_length_filter(model_name):
         return True
     return False
 
-def cloned_feature(feature, num_layers, detach=True):
+def cloned_feature(feature: Any, num_layers: int | None, detach: bool = True) -> torch.Tensor:
     """
     Clone & detach the feature, keeping the last N layers (or averaging -2,-3,-4 if not specified)
 
@@ -134,7 +137,7 @@ def cloned_feature(feature, num_layers, detach=True):
     else:
         return feature
 
-def extract_bart_word_embeddings(model_name, tokenizer, model, data, device, keep_endpoints, num_layers, detach=True):
+def extract_bart_word_embeddings(model_name: str, tokenizer: Any, model: Any, data: list[list[str]], device: torch.device, keep_endpoints: bool, num_layers: int | None, detach: bool = True) -> list[torch.Tensor]:
     """
     Handles vi-bart.  May need testing before using on other bart
 
@@ -170,7 +173,7 @@ def extract_bart_word_embeddings(model_name, tokenizer, model, data, device, kee
 
     return processed
 
-def extract_phobert_embeddings(model_name, tokenizer, model, data, device, keep_endpoints, num_layers, detach=True):
+def extract_phobert_embeddings(model_name: str, tokenizer: Any, model: Any, data: list[list[str]], device: torch.device, keep_endpoints: bool, num_layers: int | None, detach: bool = True) -> list[torch.Tensor]:
     """
     Extract transformer embeddings using a method specifically for phobert
 
@@ -266,7 +269,7 @@ BAD_TOKENIZERS = ('bert-base-german-cased',
                   'google/muril-base-cased',
                   'l3cube-pune/marathi-roberta')
 
-def fix_blank_tokens(tokenizer, data):
+def fix_blank_tokens(tokenizer: Any, data: list[list[str]]) -> list[list[str]]:
     """Patch bert tokenizers with missing characters
 
     There is an issue that some tokenizers (so far the German ones identified above)
@@ -289,7 +292,7 @@ def fix_blank_tokens(tokenizer, data):
         new_data.append(new_sentence)
     return new_data
 
-def extract_llama_embeddings(model_name, tokenizer, model, data, device, keep_endpoints, num_layers, detach=True):
+def extract_llama_embeddings(model_name: str, tokenizer: Any, model: Any, data: list[list[str]], device: torch.device, keep_endpoints: bool, num_layers: int | None, detach: bool = True) -> list[torch.Tensor]:
     # will calculate attention masks ourselves later
     tokenized = tokenizer(data, is_split_into_words=True, return_offsets_mapping=False, return_attention_mask=False)
 
@@ -331,7 +334,7 @@ def extract_llama_embeddings(model_name, tokenizer, model, data, device, keep_en
     return processed
 
 
-def extract_xlnet_embeddings(model_name, tokenizer, model, data, device, keep_endpoints, num_layers, detach=True):
+def extract_xlnet_embeddings(model_name: str, tokenizer: Any, model: Any, data: list[list[str]], device: torch.device, keep_endpoints: bool, num_layers: int | None, detach: bool = True) -> list[torch.Tensor]:
     # using attention masks makes contextual embeddings much more useful for downstream tasks
     tokenized = tokenizer(data, is_split_into_words=True, return_offsets_mapping=False, return_attention_mask=False)
     #tokenized = tokenizer(data, padding="longest", is_split_into_words=True, return_offsets_mapping=False, return_attention_mask=True)
@@ -401,7 +404,7 @@ def extract_xlnet_embeddings(model_name, tokenizer, model, data, device, keep_en
 
     return processed
 
-def build_cloned_features(model, tokenizer, attention_tensor, id_tensor, num_layers, detach, device):
+def build_cloned_features(model: Any, tokenizer: Any, attention_tensor: torch.Tensor, id_tensor: torch.Tensor, num_layers: int | None, detach: bool, device: torch.device) -> torch.Tensor:
     """
     Extract an embedding from the given transformer for a certain attention mask and tokens range
 
@@ -443,7 +446,7 @@ def build_cloned_features(model, tokenizer, attention_tensor, id_tensor, num_lay
     return slices
 
 
-def convert_to_position_list(sentence, offsets):
+def convert_to_position_list(sentence: list[str], offsets: list[int | None]) -> list[int | None]:
     """
     Convert a transformers-tokenized sentence's offsets to a list of word to position
     """
@@ -465,7 +468,7 @@ def convert_to_position_list(sentence, offsets):
             break
     return list_offsets
 
-def extract_base_embeddings(model_name, tokenizer, model, data, device, keep_endpoints, num_layers, detach):
+def extract_base_embeddings(model_name: str, tokenizer: Any, model: Any, data: list[list[str]], device: torch.device, keep_endpoints: bool, num_layers: int | None, detach: bool) -> list[torch.Tensor]:
     #add add_prefix_space = True for RoBerTa-- error if not
     # using attention masks makes contextual embeddings much more useful for downstream tasks
     tokenized = tokenizer(data, padding="longest", is_split_into_words=True, return_offsets_mapping=False, return_attention_mask=True)
@@ -517,7 +520,7 @@ def extract_base_embeddings(model_name, tokenizer, model, data, device, keep_end
 
     return processed
 
-def extract_bert_embeddings(model_name, tokenizer, model, data, device, keep_endpoints, num_layers=None, detach=True, peft_name=None):
+def extract_bert_embeddings(model_name: str, tokenizer: Any, model: Any, data: list[list[str]] | tuple[list[str], ...], device: torch.device, keep_endpoints: bool, num_layers: int | None = None, detach: bool = True, peft_name: str | None = None) -> list[torch.Tensor]:
     """
     Extract transformer embeddings using a generic roberta extraction
 

@@ -6,12 +6,15 @@ to produce consistent POS and UFeats predictions.
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
+from __future__ import annotations
+
 import argparse
 import logging
 import io
 import os
 import time
 import zipfile
+from typing import Any
 
 import numpy as np
 import torch
@@ -28,7 +31,7 @@ from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/pos', help='Root dir for saving models.')
     parser.add_argument('--wordvec_dir', type=str, default='extern_data/wordvec', help='Directory of word vectors.')
@@ -117,7 +120,7 @@ def build_argparse():
     parser.add_argument('--wandb_name', default=None, help='Name of a wandb session to start when training.  Will default to the dataset short name')
     return parser
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
     args = parser.parse_args(args=args)
     resolve_peft_args(args, logger)
@@ -134,7 +137,7 @@ def parse_args(args=None):
     args = vars(args)
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> Any:
     args = parse_args(args=args)
 
     utils.set_random_seed(args['seed'])
@@ -146,15 +149,15 @@ def main(args=None):
     else:
         return evaluate(args)
 
-def model_file_name(args):
+def model_file_name(args: dict[str, Any]) -> str:
     return utils.standard_model_file_name(args, "tagger")
 
-def save_each_file_name(args):
+def save_each_file_name(args: dict[str, Any]) -> str:
     model_file = model_file_name(args)
     pieces = os.path.splitext(model_file)
     return pieces[0] + "_%05d" + pieces[1]
 
-def load_pretrain(args):
+def load_pretrain(args: dict[str, Any]) -> pretrain.Pretrain | None:
     pt = None
     if args['pretrain']:
         pretrain_file = pretrain.find_pretrain_file(args['wordvec_pretrain_file'], args['save_dir'], args['shorthand'], args['lang'])
@@ -165,7 +168,7 @@ def load_pretrain(args):
         pt = pretrain.Pretrain(pretrain_file, vec_file, args['pretrain_max_vocab'])
     return pt
 
-def get_eval_type(dev_batch):
+def get_eval_type(dev_batch: Dataset) -> str:
     """
     If there is only one column to score in the dev set, use that instead of AllTags
     """
@@ -176,7 +179,7 @@ def get_eval_type(dev_batch):
     else:
         return "AllTags"
 
-def load_training_data(args, pretrain):
+def load_training_data(args: dict[str, Any], pretrain: pretrain.Pretrain | None) -> tuple[Any, list[Dataset], ShuffledDataset]:
     train_docs = []
     raw_train_files = args['train_file'].split(";")
     train_files = []
@@ -250,7 +253,7 @@ def load_training_data(args, pretrain):
     train_batches = ShuffledDataset(train_data, args["batch_size"])
     return vocab, train_data, train_batches
 
-def train(args):
+def train(args: dict[str, Any]) -> tuple[Trainer | None, Any]:
     model_file = model_file_name(args)
     utils.ensure_dir(os.path.split(model_file)[0])
 
@@ -411,7 +414,7 @@ def train(args):
 
     return trainer, _
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> tuple[Trainer, Any]:
     # file paths
     model_file = model_file_name(args)
 
@@ -426,7 +429,7 @@ def evaluate(args):
     result_doc = evaluate_trainer(args, trainer, pretrain)
     return trainer, result_doc
 
-def evaluate_trainer(args, trainer, pretrain):
+def evaluate_trainer(args: dict[str, Any], trainer: Trainer, pretrain: pretrain.Pretrain | None) -> Any:
     system_pred_file = args['output_file']
     loaded_args, vocab = trainer.args, trainer.vocab
 

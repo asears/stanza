@@ -241,7 +241,7 @@ class PartitionedTransformerModule(nn.Module):
                  morpho_emb_dropout,
                  timing,
                  encoder_max_len,
-                 activation=PartitionedReLU()
+                 _activation=PartitionedReLU()
     ):
         super().__init__()
         self.project_pretrained = nn.Linear(

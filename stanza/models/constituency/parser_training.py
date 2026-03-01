@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 from collections import Counter, namedtuple
 import copy
 import logging
 import os
 import random
 import re
+from typing import Any
 
 import torch
 from torch import nn
@@ -36,7 +39,7 @@ tlogger = logging.getLogger('stanza.constituency.trainer')
 TrainItem = namedtuple("TrainItem", ['tree', 'gold_sequence', 'preterminals'])
 
 class EpochStats(namedtuple("EpochStats", ['epoch_loss', 'transitions_correct', 'transitions_incorrect', 'repairs_used', 'fake_transitions_used', 'nans'])):
-    def __add__(self, other):
+    def __add__(self, other: EpochStats) -> EpochStats:
         transitions_correct = self.transitions_correct + other.transitions_correct
         transitions_incorrect = self.transitions_incorrect + other.transitions_incorrect
         repairs_used = self.repairs_used + other.repairs_used
@@ -45,7 +48,7 @@ class EpochStats(namedtuple("EpochStats", ['epoch_loss', 'transitions_correct', 
         nans = self.nans + other.nans
         return EpochStats(epoch_loss, transitions_correct, transitions_incorrect, repairs_used, fake_transitions_used, nans)
 
-def evaluate(args, model_file, retag_pipeline):
+def evaluate(args: dict[str, Any], model_file: str, retag_pipeline: list[Any] | None) -> None:
     """
     Loads the given model file and tests the eval_file treebank.
 
@@ -93,7 +96,7 @@ def evaluate(args, model_file, retag_pipeline):
         if kbestF1 is not None:
             tlogger.info("KBest F1 score on %s: %f", args['eval_file'], kbestF1)
 
-def remove_optimizer(args, model_save_file, model_load_file):
+def remove_optimizer(args: dict[str, Any], model_save_file: str, model_load_file: str) -> None:
     """
     A utility method to remove the optimizer from a save file
 
@@ -111,7 +114,7 @@ def remove_optimizer(args, model_save_file, model_load_file):
     trainer = Trainer.load(model_load_file, args=load_args, load_optimizer=False)
     trainer.save(model_save_file)
 
-def add_grad_clipping(trainer, grad_clipping):
+def add_grad_clipping(trainer: Trainer, grad_clipping: float | None) -> None:
     """
     Adds a torch.clamp hook on each parameter if grad_clipping is not None
     """
@@ -260,14 +263,14 @@ def train(args, model_load_file, retag_pipeline):
 
     return trainer
 
-def compose_train_data(trees, sequences):
+def compose_train_data(trees: list[Tree], sequences: list[Any]) -> list[TrainItem]:
     preterminal_lists = [[Tree(label=preterminal.label, children=Tree(label=preterminal.children[0].label))
                           for preterminal in tree.yield_preterminals()]
                          for tree in trees]
     data = [TrainItem(*x) for x in zip(trees, sequences, preterminal_lists)]
     return data
 
-def next_epoch_data(leftover_training_data, train_data, epoch_size):
+def next_epoch_data(leftover_training_data: list[Any], train_data: list[Any], epoch_size: int) -> tuple[list[Any], list[Any]]:
     """
     Return the next epoch_size trees from the training data, starting
     with leftover data from the previous epoch if there is any
@@ -290,7 +293,7 @@ def next_epoch_data(leftover_training_data, train_data, epoch_size):
 
     return leftover_training_data, epoch_data
 
-def update_bert_learning_rate(args, optimizer, epochs_trained):
+def update_bert_learning_rate(args: dict[str, Any], optimizer: torch.optim.Optimizer, epochs_trained: int) -> None:
     """
     Update the learning rate for the bert finetuning, if applicable
     """
@@ -668,7 +671,7 @@ def train_model_one_batch(epoch, batch_idx, model, training_batch, transition_te
         matched = False
         tlogger.info("Watching %s   ... epoch %d batch %d", args['watch_regex'], epoch, batch_idx)
         watch_regex = re.compile(args['watch_regex'])
-        for n, p in trainer.model.named_parameters():
+        for n, p in model.named_parameters():
             if watch_regex.search(n):
                 matched = True
                 if p.requires_grad and p.grad is not None:

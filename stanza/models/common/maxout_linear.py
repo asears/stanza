@@ -20,7 +20,7 @@ import torch
 import torch.nn as nn
 
 class MaxoutLinear(nn.Module):
-    def __init__(self, in_channels, out_channels, maxout_k):
+    def __init__(self, in_channels: int, out_channels: int, maxout_k: int) -> None:
         super().__init__()
 
         self.in_channels = in_channels
@@ -29,7 +29,7 @@ class MaxoutLinear(nn.Module):
 
         self.linear = nn.Linear(in_channels, out_channels * maxout_k)
 
-    def forward(self, inputs):
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """
         Use the oversized linear as the repeated linear, then take the max
 

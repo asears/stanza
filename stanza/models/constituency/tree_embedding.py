@@ -94,7 +94,7 @@ class TreeEmbedding(nn.Module):
         return previous_layer
 
     def forward(self, inputs):
-        return embed_trees(self, inputs)
+        return self.embed_trees(inputs)
 
     def get_norms(self):
         lines = ["constituency_parser." + x for x in self.constituency_parser.get_norms()]

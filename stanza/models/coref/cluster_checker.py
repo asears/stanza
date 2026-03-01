@@ -1,7 +1,6 @@
 """ Describes ClusterChecker, a class used to retrieve LEA scores.
 See aclweb.org/anthology/P16-1060.pdf. """
 
-from typing import List, Tuple
 from collections.abc import Hashable
 
 from stanza.models.coref.const import EPSILON
@@ -17,7 +16,7 @@ class ClusterChecker:
     """ Collects information on gold and predicted clusters across documents.
     Can be used to retrieve weighted LEA-score for them.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         self._lea_precision = 0.0
         self._lea_recall = 0.0
         self._lea_precision_weighting = 0.0
@@ -37,12 +36,12 @@ class ClusterChecker:
         self._ceafe_recall = 0.0
 
     @staticmethod
-    def _f1(p,r):
+    def _f1(p: float, r: float) -> float:
         return (p * r) / (p+r + EPSILON) * 2
     
     def add_predictions(self,
-                        gold_clusters: List[List[Hashable]],
-                        pred_clusters: List[List[Hashable]]):
+                        gold_clusters: list[list[Hashable]],
+                        pred_clusters: list[list[Hashable]]) -> tuple[float, float, float]:
         """
         Calculates LEA for the document's clusters and stores them to later
         output weighted LEA across documents.
@@ -85,12 +84,12 @@ class ClusterChecker:
         return doc_f1, doc_precision, doc_recall
 
     @property
-    def bakeoff(self):
+    def bakeoff(self) -> float:
         """ Get the F1 macroaverage score used by the bakeoff """
         return sum(self.mbc)/3
 
     @property
-    def mbc(self):
+    def mbc(self) -> list[float]:
         """ Get the F1 average score of (muc, b3, ceafe) over docs """
         avg_precisions = [self._muc_precision, self._b3_precision, self._ceafe_precision]
         avg_precisions = [i/(self._num_preds + EPSILON) for i in avg_precisions]
@@ -103,7 +102,7 @@ class ClusterChecker:
         return avg_f1s
 
     @property
-    def total_lea(self):
+    def total_lea(self) -> tuple[float, float, float]:
         """ Returns weighted LEA for all the documents as
         (f1, precision, recall) """
         precision = self._lea_precision / (self._lea_precision_weighting + EPSILON)
@@ -112,8 +111,8 @@ class ClusterChecker:
         return f1, precision, recall
 
     @staticmethod
-    def _lea(key: List[List[Hashable]],
-             response: List[List[Hashable]]) -> Tuple[float, float]:
+    def _lea(key: list[list[Hashable]],
+             response: list[list[Hashable]]) -> tuple[float, float]:
         """ See aclweb.org/anthology/P16-1060.pdf. """
         response_clusters = [set(cluster) for cluster in response]
         response_map = {mention: cluster
@@ -137,8 +136,8 @@ class ClusterChecker:
         return res, weight
 
     @staticmethod
-    def _muc(key: List[List[Hashable]],
-             response: List[List[Hashable]]) -> float:
+    def _muc(key: list[list[Hashable]],
+             response: list[list[Hashable]]) -> float:
         """ See aclweb.org/anthology/P16-1060.pdf. """
 
         response_clusters = [set(cluster) for cluster in response]
@@ -175,8 +174,8 @@ class ClusterChecker:
             return 0 # +inf technically
 
     @staticmethod
-    def _b3(key: List[List[Hashable]],
-            response: List[List[Hashable]]) -> float:
+    def _b3(key: list[list[Hashable]],
+            response: list[list[Hashable]]) -> float:
         """ See aclweb.org/anthology/P16-1060.pdf. """
         
         response_clusters = [set(cluster) for cluster in response]
@@ -200,11 +199,11 @@ class ClusterChecker:
 
 
     @staticmethod
-    def _phi4(c1, c2):
+    def _phi4(c1: list[Hashable], c2: list[Hashable]) -> float:
         return 2 * len([m for m in c1 if m in c2]) / float(len(c1) + len(c2))
 
     @staticmethod
-    def _ceafe(clusters: List[List[Hashable]], gold_clusters: List[List[Hashable]]):
+    def _ceafe(clusters: list[list[Hashable]], gold_clusters: list[list[Hashable]]) -> tuple[float, float]:
         """ see https://github.com/ufal/corefud-scorer/blob/main/coval/eval/evaluator.py """
 
         try:

@@ -15,6 +15,8 @@ https://github.com/tk1980/LargeMarginInSoftmax
 There is no license specifically chosen; they just ask people to cite the paper if the work is useful.
 """
 
+from __future__ import annotations
+
 
 
 import torch
@@ -35,14 +37,14 @@ class LargeMarginInSoftmaxLoss(nn.CrossEntropyLoss):
                                      If True, it realizes the method that incorporates the modified loss into ours
                                      as described in the above paper (Table 4).
     """
-    def __init__(self, reg_lambda=0.3, deg_logit=None,
-                weight=None, size_average=None, ignore_index=-100, reduce=None, reduction='mean'):
+    def __init__(self, reg_lambda: float = 0.3, deg_logit: float | None = None,
+                weight: torch.Tensor | None = None, size_average: bool | None = None, ignore_index: int = -100, reduce: bool | None = None, reduction: str = 'mean') -> None:
         super(LargeMarginInSoftmaxLoss, self).__init__(weight=weight, size_average=size_average,
                                 ignore_index=ignore_index, reduce=reduce, reduction=reduction)
         self.reg_lambda = reg_lambda
         self.deg_logit = deg_logit
 
-    def forward(self, input, target):
+    def forward(self, input: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         N = input.size(0) # number of samples
         C = input.size(1) # number of classes
         Mask = torch.zeros_like(input, requires_grad=False)

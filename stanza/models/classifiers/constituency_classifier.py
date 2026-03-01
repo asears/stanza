@@ -2,8 +2,11 @@
 A classifier that uses a constituency parser for the base embeddings
 """
 
+from __future__ import annotations
+
 import dataclasses
 import logging
+from typing import Any
 
 import torch
 import torch.nn as nn
@@ -18,7 +21,7 @@ logger = logging.getLogger('stanza')
 tlogger = logging.getLogger('stanza.classifiers.trainer')
 
 class ConstituencyClassifier(BaseClassifier):
-    def __init__(self, tree_embedding, labels, args):
+    def __init__(self, tree_embedding: Any, labels: list[str], args: Any) -> None:
         super(ConstituencyClassifier, self).__init__()
         self.labels = labels
         # we build a separate config out of the args so that we can easily save it in torch
@@ -37,17 +40,17 @@ class ConstituencyClassifier(BaseClassifier):
         self.fc_layers = build_output_layers(self.tree_embedding.output_size, self.config.fc_shapes, self.config.num_classes)
         self.dropout = nn.Dropout(self.config.dropout)
 
-    def is_unsaved_module(self, name):
+    def is_unsaved_module(self, _name: str) -> bool:
         return False
 
-    def log_configuration(self):
+    def log_configuration(self) -> None:
         tlogger.info("Backprop into parser: %s", self.config.constituency_backprop)
         tlogger.info("Batch norm: %s", self.config.constituency_batch_norm)
         tlogger.info("Word positions used: %s", "all words" if self.config.constituency_all_words else "start and end words")
         tlogger.info("Attention over nodes: %s", self.config.constituency_node_attn)
         tlogger.info("Intermediate layers: %s", self.config.fc_shapes)
 
-    def log_norms(self):
+    def log_norms(self) -> None:
         lines = ["NORMS FOR MODEL PARAMTERS"]
         lines.extend(["tree_embedding." + x for x in self.tree_embedding.get_norms()])
         for name, param in self.named_parameters():
@@ -56,7 +59,7 @@ class ConstituencyClassifier(BaseClassifier):
         logger.info("\n".join(lines))
 
 
-    def forward(self, inputs):
+    def forward(self, inputs: list[Any]) -> torch.Tensor:
         inputs = [x.constituency if isinstance(x, SentimentDatum) else x for x in inputs]
 
         embedding = self.tree_embedding.embed_trees(inputs)
@@ -68,7 +71,7 @@ class ConstituencyClassifier(BaseClassifier):
         out = self.fc_layers[-1](previous_layer)
         return out
 
-    def get_params(self, skip_modules=True):
+    def get_params(self, skip_modules: bool = True) -> dict[str, Any]:
         model_state = self.state_dict()
         # skip all of the constituency parameters here -
         # we will add them by calling the model's get_params()
@@ -89,5 +92,5 @@ class ConstituencyClassifier(BaseClassifier):
         }
         return params
 
-    def extract_sentences(self, doc):
+    def extract_sentences(self, doc: Any) -> list[Any]:
         return [sentence.constituency for sentence in doc.sentences]

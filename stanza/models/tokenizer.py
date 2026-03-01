@@ -15,9 +15,12 @@ words in the lexicon, this is to eliminate the less frequent but long words (avo
 and suffixes are used to stop early during the window-dictionary checking process.  
 """
 
+from __future__ import annotations
+
 import argparse
 import logging
 import os
+from typing import Any
 from stanza.models.common import utils
 from stanza.models.tokenization.trainer import Trainer
 from stanza.models.tokenization.data import DataLoader, TokenizationDataset
@@ -25,7 +28,7 @@ from stanza.models.tokenization.utils import load_mwt_dict, eval_model, output_p
 
 logger = logging.getLogger('stanza')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     """
     If args == None, the system args are used.
     """
@@ -95,7 +98,7 @@ def build_argparse():
     parser.add_argument('--wandb_name', default=None, help='Name of a wandb session to start when training.  Will default to the dataset short name')
     return parser
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
     args = parser.parse_args(args=args)
 
@@ -105,7 +108,7 @@ def parse_args(args=None):
     args = vars(args)
     return args
 
-def model_file_name(args):
+def model_file_name(args: dict[str, Any]) -> str:
     embedding = "nocharlm"
     if args['charlm'] and args['charlm_forward_file']:
         embedding = "charlm"
@@ -117,7 +120,7 @@ def model_file_name(args):
         return save_name
     return os.path.join(args['save_dir'], save_name)
 
-def main(args=None):
+def main(args: list[str] | None = None) -> tuple[Trainer, Any]:
     args = parse_args(args=args)
 
     utils.set_random_seed(args['seed'])
@@ -134,7 +137,7 @@ def main(args=None):
     else:
         return evaluate(args)
 
-def train(args):
+def train(args: dict[str, Any]) -> tuple[Trainer, Any]:
     if args['use_dictionary']:
         #load lexicon
         lexicon, args['num_dict_feat'] = load_lexicon(args)
@@ -239,7 +242,7 @@ def train(args):
 
     return trainer, None
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> tuple[Trainer, Any]:
     mwt_dict = load_mwt_dict(args['mwt_json_file'])
     trainer = Trainer(args=args, model_file=args['load_name'] or args['save_name'], device=args['device'], foundation_cache=None)
     loaded_args, vocab = trainer.args, trainer.vocab

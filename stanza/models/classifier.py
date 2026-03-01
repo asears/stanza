@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import argparse
 import ast
 import logging
 import os
 from enum import Enum
+from typing import Any
 
 import torch
 import torch.nn as nn
@@ -98,7 +101,7 @@ nohup python3 -u -m stanza.models.classifier --max_epochs 400 --filter_channels 
 python3 -u -m stanza.models.classifier --no_train --test_file extern_data/sentiment/vietnamese/_UIT-VSFC/test.txt --shorthand vi_vsfc --wordvec_pretrain_file ../stanza_resources/vi/pretrain/vtb.pt --wordvec_type word2vec --load_name vi_vsfc.pt
 """
 
-def convert_fc_shapes(arg):
+def convert_fc_shapes(arg: str) -> tuple[int, ...]:
     """
     Returns a tuple of sizes to use in FC layers.
 
@@ -142,7 +145,7 @@ DEFAULT_LEARNING_RHO = 0.9
 DEFAULT_MOMENTUM = { "madgrad": 0.9, "sgd": 0.9 }
 DEFAULT_WEIGHT_DECAY = { "adamw": 0.05, "adadelta": 0.0001, "sgd": 0.01, "adabelief": 1.2e-6, "madgrad": 2e-6 }
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     """
     Build the argparse for the classifier.
 
@@ -288,7 +291,7 @@ def build_argparse():
 
     return parser
 
-def build_model_filename(args):
+def build_model_filename(args: argparse.Namespace) -> str:
     shape = "FS_%s" % "_".join([str(x) for x in args.filter_sizes])
     shape = shape + "_C_%d_" % args.filter_channels
     if args.fc_shapes:
@@ -298,7 +301,7 @@ def build_model_filename(args):
     logger.info("Expanded save_name: %s", model_save_file)
     return model_save_file
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> argparse.Namespace:
     """
     Add arguments for building the classifier.
     Parses command line args and returns the result.
@@ -321,7 +324,7 @@ def parse_args(args=None):
     return args
 
 
-def dataset_predictions(model, dataset):
+def dataset_predictions(model: Any, dataset: list[Any]) -> list[Any]:
     model.eval()
     index_label_map = {x: y for (x, y) in enumerate(model.labels)}
 
@@ -341,7 +344,7 @@ def dataset_predictions(model, dataset):
     predictions = utils.unsort(predictions, o_idx)
     return predictions
 
-def confusion_dataset(predictions, dataset, labels):
+def confusion_dataset(predictions: list[Any], dataset: list[Any], labels: list[Any]) -> dict[Any, dict[Any, int]]:
     """
     Returns a confusion matrix
 
@@ -360,8 +363,8 @@ def confusion_dataset(predictions, dataset, labels):
     return confusion_matrix
 
 
-def score_dataset(model, dataset, label_map=None,
-                  remap_labels=None, forgive_unmapped_labels=False):
+def score_dataset(model: Any, dataset: list[Any], label_map: dict[Any, int] | None = None,
+                  remap_labels: dict[int, int] | None = None, forgive_unmapped_labels: bool = False) -> int:
     """
     remap_labels: a dict from old label to new label to use when
     testing a classifier on a dataset with a simpler label set.
@@ -414,7 +417,7 @@ def score_dataset(model, dataset, label_map=None,
                 correct = correct + 1
     return correct
 
-def score_dev_set(model, dev_set, dev_eval_scoring):
+def score_dev_set(model: Any, dev_set: list[Any], dev_eval_scoring: DevScoring) -> tuple[float, float, float]:
     predictions = dataset_predictions(model, dev_set)
     confusion_matrix = confusion_dataset(predictions, dev_set, model.labels)
     logger.info(f"Dev set confusion matrix:\n{format_confusion(confusion_matrix, model.labels)}")
@@ -432,14 +435,14 @@ def score_dev_set(model, dev_set, dev_eval_scoring):
     else:
         raise ValueError(f"Unknown scoring method {dev_eval_scoring}")
 
-def intermediate_name(filename, epoch, dev_scoring, score):
+def intermediate_name(filename: str, epoch: int, dev_scoring: DevScoring, score: float) -> str:
     """
     Build an informative intermediate checkpoint name from a base name, epoch #, and accuracy
     """
     root, ext = os.path.splitext(filename)
     return root + ".E{epoch:04d}-{score_type}{acc:05.2f}".format(**{"epoch": epoch, "score_type": dev_scoring.value, "acc": score * 100}) + ext
 
-def log_param_sizes(model):
+def log_param_sizes(model: nn.Module) -> None:
     logger.debug("--- Model parameter sizes ---")
     total_size = 0
     for name, param in model.named_parameters():
@@ -448,7 +451,7 @@ def log_param_sizes(model):
         logger.debug("  %s %d %d %d", name, param.element_size(), param.nelement(), param_size)
     logger.debug("  Total size: %d", total_size)
 
-def train_model(trainer, model_file, checkpoint_file, args, train_set, dev_set, labels):
+def train_model(trainer: Trainer, model_file: str, checkpoint_file: str | None, args: argparse.Namespace, train_set: list[Any], dev_set: list[Any], labels: list[Any]) -> None:
     tlogger.setLevel(logging.DEBUG)
 
     # TODO: use a (torch) dataloader to possibly speed up the GPU usage
@@ -581,7 +584,7 @@ def train_model(trainer, model_file, checkpoint_file, args, train_set, dev_set, 
     if args.wandb:
         wandb.finish()
 
-def main(args=None):
+def main(args: list[str] | None = None) -> None:
     args = parse_args(args)
     seed = utils.set_random_seed(args.seed)
     logger.info("Using random seed: %d" % seed)

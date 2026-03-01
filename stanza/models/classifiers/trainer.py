@@ -4,10 +4,13 @@ Organizes the model itself and its optimizer in one place
 Saving the optimizer allows for easy restarting of training
 """
 
+from __future__ import annotations
+
 import logging
 import os
 import torch
 from types import SimpleNamespace
+from typing import Any
 
 import stanza.models.classifiers.data as data
 import stanza.models.classifiers.cnn_classifier as cnn_classifier
@@ -17,6 +20,7 @@ from stanza.models.classifiers.utils import ModelType, WVType, ExtraVectors
 from stanza.models.common.foundation_cache import load_bert, load_bert_with_peft, load_charlm, load_pretrain
 from stanza.models.common.peft_config import build_peft_wrapper, load_peft_wrapper
 from stanza.models.common.pretrain import Pretrain
+from stanza.models.common import utils
 from stanza.models.common.utils import get_split_optimizer
 from stanza.models.constituency.tree_embedding import TreeEmbedding
 
@@ -30,7 +34,7 @@ class Trainer:
     Stores a constituency model and its optimizer
     """
 
-    def __init__(self, model, optimizer=None, epochs_trained=0, global_step=0, best_score=None):
+    def __init__(self, model: Any, optimizer: dict[str, Any] | None = None, epochs_trained: int = 0, global_step: int = 0, best_score: float | None = None) -> None:
         self.model = model
         self.optimizer = optimizer
         # we keep track of position in the learning so that we can
@@ -41,7 +45,7 @@ class Trainer:
         # of a model, we know how far we got
         self.best_score = best_score
 
-    def save(self, filename, epochs_trained=None, skip_modules=True, save_optimizer=True):
+    def save(self, filename: str, epochs_trained: int | None = None, skip_modules: bool = True, save_optimizer: bool = True) -> None:
         """
         save the current model, optimizer, and other state to filename
 
@@ -64,7 +68,7 @@ class Trainer:
         logger.info(f"Model saved to {filename}")
 
     @staticmethod
-    def load(filename, args, foundation_cache=None, load_optimizer=False):
+    def load(filename: str, args: Any, foundation_cache: Any | None = None, load_optimizer: bool = False) -> "Trainer":
         if not os.path.exists(filename):
             if args.save_dir is None:
                 raise FileNotFoundError(f"Cannot find model in {filename} and args.save_dir is None")
@@ -206,7 +210,7 @@ class Trainer:
         return trainer
 
 
-    def load_pretrain(args, foundation_cache):
+    def load_pretrain(args: Any, foundation_cache: Any) -> Pretrain:
         if args.wordvec_pretrain_file:
             pretrain_file = args.wordvec_pretrain_file
         elif args.wordvec_type:
@@ -229,7 +233,7 @@ class Trainer:
 
 
     @staticmethod
-    def build_new_model(args, train_set):
+    def build_new_model(args: Any, train_set: list[data.SentimentDatum] | None) -> "Trainer":
         """
         Load pretrained pieces and then build a new model
         """
@@ -299,5 +303,5 @@ class Trainer:
 
 
     @staticmethod
-    def build_optimizer(model, args):
+    def build_optimizer(model: Any, args: Any) -> dict[str, Any]:
         return get_split_optimizer(args.optim.lower(), model, args.learning_rate, momentum=args.momentum, weight_decay=args.weight_decay, bert_learning_rate=args.bert_learning_rate, bert_weight_decay=args.weight_decay * args.bert_weight_decay, is_peft=args.use_peft)

@@ -2,8 +2,11 @@
 Utility functions for data transformations.
 """
 
+from __future__ import annotations
+
 import logging
 import random
+from typing import Any
 
 import torch
 
@@ -12,11 +15,11 @@ from stanza.models.common.doc import HEAD, ID, UPOS
 
 logger = logging.getLogger('stanza')
 
-def map_to_ids(tokens, vocab):
+def map_to_ids(tokens: list[str], vocab: Any) -> list[int]:
     ids = [vocab[t] if t in vocab else constant.UNK_ID for t in tokens]
     return ids
 
-def get_long_tensor(tokens_list, batch_size, pad_id=constant.PAD_ID):
+def get_long_tensor(tokens_list: list[Any], batch_size: int, pad_id: int = constant.PAD_ID) -> torch.Tensor:
     """ Convert (list of )+ tokens to a padded LongTensor. """
     sizes = []
     x = tokens_list
@@ -30,7 +33,7 @@ def get_long_tensor(tokens_list, batch_size, pad_id=constant.PAD_ID):
         tokens[i, :len(s)] = torch.LongTensor(s)
     return tokens
 
-def get_float_tensor(features_list, batch_size):
+def get_float_tensor(features_list: list[list[list[float]]] | None, batch_size: int) -> torch.Tensor | None:
     if features_list is None or features_list[0] is None:
         return None
     seq_len = max(len(x) for x in features_list)
@@ -40,7 +43,7 @@ def get_float_tensor(features_list, batch_size):
         features[i,:len(f),:] = torch.FloatTensor(f)
     return features
 
-def sort_all(batch, lens):
+def sort_all(batch: list[Any], lens: list[int]) -> tuple[list[Any], list[int]]:
     """ Sort all fields by descending order of lens, and return the original indices. """
     if batch == [[]]:
         return [[]], []
@@ -48,7 +51,7 @@ def sort_all(batch, lens):
     sorted_all = [list(t) for t in zip(*sorted(zip(*unsorted_all), reverse=True))]
     return sorted_all[2:], sorted_all[1]
 
-def get_augment_ratio(train_data, should_augment_predicate, can_augment_predicate, desired_ratio=0.1, max_ratio=0.5):
+def get_augment_ratio(train_data: list[list[dict[str, Any]]], should_augment_predicate: Any, can_augment_predicate: Any, desired_ratio: float = 0.1, max_ratio: float = 0.5) -> float:
     """
     Returns X so that if you randomly select X * N sentences, you get 10%
 
@@ -85,11 +88,11 @@ def get_augment_ratio(train_data, should_augment_predicate, can_augment_predicat
     return ratio
 
 
-def should_augment_nopunct_predicate(sentence):
+def should_augment_nopunct_predicate(sentence: list[dict[str, Any]]) -> bool:
     last_word = sentence[-1]
     return last_word.get(UPOS, None) == 'PUNCT'
 
-def can_augment_nopunct_predicate(sentence):
+def can_augment_nopunct_predicate(sentence: list[dict[str, Any]]) -> bool:
     """
     Check that the sentence ends with PUNCT and also doesn't have any words which depend on the last word
     """
@@ -103,10 +106,11 @@ def can_augment_nopunct_predicate(sentence):
         return False
     return True
 
-def augment_punct(train_data, augment_ratio,
-                  should_augment_predicate=should_augment_nopunct_predicate,
-                  can_augment_predicate=can_augment_nopunct_predicate,
-                  keep_original_sentences=True):
+def augment_punct(train_data: list[list[dict[str, Any]]], augment_ratio: float | None,
+                  should_augment_predicate: Any = should_augment_nopunct_predicate,
+                  can_augment_predicate: Any = can_augment_nopunct_predicate,
+                  keep_original_sentences: bool = True) -> list[list[dict[str, Any]]]:
+
 
     """
     Adds extra training data to compensate for some models having all sentences end with PUNCT

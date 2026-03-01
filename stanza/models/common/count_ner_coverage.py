@@ -1,7 +1,7 @@
 from stanza.models.common import pretrain
 import argparse
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument('ners', type=str, nargs='*', help='Which treebanks to run on')
     parser.add_argument('--pretrain', type=str, default="/home/john/stanza_resources/hi/pretrain/hdtb.pt", help='Which pretrain to use')
@@ -11,7 +11,7 @@ def parse_args():
     return args
 
 
-def read_ner(filename):
+def read_ner(filename: str) -> list[str]:
     words = []
     for line in open(filename).readlines():
         line = line.strip()
@@ -22,7 +22,7 @@ def read_ner(filename):
         words.append(line.split("\t")[0])
     return words
 
-def count_coverage(pretrain, words):
+def count_coverage(pretrain: pretrain.Pretrain, words: list[str]) -> float:
     count = 0
     for w in words:
         if w in pretrain.vocab:

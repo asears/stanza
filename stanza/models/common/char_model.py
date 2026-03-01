@@ -16,9 +16,12 @@ Based on
 }
 """
 
+from __future__ import annotations
+
 from collections import Counter
 from operator import itemgetter
 import os
+from typing import Any
 
 import torch
 import torch.nn as nn
@@ -31,7 +34,7 @@ from stanza.models.common.dropout import SequenceUnitDropout
 from stanza.models.common.vocab import UNK_ID, CharVocab
 
 class CharacterModel(nn.Module):
-    def __init__(self, args, vocab, pad=False, bidirectional=False, attention=True):
+    def __init__(self, args: dict[str, Any], vocab: Any, pad: bool = False, bidirectional: bool = False, attention: bool = True) -> None:
         super().__init__()
         self.args = args
         self.pad = pad
@@ -52,7 +55,7 @@ class CharacterModel(nn.Module):
 
         self.dropout = nn.Dropout(args['dropout'])
 
-    def forward(self, chars, chars_mask, word_orig_idx, sentlens, wordlens):
+    def forward(self, chars: torch.Tensor, _chars_mask: torch.Tensor, word_orig_idx: list[int], sentlens: list[int], wordlens: list[int]) -> torch.Tensor | PackedSequence:
         embs = self.dropout(self.char_emb(chars))
         batch_size = embs.size(0)
         embs = pack_padded_sequence(embs, wordlens, batch_first=True)
@@ -79,7 +82,7 @@ class CharacterModel(nn.Module):
 
         return res
 
-def build_charlm_vocab(path, cutoff=0):
+def build_charlm_vocab(path: str, cutoff: int = 0) -> CharVocab:
     """
     Build a vocab for a CharacterLanguageModel
 
@@ -120,7 +123,7 @@ CHARLM_END = " "
 
 class CharacterLanguageModel(nn.Module):
 
-    def __init__(self, args, vocab, pad=False, is_forward_lm=True):
+    def __init__(self, args: dict[str, Any], vocab: Any, pad: bool = False, is_forward_lm: bool = True) -> None:
         super().__init__()
         self.args = args
         self.vocab = vocab
@@ -142,7 +145,7 @@ class CharacterLanguageModel(nn.Module):
         self.dropout = nn.Dropout(args['char_dropout'])
         self.char_dropout = SequenceUnitDropout(args.get('char_unit_dropout', 0), UNK_ID)
 
-    def forward(self, chars, charlens, hidden=None):
+    def forward(self, chars: torch.Tensor, charlens: list[int], hidden: tuple[torch.Tensor, torch.Tensor] | None = None) -> tuple[torch.Tensor, tuple[torch.Tensor, torch.Tensor], torch.Tensor]:
         chars = self.char_dropout(chars)
         embs = self.dropout(self.char_emb(chars))
         batch_size = embs.size(0)
@@ -155,7 +158,7 @@ class CharacterLanguageModel(nn.Module):
         decoded = self.decoder(output)
         return output, hidden, decoded
 
-    def get_representation(self, chars, charoffsets, charlens, char_orig_idx):
+    def get_representation(self, chars: torch.Tensor, charoffsets: list[list[int]], charlens: list[int], char_orig_idx: list[int]) -> torch.Tensor | PackedSequence:
         with torch.no_grad():
             output, _, _ = self.forward(chars, charlens)
             res = [output[i, offsets] for i, offsets in enumerate(charoffsets)]
@@ -165,7 +168,7 @@ class CharacterLanguageModel(nn.Module):
                 res = pad_packed_sequence(res, batch_first=True)[0]
         return res
 
-    def per_char_representation(self, words):
+    def per_char_representation(self, words: list[str]) -> list[torch.Tensor]:
         device = next(self.parameters()).device
         vocab = self.char_vocab()
 
@@ -180,7 +183,7 @@ class CharacterLanguageModel(nn.Module):
             output = unsort(output, [x[2] for x in all_data])
         return output
 
-    def build_char_representation(self, sentences):
+    def build_char_representation(self, sentences: list[list[str]]) -> list[torch.Tensor]:
         """
         Return values from this charlm for a list of list of words
 
@@ -225,13 +228,13 @@ class CharacterLanguageModel(nn.Module):
 
         return res
 
-    def hidden_dim(self):
+    def hidden_dim(self) -> int:
         return self.args['char_hidden_dim']
 
-    def char_vocab(self):
+    def char_vocab(self) -> CharVocab:
         return self.vocab['char']
 
-    def train(self, mode=True):
+    def train(self, mode: bool = True) -> None:
         """
         Override the default train() function, so that when self.finetune == False, the training mode 
         won't be impacted by the parent models' status change.
@@ -242,7 +245,7 @@ class CharacterLanguageModel(nn.Module):
             if self.finetune: # only set to training mode in finetune status
                 super().train(mode)
 
-    def full_state(self):
+    def full_state(self) -> dict[str, Any]:
         state = {
             'vocab': self.vocab['char'].state_dict(),
             'args': self.args,
@@ -252,13 +255,13 @@ class CharacterLanguageModel(nn.Module):
         }
         return state
 
-    def save(self, filename):
+    def save(self, filename: str) -> None:
         os.makedirs(os.path.split(filename)[0], exist_ok=True)
         state = self.full_state()
         torch.save(state, filename, _use_new_zipfile_serialization=False)
 
     @classmethod
-    def from_full_state(cls, state, finetune=False):
+    def from_full_state(cls, state: dict[str, Any], finetune: bool = False) -> CharacterLanguageModel:
         vocab = {'char': CharVocab.load_state_dict(state['vocab'])}
         model = cls(state['args'], vocab, state['pad'], state['is_forward_lm'])
         model.load_state_dict(state['state_dict'])
@@ -267,7 +270,7 @@ class CharacterLanguageModel(nn.Module):
         return model
 
     @classmethod
-    def load(cls, filename, finetune=False):
+    def load(cls, filename: str, finetune: bool = False) -> CharacterLanguageModel:
         state = torch.load(filename, lambda storage, loc: storage, weights_only=True)
         # allow saving just the Model object,
         # and allow for old charlms to still work
@@ -279,11 +282,11 @@ class CharacterLanguageModelWordAdapter(nn.Module):
     """
     Adapts a character model to return embeddings for each character in a word
     """
-    def __init__(self, charlms):
+    def __init__(self, charlms: list[CharacterLanguageModel]) -> None:
         super().__init__()
         self.charlms = charlms
 
-    def forward(self, words, wrap=True):
+    def forward(self, words: list[str], wrap: bool = True) -> torch.Tensor:
         if wrap:
             words = [CHARLM_START + x + CHARLM_END for x in words]
         padded_reps = []
@@ -296,11 +299,11 @@ class CharacterLanguageModelWordAdapter(nn.Module):
         padded_rep = torch.cat(padded_reps, dim=2)
         return padded_rep
 
-    def hidden_dim(self):
+    def hidden_dim(self) -> int:
         return sum(charlm.hidden_dim() for charlm in self.charlms)
 
 class CharacterLanguageModelTrainer:
-    def __init__(self, model, params, optimizer, criterion, scheduler, epoch=1, global_step=0):
+    def __init__(self, model: CharacterLanguageModel, params: list[torch.Tensor], optimizer: Any, criterion: Any, scheduler: Any, epoch: int = 1, global_step: int = 0) -> None:
         self.model = model
         self.params = params
         self.optimizer = optimizer
@@ -309,7 +312,7 @@ class CharacterLanguageModelTrainer:
         self.epoch = epoch
         self.global_step = global_step
 
-    def save(self, filename, full=True):
+    def save(self, filename: str, full: bool = True) -> None:
         os.makedirs(os.path.split(filename)[0], exist_ok=True)
         state = {
             'model': self.model.full_state(),
@@ -325,7 +328,7 @@ class CharacterLanguageModelTrainer:
         torch.save(state, filename, _use_new_zipfile_serialization=False)
 
     @classmethod
-    def from_new_model(cls, args, vocab):
+    def from_new_model(cls, args: dict[str, Any], vocab: dict[str, Any]) -> CharacterLanguageModelTrainer:
         model = CharacterLanguageModel(args, vocab, is_forward_lm=True if args['direction'] == 'forward' else False)
         model = model.to(args['device'])
         params = [param for param in model.parameters() if param.requires_grad]
@@ -336,7 +339,7 @@ class CharacterLanguageModelTrainer:
 
 
     @classmethod
-    def load(cls, args, filename, finetune=False):
+    def load(cls, args: dict[str, Any], filename: str, finetune: bool = False) -> CharacterLanguageModelTrainer:
         """
         Load the model along with any other saved state for training
 

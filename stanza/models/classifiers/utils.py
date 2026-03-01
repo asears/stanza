@@ -26,7 +26,7 @@ class ModelType(Enum):
     CNN = 1
     CONSTITUENCY = 2
 
-def build_output_layers(fc_input_size, fc_shapes, num_classes):
+def build_output_layers(fc_input_size: int, fc_shapes: tuple[int, ...], num_classes: int) -> nn.ModuleList:
     """
     Build a sequence of fully connected layers to go from the final conv layer to num_classes
 

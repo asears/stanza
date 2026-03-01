@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import Any
+
 import torch
 
 import stanza.models.common.seq2seq_constant as constant
@@ -30,14 +34,14 @@ try:
     a = torch.tensor([1.])
     b = torch.tensor([2.])
     c = torch.div(a, b, rounding_mode='trunc')
-    def trunc_division(a, b):
+    def trunc_division(a: torch.Tensor, b: int) -> torch.Tensor:
         return torch.div(a, b, rounding_mode='trunc')
 except TypeError:
-    def trunc_division(a, b):
+    def trunc_division(a: torch.Tensor, b: int) -> torch.Tensor:
         return a // b
 
 class Beam:
-    def __init__(self, size, device=None):
+    def __init__(self, size: int, device: torch.device | None = None) -> None:
         self.size = size
         self.done = False
 
@@ -55,15 +59,15 @@ class Beam:
         # The copy indices for each time
         self.copy = []
 
-    def get_current_state(self):
+    def get_current_state(self) -> torch.Tensor:
         "Get the outputs for the current timestep."
         return self.nextYs[-1]
 
-    def get_current_origin(self):
+    def get_current_origin(self) -> torch.Tensor:
         "Get the backpointers for the current timestep."
         return self.prevKs[-1]
 
-    def advance(self, wordLk, copy_indices=None):
+    def advance(self, wordLk: torch.Tensor, copy_indices: torch.Tensor | None = None) -> bool:
         """
         Given prob over words for every last beam `wordLk` and attention
         `attnOut`: Compute and update the beam search.
@@ -109,7 +113,7 @@ class Beam:
 
         return self.done
 
-    def sort_best(self):
+    def sort_best(self) -> tuple[torch.Tensor, torch.Tensor]:
         return torch.sort(self.scores, 0, True)
 
     def get_best(self):
@@ -117,7 +121,7 @@ class Beam:
         scores, ids = self.sortBest()
         return scores[1], ids[1]
 
-    def get_hyp(self, k):
+    def get_hyp(self, k: int | torch.Tensor) -> list[Any]:
         """
         Walk back to construct the full hypothesis.
 

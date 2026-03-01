@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -10,7 +12,7 @@ class HLSTMCell(nn.modules.rnn.RNNCellBase):
     A Highway LSTM Cell as proposed in Zhang et al. (2018) Highway Long Short-Term Memory RNNs for 
     Distant Speech Recognition.
     """
-    def __init__(self, input_size, hidden_size, bias=True):
+    def __init__(self, input_size: int, hidden_size: int, bias: bool = True) -> None:
         super(HLSTMCell, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -24,7 +26,7 @@ class HLSTMCell(nn.modules.rnn.RNNCellBase):
         # highway gate parameters
         self.gate = nn.Linear(input_size + 2 * hidden_size, hidden_size, bias=bias)
 
-    def forward(self, input, c_l_minus_one=None, hx=None):
+    def forward(self, input: torch.Tensor, c_l_minus_one: torch.Tensor | None = None, hx: tuple[torch.Tensor, torch.Tensor] | None = None) -> tuple[torch.Tensor, torch.Tensor]:
         self.check_forward_input(input)
         if hx is None:
             hx = input.new_zeros(input.size(0), self.hidden_size, requires_grad=False)
@@ -57,9 +59,9 @@ class HighwayLSTM(nn.Module):
     A Highway LSTM network, as used in the original Tensorflow version of the Dozat parser. Note that this
     is independent from the HLSTMCell above.
     """
-    def __init__(self, input_size, hidden_size,
-                 num_layers=1, bias=True, batch_first=False,
-                 dropout=0, bidirectional=False, rec_dropout=0, highway_func=None, pad=False):
+    def __init__(self, input_size: int, hidden_size: int,
+                 num_layers: int = 1, bias: bool = True, batch_first: bool = False,
+                 dropout: float = 0, bidirectional: bool = False, rec_dropout: float = 0, highway_func=None, pad: bool = False) -> None:
         super(HighwayLSTM, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
@@ -88,7 +90,7 @@ class HighwayLSTM(nn.Module):
             self.gate[-1].bias.data.zero_()
             in_size = hidden_size * self.num_directions
 
-    def forward(self, input, seqlens, hx=None):
+    def forward(self, input: torch.Tensor | PackedSequence, seqlens: list[int], hx: tuple[torch.Tensor, torch.Tensor] | None = None) -> tuple[torch.Tensor | PackedSequence, tuple[torch.Tensor, torch.Tensor]]:
         highway_func = (lambda x: x) if self.highway_func is None else self.highway_func
 
         hs = []

@@ -5,6 +5,8 @@ This implementation combines a deep biaffine graph-based parser with linearizati
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
+from __future__ import annotations
+
 """
 Training and evaluation for the parser.
 """
@@ -18,6 +20,7 @@ import logging
 import numpy as np
 import random
 import zipfile
+from typing import Any
 
 
 from stanza.models.depparse.data import DataLoader
@@ -32,7 +35,7 @@ from stanza.utils.conll import CoNLL
 
 logger = logging.getLogger('stanza')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/depparse', help='Root dir for saving models.')
     parser.add_argument('--wordvec_dir', type=str, default='extern_data/word2vec', help='Directory of word vectors.')
@@ -196,7 +199,7 @@ def build_argparse():
     parser.add_argument('--train_size', type=int, default=None, help='If specified, randomly select this many sentences from the training data')
     return parser
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
     args = parser.parse_args(args=args)
     resolve_peft_args(args, logger)
@@ -207,7 +210,7 @@ def parse_args(args=None):
     args = vars(args)
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> Any:
     args = parse_args(args=args)
 
     utils.set_random_seed(args['seed'])
@@ -219,11 +222,11 @@ def main(args=None):
     else:
         return evaluate(args)
 
-def model_file_name(args):
+def model_file_name(args: dict[str, Any]) -> str:
     return utils.standard_model_file_name(args, "parser")
 
 # TODO: refactor with everywhere
-def load_pretrain(args):
+def load_pretrain(args: dict[str, Any]) -> pretrain.Pretrain | None:
     pt = None
     if args['pretrain']:
         pretrain_file = pretrain.find_pretrain_file(args['wordvec_pretrain_file'], args['save_dir'], args['shorthand'], args['lang'])
@@ -234,7 +237,7 @@ def load_pretrain(args):
         pt = pretrain.Pretrain(pretrain_file, vec_file, args['pretrain_max_vocab'])
     return pt
 
-def predict_dataset(trainer, dev_batch):
+def predict_dataset(trainer: Trainer, dev_batch: DataLoader) -> list[Any]:
     dev_preds = []
     if len(dev_batch) > 0:
         for batch in dev_batch:
@@ -243,7 +246,7 @@ def predict_dataset(trainer, dev_batch):
         dev_preds = utils.unsort(dev_preds, dev_batch.data_orig_idx)
     return dev_preds
 
-def train(args):
+def train(args: dict[str, Any]) -> tuple[Trainer, Any]:
     model_file = model_file_name(args)
     utils.ensure_dir(os.path.split(model_file)[0])
 
@@ -457,7 +460,7 @@ def train(args):
 
     return trainer, _
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> tuple[Trainer, Any]:
     model_file = model_file_name(args)
     # load pretrained vectors if needed
     pretrain = load_pretrain(args)
@@ -472,7 +475,7 @@ def evaluate(args):
         trainer.model.log_norms()
     return trainer, evaluate_trainer(args, trainer, pretrain)
 
-def evaluate_trainer(args, trainer, pretrain):
+def evaluate_trainer(args: dict[str, Any], trainer: Trainer, pretrain: pretrain.Pretrain | None) -> Any:
     system_pred_file = args['output_file']
     loaded_args, vocab = trainer.args, trainer.vocab
 

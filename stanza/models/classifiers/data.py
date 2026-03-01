@@ -1,11 +1,13 @@
 """Stanza models classifier data functions."""
 
+from __future__ import annotations
+
 import collections
 import logging
 import json
 import random
 import re
-from typing import List
+from typing import Any
 
 from stanza.models.classifiers.utils import WVType
 from stanza.models.common.vocab import PAD, PAD_ID, UNK, UNK_ID
@@ -14,28 +16,28 @@ import stanza.models.constituency.tree_reader as tree_reader
 logger = logging.getLogger('stanza')
 
 class SentimentDatum:
-    def __init__(self, sentiment, text, constituency=None):
+    def __init__(self, sentiment: str, text: list[str], constituency: Any | None = None) -> None:
         self.sentiment = sentiment
         self.text = text
         self.constituency = constituency
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if self is other:
             return True
         if not isinstance(other, SentimentDatum):
             return False
         return self.sentiment == other.sentiment and self.text == other.text and self.constituency == other.constituency
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self._asdict())
 
-    def _asdict(self):
+    def _asdict(self) -> dict[str, Any]:
         if self.constituency is None:
             return {'sentiment': self.sentiment, 'text': self.text}
         else:
             return {'sentiment': self.sentiment, 'text': self.text, 'constituency': str(self.constituency)}
 
-def update_text(sentence: List[str], wordvec_type: WVType) -> List[str]:
+def update_text(sentence: list[str], wordvec_type: WVType) -> list[str]:
     """
     Process a line of text (with tokenization provided as whitespace)
     into a list of strings.
@@ -68,7 +70,7 @@ def update_text(sentence: List[str], wordvec_type: WVType) -> List[str]:
         raise ValueError(f"Unknown wordvec_type {wordvec_type}")
 
 
-def read_dataset(dataset, wordvec_type: WVType, min_len: int) -> List[SentimentDatum]:
+def read_dataset(dataset: str, wordvec_type: WVType, min_len: int | None) -> list[SentimentDatum]:
     """
     returns a list where the values of the list are
       label, [token...]
@@ -87,7 +89,7 @@ def read_dataset(dataset, wordvec_type: WVType, min_len: int) -> List[SentimentD
         lines = [x for x in lines if len(x.text) >= min_len]
     return lines
 
-def dataset_labels(dataset):
+def dataset_labels(dataset: list[SentimentDatum]) -> list[str]:
     """
     Returns a sorted list of label name
     """
@@ -101,7 +103,7 @@ def dataset_labels(dataset):
         labels = sorted(list(labels))
     return labels
 
-def dataset_vocab(dataset):
+def dataset_vocab(dataset: list[SentimentDatum]) -> list[str]:
     vocab = set()
     for line in dataset:
         for word in line.text:
@@ -111,7 +113,7 @@ def dataset_vocab(dataset):
         raise ValueError("Unexpected values for PAD and UNK!")
     return vocab
 
-def sort_dataset_by_len(dataset, keep_index=False):
+def sort_dataset_by_len(dataset: list[SentimentDatum], keep_index: bool = False) -> collections.OrderedDict[int, list[Any]]:
     """
     returns a dict mapping length -> list of items of that length
 
@@ -128,7 +130,7 @@ def sort_dataset_by_len(dataset, keep_index=False):
             sorted_dataset[len(item.text)].append(item)
     return sorted_dataset
 
-def shuffle_dataset(sorted_dataset, batch_size, batch_single_item):
+def shuffle_dataset(sorted_dataset: collections.OrderedDict[int, list[SentimentDatum]], batch_size: int, batch_single_item: int) -> list[list[SentimentDatum]]:
     """
     Given a dataset sorted by len, sorts within each length to make
     chunks of roughly the same size.  Returns all items as a single list.
@@ -154,7 +156,7 @@ def shuffle_dataset(sorted_dataset, batch_size, batch_single_item):
     return batches
 
 
-def check_labels(labels, dataset):
+def check_labels(labels: list[str], dataset: list[SentimentDatum]) -> None:
     """
     Check that all of the labels in the dataset are in the known labels.
 

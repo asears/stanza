@@ -3,6 +3,7 @@ import os
 import logging
 
 from stanza.models.common import utils
+from stanza.models.common.foundation_cache import FoundationCache
 from stanza.models.constituency.utils import retag_tags
 from stanza.models.constituency.trainer import Trainer
 from stanza.models.constituency.tree_reader import read_trees

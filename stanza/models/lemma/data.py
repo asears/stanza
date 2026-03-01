@@ -68,7 +68,7 @@ class DataLoader:
         pos_vocab = Vocab(pos_data, self.args['lang'])
         return char_vocab, pos_vocab
 
-    def preprocess(self, data, char_vocab, pos_vocab, args):
+    def preprocess(self, data, char_vocab, pos_vocab, _args):
         processed = []
         for d in data:
             edit_type = edit.EDIT_TO_ID[edit.get_edit_type(d[0], d[2])]

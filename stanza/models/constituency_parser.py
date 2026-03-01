@@ -158,11 +158,15 @@ Some alternate optimizer methods:
 
 """
 
+from __future__ import annotations
+
 import argparse
+import importlib.util
 import logging
 import os
 import random
 import re
+from typing import Any
 
 
 import stanza
@@ -181,7 +185,7 @@ from stanza.resources.common import DEFAULT_MODEL_DIR
 logger = logging.getLogger('stanza')
 tlogger = logging.getLogger('stanza.constituency.trainer')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     """
     Adds the arguments for building the con parser
 
@@ -751,7 +755,7 @@ def build_argparse():
 
     return parser
 
-def build_model_filename(args):
+def build_model_filename(args: dict[str, Any]) -> str:
     embedding = utils.embedding_name(args)
     maybe_finetune = "finetuned" if args['bert_finetune'] or args['stage1_bert_finetune'] else ""
     transformer_finetune_begin = "%d" % args['bert_finetune_begin_epoch'] if args['bert_finetune_begin_epoch'] is not None else ""
@@ -786,7 +790,7 @@ def build_model_filename(args):
         model_save_file = os.path.join(args['save_dir'], model_save_file)
     return model_save_file
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
 
     args = parser.parse_args(args=args)
@@ -811,7 +815,8 @@ def parse_args(args=None):
             # if MADGRAD exists, use it
             # otherwise, adamw
             try:
-                import madgrad
+              if importlib.util.find_spec("madgrad") is None:
+                raise ModuleNotFoundError("madgrad")
                 args.optim = "madgrad"
                 logger.info("Multistage training is set, optimizer is not chosen, and MADGRAD is available.  Will use MADGRAD as the second stage optimizer.")
             except ModuleNotFoundError as e:
@@ -878,7 +883,7 @@ def parse_args(args=None):
 
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> None:
     """
     Main function for building con parser
 

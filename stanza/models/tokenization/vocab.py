@@ -1,5 +1,6 @@
 from collections import Counter
 import re
+from typing import Any
 
 from stanza.models.common.vocab import BaseVocab
 from stanza.models.common.vocab import UNK, PAD
@@ -7,11 +8,11 @@ from stanza.models.common.vocab import UNK, PAD
 SPACE_RE = re.compile(r'\s')
 
 class Vocab(BaseVocab):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.lang_replaces_spaces = any([self.lang.startswith(x) for x in ['zh', 'ja', 'ko']])
 
-    def build_vocab(self):
+    def build_vocab(self) -> None:
         paras = self.data
         counter = Counter()
         for para in paras:
@@ -22,16 +23,16 @@ class Vocab(BaseVocab):
         self._id2unit = [PAD, UNK] + list(sorted(list(counter.keys()), key=lambda k: counter[k], reverse=True))
         self._unit2id = {w:i for i, w in enumerate(self._id2unit)}
 
-    def append(self, unit):
+    def append(self, unit: str) -> None:
         self._id2unit.append(unit)
         idx = len(self._id2unit) - 1
         self._unit2id[unit] = idx
 
-    def normalize_unit(self, unit):
+    def normalize_unit(self, unit: str) -> str:
         # Normalize minimal units used by the tokenizer
         return unit
 
-    def normalize_token(self, token):
+    def normalize_token(self, token: str) -> str:
         token = SPACE_RE.sub(' ', token.lstrip())
 
         if self.lang_replaces_spaces:

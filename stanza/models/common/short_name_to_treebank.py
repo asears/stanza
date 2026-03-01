@@ -352,7 +352,7 @@ SHORT_NAMES = {
 }
 
 
-def short_name_to_treebank(short_name):
+def short_name_to_treebank(short_name: str) -> str:
     return SHORT_NAMES[short_name]
 
 
@@ -699,7 +699,7 @@ CANONICAL_NAMES = {
 }
 
 
-def canonical_treebank_name(ud_name):
+def canonical_treebank_name(ud_name: str) -> str:
     if ud_name in SHORT_NAMES:
         return SHORT_NAMES[ud_name]
     return CANONICAL_NAMES.get(ud_name.lower(), ud_name)

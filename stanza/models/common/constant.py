@@ -490,7 +490,7 @@ treebank_special_cases = {
 
 SHORTNAME_RE = re.compile("^[a-z-]+_[a-z0-9-_]+$")
 
-def langcode_to_lang(lcode):
+def langcode_to_lang(lcode: str) -> str:
     if lcode in lcode2lang:
         return lcode2lang[lcode]
     elif lcode.lower() in lcode2lang:
@@ -498,7 +498,7 @@ def langcode_to_lang(lcode):
     else:
         return lcode
 
-def pretty_langcode_to_lang(lcode):
+def pretty_langcode_to_lang(lcode: str) -> str:
     lang = langcode_to_lang(lcode)
     lang = lang.replace("_", " ")
     if lang == 'Simplified Chinese':
@@ -507,7 +507,7 @@ def pretty_langcode_to_lang(lcode):
         lang = 'Chinese (Traditional)'
     return lang
 
-def lang_to_langcode(lang):
+def lang_to_langcode(lang: str) -> str:
     if lang in lang2lcode:
         lcode = lang2lcode[lang]
     elif lang.lower() in langlower2lcode:
@@ -522,7 +522,7 @@ def lang_to_langcode(lang):
 
 RIGHT_TO_LEFT = set(["ar", "arc", "az", "ckb", "dv", "ff", "he", "ku", "mzn", "nqo", "ps", "fa", "rhg", "sd", "syr", "ur"])
 
-def is_right_to_left(lang):
+def is_right_to_left(lang: str) -> bool:
     """
     Covers all the RtL languages we support, as well as many we don't.
 
@@ -531,7 +531,7 @@ def is_right_to_left(lang):
     lcode = lang_to_langcode(lang)
     return lcode in RIGHT_TO_LEFT
 
-def treebank_to_short_name(treebank):
+def treebank_to_short_name(treebank: str) -> str:
     """ Convert treebank name to short code. """
     if treebank in treebank_special_cases:
         return treebank_special_cases.get(treebank)
@@ -557,7 +557,7 @@ def treebank_to_short_name(treebank):
     short = f"{lcode}_{corpus.lower()}"
     return short
 
-def treebank_to_langid(treebank):
+def treebank_to_langid(treebank: str) -> str:
     """ Convert treebank name to langid """
     short_name = treebank_to_short_name(treebank)
     return short_name.split("_")[0]

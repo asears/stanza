@@ -261,14 +261,14 @@ class LSTMModel(BaseModel, nn.Module):
             self.reduce_heads = self.args['reduce_heads']
             if self.hidden_size % args['constituent_heads'] != 0:
                 # TODO: technically we should either use the LCM of this and reduce_heads, or just have two separate fields
-                self.hidden_size = self.hidden_size + args['constituent_heads'] - (hidden_size % args['constituent_heads'])
+                self.hidden_size = self.hidden_size + args['constituent_heads'] - (self.hidden_size % args['constituent_heads'])
                 if self.constituency_composition == ConstituencyComposition.ATTN and self.hidden_size % self.reduce_heads != 0:
                     raise ValueError("--reduce_heads and --constituent_heads not compatible!")
 
         self.transition_hidden_size = self.args['transition_hidden_size']
         if args['transition_stack'] == StackHistory.ATTN:
             if self.transition_hidden_size % args['transition_heads'] > 0:
-                logger.warning("transition_hidden_size %d %% transition_heads %d != 0.  reconfiguring", transition_hidden_size, args['transition_heads'])
+                logger.warning("transition_hidden_size %d %% transition_heads %d != 0.  reconfiguring", self.transition_hidden_size, args['transition_heads'])
                 self.transition_hidden_size = self.transition_hidden_size + args['transition_heads'] - (self.transition_hidden_size % args['transition_heads'])
 
         self.tag_embedding_dim = self.args['tag_embedding_dim']

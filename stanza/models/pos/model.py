@@ -138,7 +138,7 @@ class Tagger(nn.Module):
     def log_norms(self):
         utils.log_norms(self)
 
-    def forward(self, word, word_mask, wordchars, wordchars_mask, upos, xpos, ufeats, pretrained, word_orig_idx, sentlens, wordlens, text):
+    def forward(self, word, _word_mask, wordchars, wordchars_mask, upos, xpos, ufeats, pretrained, word_orig_idx, sentlens, wordlens, text):
         
         def pack(x):
             return pack_padded_sequence(x, sentlens, batch_first=True)

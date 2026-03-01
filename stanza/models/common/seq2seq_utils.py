@@ -1,13 +1,16 @@
 """
 Utils for seq2seq models.
 """
+from __future__ import annotations
+
 import json
+from typing import Any
 import torch
 
 import stanza.models.common.seq2seq_constant as constant
 
 # torch utils
-def get_optimizer(name, parameters, lr):
+def get_optimizer(name: str, parameters: list[dict[str, Any]], lr: float) -> torch.optim.Optimizer:
     if name == 'sgd':
         return torch.optim.SGD(parameters, lr=lr)
     elif name == 'adagrad':
@@ -19,18 +22,18 @@ def get_optimizer(name, parameters, lr):
     else:
         raise Exception(f"Unsupported optimizer: {name}")
 
-def change_lr(optimizer, new_lr):
+def change_lr(optimizer: torch.optim.Optimizer, new_lr: float) -> None:
     for param_group in optimizer.param_groups:
         param_group['lr'] = new_lr
 
-def flatten_indices(seq_lens, width):
+def flatten_indices(seq_lens: list[int], width: int) -> list[int]:
     flat = []
     for i, l in enumerate(seq_lens):
         for j in range(l):
             flat.append(i * width + j)
     return flat
 
-def keep_partial_grad(grad, topk):
+def keep_partial_grad(grad: torch.Tensor, topk: int) -> torch.Tensor:
     """
     Keep only the topk rows of grads.
     """
@@ -39,21 +42,21 @@ def keep_partial_grad(grad, topk):
     return grad
 
 # other utils
-def save_config(config, path, verbose=True):
+def save_config(config: dict[str, Any], path: str, verbose: bool = True) -> dict[str, Any]:
     with open(path, 'w') as outfile:
         json.dump(config, outfile, indent=2)
     if verbose:
         print(f"Config saved to file {path}")
     return config
 
-def load_config(path, verbose=True):
+def load_config(path: str, verbose: bool = True) -> dict[str, Any]:
     with open(path) as f:
         config = json.load(f)
     if verbose:
         print(f"Config loaded from file {path}")
     return config
 
-def unmap_with_copy(indices, src_tokens, vocab):
+def unmap_with_copy(indices: list[list[int]], src_tokens: list[list[str]], vocab: Any) -> list[list[str]]:
     """
     Unmap a list of list of indices, by optionally copying from src_tokens.
     """
@@ -69,7 +72,7 @@ def unmap_with_copy(indices, src_tokens, vocab):
         result += [words]
     return result
 
-def prune_decoded_seqs(seqs):
+def prune_decoded_seqs(seqs: list[list[str]]) -> list[list[str]]:
     """
     Prune decoded sequences after EOS token.
     """
@@ -82,7 +85,7 @@ def prune_decoded_seqs(seqs):
             out += [s]
     return out
 
-def prune_hyp(hyp):
+def prune_hyp(hyp: list[int]) -> list[int]:
     """
     Prune a decoded hypothesis
     """
@@ -92,14 +95,14 @@ def prune_hyp(hyp):
     else:
         return hyp
 
-def prune(data_list, lens):
+def prune(data_list: list[list[Any]], lens: list[int]) -> list[list[Any]]:
     assert len(data_list) == len(lens)
     nl = []
     for d, l in zip(data_list, lens):
         nl.append(d[:l])
     return nl
 
-def sort(packed, ref, reverse=True):
+def sort(packed: tuple[list[Any], ...] | list[list[Any]], ref: list[Any], reverse: bool = True) -> tuple[list[Any], ...]:
     """
     Sort a series of packed list, according to a ref list.
     Also return the original index before the sort.
@@ -109,7 +112,7 @@ def sort(packed, ref, reverse=True):
     sorted_packed = [list(t) for t in zip(*sorted(zip(*packed), reverse=reverse))]
     return tuple(sorted_packed[1:])
 
-def unsort(sorted_list, oidx):
+def unsort(sorted_list: list[Any], oidx: list[int]) -> list[Any]:
     """
     Unsort a sorted list, based on the original idx.
     """

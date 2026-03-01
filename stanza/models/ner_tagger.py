@@ -6,6 +6,8 @@ to produce NER predictions.
 For details please refer to paper: https://nlp.stanford.edu/pubs/qi2018universal.pdf.
 """
 
+from __future__ import annotations
+
 import os
 import time
 from datetime import datetime
@@ -15,6 +17,7 @@ import numpy as np
 import re
 import json
 import torch
+from typing import Any
 
 from stanza.models.ner.data import DataLoader
 from stanza.models.ner.trainer import Trainer
@@ -28,7 +31,7 @@ from stanza.utils.confusion import confusion_to_weighted_f1, format_confusion
 
 logger = logging.getLogger('stanza')
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str, default='data/ner', help='Directory of NER data.')
     parser.add_argument('--wordvec_dir', type=str, default='extern_data/word2vec', help='Directory of word vectors')
@@ -116,7 +119,7 @@ def build_argparse():
     parser.add_argument('--wandb_name', default=None, help='Name of a wandb session to start when training.  Will default to the dataset short name')
     return parser
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
     add_peft_args(parser)
     args = parser.parse_args(args=args)
@@ -128,7 +131,7 @@ def parse_args(args=None):
     args = vars(args)
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> Any:
     args = parse_args(args=args)
 
     utils.set_random_seed(args['seed'])
@@ -140,7 +143,7 @@ def main(args=None):
     else:
         evaluate(args)
 
-def load_pretrain(args):
+def load_pretrain(args: dict[str, Any]) -> Pretrain | None:
     # load pretrained vectors
     if not args['pretrain']:
         return None
@@ -157,10 +160,10 @@ def load_pretrain(args):
         pretrain = Pretrain(None, vec_file, args['pretrain_max_vocab'], save_to_file=False)
     return pretrain
 
-def model_file_name(args):
+def model_file_name(args: dict[str, Any]) -> str:
     return utils.standard_model_file_name(args, "nertagger")
 
-def get_known_tags(tags):
+def get_known_tags(tags: list[list[list[str]]]) -> list[list[str]]:
     """
     Tags are stored in the dataset as a list of list of tags
 
@@ -174,7 +177,7 @@ def get_known_tags(tags):
                 known_tags[tag_idx].add(tag)
     return [sorted(x) for x in known_tags]
 
-def warn_missing_tags(tag_vocab, data_tags, error_msg, bioes_to_bio=False):
+def warn_missing_tags(tag_vocab: Any, data_tags: list[list[list[str]]], error_msg: str, bioes_to_bio: bool = False) -> None:
     """
     Check for tags missing from the tag_vocab.
 
@@ -201,7 +204,7 @@ def warn_missing_tags(tag_vocab, data_tags, error_msg, bioes_to_bio=False):
             current_tags = set([re.sub("^E-", "I-", re.sub("^S-", "B-", x)) for x in current_tags])
         utils.warn_missing_tags(tag_set, current_tags, current_error_msg)
 
-def train(args):
+def train(args: dict[str, Any]) -> Trainer | None:
     model_file = model_file_name(args)
 
     save_dir, save_name = os.path.split(model_file)
@@ -400,7 +403,7 @@ def train(args):
 
     return trainer
 
-def write_ner_results(filename, batch, preds, predict_tagset):
+def write_ner_results(filename: str, batch: DataLoader, preds: list[list[str]], predict_tagset: int) -> None:
     if len(batch.tags) != len(preds):
         raise ValueError("Unexpected batch vs pred lengths: %d vs %d" % (len(batch.tags), len(preds)))
 
@@ -419,14 +422,14 @@ def write_ner_results(filename, batch, preds, predict_tagset):
                     fout.write("%s\t%s\t%s\n" % (word, gold, pred))
                 fout.write("\n")
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> Any:
     # file paths
     model_file = model_file_name(args)
 
     loaded_args, trainer, vocab = load_model(args, model_file)
     return evaluate_model(loaded_args, trainer, vocab, args['eval_file'])
 
-def evaluate_model(loaded_args, trainer, vocab, eval_file):
+def evaluate_model(loaded_args: dict[str, Any], trainer: Trainer, vocab: Any, eval_file: str) -> dict[str, Any]:
     if loaded_args['log_norms']:
         trainer.model.log_norms()
 
@@ -465,7 +468,7 @@ def evaluate_model(loaded_args, trainer, vocab, eval_file):
 
     return confusion
 
-def load_model(args, model_file):
+def load_model(args: dict[str, Any], model_file: str) -> tuple[dict[str, Any], Trainer, Any]:
     # load model
     charlm_args = {}
     if 'charlm_forward_file' in args:

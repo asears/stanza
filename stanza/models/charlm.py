@@ -2,12 +2,15 @@
 Entry point for training and evaluating a character-level neural language model.
 """
 
+from __future__ import annotations
+
 import argparse
 import logging
 import math
 import os
 import time
 from types import GeneratorType
+from typing import Any, Generator
 import numpy as np
 import torch
 
@@ -17,7 +20,7 @@ from stanza.models.common import utils
 
 logger = logging.getLogger('stanza')
 
-def repackage_hidden(h):
+def repackage_hidden(h: Any) -> Any:
     """Wraps hidden states in new Tensors,
     to detach them from their history."""
     if isinstance(h, torch.Tensor):
@@ -25,7 +28,7 @@ def repackage_hidden(h):
     else:
         return tuple(repackage_hidden(v) for v in h)
 
-def batchify(data, bsz, device):
+def batchify(data: torch.Tensor, bsz: int, device: Any) -> torch.Tensor:
     # Work out how cleanly we can divide the dataset into bsz parts.
     nbatch = data.size(0) // bsz
     # Trim off any extra elements that wouldn't cleanly fit (remainders).
@@ -35,13 +38,13 @@ def batchify(data, bsz, device):
     data = data.to(device)
     return data
 
-def get_batch(source, i, seq_len):
+def get_batch(source: torch.Tensor, i: int, seq_len: int) -> tuple[torch.Tensor, torch.Tensor]:
     seq_len = min(seq_len, source.size(1) - 1 - i)
     data = source[:, i:i+seq_len]
     target = source[:, i+1:i+1+seq_len].reshape(-1)
     return data, target
 
-def load_file(filename, vocab, direction):
+def load_file(filename: str, vocab: dict[str, Any], direction: str) -> torch.Tensor:
     with utils.open_read_text(filename) as fin:
         data = fin.read()
 
@@ -49,7 +52,7 @@ def load_file(filename, vocab, direction):
     if direction == 'backward': idx = idx[::-1]
     return torch.tensor(idx)
 
-def load_data(path, vocab, direction):
+def load_data(path: str, vocab: dict[str, Any], direction: str) -> Generator[torch.Tensor, None, None]:
     if os.path.isdir(path):
         filenames = sorted(os.listdir(path))
         for filename in filenames:
@@ -60,7 +63,7 @@ def load_data(path, vocab, direction):
         data = load_file(path, vocab, direction)
         yield data
 
-def build_argparse():
+def build_argparse() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--train_file', type=str, help="Input plaintext file")
     parser.add_argument('--train_dir', type=str, help="If non-empty, load from directory with multiple training files")
@@ -105,7 +108,7 @@ def build_argparse():
     parser.add_argument('--wandb_name', default=None, help='Name of a wandb session to start when training.  Will default to the dataset short name')
     return parser
 
-def build_model_filename(args):
+def build_model_filename(args: dict[str, Any]) -> str:
     if args['save_name']:
         save_name = args['save_name']
     else:
@@ -113,7 +116,7 @@ def build_model_filename(args):
     model_file = os.path.join(args['save_dir'], save_name)
     return model_file
 
-def parse_args(args=None):
+def parse_args(args: list[str] | None = None) -> dict[str, Any]:
     parser = build_argparse()
 
     args = parser.parse_args(args=args)
@@ -124,7 +127,7 @@ def parse_args(args=None):
     args = vars(args)
     return args
 
-def main(args=None):
+def main(args: list[str] | None = None) -> None:
     args = parse_args(args=args)
 
     utils.set_random_seed(args['seed'])
@@ -138,7 +141,13 @@ def main(args=None):
     else:
         evaluate(args)
 
-def evaluate_epoch(args, vocab, data, model, criterion):
+def evaluate_epoch(
+    args: dict[str, Any],
+    vocab: dict[str, Any],
+    data: torch.Tensor | Generator[torch.Tensor, None, None],
+    model: CharacterLanguageModel,
+    criterion: torch.nn.Module,
+) -> float:
     """
     Run an evaluation over entire dataset.
     """
@@ -163,7 +172,16 @@ def evaluate_epoch(args, vocab, data, model, criterion):
             total_loss += data.size(1) * loss.data.item()
     return total_loss / batches.size(1)
 
-def evaluate_and_save(args, vocab, data, trainer, best_loss, model_file, checkpoint_file, writer=None):
+def evaluate_and_save(
+    args: dict[str, Any],
+    vocab: dict[str, Any],
+    data: torch.Tensor | Generator[torch.Tensor, None, None],
+    trainer: CharacterLanguageModelTrainer,
+    best_loss: float | None,
+    model_file: str,
+    checkpoint_file: str | None,
+    writer: Any = None,
+) -> tuple[float, float, float | None]:
     """
     Run an evaluation over entire dataset, print progress and save the model if necessary.
     """
@@ -193,13 +211,13 @@ def evaluate_and_save(args, vocab, data, trainer, best_loss, model_file, checkpo
 
     return loss, ppl, best_loss
 
-def get_current_lr(trainer, args):
+def get_current_lr(trainer: CharacterLanguageModelTrainer, args: dict[str, Any]) -> float:
     return trainer.scheduler.state_dict().get('_last_lr', [args['lr0']])[0]
 
-def load_char_vocab(vocab_file):
+def load_char_vocab(vocab_file: str) -> dict[str, CharVocab]:
     return {'char': CharVocab.load_state_dict(torch.load(vocab_file, lambda storage, loc: storage, weights_only=True))}
 
-def train(args):
+def train(args: dict[str, Any]) -> None:
     utils.log_training_args(args, logger)
     model_file = build_model_filename(args)
 
@@ -327,7 +345,7 @@ def train(args):
         wandb.finish()
     return
 
-def evaluate(args):
+def evaluate(args: dict[str, Any]) -> None:
     model_file = build_model_filename(args)
 
     model = CharacterLanguageModel.load(model_file).to(args['device'])

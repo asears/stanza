@@ -2,6 +2,8 @@
 Different loss functions.
 """
 
+from __future__ import annotations
+
 import logging
 import numpy as np
 import torch
@@ -11,13 +13,13 @@ import stanza.models.common.seq2seq_constant as constant
 
 logger = logging.getLogger('stanza')
 
-def SequenceLoss(vocab_size):
+def SequenceLoss(vocab_size: int) -> nn.NLLLoss:
     weight = torch.ones(vocab_size)
     weight[constant.PAD_ID] = 0
     crit = nn.NLLLoss(weight)
     return crit
 
-def weighted_cross_entropy_loss(labels, log_dampened=False):
+def weighted_cross_entropy_loss(labels: list[int] | np.ndarray, log_dampened: bool = False) -> nn.CrossEntropyLoss:
     """
     Either return a loss function which reweights all examples so the
     classes have the same effective weight, or dampened reweighting
@@ -47,7 +49,7 @@ class FocalLoss(nn.Module):
 
     https://arxiv.org/abs/1708.02002
     """
-    def __init__(self, reduction='mean', gamma=2.0):
+    def __init__(self, reduction: str = 'mean', gamma: float = 2.0) -> None:
         super().__init__()
         if reduction not in ('sum', 'none', 'mean'):
             raise ValueError("Unknown reduction: %s" % reduction)
@@ -56,7 +58,7 @@ class FocalLoss(nn.Module):
         self.ce_loss = nn.CrossEntropyLoss(reduction='none')
         self.gamma = gamma
 
-    def forward(self, inputs, targets):
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
         Weight the loss using the models assessment of the correct answer
 
@@ -90,14 +92,14 @@ class MixLoss(nn.Module):
     A mixture of SequenceLoss and CrossEntropyLoss.
     Loss = SequenceLoss + alpha * CELoss
     """
-    def __init__(self, vocab_size, alpha):
+    def __init__(self, vocab_size: int, alpha: float) -> None:
         super().__init__()
         self.seq_loss = SequenceLoss(vocab_size)
         self.ce_loss = nn.CrossEntropyLoss()
         assert alpha >= 0
         self.alpha = alpha
 
-    def forward(self, seq_inputs, seq_targets, class_inputs, class_targets):
+    def forward(self, seq_inputs: torch.Tensor, seq_targets: torch.Tensor, class_inputs: torch.Tensor, class_targets: torch.Tensor) -> torch.Tensor:
         sl = self.seq_loss(seq_inputs, seq_targets)
         cel = self.ce_loss(class_inputs, class_targets)
         loss = sl + self.alpha * cel
@@ -110,14 +112,14 @@ class MaxEntropySequenceLoss(nn.Module):
 
     Loss = NLLLoss + alpha * EntropyLoss
     """
-    def __init__(self, vocab_size, alpha):
+    def __init__(self, vocab_size: int, alpha: float) -> None:
         super().__init__()
         weight = torch.ones(vocab_size)
         weight[constant.PAD_ID] = 0
         self.nll = nn.NLLLoss(weight)
         self.alpha = alpha
 
-    def forward(self, inputs, targets):
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
         inputs: [N, C]
         targets: [N]

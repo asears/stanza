@@ -2,9 +2,12 @@
 Keeps BERT, charlm, word embedings in a cache to save memory
 """
 
+from __future__ import annotations
+
 from collections import namedtuple
 import logging
 import threading
+from typing import Any
 
 from stanza.models.common import bert_embedding
 from stanza.models.common.char_model import CharacterLanguageModel
@@ -15,7 +18,7 @@ logger = logging.getLogger('stanza')
 BertRecord = namedtuple('BertRecord', ['model', 'tokenizer', 'peft_ids'])
 
 class FoundationCache:
-    def __init__(self, other=None, local_files_only=False):
+    def __init__(self, other: FoundationCache | None = None, local_files_only: bool = False) -> None:
         if other is None:
             self.bert = {}
             self.charlms = {}
@@ -30,11 +33,11 @@ class FoundationCache:
             self.lock = other.lock
         self.local_files_only=local_files_only
 
-    def load_bert(self, transformer_name, local_files_only=None):
+    def load_bert(self, transformer_name: str | None, local_files_only: bool | None = None) -> tuple[Any, Any]:
         m, t, _ = self.load_bert_with_peft(transformer_name, None, local_files_only=local_files_only)
         return m, t
 
-    def load_bert_with_peft(self, transformer_name, peft_name, local_files_only=None):
+    def load_bert_with_peft(self, transformer_name: str | None, peft_name: str | None, local_files_only: bool | None = None) -> tuple[Any, Any, str | None]:
         """
         Load a transformer only once
 
@@ -61,7 +64,7 @@ class FoundationCache:
             peft_name = "%s_%d" % (peft_name, bert_record.peft_ids[peft_name])
             return bert_record.model, bert_record.tokenizer, peft_name
 
-    def load_charlm(self, filename):
+    def load_charlm(self, filename: str | None) -> CharacterLanguageModel | None:
         if not filename:
             return None
 
@@ -74,7 +77,7 @@ class FoundationCache:
 
             return self.charlms[filename]
 
-    def load_pretrain(self, filename):
+    def load_pretrain(self, filename: str | None) -> Pretrain | None:
         """
         Load a pretrained word embedding only once
 
@@ -100,13 +103,13 @@ class NoTransformerFoundationCache(FoundationCache):
     since it will then have the finetuned weights for other models
     which don't want them
     """
-    def load_bert(self, transformer_name, local_files_only=None):
+    def load_bert(self, transformer_name: str | None, local_files_only: bool | None = None) -> tuple[Any, Any]:
         return load_bert(transformer_name, local_files_only=self.local_files_only if local_files_only is None else local_files_only)
 
-    def load_bert_with_peft(self, transformer_name, peft_name, local_files_only=None):
+    def load_bert_with_peft(self, transformer_name: str | None, peft_name: str | None, local_files_only: bool | None = None) -> tuple[Any, Any, str | None]:
         return load_bert_with_peft(transformer_name, peft_name, local_files_only=self.local_files_only if local_files_only is None else local_files_only)
 
-def load_bert(model_name, foundation_cache=None, local_files_only=None):
+def load_bert(model_name: str | None, foundation_cache: FoundationCache | None = None, local_files_only: bool | None = None) -> tuple[Any, Any]:
     """
     Load a bert, possibly using a foundation cache, ignoring the cache if None
     """
@@ -115,13 +118,13 @@ def load_bert(model_name, foundation_cache=None, local_files_only=None):
     else:
         return foundation_cache.load_bert(model_name, local_files_only=local_files_only)
 
-def load_bert_with_peft(model_name, peft_name, foundation_cache=None, local_files_only=None):
+def load_bert_with_peft(model_name: str | None, peft_name: str | None, foundation_cache: FoundationCache | None = None, local_files_only: bool | None = None) -> tuple[Any, Any, str | None]:
     if foundation_cache is None:
         m, t = bert_embedding.load_bert(model_name, local_files_only=local_files_only)
         return m, t, peft_name
     return foundation_cache.load_bert_with_peft(model_name, peft_name, local_files_only=local_files_only)
 
-def load_charlm(charlm_file, foundation_cache=None, finetune=False):
+def load_charlm(charlm_file: str | None, foundation_cache: FoundationCache | None = None, finetune: bool = False) -> CharacterLanguageModel | None:
     if not charlm_file:
         return None
 
@@ -136,7 +139,7 @@ def load_charlm(charlm_file, foundation_cache=None, finetune=False):
     logger.debug("Loading charlm from %s", charlm_file)
     return CharacterLanguageModel.load(charlm_file, finetune=False)
 
-def load_pretrain(filename, foundation_cache=None):
+def load_pretrain(filename: str | None, foundation_cache: FoundationCache | None = None) -> Pretrain | None:
     if not filename:
         return None
 

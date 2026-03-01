@@ -2,6 +2,8 @@
 Utility functions.
 """
 
+from __future__ import annotations
+
 import argparse
 from contextlib import contextmanager
 import gzip
@@ -14,6 +16,7 @@ import re
 import sys
 import unicodedata
 import zipfile
+from typing import Any, Iterator
 
 import torch
 import torch.nn as nn
@@ -36,7 +39,7 @@ from stanza.resources.default_packages import TRANSFORMER_NICKNAMES
 logger = logging.getLogger('stanza')
 
 # filenames
-def get_wordvec_file(wordvec_dir, shorthand, wordvec_type=None):
+def get_wordvec_file(wordvec_dir: str, shorthand: str, wordvec_type: str | None = None) -> str:
     """ Lookup the name of the word vectors file, given a directory and the language shorthand.
     """
     lcode, tcode = shorthand.split('_', 1)
@@ -64,7 +67,7 @@ def get_wordvec_file(wordvec_dir, shorthand, wordvec_type=None):
     return filename
 
 @contextmanager
-def output_stream(filename=None):
+def output_stream(filename: str | None = None) -> Iterator[Any]:
     """
     Yields the given file if a file is given, or returns sys.stdout if filename is None
 
@@ -78,7 +81,7 @@ def output_stream(filename=None):
 
 
 @contextmanager
-def open_read_text(filename, encoding="utf-8"):
+def open_read_text(filename: str, encoding: str = "utf-8") -> Iterator[Any]:
     """
     Opens a file as an .xz file or .gz if it ends with .xz or .gz, or regular text otherwise.
 
@@ -101,7 +104,7 @@ def open_read_text(filename, encoding="utf-8"):
             yield fin
 
 @contextmanager
-def open_read_binary(filename):
+def open_read_binary(filename: str) -> Iterator[Any]:
     """
     Opens a file as an .xz file or .gz if it ends with .xz or .gz, or regular binary file otherwise.
 
@@ -135,7 +138,7 @@ def open_read_binary(filename):
             yield fin
 
 # training schedule
-def get_adaptive_eval_interval(cur_dev_size, thres_dev_size, base_interval):
+def get_adaptive_eval_interval(cur_dev_size: int, thres_dev_size: int, base_interval: int) -> int:
     """ Adjust the evaluation interval adaptively.
     If cur_dev_size <= thres_dev_size, return base_interval;
     else, linearly increase the interval (round to integer times of base interval).
@@ -147,7 +150,7 @@ def get_adaptive_eval_interval(cur_dev_size, thres_dev_size, base_interval):
         return base_interval * alpha
 
 # ud utils
-def ud_scores(gold_conllu_file, system_conllu_file):
+def ud_scores(gold_conllu_file: Any, system_conllu_file: Any) -> Any:
     def has_readline(f):
         return hasattr(f, 'readline') and callable(f.readline)
 
@@ -177,7 +180,7 @@ def ud_scores(gold_conllu_file, system_conllu_file):
 
     return evaluation
 
-def harmonic_mean(a, weights=None):
+def harmonic_mean(a: list[float], weights: list[float] | None = None) -> float:
     if any([x == 0 for x in a]):
         return 0
     else:
@@ -188,7 +191,7 @@ def harmonic_mean(a, weights=None):
             return sum(weights) / sum(w/x for x, w in zip(a, weights))
 
 # torch utils
-def dispatch_optimizer(name, parameters, opt_logger, lr=None, betas=None, eps=None, momentum=None, **extra_args):
+def dispatch_optimizer(name: str, parameters: list[dict[str, Any]], opt_logger: logging.Logger, lr: float | None = None, betas: tuple[float, float] | None = None, eps: float | None = None, momentum: float | None = None, **extra_args: Any) -> torch.optim.Optimizer:
     extra_logging = ""
     if len(extra_args) > 0:
         extra_logging = ", " + ", ".join("%s=%s" % (x, y) for x, y in extra_args.items())
@@ -246,7 +249,7 @@ def dispatch_optimizer(name, parameters, opt_logger, lr=None, betas=None, eps=No
         raise ValueError(f"Unsupported optimizer: {name}")
 
 
-def get_optimizer(name, model, lr, betas=(0.9, 0.999), eps=1e-8, momentum=0, weight_decay=None, bert_learning_rate=0.0, bert_weight_decay=None, charlm_learning_rate=0.0, is_peft=False, bert_finetune_layers=None, opt_logger=None):
+def get_optimizer(name: str, model: Any, lr: float, betas: tuple[float, float] = (0.9, 0.999), eps: float = 1e-8, momentum: float = 0, weight_decay: float | None = None, bert_learning_rate: float = 0.0, bert_weight_decay: float | None = None, charlm_learning_rate: float = 0.0, is_peft: bool = False, bert_finetune_layers: int | None = None, opt_logger: logging.Logger | None = None) -> torch.optim.Optimizer:
     opt_logger = opt_logger if opt_logger is not None else logger
     base_parameters = [p for n, p in model.named_parameters()
                        if p.requires_grad and not n.startswith("bert_model.")
@@ -289,7 +292,7 @@ def get_optimizer(name, model, lr, betas=(0.9, 0.999), eps=1e-8, momentum=0, wei
 
     return dispatch_optimizer(name, parameters, opt_logger=opt_logger, lr=lr, betas=betas, eps=eps, momentum=momentum, **extra_args)
 
-def get_split_optimizer(name, model, lr, betas=(0.9, 0.999), eps=1e-8, momentum=0, weight_decay=None, bert_learning_rate=0.0, bert_weight_decay=None, charlm_learning_rate=0.0, is_peft=False, bert_finetune_layers=None):
+def get_split_optimizer(name: str, model: Any, lr: float, betas: tuple[float, float] = (0.9, 0.999), eps: float = 1e-8, momentum: float = 0, weight_decay: float | None = None, bert_learning_rate: float = 0.0, bert_weight_decay: float | None = None, charlm_learning_rate: float = 0.0, is_peft: bool = False, bert_finetune_layers: int | None = None) -> dict[str, torch.optim.Optimizer]:
     """Same as `get_optimizer`, but splits the optimizer for Bert into a separate optimizer"""
     base_parameters = [p for n, p in model.named_parameters()
                        if p.requires_grad and not n.startswith("bert_model.")
@@ -334,18 +337,18 @@ def get_split_optimizer(name, model, lr, betas=(0.9, 0.999), eps=1e-8, momentum=
     return optimizers
 
 
-def change_lr(optimizer, new_lr):
+def change_lr(optimizer: torch.optim.Optimizer, new_lr: float) -> None:
     for param_group in optimizer.param_groups:
         param_group['lr'] = new_lr
 
-def flatten_indices(seq_lens, width):
+def flatten_indices(seq_lens: list[int], width: int) -> list[int]:
     flat = []
     for i, l in enumerate(seq_lens):
         for j in range(l):
             flat.append(i * width + j)
     return flat
 
-def keep_partial_grad(grad, topk):
+def keep_partial_grad(grad: torch.Tensor, topk: int) -> torch.Tensor:
     """
     Keep only the topk rows of grads.
     """
@@ -354,37 +357,37 @@ def keep_partial_grad(grad, topk):
     return grad
 
 # other utils
-def ensure_dir(d, verbose=True):
+def ensure_dir(d: str, verbose: bool = True) -> None:
     if not os.path.exists(d):
         if verbose:
             logger.info(f"Directory {d} does not exist; creating...")
         # exist_ok: guard against race conditions
         os.makedirs(d, exist_ok=True)
 
-def save_config(config, path, verbose=True):
+def save_config(config: dict[str, Any], path: str, verbose: bool = True) -> dict[str, Any]:
     with open(path, 'w') as outfile:
         json.dump(config, outfile, indent=2)
     if verbose:
         print(f"Config saved to file {path}")
     return config
 
-def load_config(path, verbose=True):
+def load_config(path: str, verbose: bool = True) -> dict[str, Any]:
     with open(path) as f:
         config = json.load(f)
     if verbose:
         print(f"Config loaded from file {path}")
     return config
 
-def print_config(config):
+def print_config(config: dict[str, Any]) -> None:
     info = "Running with the following configs:\n"
     for k,v in config.items():
         info += f"\t{k} : {str(v)}\n"
     logger.info("\n" + info + "\n")
 
-def normalize_text(text):
+def normalize_text(text: str) -> str:
     return unicodedata.normalize('NFD', text)
 
-def unmap_with_copy(indices, src_tokens, vocab):
+def unmap_with_copy(indices: list[list[int]], src_tokens: list[list[str]], vocab: Any) -> list[list[str]]:
     """
     Unmap a list of list of indices, by optionally copying from src_tokens.
     """
@@ -400,7 +403,7 @@ def unmap_with_copy(indices, src_tokens, vocab):
         result += [words]
     return result
 
-def prune_decoded_seqs(seqs):
+def prune_decoded_seqs(seqs: list[list[str]]) -> list[list[str]]:
     """
     Prune decoded sequences after EOS token.
     """
@@ -413,7 +416,7 @@ def prune_decoded_seqs(seqs):
             out += [s]
     return out
 
-def prune_hyp(hyp):
+def prune_hyp(hyp: list[int]) -> list[int]:
     """
     Prune a decoded hypothesis
     """
@@ -423,14 +426,14 @@ def prune_hyp(hyp):
     else:
         return hyp
 
-def prune(data_list, lens):
+def prune(data_list: list[list[Any]], lens: list[int]) -> list[list[Any]]:
     assert len(data_list) == len(lens)
     nl = []
     for d, l in zip(data_list, lens):
         nl.append(d[:l])
     return nl
 
-def sort(packed, ref, reverse=True):
+def sort(packed: tuple[list[Any], ...] | list[list[Any]], ref: list[Any], reverse: bool = True) -> tuple[list[Any], ...]:
     """
     Sort a series of packed list, according to a ref list.
     Also return the original index before the sort.
@@ -440,7 +443,7 @@ def sort(packed, ref, reverse=True):
     sorted_packed = [list(t) for t in zip(*sorted(zip(*packed), reverse=reverse))]
     return tuple(sorted_packed[1:])
 
-def unsort(sorted_list, oidx):
+def unsort(sorted_list: list[Any], oidx: list[int]) -> list[Any]:
     """
     Unsort a sorted list, based on the original idx.
     """
@@ -450,7 +453,7 @@ def unsort(sorted_list, oidx):
     _, unsorted = [list(t) for t in zip(*sorted(zip(oidx, sorted_list)))]
     return unsorted
 
-def sort_with_indices(data, key=None, reverse=False):
+def sort_with_indices(data: list[Any], key: Any = None, reverse: bool = False) -> tuple[list[Any], list[int]]:
     """
     Sort data and return both the data and the original indices.
 
@@ -467,7 +470,7 @@ def sort_with_indices(data, key=None, reverse=False):
     result = tuple(zip(*ordered))
     return result[1], result[0]
 
-def split_into_batches(data, batch_size):
+def split_into_batches(data: list[list[Any]], batch_size: int) -> list[tuple[int, int]]:
     """
     Returns a list of intervals so that each interval is either <= batch_size or one element long.
 
@@ -499,7 +502,7 @@ def split_into_batches(data, batch_size):
         intervals.append((interval_start, len(data)))
     return intervals
 
-def tensor_unsort(sorted_tensor, oidx):
+def tensor_unsort(sorted_tensor: torch.Tensor, oidx: list[int]) -> torch.Tensor:
     """
     Unsort a sorted tensor on its 0-th dimension, based on the original idx.
     """
@@ -508,7 +511,7 @@ def tensor_unsort(sorted_tensor, oidx):
     return sorted_tensor[backidx]
 
 
-def set_random_seed(seed):
+def set_random_seed(seed: int | None) -> int:
     """
     Set a random seed on all of the things which might need it.
     torch, np, python random, and torch.cuda
@@ -526,7 +529,7 @@ def set_random_seed(seed):
         torch.cuda.manual_seed_all(seed)
     return seed
 
-def find_missing_tags(known_tags, test_tags):
+def find_missing_tags(known_tags: list[str] | list[list[str]], test_tags: list[str] | list[list[str]]) -> list[str]:
     if isinstance(known_tags, list) and isinstance(known_tags[0], list):
         known_tags = set(x for y in known_tags for x in y)
     if isinstance(test_tags, list) and isinstance(test_tags[0], list):
@@ -534,7 +537,7 @@ def find_missing_tags(known_tags, test_tags):
     missing_tags = sorted(x for x in test_tags if x not in known_tags)
     return missing_tags
 
-def warn_missing_tags(known_tags, test_tags, test_set_name):
+def warn_missing_tags(known_tags: list[str] | list[list[str]], test_tags: list[str] | list[list[str]], test_set_name: str) -> bool:
     """
     Print a warning if any tags present in the second list are not in the first list.
 
@@ -546,7 +549,7 @@ def warn_missing_tags(known_tags, test_tags, test_set_name):
         return True
     return False
 
-def checkpoint_name(save_dir, save_name, checkpoint_name):
+def checkpoint_name(save_dir: str, save_name: str, checkpoint_name: str | None) -> str:
     """
     Will return a recommended checkpoint name for the given dir, save_name, optional checkpoint_name
 
@@ -566,7 +569,7 @@ def checkpoint_name(save_dir, save_name, checkpoint_name):
 
     return save_name + "_checkpoint"
 
-def default_device():
+def default_device() -> str:
     """
     Pick a default device based on what's available on this system
     """
@@ -574,7 +577,7 @@ def default_device():
         return 'cuda'
     return 'cpu'
 
-def add_device_args(parser):
+def add_device_args(parser: argparse.ArgumentParser) -> None:
     """
     Add args which specify cpu, cuda, or arbitrary device
     """
@@ -582,7 +585,7 @@ def add_device_args(parser):
     parser.add_argument('--cuda', dest='device', action='store_const', const='cuda', help='Run on CUDA')
     parser.add_argument('--cpu', dest='device', action='store_const', const='cpu', help='Ignore CUDA and run on CPU')
 
-def load_elmo(elmo_model):
+def load_elmo(elmo_model: str) -> Any:
     # This import is here so that Elmo integration can be treated
     # as an optional feature
     import elmoformanylangs
@@ -591,7 +594,7 @@ def load_elmo(elmo_model):
     elmo_model = elmoformanylangs.Embedder(elmo_model)
     return elmo_model
 
-def log_training_args(args, args_logger, name="training"):
+def log_training_args(args: argparse.Namespace | dict[str, Any], args_logger: logging.Logger, name: str = "training") -> None:
     """
     For record keeping purposes, log the arguments when training
     """
@@ -601,7 +604,7 @@ def log_training_args(args, args_logger, name="training"):
     log_lines = ['%s: %s' % (k, args[k]) for k in keys]
     args_logger.info('ARGS USED AT %s TIME:\n%s\n', name.upper(), '\n'.join(log_lines))
 
-def embedding_name(args):
+def embedding_name(args: dict[str, Any]) -> str:
     """
     Return the generic name of the biggest embedding used by a model.
 
@@ -623,7 +626,7 @@ def embedding_name(args):
 
     return embedding
 
-def standard_model_file_name(args, model_type, **kwargs):
+def standard_model_file_name(args: dict[str, Any], model_type: str, **kwargs: Any) -> str:
     """
     Returns a model file name based on some common args found in the various models.
 
@@ -682,7 +685,7 @@ def standard_model_file_name(args, model_type, **kwargs):
         return model_file
     return os.path.join(args['save_dir'], model_file)
 
-def escape_misc_space(space):
+def escape_misc_space(space: str) -> str:
     spaces = []
     for char in space:
         if char == ' ':
@@ -704,7 +707,7 @@ def escape_misc_space(space):
     escaped_space = "".join(spaces)
     return escaped_space
 
-def unescape_misc_space(misc_space):
+def unescape_misc_space(misc_space: str) -> str:
     spaces = []
     pos = 0
     while pos < len(misc_space):
@@ -735,7 +738,7 @@ def unescape_misc_space(misc_space):
     unescaped_space = "".join(spaces)
     return unescaped_space
 
-def space_before_to_misc(space):
+def space_before_to_misc(space: str) -> str:
     """
     Convert whitespace to SpacesBefore specifically for the start of a document.
 
@@ -751,7 +754,7 @@ def space_before_to_misc(space):
     escaped_space = escape_misc_space(space)
     return "SpacesBefore=%s" % escaped_space
 
-def space_after_to_misc(space):
+def space_after_to_misc(space: str) -> str:
     """
     Convert whitespace back to the escaped format - either SpaceAfter=No or SpacesAfter=...
     """
@@ -762,7 +765,7 @@ def space_after_to_misc(space):
     escaped_space = escape_misc_space(space)
     return "SpacesAfter=%s" % escaped_space
 
-def misc_to_space_before(misc):
+def misc_to_space_before(misc: str | None) -> str:
     """
     Find any SpacesBefore annotation in the MISC column and turn it into a space value
     """
@@ -776,7 +779,7 @@ def misc_to_space_before(misc):
         return unescape_misc_space(misc_space)
     return ""
 
-def misc_to_space_after(misc):
+def misc_to_space_after(misc: str | None) -> str:
     """
     Convert either SpaceAfter=No or the SpacesAfter annotation
 
@@ -802,7 +805,7 @@ def misc_to_space_after(misc):
             return unescape_misc_space(misc_space)
     return " "
 
-def log_norms(model):
+def log_norms(model: nn.Module) -> None:
     lines = ["NORMS FOR MODEL PARAMTERS"]
     pieces = []
     for name, param in model.named_parameters():
@@ -815,7 +818,7 @@ def log_norms(model):
         lines.append(line_format % line)
     logger.info("\n".join(lines))
 
-def attach_bert_model(model, bert_model, bert_tokenizer, use_peft, force_bert_saved):
+def attach_bert_model(model: Any, bert_model: Any, bert_tokenizer: Any, use_peft: bool, force_bert_saved: bool) -> None:
     if use_peft:
         # we use a peft-specific pathway for saving peft weights
         model.add_unsaved_module('bert_model', bert_model)
@@ -830,7 +833,7 @@ def attach_bert_model(model, bert_model, bert_tokenizer, use_peft, force_bert_sa
         model.bert_model = None
     model.add_unsaved_module('bert_tokenizer', bert_tokenizer)
 
-def build_save_each_filename(base_filename):
+def build_save_each_filename(base_filename: str) -> str:
     """
     If the given name doesn't have %d in it, add %4d at the end of the filename
 
@@ -840,7 +843,7 @@ def build_save_each_filename(base_filename):
         base_filename % 1
     except TypeError:
         # so models.pt -> models_0001.pt, etc
-        pieces = os.path.splitext(model_save_each_file)
+        pieces = os.path.splitext(base_filename)
         base_filename = pieces[0] + "_%04d" + pieces[1]
     return base_filename
 
@@ -908,7 +911,7 @@ NONLINEARITY = {
     'tanh':       nn.Tanh,
 }
 
-def build_nonlinearity(nonlinearity):
+def build_nonlinearity(nonlinearity: str | None) -> nn.Module:
     """
     Look up "nonlinearity" in a map from function name to function, build the appropriate layer.
     """
