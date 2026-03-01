@@ -163,7 +163,7 @@ def test_doc_id_comment(doc):
 
 @pytest.fixture(scope="module")
 def pipeline():
-    return stanza.Pipeline(dir=TEST_MODELS_DIR, download_method=None)
+    return stanza.Pipeline(dir=str(TEST_MODELS_DIR), download_method=None)
 
 
 @pytest.mark.skip(reason="TODO: avoid network/resource fetch dependency for serialized pipeline test")

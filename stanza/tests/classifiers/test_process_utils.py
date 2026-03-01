@@ -55,7 +55,7 @@ def test_read_snippets(tmp_path):
         fout.write("FOO\tThis is a test\thappy\n")
         fout.write("FOO\tThis is a second sentence\tsad\n")
 
-    nlp = stanza.Pipeline("en", dir=TEST_MODELS_DIR, processors="tokenize", download_method=None)
+    nlp = stanza.Pipeline("en", dir=str(TEST_MODELS_DIR), processors="tokenize", download_method=None)
 
     mapping = {"happy": 0, "sad": 1}
 
@@ -77,7 +77,7 @@ def test_read_snippets_two_columns(tmp_path):
         fout.write("FOO\tThis is a second sentence\tsad\tbar\n")
         fout.write("FOO\tThis is a third sentence\tsad\tfoo\n")
 
-    nlp = stanza.Pipeline("en", dir=TEST_MODELS_DIR, processors="tokenize", download_method=None)
+    nlp = stanza.Pipeline("en", dir=str(TEST_MODELS_DIR), processors="tokenize", download_method=None)
 
     mapping = {("happy", "foo"): 0, ("sad", "bar"): 1, ("sad", "foo"): 2}
 
@@ -91,7 +91,7 @@ def test_read_snippets_two_columns(tmp_path):
 def test_read_snippets_mocked(tmp_path, mocker):
     """
     Test snippet reading logic without requiring model resources.
-    
+
     This test mocks the NLP pipeline to verify the snippet parsing logic
     without downloading models or dealing with resource files.
     """
@@ -102,29 +102,29 @@ def test_read_snippets_mocked(tmp_path, mocker):
 
     # Mock the stanza pipeline
     mock_nlp = MagicMock()
-    
+
     # Mock the tokenization results
     mock_doc1 = MagicMock()
     mock_sent1 = MagicMock()
     mock_sent1.words = [MagicMock(text=word) for word in ['This', 'is', 'a', 'test']]
     mock_doc1.sentences = [mock_sent1]
-    
+
     mock_doc2 = MagicMock()
     mock_sent2 = MagicMock()
     mock_sent2.words = [MagicMock(text=word) for word in ['This', 'is', 'a', 'second', 'sentence']]
     mock_doc2.sentences = [mock_sent2]
-    
+
     # Setup the mock to return different documents
     mock_nlp.side_effect = [mock_doc1, mock_doc2]
-    
+
     # Patch the stanza.Pipeline
     mocker.patch('stanza.Pipeline', return_value=mock_nlp)
-    
+
     # Test that data reading works correctly
     lines = []
     with filename.open("r", encoding="utf-8") as fin:
         lines = fin.readlines()
-    
+
     # Verify we can parse the CSV format
     assert len(lines) == 2
     parts1 = lines[0].strip().split('\t')
@@ -132,7 +132,7 @@ def test_read_snippets_mocked(tmp_path, mocker):
     assert parts1[0] == 'FOO'
     assert parts1[1] == 'This is a test'
     assert parts1[2] == 'happy'
-    
+
     parts2 = lines[1].strip().split('\t')
     assert len(parts2) == 3
     assert parts2[0] == 'FOO'
@@ -155,45 +155,45 @@ def test_read_snippets_two_columns_mocked(tmp_path, mocker):
 
     # Mock the stanza pipeline
     mock_nlp = MagicMock()
-    
+
     # Setup mock documents for tokenization
     mock_doc1 = MagicMock()
     mock_sent1 = MagicMock()
     mock_sent1.words = [MagicMock(text=word) for word in ['This', 'is', 'a', 'test']]
     mock_doc1.sentences = [mock_sent1]
-    
+
     mock_doc2 = MagicMock()
     mock_sent2 = MagicMock()
     mock_sent2.words = [MagicMock(text=word) for word in ['This', 'is', 'a', 'second', 'sentence']]
     mock_doc2.sentences = [mock_sent2]
-    
+
     mock_doc3 = MagicMock()
     mock_sent3 = MagicMock()
     mock_sent3.words = [MagicMock(text=word) for word in ['This', 'is', 'a', 'third', 'sentence']]
     mock_doc3.sentences = [mock_sent3]
-    
+
     # Setup the mock to return different documents
     mock_nlp.side_effect = [mock_doc1, mock_doc2, mock_doc3]
-    
+
     # Patch the stanza.Pipeline
     mocker.patch('stanza.Pipeline', return_value=mock_nlp)
-    
+
     # Test that multi-column data can be parsed correctly
     lines = []
     with filename.open("r", encoding="utf-8") as fin:
         lines = fin.readlines()
-    
+
     # Verify we can parse the multi-column CSV format
     assert len(lines) == 3
-    
+
     parts1 = lines[0].strip().split('\t')
     assert len(parts1) == 4
     assert parts1[2:] == ['happy', 'foo']
-    
+
     parts2 = lines[1].strip().split('\t')
     assert len(parts2) == 4
     assert parts2[2:] == ['sad', 'bar']
-    
+
     parts3 = lines[2].strip().split('\t')
     assert len(parts3) == 4
     assert parts3[2:] == ['sad', 'foo']

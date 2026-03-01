@@ -16,7 +16,7 @@ def pipeline():
     """
     A reusable pipeline with the NER module
     """
-    return stanza.Pipeline("en", dir=TEST_MODELS_DIR, processors="tokenize,mwt", package="gum")
+    return stanza.Pipeline("en", dir=str(TEST_MODELS_DIR), processors="tokenize,mwt", package="gum")
 
 
 def test_resplit_keep_tokens(pipeline):

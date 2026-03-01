@@ -12,7 +12,7 @@ You are a developer or researcher using Stanza for NLP tasks. Your focus is on s
 ## Typical Workflows
 
 ### Getting Started
-1. Install Stanza: `pip install stanza`
+1. Install Stanza: `uv pip install -e stanza`
 2. Download models: `stanza.download('en')`
 3. Run first pipeline: Create 5-line Python script
 4. Process text and access annotations

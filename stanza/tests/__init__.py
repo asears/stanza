@@ -17,15 +17,13 @@ TEST_HOME_VAR = 'STANZA_TEST_HOME'
 # Global Variables
 TEST_DIR_BASE_NAME = 'stanza_test'
 
-TEST_WORKING_DIR = os.getenv(TEST_HOME_VAR, None)
-if not TEST_WORKING_DIR:
-    TEST_WORKING_DIR = user_cache_dir(TEST_DIR_BASE_NAME, 'StanfordNLP', __resources_version__)
+TEST_WORKING_DIR = Path(os.getenv(TEST_HOME_VAR, user_cache_dir(TEST_DIR_BASE_NAME, 'StanfordNLP', __resources_version__)))
 
-TEST_MODELS_DIR = f'{TEST_WORKING_DIR}/models'
-TEST_CORENLP_DIR = f'{TEST_WORKING_DIR}/corenlp_dir'
+TEST_MODELS_DIR = TEST_WORKING_DIR / 'models'
+TEST_CORENLP_DIR = TEST_WORKING_DIR / 'corenlp_dir'
 
 # server resources
-SERVER_TEST_PROPS = f'{TEST_WORKING_DIR}/scripts/external_server.properties'
+SERVER_TEST_PROPS = str(TEST_WORKING_DIR / 'scripts' / 'external_server.properties')
 
 # language resources
 LANGUAGE_RESOURCES = {}
@@ -44,19 +42,19 @@ MODEL_FILES = [TOKENIZE_MODEL, MWT_MODEL, POS_MODEL, POS_PRETRAIN, LEMMA_MODEL, 
 EN_KEY = 'en'
 EN_SHORTHAND = 'en_ewt'
 # models
-EN_MODELS_DIR = f'{TEST_WORKING_DIR}/models/{EN_SHORTHAND}_models'
-EN_MODEL_FILES = [f'{EN_MODELS_DIR}/{EN_SHORTHAND}_{model_fname}' for model_fname in MODEL_FILES]
+EN_MODELS_DIR = TEST_WORKING_DIR / 'models' / f'{EN_SHORTHAND}_models'
+EN_MODEL_FILES = [str(EN_MODELS_DIR / f'{EN_SHORTHAND}_{model_fname}') for model_fname in MODEL_FILES]
 
 # French resources
 FR_KEY = 'fr'
 FR_SHORTHAND = 'fr_gsd'
 # regression file paths
-FR_TEST_IN = f'{TEST_WORKING_DIR}/in/fr_gsd.test.txt'
-FR_TEST_OUT = f'{TEST_WORKING_DIR}/out/fr_gsd.test.txt.out'
-FR_TEST_GOLD_OUT = f'{TEST_WORKING_DIR}/out/fr_gsd.test.txt.out.gold'
+FR_TEST_IN = str(TEST_WORKING_DIR / 'in' / 'fr_gsd.test.txt')
+FR_TEST_OUT = str(TEST_WORKING_DIR / 'out' / 'fr_gsd.test.txt.out')
+FR_TEST_GOLD_OUT = str(TEST_WORKING_DIR / 'out' / 'fr_gsd.test.txt.out.gold')
 # models
-FR_MODELS_DIR = f'{TEST_WORKING_DIR}/models/{FR_SHORTHAND}_models'
-FR_MODEL_FILES = [f'{FR_MODELS_DIR}/{FR_SHORTHAND}_{model_fname}' for model_fname in MODEL_FILES]
+FR_MODELS_DIR = TEST_WORKING_DIR / 'models' / f'{FR_SHORTHAND}_models'
+FR_MODEL_FILES = [str(FR_MODELS_DIR / f'{FR_SHORTHAND}_{model_fname}') for model_fname in MODEL_FILES]
 
 # Other language resources
 AR_SHORTHAND = 'ar_padt'

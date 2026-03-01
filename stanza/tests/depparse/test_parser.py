@@ -76,7 +76,7 @@ DEV_DATA = """
 class TestParser:
     @pytest.fixture(scope="class")
     def wordvec_pretrain_file(self):
-        return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
+        return str(TEST_WORKING_DIR / 'in' / 'tiny_emb.pt')
 
     def run_training(self, tmp_path, wordvec_pretrain_file, train_text, dev_text, augment_nopunct=False, extra_args=None, zip_train_data=False):
         """
@@ -171,7 +171,7 @@ class TestParser:
         save_name = trainer.args['save_name']
         filename = tmp_path / save_name
         assert filename.exists()
-        checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
+        checkpoint = torch.load(filename, lambda storage, _loc: storage, weights_only=True)
         assert any(x.startswith("bert_model") for x in checkpoint['model'])
 
         # Test loading the saved model, saving it, and still having bert in it
@@ -183,7 +183,7 @@ class TestParser:
         saved_model.save(filename)
 
         # This is the part that would fail if the force_bert_saved option did not exist
-        checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
+        checkpoint = torch.load(filename, lambda storage, _loc: storage, weights_only=True)
         assert any(x.startswith("bert_model") for x in checkpoint['model'])
 
     @pytest.mark.transformers

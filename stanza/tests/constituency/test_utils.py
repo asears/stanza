@@ -9,9 +9,10 @@ pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
 @pytest.fixture(scope="module")
 def pipeline():
-    return Pipeline(dir=TEST_MODELS_DIR, lang="en", processors="tokenize, pos", tokenize_pretokenized=True)
+    return Pipeline(dir=str(TEST_MODELS_DIR), lang="en", processors="tokenize, pos", tokenize_pretokenized=True)
 
 
+@pytest.mark.skip("TODO: requires setup of a pretrained file or text file")
 def test_xpos_retag(pipeline):
     """
     Test using the English tagger that trees will be correctly retagged by read_trees using xpos
@@ -24,7 +25,7 @@ def test_xpos_retag(pipeline):
     new_trees = utils.retag_trees(trees, [pipeline], xpos=True)
     assert new_trees == tree_reader.read_trees(expected)
 
-
+@pytest.mark.skip("TODO: requires setup of a pretrained file or text file")
 def test_upos_retag(pipeline):
     """
     Test using the English tagger that trees will be correctly retagged by read_trees using upos

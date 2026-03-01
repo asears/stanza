@@ -1,9 +1,9 @@
 import logging
 import os
 import pathlib
-from pathlib import Path
 import tempfile
 from collections import defaultdict
+from pathlib import Path
 
 import pytest
 import torch
@@ -76,7 +76,7 @@ def build_trainer(wordvec_pretrain_file, *args, treebank=TREEBANK):
 class TestTrainer:
     @pytest.fixture(scope="class")
     def wordvec_pretrain_file(self):
-        return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
+        return str(TEST_WORKING_DIR / 'in' / 'tiny_emb.pt')
 
     @pytest.fixture(scope="class")
     def tiny_random_xlnet(self, tmp_path_factory):
@@ -209,7 +209,7 @@ class TestTrainer:
         each_name = args['save_each_name']
         if not exists_ok:
             assert not Path(args['save_name']).exists()
-        retag_pipeline = Pipeline(lang="en", processors="tokenize, pos", tokenize_pretokenized=True, dir=TEST_MODELS_DIR, foundation_cache=foundation_cache, download_method=None)
+        retag_pipeline = Pipeline(lang="en", processors="tokenize, pos", tokenize_pretokenized=True, dir=str(TEST_MODELS_DIR), foundation_cache=foundation_cache, download_method=None)
         trained_model = parser_training.train(args, None, [retag_pipeline])
         # check that hooks are in the model if expected
         for p in trained_model.model.parameters():
@@ -444,7 +444,7 @@ class TestTrainer:
             bert_model, bert_tokenizer = foundation_cache.load_bert(transformer_name)
             assert self.bert_weights_allclose(bert_model, trained_model)
 
-            checkpoint = torch.load(args['save_name'], lambda storage, loc: storage, weights_only=True)
+            checkpoint = torch.load(args['save_name'], lambda storage, _loc: storage, weights_only=True)
             params = checkpoint['params']
             # check that the bert model wasn't saved in the model
             assert all(not x.startswith("bert_model.") for x in params['model'])

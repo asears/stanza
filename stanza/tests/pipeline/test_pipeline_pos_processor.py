@@ -24,7 +24,7 @@ EN_DOC_GOLD = """
 
 @pytest.fixture(scope="module")
 def pos_pipeline():
-    return stanza.Pipeline(processors='tokenize,pos', dir=TEST_MODELS_DIR, download_method=None, lang='en')
+    return stanza.Pipeline(processors='tokenize,pos', dir=str(TEST_MODELS_DIR), download_method=None, lang='en')
 
 
 def test_part_of_speech(pos_pipeline):

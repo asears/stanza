@@ -16,22 +16,22 @@ pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
 @pytest.fixture(scope="module")
 def basic_multilingual():
-    return Pipeline(dir=TEST_MODELS_DIR, lang='multilingual', processors="langid")
+    return Pipeline(dir=str(TEST_MODELS_DIR), lang='multilingual', processors="langid")
 
 
 @pytest.fixture(scope="module")
 def enfr_multilingual():
-    return Pipeline(dir=TEST_MODELS_DIR, lang="multilingual", processors="langid", langid_lang_subset=["en", "fr"])
+    return Pipeline(dir=str(TEST_MODELS_DIR), lang="multilingual", processors="langid", langid_lang_subset=["en", "fr"])
 
 
 @pytest.fixture(scope="module")
 def en_multilingual():
-    return Pipeline(dir=TEST_MODELS_DIR, lang="multilingual", processors="langid", langid_lang_subset=["en"])
+    return Pipeline(dir=str(TEST_MODELS_DIR), lang="multilingual", processors="langid", langid_lang_subset=["en"])
 
 
 @pytest.fixture(scope="module")
 def clean_multilingual():
-    return Pipeline(dir=TEST_MODELS_DIR, lang="multilingual", processors="langid", langid_clean_text=True)
+    return Pipeline(dir=str(TEST_MODELS_DIR), lang="multilingual", processors="langid", langid_clean_text=True)
 
 
 def test_langid(basic_multilingual):

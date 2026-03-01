@@ -11,7 +11,7 @@ pytestmark = [pytest.mark.pipeline, pytest.mark.travis]
 
 
 def test_replace_long_tokens():
-    nlp = stanza.Pipeline(lang="en", download_method=None, model_dir=TEST_MODELS_DIR, processors="tokenize")
+    nlp = stanza.Pipeline(lang="en", download_method=None, model_dir=str(TEST_MODELS_DIR), processors="tokenize")
 
     test_str = "foo " + "x" * 10000 + " bar"
 
@@ -21,7 +21,7 @@ def test_replace_long_tokens():
 
 
 def test_set_max_len():
-    nlp = stanza.Pipeline(processors='tokenize', dir=TEST_MODELS_DIR, lang='en', download_method=None, tokenize_max_seqlen=20)
+    nlp = stanza.Pipeline(processors='tokenize', dir=str(TEST_MODELS_DIR), lang='en', download_method=None, tokenize_max_seqlen=20)
     doc = nlp("This is a doc withaverylongtokenthatshouldbereplaced")
     assert len(doc.sentences) == 1
     assert len(doc.sentences[0].words) == 5

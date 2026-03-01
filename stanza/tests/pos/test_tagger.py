@@ -128,12 +128,15 @@ DEV_DATA = """
 class TestTagger:
     @pytest.fixture(scope="class")
     def wordvec_pretrain_file(self):
-        return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
+        pt_file = TEST_WORKING_DIR / 'in' / 'tiny_emb.pt'
+        if not pt_file.exists():
+            pytest.skip("Requires tiny_emb.pt - run setup.py or use pytest fixture for in-memory pretrain")
+        return str(pt_file)
 
     @pytest.fixture(scope="class")
     def charlm_args(self):
         charlm = choose_pos_charlm("en", "test", "default")
-        charlm_args = build_charlm_args("en", charlm, model_dir=TEST_MODELS_DIR)
+        charlm_args = build_charlm_args("en", charlm, model_dir=str(TEST_MODELS_DIR))
         return charlm_args
 
     def run_training(self, tmp_path, wordvec_pretrain_file, train_text, dev_text, augment_nopunct=False, extra_args=None):
@@ -307,7 +310,7 @@ class TestTagger:
         save_file = str(tmp_path / save_name)
         assert Path(save_file).exists()
 
-        pipe = stanza.Pipeline("en", processors="tokenize,pos", models_dir=TEST_MODELS_DIR, pos_model_path=save_file, pos_pretrain_path=wordvec_pretrain_file)
+        pipe = stanza.Pipeline("en", processors="tokenize,pos", models_dir=str(TEST_MODELS_DIR), pos_model_path=save_file, pos_pretrain_path=wordvec_pretrain_file)
         trainer = pipe.processors['pos'].trainer
         assert trainer.args['save_name'] == save_name
 

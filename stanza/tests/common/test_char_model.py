@@ -188,17 +188,17 @@ class TestCharModel:
                     '--vocab_save_name', vocab_save_name,
                     '--checkpoint_save_name', checkpoint_save_name]
             args = charlm.parse_args(args)
-            
+
             # Mock the train function to avoid actual training
             mock_train = mocker.patch('stanza.models.charlm.train')
-            
+
             # Test that argument parsing works
             # Skip assertion check - args paths may differ from Path objects due to normalization
             # TODO: Fix test setup to properly handle pathlib Path conversion in parse_args
             assert args['epochs'] == 2
             assert args['batch_size'] == 10
             assert args['shorthand'] == 'en_test'
-            
+
             # Test get_lr_function works with parsed args
             try:
                 from stanza.models.common.utils import get_lr_function
@@ -221,16 +221,16 @@ class TestCharModel:
             train_file = Path(tempdir) / "en_test.train.txt"
             with train_file.open("w", encoding="utf-8") as fout:
                 fout.write(fake_text_1)
-            
+
             # Test that build_charlm_vocab works with real files
             vocab = char_model.build_charlm_vocab(train_file, cutoff=1)
-            
+
             # Verify the vocab contains expected characters
             for char in fake_text_1:
-                if char not in ['\n']:  # newlines might not be included
+                if char != '\n':  # newlines might not be included
                     # Allow for the possibility some chars aren't included
                     pass
-            
+
             # Test that vocab is a proper dict/counter-like object
             assert hasattr(vocab, '__getitem__') or hasattr(vocab, 'get'), "Vocab should support dict-like access"
 
@@ -248,10 +248,10 @@ class TestCharModel:
             train_file = Path(tempdir) / "en_test.train.txt"
             with train_file.open("w", encoding="utf-8") as fout:
                 fout.write(fake_text_1)
-            
+
             save_name = 'en_test.forward.pt'
             vocab_save_name = 'en_text.vocab.pt'
-            
+
             args = ['--train_file', str(train_file),
                     '--eval_file', str(eval_file),
                     '--epochs', '1',
@@ -260,22 +260,22 @@ class TestCharModel:
                     '--save_name', save_name,
                     '--vocab_save_name', vocab_save_name]
             args = charlm.parse_args(args)
-            
+
             # Verify save paths are constructed correctly
             vocab_save_path = str(Path(args['save_dir']) / args['vocab_save_name'])
             save_path = str(Path(args['save_dir']) / args['save_name'])
-            
+
             # Test paths are valid strings
             assert isinstance(vocab_save_path, str)
             assert isinstance(save_path, str)
             assert len(vocab_save_path) > 0
             assert len(save_path) > 0
-            
+
             # Mock the CharacterLanguageModel.load to avoid file I/O
             mock_model = MagicMock()
             mock_model.is_forward_lm = True
             mocker.patch.object(char_model.CharacterLanguageModel, 'load', return_value=mock_model)
-            
+
             # Test that we can reference load correctly
             loaded = char_model.CharacterLanguageModel.load(save_path)
             assert loaded is not None

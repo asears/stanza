@@ -23,7 +23,7 @@ class TestMorphSegProcessor:
         return stanza.Pipeline(
             lang='en',
             processors='tokenize,morphseg',
-            model_dir=TEST_MODELS_DIR,
+            model_dir=str(TEST_MODELS_DIR),
             download_method=None,
         )
 

@@ -5,8 +5,7 @@ import numpy as np
 import pytest
 
 from stanza.models.common import pretrain
-from stanza.tests.classifiers.test_data import SENTENCES, DATASET, DATASET_WITH_TREES
-
+from stanza.tests.classifiers.test_data import DATASET, DATASET_WITH_TREES, SENTENCES
 
 EMB_DIM = 5
 
@@ -39,6 +38,10 @@ def fake_embeddings(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def train_file_with_trees(tmp_path_factory):
+    """Returns a path to a training file with the same sentences as DATASET but with trees included.
+
+    This is for testing that the training can handle trees in the input.
+    """
     train_set = DATASET_WITH_TREES * 20
     train_filename = tmp_path_factory.mktemp("data") / "train_trees.json"
     with train_filename.open("w", encoding="utf-8") as fout:
@@ -48,6 +51,7 @@ def train_file_with_trees(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def dev_file_with_trees(tmp_path_factory):
+    """Returns a path to a dev file with the same sentences as DATASET but with trees included."""
     dev_set = DATASET_WITH_TREES * 2
     dev_filename = tmp_path_factory.mktemp("data") / "dev_trees.json"
     with dev_filename.open("w", encoding="utf-8") as fout:
@@ -57,6 +61,7 @@ def dev_file_with_trees(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def train_file(tmp_path_factory):
+    """Returns a path to a training file with the same sentences as DATASET but without trees included."""
     train_set = DATASET * 20
     train_filename = tmp_path_factory.mktemp("data") / "train.json"
     with train_filename.open("w", encoding="utf-8") as fout:
@@ -66,6 +71,7 @@ def train_file(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def dev_file(tmp_path_factory):
+    """Returns a path to a dev file with the same sentences as DATASET but without trees included."""
     dev_set = DATASET * 2
     dev_filename = tmp_path_factory.mktemp("data") / "dev.json"
     with dev_filename.open("w", encoding="utf-8") as fout:
@@ -75,6 +81,7 @@ def dev_file(tmp_path_factory):
 
 @pytest.fixture(scope="module")
 def test_file(tmp_path_factory):
+    """Returns a path to a test file with the same sentences as DATASET but without trees included."""
     test_set = DATASET
     test_filename = tmp_path_factory.mktemp("data") / "test.json"
     with test_filename.open("w", encoding="utf-8") as fout:

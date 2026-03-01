@@ -313,8 +313,8 @@ class TestClassifierWithMocks:
         mock_args.min_train_len = 1
 
         # Simulate building the model
-        from stanza.models.classifiers.trainer import Trainer
         from stanza.models.classifiers import data
+        from stanza.models.classifiers.trainer import Trainer
 
         train_set = data.read_dataset(
             mock_args.train_file,
@@ -337,4 +337,3 @@ class TestClassifierWithMocks:
 
         # Verify Trainer.build_new_model was called
         mock_trainer_class.assert_called_once_with(mock_args, mock_dataset)
-

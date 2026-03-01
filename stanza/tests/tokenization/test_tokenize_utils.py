@@ -75,7 +75,7 @@ def test_long_paragraph():
     """
     Test the tokenizer's capacity to break text up into smaller chunks
     """
-    pipeline = Pipeline("en", dir=TEST_MODELS_DIR, processors="tokenize")
+    pipeline = Pipeline("en", dir=str(TEST_MODELS_DIR), processors="tokenize")
     tokenizer = pipeline.processors['tokenize']
 
     raw_text = "TIL not to ask a date to dress up as Smurfette on a first date.  " * 100

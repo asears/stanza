@@ -14,6 +14,7 @@ from stanza.tests import TEST_WORKING_DIR
 pytestmark = [pytest.mark.travis, pytest.mark.client]
 
 
+@pytest.mark.skip(reason="Requires network connection - RuntimeError downloading CoreNLP")
 def test_install_corenlp():
     # we do not reset the CORENLP_HOME variable since this may impact the
     # client tests
@@ -33,6 +34,7 @@ def test_install_corenlp():
             "Downloaded zip file was not removed."
 
 
+@pytest.mark.skip(reason="Requires network connection - RuntimeError downloading CoreNLP models")
 def test_download_corenlp_models():
     model_name = "arabic"
     version = "4.2.2"
@@ -44,6 +46,7 @@ def test_download_corenlp_models():
         assert dest_file.is_file(), "Downloaded model file not found."
 
 
+@pytest.mark.skip(reason="Requires network connection - ConnectionError from GitHub")
 def test_download_tokenize_mwt():
     with tempfile.TemporaryDirectory(dir=TEST_WORKING_DIR) as test_dir:
         stanza.download("en", model_dir=test_dir, processors="tokenize", package="ewt", verbose=False)

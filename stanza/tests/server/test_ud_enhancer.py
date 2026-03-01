@@ -15,7 +15,7 @@ def check_edges(graph, source, target, num, isExtra=None):
 
 
 def test_one_sentence():
-    nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, processors="tokenize,pos,lemma,depparse")
+    nlp = stanza.Pipeline(dir=str(TEST_MODELS_DIR), processors="tokenize,pos,lemma,depparse")
     doc = nlp("This is the car that I bought")
     result = ud_enhancer.process_doc(doc, language="en", pronouns_pattern=None)
 

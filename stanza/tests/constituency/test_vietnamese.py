@@ -5,8 +5,8 @@ Technically some other languages can have this, too, like that one French token
 """
 
 import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
 
 import pytest
 

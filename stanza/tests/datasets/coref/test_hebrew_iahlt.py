@@ -9,7 +9,7 @@ pytestmark = [pytest.mark.travis, pytest.mark.pipeline]
 
 @pytest.fixture(scope="module")
 def tokenizer():
-    pipe = Pipeline(lang="he", processors="tokenize", dir=TEST_MODELS_DIR, download_method=None)
+    pipe = Pipeline(lang="he", processors="tokenize", dir=str(TEST_MODELS_DIR), download_method=None)
     return pipe
 
 

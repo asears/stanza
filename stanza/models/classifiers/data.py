@@ -165,4 +165,3 @@ def check_labels(labels, dataset):
     not_found = [i for i in new_labels if i not in labels]
     if not_found:
         raise RuntimeError('Dataset contains labels which the model does not know about:' + str(not_found))
-

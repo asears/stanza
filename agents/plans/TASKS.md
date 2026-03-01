@@ -43,7 +43,15 @@
 
 ## Examples and Demos
 
+Eskimo-Aleut language family
+
 - Inuktitut, Inuinnaqtun, Inuvialuktun examples
+
+Inuktitut: Spoken in Canada, primarily in Nunavut and northern Quebec.
+Inuinnaqtun: Another variety spoken in western Nunavut and the Northwest Territories.
+Kalaallisut: The official language of Greenland, also known as Greenlandic.
+Inupiaq: Spoken by the Inuit in Alaska.
+These languages share similarities in structure and vocabulary, reflecting their cultural heritage and environment.
 
 https://itk.ca/projects/inuktut/
 
@@ -52,6 +60,20 @@ https://www150.statcan.gc.ca/n1/pub/41-20-0002/412000022025004-eng.htm
 https://www.oise.utoronto.ca/deepeningknowledge/resources/inuktitut-language
 
 https://www.yorku.ca/research/cikl/inuit-languages/
+
+Similar languages:
+
+Aleut, Alaska
+Yupik, Alaska
+
+Universal Dependencies
+Universal Dependencies (UD) is a framework for consistent annotation of grammar (parts of speech, morphological features, and syntactic dependencies) across different human languages. UD is an open community effort with over 600 contributors producing over 200 treebanks in over 150 languages. If you are new to UD, you should start by reading the first part of the Short Introduction and then browsing the annotation guidelines.
+
+https://universaldependencies.org/
+
+https://lindat.mff.cuni.cz/services/pmltq/#!/home
+
+https://lindat.mff.cuni.cz/services/teitok/ud212/
 
 ## Branches
 

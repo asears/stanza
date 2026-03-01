@@ -187,6 +187,7 @@ def test_raw_tree():
         assert str(tree) == expected_tree
 
 
+@pytest.mark.skip(reason="TODO: needs fix as currently failing with please install corenlp, should be optional with corenlp marker or equiv, we can mock also")
 def test_update_mwts():
     con_sentences = convert_it_vit.read_constituency_sentences(io.StringIO(CON_SAMPLE))
     ud_train_data = CoNLL.conll2doc(input_str=UD_SAMPLE)

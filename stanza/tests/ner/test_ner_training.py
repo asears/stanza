@@ -1,18 +1,18 @@
 import json
 import logging
 import os
-from pathlib import Path
 import warnings
+from pathlib import Path
 
 import pytest
 import torch
-
-pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.train]
 
 from stanza.models import ner_tagger
 from stanza.models.ner.trainer import Trainer
 from stanza.tests import TEST_WORKING_DIR
 from stanza.utils.datasets.ner.prepare_ner_file import process_dataset
+
+pytestmark = [pytest.mark.travis, pytest.mark.pipeline, pytest.mark.train]
 
 logger = logging.getLogger('stanza')
 
@@ -87,15 +87,18 @@ Computer B-ORG B-ORG
 Science E-ORG E-ORG
 """.strip().replace(" ", "\t")
 
+
 @pytest.fixture(scope="module")
 def pretrain_file():
-    return f'{TEST_WORKING_DIR}/in/tiny_emb.pt'
+    return str(TEST_WORKING_DIR / 'in' / 'tiny_emb.pt')
+
 
 def write_temp_file(filename, bio_data):
     bio_filename = Path(filename).with_suffix('.bio')
     with bio_filename.open("w", encoding="utf-8") as fout:
         fout.write(bio_data)
     process_dataset(str(bio_filename), filename)
+
 
 def write_temp_2tag(filename, bio_data):
     doc = []
@@ -106,11 +109,12 @@ def write_temp_2tag(filename, bio_data):
             text, tags = word.split("\t", maxsplit=1)
             doc[-1].append({
                 "text": text,
-                "multi_ner": tags.split()
+                "multi_ner": tags.split(),
             })
 
     with Path(filename).open("w", encoding="utf-8") as fout:
         json.dump(doc, fout)
+
 
 def get_args(tmp_path, pretrain_file, train_json, dev_json, *extra_args):
     save_dir = tmp_path / "models"
@@ -126,6 +130,7 @@ def get_args(tmp_path, pretrain_file, train_json, dev_json, *extra_args):
     args = args + list(extra_args)
     return args
 
+
 def run_two_tag_training(pretrain_file, tmp_path, *extra_args, train_data=EN_TRAIN_2TAG):
     train_json = tmp_path / "en_test.train.json"
     write_temp_2tag(train_json, train_data)
@@ -136,11 +141,13 @@ def run_two_tag_training(pretrain_file, tmp_path, *extra_args, train_data=EN_TRA
     args = get_args(tmp_path, pretrain_file, train_json, dev_json, *extra_args)
     return ner_tagger.main(args)
 
+
 def test_basic_two_tag_training(pretrain_file, tmp_path):
     trainer = run_two_tag_training(pretrain_file, tmp_path)
     assert len(trainer.model.tag_clfs) == 2
     assert len(trainer.model.crits) == 2
     assert len(trainer.vocab['tag'].lens()) == 2
+
 
 def test_two_tag_training_backprop(pretrain_file, tmp_path):
     """
@@ -161,6 +168,7 @@ def test_two_tag_training_backprop(pretrain_file, tmp_path):
     for old_clf, new_clf in zip(trainer.model.tag_clfs, new_trainer.model.tag_clfs):
         assert not torch.allclose(old_clf.weight, new_clf.weight)
 
+
 def test_two_tag_training_c2_backprop(pretrain_file, tmp_path):
     """
     Test that the training is backproping only one tag if one column is blank
@@ -180,6 +188,7 @@ def test_two_tag_training_c2_backprop(pretrain_file, tmp_path):
     assert not torch.allclose(trainer.model.tag_clfs[0].weight, new_trainer.model.tag_clfs[0].weight)
     assert torch.allclose(trainer.model.tag_clfs[1].weight, new_trainer.model.tag_clfs[1].weight)
 
+
 def test_connected_two_tag_training(pretrain_file, tmp_path):
     trainer = run_two_tag_training(pretrain_file, tmp_path, "--connect_output_layers")
     assert len(trainer.model.tag_clfs) == 2
@@ -190,6 +199,7 @@ def test_connected_two_tag_training(pretrain_file, tmp_path):
     # the second output layer has its size increased
     # by the number of tags known to the first output layer
     assert trainer.model.tag_clfs[1].weight.shape[1] == trainer.vocab['tag'].lens()[0] + trainer.model.tag_clfs[0].weight.shape[1]
+
 
 def run_training(pretrain_file, tmp_path, *extra_args):
     train_json = tmp_path / "en_test.train.json"
@@ -226,15 +236,18 @@ def test_train_model_cpu(pretrain_file, tmp_path):
     device = next(model.parameters()).device
     assert str(device).startswith("cpu")
 
+
 def model_file_has_bert(filename):
-    checkpoint = torch.load(filename, lambda storage, loc: storage, weights_only=True)
+    checkpoint = torch.load(filename, lambda storage, _loc: storage, weights_only=True)
     return any(x.startswith("bert_model.") for x in checkpoint['model'])
+
 
 @pytest.mark.transformers
 def test_with_bert(pretrain_file, tmp_path):
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert')
     model_file = str(Path(trainer.args['save_dir']) / trainer.args['save_name'])
     assert not model_file_has_bert(model_file)
+
 
 @pytest.mark.transformers
 def test_with_bert_finetune(pretrain_file, tmp_path):
@@ -252,12 +265,13 @@ def test_with_bert_finetune(pretrain_file, tmp_path):
     reloaded_trainer.save(bar_save_filename)
     assert model_file_has_bert(bar_save_filename)
 
+
 @pytest.mark.transformers
 def test_with_peft_finetune(pretrain_file, tmp_path):
     # TODO: check that the peft tensors are moving when training?
     trainer = run_training(pretrain_file, tmp_path, '--bert_model', 'hf-internal-testing/tiny-bert', '--use_peft')
     model_file = str(Path(trainer.args['save_dir']) / trainer.args['save_name'])
-    checkpoint = torch.load(model_file, lambda storage, loc: storage, weights_only=True)
+    checkpoint = torch.load(model_file, lambda storage, _loc: storage, weights_only=True)
     assert 'bert_lora' in checkpoint
     assert not any(x.startswith("bert_model.") for x in checkpoint['model'])
 

@@ -17,7 +17,7 @@ class TestClassifier:
         """
         Get a depparse_processor for English
         """
-        nlp = stanza.Pipeline(processors='tokenize,pos,lemma,depparse', dir=TEST_MODELS_DIR, lang='en')
+        nlp = stanza.Pipeline(processors='tokenize,pos,lemma,depparse', dir=str(TEST_MODELS_DIR), lang='en')
         assert 'depparse' in nlp.processors
         return nlp.processors['depparse']
 

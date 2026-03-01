@@ -19,7 +19,7 @@ EN_DOC2 = "Chris Manning wrote a sentence. Then another."
 
 @pytest.fixture(scope="module")
 def nlp_pipeline():
-    nlp = stanza.Pipeline(dir=TEST_MODELS_DIR, lang='en', download_method=None)
+    nlp = stanza.Pipeline(dir=str(TEST_MODELS_DIR), lang='en', download_method=None)
     return nlp
 
 

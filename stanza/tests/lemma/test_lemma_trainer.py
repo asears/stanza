@@ -103,7 +103,7 @@ class TestLemmatizer:
     @pytest.fixture(scope="class")
     def charlm_args(self):
         charlm = choose_lemma_charlm("en", "test", "default")
-        charlm_args = build_charlm_args("en", charlm, model_dir=TEST_MODELS_DIR)
+        charlm_args = build_charlm_args("en", charlm, model_dir=str(TEST_MODELS_DIR))
         return charlm_args
 
     def run_training(self, tmp_path, train_text, dev_text, extra_args=None):
@@ -154,5 +154,5 @@ class TestLemmatizer:
         # check that the charlm wasn't saved in here
         args = saved_model.args
         save_name = str(Path(args['save_dir']) / args['save_name'])
-        checkpoint = torch.load(save_name, lambda storage, loc: storage, weights_only=True)
+        checkpoint = torch.load(save_name, lambda storage, _loc: storage, weights_only=True)
         assert not any(x.startswith("contextual_embedding") for x in checkpoint['model'])

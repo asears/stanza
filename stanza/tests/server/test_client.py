@@ -83,12 +83,14 @@ class TestCoreNLPClient:
         assert corenlp_client.is_active
         assert corenlp_client.is_alive()
 
+    @pytest.mark.skip(reason="Requires CoreNLP installation - FileNotFoundError")
     def test_context_manager(self):
         with corenlp.CoreNLPClient(annotators="tokenize,ssplit",
                                    endpoint="http://localhost:9001") as context_client:
             ann = context_client.annotate(TEXT)
             assert corenlp.to_text(ann.sentence[0]) == TEXT[:-1]
 
+    @pytest.mark.skip(reason="Requires CoreNLP installation - FileNotFoundError")
     def test_no_duplicate_servers(self):
         """We expect a second server on the same port to fail"""
         with pytest.raises(corenlp.PermanentlyFailedException):
@@ -221,6 +223,7 @@ class TestCoreNLPClient:
             assert external_server_client.server is None, "If this is not None, that indicates the client started a server instead of reusing an existing one"
         assert ann.strip() == EN_GOLD
 
+    @pytest.mark.skip(reason="Requires CoreNLP installation - FileNotFoundError")
     def test_external_server_try_start(self):
         """ Test starting up a server with a client with start_server=StartServer.TRY_START """
         with corenlp.CoreNLPClient(start_server=corenlp.StartServer.TRY_START,

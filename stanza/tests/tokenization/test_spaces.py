@@ -30,7 +30,7 @@ def test_spaces_no_mwt():
     """
     Test what happens if the words in a document have SpacesBefore and/or After
     """
-    nlp = stanza.Pipeline(processors='tokenize', download_method=None, dir=TEST_MODELS_DIR, lang='en')
+    nlp = stanza.Pipeline(processors='tokenize', download_method=None, dir=str(TEST_MODELS_DIR), lang='en')
     doc = nlp("  Jennifer has nice antennae.  Not very nice person, though.  ")
     result = f"{doc:C}"
     result = result.strip()
@@ -71,7 +71,7 @@ def test_spaces_mwt():
     """
     Similar to the above test, but now we test it with MWT
     """
-    nlp = stanza.Pipeline(processors='tokenize', download_method=None, dir=TEST_MODELS_DIR, lang='en')
+    nlp = stanza.Pipeline(processors='tokenize', download_method=None, dir=str(TEST_MODELS_DIR), lang='en')
     doc = nlp("  She's not a nice person.  However, the best antennae on the Cerritos are Jennifer's.  ")
     result = f"{doc:C}"
     result = result.strip()

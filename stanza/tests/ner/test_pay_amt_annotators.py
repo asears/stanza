@@ -2,8 +2,8 @@
 Simple test for tracking AMT annotator work
 """
 
-from pathlib import Path
 import zipfile
+from pathlib import Path
 
 import pytest
 
