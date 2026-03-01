@@ -41,7 +41,7 @@ ignore = [
     "D200",
     "D400",
     "D415",
-    "ANN",
+    # "ANN",
     "D203",
     "D212",
     "Q000",    # Single quotes found
@@ -98,7 +98,7 @@ exclude = [
 [lint.per-file-ignores]
 "__init__.py" = ["F401"] # Allow unused imports in __init__.py
 "stanza/models/**" = [
-    "ANN",
+    # "ANN",
     "C901",
     "CPY",
     "D",
@@ -288,6 +288,7 @@ exclude = [
 "demo/**" = [
     "F401",
     "F841",
+    "ANN",
 ] # Allow unused imports and variables in demo scripts
 
 # isort Configuration (Import Sorting)
